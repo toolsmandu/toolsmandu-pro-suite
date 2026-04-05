@@ -32,6 +32,7 @@ const AdminSettings = () => {
       setFooterAbout(map.footer_about?.value || '');
       setOrderMode(map.order_mode?.value || 'cart');
       setWhatsappNumber(map.whatsapp_number?.value || '');
+      setProductBannerImage(map.product_banner_image?.value || '');
       return map;
     },
   });
