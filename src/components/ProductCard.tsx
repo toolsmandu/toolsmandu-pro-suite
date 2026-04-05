@@ -46,13 +46,6 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         <Link to={`/product/${slug}`}>
           <h3 className="font-medium text-foreground text-sm line-clamp-2 hover:text-primary transition-colors">{name}</h3>
         </Link>
-        {duration && <p className="text-xs text-muted-foreground mt-1">{duration}</p>}
-        {rating !== null && rating !== undefined && rating > 0 && (
-          <div className="flex items-center gap-1 mt-1">
-            <Star className="h-3 w-3 fill-warning text-warning" />
-            <span className="text-xs text-muted-foreground">{rating}</span>
-          </div>
-        )}
         <div className="mt-auto pt-3 flex items-center justify-between">
           <div>
             <span className="text-lg font-bold text-foreground">${price}</span>
