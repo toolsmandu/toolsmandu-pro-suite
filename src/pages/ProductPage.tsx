@@ -161,9 +161,7 @@ const ProductPage = () => {
 
             {/* Description */}
             {product.description && (
-              <div className="mb-8">
-                <p className="text-muted-foreground whitespace-pre-line leading-relaxed">{product.description}</p>
-              </div>
+              <div className="mb-8 prose prose-sm prose-invert max-w-none text-muted-foreground [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" dangerouslySetInnerHTML={{ __html: product.description }} />
             )}
           </div>
 
