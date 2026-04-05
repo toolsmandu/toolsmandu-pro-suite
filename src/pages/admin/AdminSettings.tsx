@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { toast } from 'sonner';
 import { Plus, Trash2, ShoppingCart, MessageCircle } from 'lucide-react';
 
@@ -18,6 +19,7 @@ const AdminSettings = () => {
   const [footerAbout, setFooterAbout] = useState('');
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [productBannerImage, setProductBannerImage] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newLink, setNewLink] = useState({ column_name: '', label: '', url: '', sort_order: '0' });
 
@@ -30,6 +32,7 @@ const AdminSettings = () => {
       setFooterAbout(map.footer_about?.value || '');
       setOrderMode(map.order_mode?.value || 'cart');
       setWhatsappNumber(map.whatsapp_number?.value || '');
+      setProductBannerImage(map.product_banner_image?.value || '');
       return map;
     },
   });
@@ -48,6 +51,7 @@ const AdminSettings = () => {
       { key: 'footer_about', value: footerAbout },
       { key: 'order_mode', value: orderMode },
       { key: 'whatsapp_number', value: whatsappNumber },
+      { key: 'product_banner_image', value: productBannerImage },
     ];
     for (const item of keys) {
       const { data: existing } = await supabase.from('site_settings').select('id').eq('key', item.key).maybeSingle();
@@ -126,6 +130,15 @@ const AdminSettings = () => {
             </div>
           )}
 
+          <Button onClick={saveSettings}>Save Settings</Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>Product Page Banner</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <ImageUpload value={productBannerImage} onChange={setProductBannerImage} label="Banner Background Image" />
+          <p className="text-xs text-muted-foreground">This image will be shown as a banner on single product pages.</p>
           <Button onClick={saveSettings}>Save Settings</Button>
         </CardContent>
       </Card>

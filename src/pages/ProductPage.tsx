@@ -34,14 +34,16 @@ const ProductPage = () => {
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [bannerImage, setBannerImage] = useState('');
 
   useQuery({
     queryKey: ['order-mode-settings'],
     queryFn: async () => {
-      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number']);
+      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number', 'product_banner_image']);
       data?.forEach((s: any) => {
         if (s.key === 'order_mode') setOrderMode(s.value);
         if (s.key === 'whatsapp_number') setWhatsappNumber(s.value);
+        if (s.key === 'product_banner_image') setBannerImage(s.value || '');
       });
       return data;
     },
@@ -115,10 +117,10 @@ const ProductPage = () => {
   return (
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
-      {/* Decorative top banner */}
-      <div className="w-full h-24 bg-gradient-to-r from-[#0a2e5c] via-[#1e3a8a] to-[#0a2e5c] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 50%)' }} />
-      </div>
+      {/* Top banner */}
+      <div className="w-full h-24 relative overflow-hidden" style={{
+        background: bannerImage ? `url(${bannerImage}) center/cover no-repeat` : 'linear-gradient(to right, #0a2e5c, #1e3a8a, #0a2e5c)',
+      }} />
       <div className="container mx-auto px-4 py-8">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
