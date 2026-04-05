@@ -173,12 +173,9 @@ const ProductPage = () => {
               </h3>
 
               {activeVariations.length > 0 ? (
-                <div className="space-y-2 mb-4">
+                <div className="space-y-3 mb-4">
                   {activeVariations.map((v: any) => {
                     const isSelected = selectedVariant?.id === v.id;
-                    const discount = v.original_price && v.original_price > v.price
-                      ? Math.round(((v.original_price - v.price) / v.original_price) * 100)
-                      : 0;
 
                     return (
                       <button
@@ -186,15 +183,15 @@ const ProductPage = () => {
                         onClick={() => setSelectedVariant(v)}
                         disabled={isOutOfStock}
                         className={cn(
-                          "w-full border rounded-lg p-3 text-left transition-all flex items-center gap-3",
+                          "w-full border-2 rounded-xl p-4 text-left transition-all flex items-center gap-4",
                           isSelected
-                            ? "border-[#f97015] ring-1 ring-[#f97015]"
-                            : "border-border hover:border-[#f97015]/50",
+                            ? "bg-[#f97015]/10 border-[#f97015] ring-1 ring-[#f97015]"
+                            : "bg-white/5 border-white/10 hover:border-[#f97015]/50 hover:bg-white/10",
                           isOutOfStock && "opacity-50 cursor-not-allowed"
                         )}
                       >
                         {/* Small product thumbnail */}
-                        <div className="w-10 h-10 rounded bg-secondary overflow-hidden flex-shrink-0">
+                        <div className="w-12 h-12 rounded-md bg-secondary overflow-hidden flex-shrink-0">
                           {product.image_url ? (
                             <img src={product.image_url} alt="" className="w-full h-full object-cover" />
                           ) : (
@@ -210,13 +207,16 @@ const ProductPage = () => {
                           <div className="font-semibold text-sm" style={{ color: '#f97015' }}>NPR {v.price}</div>
                         </div>
 
-                        {isSelected ? (
-                          <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#f97015' }}>
-                            <Check className="h-4 w-4 text-white" />
-                          </div>
-                        ) : (
-                          <ShoppingCart className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                        )}
+                        <div className={cn(
+                          "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+                          isSelected ? "bg-[#f97015]" : "bg-white/10"
+                        )}>
+                          {isSelected ? (
+                            <Check className="h-5 w-5 text-white" />
+                          ) : (
+                            <ShoppingCart className="h-5 w-5 text-white/40" />
+                          )}
+                        </div>
                       </button>
                     );
                   })}
