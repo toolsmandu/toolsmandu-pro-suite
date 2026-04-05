@@ -48,12 +48,12 @@ const ImageUpload = ({ value, onChange, label = 'Image' }: ImageUploadProps) => 
 
       // Track in media table
       const fileType = file.type.startsWith('video/') ? 'video' : 'image';
-      await supabase.from('media').insert({
+      await (supabase.from('media' as any) as any).insert({
         file_name: file.name,
         file_path: filePath,
         file_type: fileType,
         file_size: file.size,
-      } as any);
+      });
 
       queryClient.invalidateQueries({ queryKey: ['admin-media'] });
       onChange(publicUrl);

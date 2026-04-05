@@ -18,8 +18,7 @@ const AdminMedia = () => {
   const { data: media, isLoading } = useQuery({
     queryKey: ['admin-media'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('media')
+      const { data } = await (supabase.from('media' as any) as any)
         .select('*')
         .order('created_at', { ascending: false });
       return (data || []) as any[];
@@ -45,12 +44,12 @@ const AdminMedia = () => {
         if (error) throw error;
 
         const fileType = file.type.startsWith('video/') ? 'video' : 'image';
-        await supabase.from('media').insert({
+        await (supabase.from('media' as any) as any).insert({
           file_name: file.name,
           file_path: filePath,
           file_type: fileType,
           file_size: file.size,
-        } as any);
+        });
       }
       queryClient.invalidateQueries({ queryKey: ['admin-media'] });
       toast.success('Files uploaded!');
@@ -65,7 +64,7 @@ const AdminMedia = () => {
   const renameMutation = useMutation({
     mutationFn: async () => {
       if (!renameItem || !newName.trim()) return;
-      await supabase.from('media').update({ file_name: newName.trim() } as any).eq('id', renameItem.id);
+      await (supabase.from('media' as any) as any).update({ file_name: newName.trim() }).eq('id', renameItem.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-media'] });
@@ -77,10 +76,8 @@ const AdminMedia = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (item: any) => {
-      // Delete from storage
       await supabase.storage.from('assets').remove([item.file_path]);
-      // Delete from media table
-      await supabase.from('media').delete().eq('id', item.id);
+      await (supabase.from('media' as any) as any).delete().eq('id', item.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-media'] });
