@@ -21,7 +21,7 @@ const AdminProducts = () => {
     name: '', slug: '', description: '', price: '', original_price: '', duration: '',
     image_url: '', category_id: '', is_featured: false, is_bestseller: false,
     is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '',
-    features: '',
+    features: '', stock_status: 'in_stock' as string,
   });
 
   const { data: products, isLoading } = useQuery({
@@ -41,7 +41,7 @@ const AdminProducts = () => {
   });
 
   const resetForm = () => {
-    setForm({ name: '', slug: '', description: '', price: '', original_price: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '', features: '' });
+    setForm({ name: '', slug: '', description: '', price: '', original_price: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock' });
     setEditingId(null);
   };
 
@@ -55,6 +55,7 @@ const AdminProducts = () => {
       flash_sale_label: product.flash_sale_label || '', rating: product.rating ? String(product.rating) : '',
       meta_title: product.meta_title || '', meta_description: product.meta_description || '',
       features: Array.isArray(product.features) ? (product.features as string[]).join('\n') : '',
+      stock_status: product.stock_status || 'in_stock',
     });
     setEditingId(product.id);
     setDialogOpen(true);
@@ -79,6 +80,7 @@ const AdminProducts = () => {
         meta_title: form.meta_title || null,
         meta_description: form.meta_description || null,
         features: form.features ? form.features.split('\n').filter(Boolean) : [],
+        stock_status: form.stock_status,
       };
       if (editingId) {
         await supabase.from('products').update(payload).eq('id', editingId);
@@ -129,6 +131,15 @@ const AdminProducts = () => {
               <div className="flex items-center gap-4"><Switch checked={form.is_featured} onCheckedChange={v => setForm({...form, is_featured: v})} /><Label>Featured</Label></div>
               <div className="flex items-center gap-4"><Switch checked={form.is_bestseller} onCheckedChange={v => setForm({...form, is_bestseller: v})} /><Label>Bestseller</Label></div>
               <div className="flex items-center gap-4"><Switch checked={form.is_flash_sale} onCheckedChange={v => setForm({...form, is_flash_sale: v})} /><Label>Flash Sale</Label></div>
+              <div><Label>Stock Status</Label>
+                <Select value={form.stock_status} onValueChange={v => setForm({...form, stock_status: v})}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent position="popper" className="z-[9999]">
+                    <SelectItem value="in_stock">In Stock</SelectItem>
+                    <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <Button onClick={() => saveMutation.mutate()} className="w-full mt-4" disabled={!form.name || !form.price}>
               {editingId ? 'Update Product' : 'Create Product'}
@@ -141,7 +152,7 @@ const AdminProducts = () => {
         <div className="border border-border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Price</TableHead><TableHead>Flags</TableHead><TableHead className="w-24">Actions</TableHead></TableRow>
+              <TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Price</TableHead><TableHead>Status</TableHead><TableHead>Flags</TableHead><TableHead className="w-24">Actions</TableHead></TableRow>
             </TableHeader>
             <TableBody>
               {products?.map(p => (
@@ -149,6 +160,7 @@ const AdminProducts = () => {
                   <TableCell className="font-medium text-foreground">{p.name}</TableCell>
                   <TableCell className="text-muted-foreground">{(p.categories as any)?.name || '-'}</TableCell>
                   <TableCell className="text-foreground">${p.price}</TableCell>
+                  <TableCell><span className={`text-xs font-medium ${(p as any).stock_status === 'out_of_stock' ? 'text-destructive' : 'text-success'}`}>{(p as any).stock_status === 'out_of_stock' ? 'Out of Stock' : 'In Stock'}</span></TableCell>
                   <TableCell className="text-xs space-x-1">
                     {p.is_featured && <span className="text-primary">Featured</span>}
                     {p.is_bestseller && <span className="text-warning">Best</span>}

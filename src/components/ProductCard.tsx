@@ -16,10 +16,12 @@ interface ProductCardProps {
   is_flash_sale?: boolean | null;
   flash_sale_label?: string | null;
   is_bestseller?: boolean | null;
+  stock_status?: string | null;
 }
 
-const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, rating, is_flash_sale, flash_sale_label, is_bestseller }: ProductCardProps) => {
+const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, rating, is_flash_sale, flash_sale_label, is_bestseller, stock_status }: ProductCardProps) => {
   const { addItem } = useCart();
+  const isOutOfStock = stock_status === 'out_of_stock';
   const discount = original_price ? Math.round(((original_price - price) / original_price) * 100) : 0;
 
   return (
@@ -34,9 +36,9 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         </div>
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {is_flash_sale && <Badge className="bg-destructive text-destructive-foreground text-xs">{flash_sale_label || '🔥 Sale'}</Badge>}
-          
-          {discount > 0 && <Badge className="bg-success text-success-foreground text-xs">-{discount}%</Badge>}
+          {isOutOfStock && <Badge className="bg-muted text-muted-foreground text-xs">Out of Stock</Badge>}
+          {!isOutOfStock && is_flash_sale && <Badge className="bg-destructive text-destructive-foreground text-xs">{flash_sale_label || '🔥 Sale'}</Badge>}
+          {!isOutOfStock && discount > 0 && <Badge className="bg-success text-success-foreground text-xs">-{discount}%</Badge>}
         </div>
       </Link>
 
@@ -58,15 +60,21 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
               <span className="text-sm text-muted-foreground line-through ml-2">${original_price}</span>
             )}
           </div>
-          <Button
-            size="icon"
-            variant="secondary"
-            className="h-8 w-8"
-            onClick={(e) => { e.preventDefault(); addItem({ id, name, price, image_url, duration }); }}
-            aria-label="Add to cart"
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
+          {isOutOfStock ? (
+            <Button size="icon" variant="secondary" className="h-8 w-8 opacity-50" disabled aria-label="Out of stock">
+              <ShoppingCart className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button
+              size="icon"
+              variant="secondary"
+              className="h-8 w-8"
+              onClick={(e) => { e.preventDefault(); addItem({ id, name, price, image_url, duration }); }}
+              aria-label="Add to cart"
+            >
+              <ShoppingCart className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

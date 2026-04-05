@@ -118,9 +118,15 @@ const ProductPage = () => {
             )}
 
             <div className="flex gap-3">
-              <Button size="lg" className="flex-1" onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image_url: product.image_url, duration: product.duration })}>
-                <ShoppingCart className="h-5 w-5 mr-2" /> Add to Cart
-              </Button>
+              {(product as any).stock_status === 'out_of_stock' ? (
+                <Button size="lg" className="flex-1" disabled>
+                  Out of Stock
+                </Button>
+              ) : (
+                <Button size="lg" className="flex-1" onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image_url: product.image_url, duration: product.duration })}>
+                  <ShoppingCart className="h-5 w-5 mr-2" /> Add to Cart
+                </Button>
+              )}
             </div>
 
             {/* Description */}
