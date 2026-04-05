@@ -49,9 +49,9 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         {duration && <p className="text-xs text-muted-foreground mt-1">{duration}</p>}
         <div className="mt-auto pt-3 flex items-center justify-between">
           <div>
-            <span className="text-lg font-bold text-foreground">${price}</span>
+            <span className="text-lg font-bold text-foreground">NPR {price}</span>
             {original_price && original_price > price && (
-              <span className="text-sm text-muted-foreground line-through ml-2">${original_price}</span>
+              <span className="text-sm text-muted-foreground line-through ml-2">NPR {original_price}</span>
             )}
           </div>
           {isOutOfStock ? (

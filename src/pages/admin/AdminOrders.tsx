@@ -44,7 +44,7 @@ const AdminOrders = () => {
                   <TableCell className="font-mono text-xs text-muted-foreground">#{order.id.slice(0, 8)}</TableCell>
                   <TableCell className="text-foreground">{order.profiles?.email || '-'}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{order.order_items?.map((i: any) => i.products?.name).filter(Boolean).join(', ')}</TableCell>
-                  <TableCell className="font-bold text-foreground">${order.total}</TableCell>
+                  <TableCell className="font-bold text-foreground">NPR {order.total}</TableCell>
                   <TableCell>
                     <Select value={order.status} onValueChange={v => updateStatus.mutate({ id: order.id, status: v })}>
                       <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>

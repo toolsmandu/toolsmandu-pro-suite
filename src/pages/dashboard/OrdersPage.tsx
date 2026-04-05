@@ -49,12 +49,12 @@ const OrdersPage = () => {
               {(order.order_items as any[])?.map((item: any) => (
                 <div key={item.id} className="flex items-center justify-between text-sm">
                   <span className="text-foreground">{item.products?.name || 'Product'} × {item.quantity}</span>
-                  <span className="text-muted-foreground">${item.price}</span>
+                  <span className="text-muted-foreground">NPR {item.price}</span>
                 </div>
               ))}
             </div>
             <div className="border-t border-border mt-3 pt-3 flex justify-between font-bold text-foreground">
-              <span>Total</span><span>${order.total}</span>
+              <span>Total</span><span>NPR {order.total}</span>
             </div>
           </CardContent>
         </Card>

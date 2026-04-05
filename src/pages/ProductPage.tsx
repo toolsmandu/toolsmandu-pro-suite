@@ -90,10 +90,10 @@ const ProductPage = () => {
               </div>
             )}
             <div className="flex items-baseline gap-3 mb-4">
-              <span className="text-4xl font-bold text-foreground">${product.price}</span>
+              <span className="text-4xl font-bold text-foreground">NPR {product.price}</span>
               {product.original_price && product.original_price > product.price && (
                 <>
-                  <span className="text-xl text-muted-foreground line-through">${product.original_price}</span>
+                  <span className="text-xl text-muted-foreground line-through">NPR {product.original_price}</span>
                   <Badge className="bg-success text-success-foreground">Save {discount}%</Badge>
                 </>
               )}

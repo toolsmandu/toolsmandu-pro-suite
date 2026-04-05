@@ -56,7 +56,7 @@ const CartPage = () => {
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-foreground truncate">{item.name}</h3>
                 {item.duration && <p className="text-xs text-muted-foreground">{item.duration}</p>}
-                <p className="font-bold text-foreground mt-1">${item.price}</p>
+                <p className="font-bold text-foreground mt-1">NPR {item.price}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}><Minus className="h-3 w-3" /></Button>
@@ -70,8 +70,8 @@ const CartPage = () => {
         <div className="bg-card border border-border rounded-lg p-6 h-fit sticky top-20">
           <h2 className="text-xl font-bold text-foreground mb-4">Order Summary</h2>
           <div className="space-y-2 text-sm mb-4">
-            <div className="flex justify-between text-muted-foreground"><span>Subtotal</span><span>${total.toFixed(2)}</span></div>
-            <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground"><span>Total</span><span>${total.toFixed(2)}</span></div>
+            <div className="flex justify-between text-muted-foreground"><span>Subtotal</span><span>NPR {total.toFixed(2)}</span></div>
+            <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground"><span>Total</span><span>NPR {total.toFixed(2)}</span></div>
           </div>
           <Button className="w-full" size="lg" onClick={handlePlaceOrder} disabled={placing}>
             {placing ? 'Placing Order...' : 'Place Order'}
