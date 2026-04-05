@@ -139,6 +139,7 @@ const AdminSettings = () => {
         <CardContent className="space-y-4">
           <div><Label>Logo URL</Label><Input value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://..." /></div>
           <div><Label>Footer About Text</Label><Textarea value={footerAbout} onChange={e => setFooterAbout(e.target.value)} rows={3} /></div>
+          <ImageUpload value={productBannerImage} onChange={setProductBannerImage} label="Product Page Banner Image" />
           <Button onClick={saveSettings}>Save Settings</Button>
         </CardContent>
       </Card>
