@@ -6,21 +6,33 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Separator } from '@/components/ui/separator';
+
+interface Variation {
+  id?: string;
+  name: string;
+  price: string;
+  original_price: string;
+  expiry_days: string;
+  is_active: boolean;
+}
+
+const emptyVariation = (): Variation => ({ name: '', price: '', original_price: '', expiry_days: '', is_active: true });
 
 const AdminProducts = () => {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [variations, setVariations] = useState<Variation[]>([]);
   const [form, setForm] = useState({
-    name: '', slug: '', description: '', price: '', original_price: '', duration: '',
+    name: '', slug: '', description: '', duration: '',
     image_url: '', category_id: '', is_featured: false, is_bestseller: false,
-    is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '',
+    is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '',
     features: '', stock_status: 'in_stock' as string,
   });
 
@@ -49,34 +61,61 @@ const AdminProducts = () => {
   });
 
   const resetForm = () => {
-    setForm({ name: '', slug: '', description: '', price: '', original_price: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock' });
+    setForm({ name: '', slug: '', description: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock' });
+    setVariations([]);
     setEditingId(null);
   };
 
-  const openEdit = (product: any) => {
+  const openEdit = async (product: any) => {
     setForm({
       name: product.name, slug: product.slug, description: product.description || '',
-      price: String(product.price), original_price: product.original_price ? String(product.original_price) : '',
       duration: product.duration || '', image_url: product.image_url || '',
       category_id: product.category_id || '', is_featured: product.is_featured || false,
       is_bestseller: product.is_bestseller || false, is_flash_sale: product.is_flash_sale || false,
-      flash_sale_label: product.flash_sale_label || '', rating: product.rating ? String(product.rating) : '',
-      meta_title: product.meta_title || '', meta_description: product.meta_description || '',
+      flash_sale_label: product.flash_sale_label || '', meta_title: product.meta_title || '',
+      meta_description: product.meta_description || '',
       features: Array.isArray(product.features) ? (product.features as string[]).join('\n') : '',
       stock_status: product.stock_status || 'in_stock',
     });
+    // Load variations
+    const { data } = await supabase.from('product_variations').select('*').eq('product_id', product.id).order('sort_order');
+    setVariations((data || []).map((v: any) => ({
+      id: v.id,
+      name: v.name,
+      price: String(v.price),
+      original_price: v.original_price ? String(v.original_price) : '',
+      expiry_days: v.expiry_days ? String(v.expiry_days) : '',
+      is_active: v.is_active,
+    })));
     setEditingId(product.id);
     setDialogOpen(true);
   };
 
+  const updateVariation = (index: number, field: keyof Variation, value: any) => {
+    setVariations(prev => prev.map((v, i) => i === index ? { ...v, [field]: value } : v));
+  };
+
+  const removeVariation = (index: number) => {
+    setVariations(prev => prev.filter((_, i) => i !== index));
+  };
+
   const saveMutation = useMutation({
     mutationFn: async () => {
+      // Find the lowest price among active variations for the product price
+      const activeVariations = variations.filter(v => v.name && v.price);
+      const lowestPrice = activeVariations.length > 0
+        ? Math.min(...activeVariations.map(v => parseFloat(v.price)))
+        : 0;
+      const highestOriginal = activeVariations.length > 0
+        ? Math.max(...activeVariations.filter(v => v.original_price).map(v => parseFloat(v.original_price)).filter(p => !isNaN(p)), 0)
+        : null;
+
       const payload = {
         name: form.name,
         slug: form.slug || form.name.toLowerCase().replace(/\s+/g, '-'),
         description: form.description || null,
-        price: parseFloat(form.price),
-        original_price: form.original_price ? parseFloat(form.original_price) : null,
+        price: lowestPrice,
+        original_price: highestOriginal || null,
         duration: form.duration || null,
         image_url: form.image_url || null,
         category_id: form.category_id || null,
@@ -84,16 +123,37 @@ const AdminProducts = () => {
         is_bestseller: form.is_bestseller,
         is_flash_sale: form.is_flash_sale,
         flash_sale_label: form.flash_sale_label || null,
-        rating: form.rating ? parseFloat(form.rating) : null,
         meta_title: form.meta_title || null,
         meta_description: form.meta_description || null,
         features: form.features ? form.features.split('\n').filter(Boolean) : [],
         stock_status: form.stock_status,
       };
+
+      let productId = editingId;
       if (editingId) {
         await supabase.from('products').update(payload).eq('id', editingId);
       } else {
-        await supabase.from('products').insert(payload);
+        const { data, error } = await supabase.from('products').insert(payload).select('id').single();
+        if (error) throw error;
+        productId = data.id;
+      }
+
+      // Save variations: delete existing, re-insert
+      if (productId) {
+        await supabase.from('product_variations').delete().eq('product_id', productId);
+        const variationPayloads = activeVariations.map((v, i) => ({
+          product_id: productId!,
+          name: v.name,
+          price: parseFloat(v.price),
+          original_price: v.original_price ? parseFloat(v.original_price) : null,
+          expiry_days: v.expiry_days ? parseInt(v.expiry_days) : null,
+          is_active: v.is_active,
+          sort_order: i,
+        }));
+        if (variationPayloads.length > 0) {
+          const { error } = await supabase.from('product_variations').insert(variationPayloads);
+          if (error) throw error;
+        }
       }
     },
     onSuccess: () => {
@@ -126,8 +186,6 @@ const AdminProducts = () => {
                   <SelectContent position="popper" className="z-[9999]">{categories?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-              <div><Label>Selling Price</Label><Input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})} /></div>
-              <div><Label>Full Price</Label><Input type="number" value={form.original_price} onChange={e => setForm({...form, original_price: e.target.value})} /></div>
               <div><Label>Product Type</Label>
                 <Select value={form.duration} onValueChange={v => setForm({...form, duration: v})}>
                   <SelectTrigger><SelectValue placeholder="Select product type" /></SelectTrigger>
@@ -146,6 +204,45 @@ const AdminProducts = () => {
               <div className="col-span-2"><Label>Image URL</Label><Input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} /></div>
               <div className="col-span-2"><Label>Description</Label><Textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} /></div>
               <div className="col-span-2"><Label>Features (one per line)</Label><Textarea value={form.features} onChange={e => setForm({...form, features: e.target.value})} rows={3} /></div>
+
+              {/* Variations Section */}
+              <div className="col-span-2">
+                <Separator className="my-2" />
+                <div className="flex items-center justify-between mb-3">
+                  <Label className="text-base font-semibold">Variations</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setVariations(prev => [...prev, emptyVariation()])}>
+                    <Plus className="h-3 w-3 mr-1" /> Add Variation
+                  </Button>
+                </div>
+                {variations.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No variations yet. Add at least one variation with pricing.</p>
+                )}
+                <div className="space-y-3">
+                  {variations.map((v, i) => (
+                    <div key={i} className="border border-border rounded-lg p-3 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-foreground">Variation {i + 1}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
+                            <Switch checked={v.is_active} onCheckedChange={val => updateVariation(i, 'is_active', val)} />
+                            <span className={`text-xs ${v.is_active ? 'text-success' : 'text-muted-foreground'}`}>{v.is_active ? 'Active' : 'Inactive'}</span>
+                          </div>
+                          <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => removeVariation(i)}>
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="col-span-2"><Label className="text-xs">Name</Label><Input value={v.name} onChange={e => updateVariation(i, 'name', e.target.value)} placeholder="e.g. 1 Month, 1 Year" className="h-8 text-sm" /></div>
+                        <div><Label className="text-xs">Selling Price</Label><Input type="number" value={v.price} onChange={e => updateVariation(i, 'price', e.target.value)} className="h-8 text-sm" /></div>
+                        <div><Label className="text-xs">Full Price</Label><Input type="number" value={v.original_price} onChange={e => updateVariation(i, 'original_price', e.target.value)} className="h-8 text-sm" /></div>
+                        <div className="col-span-2"><Label className="text-xs">Expiry Days (validity after order)</Label><Input type="number" value={v.expiry_days} onChange={e => updateVariation(i, 'expiry_days', e.target.value)} placeholder="e.g. 30, 365" className="h-8 text-sm" /></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="col-span-2"><Label>Flash Sale Label</Label><Input value={form.flash_sale_label} onChange={e => setForm({...form, flash_sale_label: e.target.value})} /></div>
               <div><Label>Meta Title</Label><Input value={form.meta_title} onChange={e => setForm({...form, meta_title: e.target.value})} /></div>
               <div><Label>Meta Description</Label><Input value={form.meta_description} onChange={e => setForm({...form, meta_description: e.target.value})} /></div>
@@ -153,7 +250,7 @@ const AdminProducts = () => {
               <div className="flex items-center gap-4"><Switch checked={form.is_bestseller} onCheckedChange={v => setForm({...form, is_bestseller: v})} /><Label>Bestseller</Label></div>
               <div className="flex items-center gap-4"><Switch checked={form.is_flash_sale} onCheckedChange={v => setForm({...form, is_flash_sale: v})} /><Label>Flash Sale</Label></div>
             </div>
-            <Button onClick={() => saveMutation.mutate()} className="w-full mt-4" disabled={!form.name || !form.price}>
+            <Button onClick={() => saveMutation.mutate()} className="w-full mt-4" disabled={!form.name || variations.filter(v => v.name && v.price).length === 0}>
               {editingId ? 'Update Product' : 'Create Product'}
             </Button>
           </DialogContent>
