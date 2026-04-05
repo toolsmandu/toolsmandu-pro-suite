@@ -19,8 +19,9 @@ interface ProductCardProps {
   stock_status?: string | null;
 }
 
-const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, rating, is_flash_sale, flash_sale_label, is_bestseller }: ProductCardProps) => {
+const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, rating, is_flash_sale, flash_sale_label, is_bestseller, stock_status }: ProductCardProps) => {
   const { addItem } = useCart();
+  const isOutOfStock = stock_status === 'out_of_stock';
   const discount = original_price ? Math.round(((original_price - price) / original_price) * 100) : 0;
 
   return (
