@@ -229,7 +229,13 @@ const ProductPage = () => {
                           <div className="font-semibold text-foreground text-sm mt-1">NPR {v.price}</div>
                         </div>
 
-                        <ShoppingCart className={cn("h-4 w-4 flex-shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
+                        {isSelected ? (
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#f97015' }}>
+                            <Check className="h-4 w-4 text-white" />
+                          </div>
+                        ) : (
+                          <ShoppingCart className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        )}
                       </button>
                     );
                   })}
