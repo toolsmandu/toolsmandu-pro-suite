@@ -55,7 +55,8 @@ const CartPage = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-foreground truncate">{item.name}</h3>
-                {item.duration && <p className="text-xs text-muted-foreground">{item.duration}</p>}
+                {item.variantName && <p className="text-xs text-muted-foreground">{item.variantName}</p>}
+                {item.duration && !item.variantName && <p className="text-xs text-muted-foreground">{item.duration}</p>}
                 <p className="font-bold text-foreground mt-1">NPR {item.price}</p>
               </div>
               <div className="flex items-center gap-2">
