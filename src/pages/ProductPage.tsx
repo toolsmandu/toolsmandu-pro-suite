@@ -115,7 +115,7 @@ const ProductPage = () => {
   );
 
   return (
-    <>
+      {product.meta_title && <title>{product.meta_title}</title>}
       {bannerImage && (
         <div className="relative w-full overflow-hidden">
           <img
