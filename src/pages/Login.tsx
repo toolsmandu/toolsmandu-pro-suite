@@ -54,6 +54,9 @@ const Login = () => {
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
+          <div className="flex items-center justify-between mt-4">
+            <Link to="/forgot-password" className="text-sm text-primary hover:underline">Forgot password?</Link>
+          </div>
           <p className="text-center text-sm text-muted-foreground mt-4">
             Don't have an account? <Link to="/signup" className="text-primary hover:underline">Sign Up</Link>
           </p>

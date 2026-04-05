@@ -1,8 +1,9 @@
+import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-const Footer = () => {
+const Footer = forwardRef<HTMLElement>((_, ref) => {
   const { data: footerLinks } = useQuery({
     queryKey: ['footer-links'],
     queryFn: async () => {
@@ -26,7 +27,7 @@ const Footer = () => {
   }, {} as Record<string, typeof footerLinks>) || {};
 
   return (
-    <footer className="bg-card border-t border-border mt-16">
+    <footer ref={ref} className="bg-card border-t border-border mt-16">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
           {/* About */}
@@ -64,6 +65,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = 'Footer';
 
 export default Footer;
