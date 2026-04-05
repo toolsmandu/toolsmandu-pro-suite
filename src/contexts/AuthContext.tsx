@@ -47,8 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setProfile(profileRes.data ?? null);
   };
 
-  const syncAuthState = async (nextSession: Session | null) => {
-    setLoading(true);
+  const syncAuthState = async (nextSession: Session | null, isInitial = false) => {
+    if (isInitial) setLoading(true);
     setSession(nextSession);
     setUser(nextSession?.user ?? null);
 
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setProfile(null);
     }
 
-    setLoading(false);
+    if (isInitial) setLoading(false);
   };
 
   const refreshProfile = async () => {
