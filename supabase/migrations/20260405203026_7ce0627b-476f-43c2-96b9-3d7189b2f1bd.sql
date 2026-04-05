@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN order_mode text NOT NULL DEFAULT 'cart';
