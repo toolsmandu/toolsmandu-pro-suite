@@ -34,14 +34,16 @@ const ProductPage = () => {
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [bannerImage, setBannerImage] = useState('');
 
   useQuery({
     queryKey: ['order-mode-settings'],
     queryFn: async () => {
-      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number']);
+      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number', 'product_banner_image']);
       data?.forEach((s: any) => {
         if (s.key === 'order_mode') setOrderMode(s.value);
         if (s.key === 'whatsapp_number') setWhatsappNumber(s.value);
+        if (s.key === 'product_banner_image') setBannerImage(s.value);
       });
       return data;
     },
