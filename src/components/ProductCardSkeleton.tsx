@@ -1,7 +1,8 @@
+import { forwardRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ProductCardSkeleton = () => (
-  <div className="bg-card border border-border rounded-lg overflow-hidden">
+const ProductCardSkeleton = forwardRef<HTMLDivElement>((_, ref) => (
+  <div ref={ref} className="bg-card border border-border rounded-lg overflow-hidden">
     <Skeleton className="aspect-square" />
     <div className="p-4 space-y-2">
       <Skeleton className="h-4 w-3/4" />
@@ -12,6 +13,8 @@ const ProductCardSkeleton = () => (
       </div>
     </div>
   </div>
-);
+));
+
+ProductCardSkeleton.displayName = 'ProductCardSkeleton';
 
 export default ProductCardSkeleton;
