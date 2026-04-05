@@ -118,11 +118,11 @@ const ProductPage = () => {
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
       {bannerImage && (
-        <div className="relative w-full overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 overflow-hidden" style={{ height: '60%', zIndex: 0 }}>
           <img
             src={bannerImage}
             alt="Product banner"
-            className="w-full h-auto object-cover"
+            className="w-full h-full object-cover"
             style={{ opacity: 0.5 }}
           />
           <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to bottom, transparent, hsl(var(--background)))' }} />
