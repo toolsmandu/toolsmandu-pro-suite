@@ -131,7 +131,7 @@ const ProductPage = () => {
                   )}
                 </div>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 flex flex-col justify-center">
                 <div className="flex items-center gap-2 mb-2">
                   {product.is_flash_sale && (
                     <Badge className="bg-destructive text-destructive-foreground">
@@ -145,8 +145,9 @@ const ProductPage = () => {
                     <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
                   )}
                 </div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">{product.name}</h1>
-                <div className="flex items-center gap-2 mb-3">
+                <h1 className="text-3xl font-bold text-foreground mb-3">{product.name}</h1>
+                <div className="border-t border-border mb-3"></div>
+                <div className="flex items-center gap-2">
                   {product.categories && (
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
