@@ -223,8 +223,8 @@ const ProductPage = () => {
 
                         <div className="flex-1 min-w-0">
                           <div className="font-semibold text-foreground text-sm">{v.name}</div>
-                          {v.expiry_days && (
-                            <div className="text-xs text-muted-foreground">{v.expiry_days} Days Validity</div>
+                          {v.variation_info && (
+                            <div className="text-xs text-muted-foreground">{v.variation_info}</div>
                           )}
                           <div className="font-semibold text-foreground text-sm mt-1">NPR {v.price}</div>
                         </div>
