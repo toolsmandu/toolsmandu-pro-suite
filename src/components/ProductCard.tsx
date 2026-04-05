@@ -60,15 +60,21 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
               <span className="text-sm text-muted-foreground line-through ml-2">${original_price}</span>
             )}
           </div>
-          <Button
-            size="icon"
-            variant="secondary"
-            className="h-8 w-8"
-            onClick={(e) => { e.preventDefault(); addItem({ id, name, price, image_url, duration }); }}
-            aria-label="Add to cart"
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
+          {isOutOfStock ? (
+            <Button size="icon" variant="secondary" className="h-8 w-8 opacity-50" disabled aria-label="Out of stock">
+              <ShoppingCart className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button
+              size="icon"
+              variant="secondary"
+              className="h-8 w-8"
+              onClick={(e) => { e.preventDefault(); addItem({ id, name, price, image_url, duration }); }}
+              aria-label="Add to cart"
+            >
+              <ShoppingCart className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
