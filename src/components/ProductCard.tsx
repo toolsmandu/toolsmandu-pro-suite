@@ -36,9 +36,9 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         </div>
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {is_flash_sale && <Badge className="bg-destructive text-destructive-foreground text-xs">{flash_sale_label || '🔥 Sale'}</Badge>}
-          
-          {discount > 0 && <Badge className="bg-success text-success-foreground text-xs">-{discount}%</Badge>}
+          {isOutOfStock && <Badge className="bg-muted text-muted-foreground text-xs">Out of Stock</Badge>}
+          {!isOutOfStock && is_flash_sale && <Badge className="bg-destructive text-destructive-foreground text-xs">{flash_sale_label || '🔥 Sale'}</Badge>}
+          {!isOutOfStock && discount > 0 && <Badge className="bg-success text-success-foreground text-xs">-{discount}%</Badge>}
         </div>
       </Link>
 
