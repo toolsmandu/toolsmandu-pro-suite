@@ -21,7 +21,7 @@ const AdminProducts = () => {
     name: '', slug: '', description: '', price: '', original_price: '', duration: '',
     image_url: '', category_id: '', is_featured: false, is_bestseller: false,
     is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '',
-    features: '',
+    features: '', stock_status: 'in_stock' as string,
   });
 
   const { data: products, isLoading } = useQuery({
