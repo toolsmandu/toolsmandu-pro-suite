@@ -40,6 +40,14 @@ const AdminProducts = () => {
     },
   });
 
+  const { data: productTypes } = useQuery({
+    queryKey: ['product-types'],
+    queryFn: async () => {
+      const { data } = await supabase.from('product_types').select('*').order('name');
+      return data || [];
+    },
+  });
+
   const resetForm = () => {
     setForm({ name: '', slug: '', description: '', price: '', original_price: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock' });
     setEditingId(null);
@@ -120,7 +128,12 @@ const AdminProducts = () => {
               </div>
               <div><Label>Selling Price</Label><Input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})} /></div>
               <div><Label>Full Price</Label><Input type="number" value={form.original_price} onChange={e => setForm({...form, original_price: e.target.value})} /></div>
-              <div><Label>Product Type</Label><Input value={form.duration} onChange={e => setForm({...form, duration: e.target.value})} placeholder="e.g. 1 Year Subscription" /></div>
+              <div><Label>Product Type</Label>
+                <Select value={form.duration} onValueChange={v => setForm({...form, duration: v})}>
+                  <SelectTrigger><SelectValue placeholder="Select product type" /></SelectTrigger>
+                  <SelectContent position="popper" className="z-[9999]">{productTypes?.map(t => <SelectItem key={t.id} value={t.name}>{t.name}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
               <div><Label>Stock Status</Label>
                 <Select value={form.stock_status} onValueChange={v => setForm({...form, stock_status: v})}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
