@@ -117,10 +117,10 @@ const ProductPage = () => {
   return (
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
-      {/* Decorative top banner */}
-      <div className="w-full h-24 bg-gradient-to-r from-[#0a2e5c] via-[#1e3a8a] to-[#0a2e5c] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 50%)' }} />
-      </div>
+      {/* Top banner */}
+      <div className="w-full h-24 relative overflow-hidden" style={{
+        background: bannerImage ? `url(${bannerImage}) center/cover no-repeat` : 'linear-gradient(to right, #0a2e5c, #1e3a8a, #0a2e5c)',
+      }} />
       <div className="container mx-auto px-4 py-8">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
