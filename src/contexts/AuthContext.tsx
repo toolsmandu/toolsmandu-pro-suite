@@ -42,8 +42,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       supabase.from('user_roles').select('role').eq('user_id', userId),
       supabase.from('profiles').select('email, phone, avatar_url').eq('user_id', userId).single(),
     ]);
-    if (rolesRes.data) setRoles(rolesRes.data.map(r => r.role as UserRole));
-    if (profileRes.data) setProfile(profileRes.data);
+
+    setRoles((rolesRes.data ?? []).map((roleRecord) => roleRecord.role as UserRole));
+    setProfile(profileRes.data ?? null);
+  };
+
+  const syncAuthState = async (nextSession: Session | null) => {
+    setLoading(true);
+    setSession(nextSession);
+    setUser(nextSession?.user ?? null);
+
+    if (nextSession?.user) {
+      await fetchUserData(nextSession.user.id);
+    } else {
+      setRoles([]);
+      setProfile(null);
+    }
+
+    setLoading(false);
   };
 
   const refreshProfile = async () => {
@@ -51,23 +67,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        setTimeout(() => fetchUserData(session.user.id), 0);
-      } else {
-        setRoles([]);
-        setProfile(null);
-      }
-      setLoading(false);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+      await syncAuthState(nextSession);
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) fetchUserData(session.user.id);
-      setLoading(false);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      await syncAuthState(session);
     });
 
     return () => subscription.unsubscribe();
