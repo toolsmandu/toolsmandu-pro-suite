@@ -32,7 +32,7 @@ const AdminProducts = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [form, setForm] = useState({
-    name: '', slug: '', description: '', duration: '',
+    name: '', slug: '', description: '', duration: '', region: '',
     image_url: '', category_id: '', is_featured: false, is_bestseller: false,
     is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '',
     features: '', stock_status: 'in_stock' as string, order_mode: 'cart' as string,
@@ -63,7 +63,7 @@ const AdminProducts = () => {
   });
 
   const resetForm = () => {
-    setForm({ name: '', slug: '', description: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock', order_mode: 'cart' });
+    setForm({ name: '', slug: '', description: '', duration: '', region: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock', order_mode: 'cart' });
     setVariations([]);
     setEditingId(null);
   };
@@ -71,7 +71,8 @@ const AdminProducts = () => {
   const openEdit = async (product: any) => {
     setForm({
       name: product.name, slug: product.slug, description: product.description || '',
-      duration: product.duration || '', image_url: product.image_url || '',
+      duration: product.duration || '', region: product.region || '',
+      image_url: product.image_url || '',
       category_id: product.category_id || '', is_featured: product.is_featured || false,
       is_bestseller: product.is_bestseller || false, is_flash_sale: product.is_flash_sale || false,
       flash_sale_label: product.flash_sale_label || '', meta_title: product.meta_title || '',
@@ -121,6 +122,7 @@ const AdminProducts = () => {
         price: lowestPrice,
         original_price: highestOriginal || null,
         duration: form.duration || null,
+        region: form.region || null,
         image_url: form.image_url || null,
         category_id: form.category_id || null,
         is_featured: form.is_featured,
@@ -198,6 +200,7 @@ const AdminProducts = () => {
                   <SelectContent position="popper" className="z-[9999]">{productTypes?.map(t => <SelectItem key={t.id} value={t.name}>{t.name}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
+              <div><Label>Region</Label><Input value={form.region} onChange={e => setForm({...form, region: e.target.value})} placeholder="e.g. Global, Nepal" /></div>
               <div><Label>Stock Status</Label>
                 <Select value={form.stock_status} onValueChange={v => setForm({...form, stock_status: v})}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
