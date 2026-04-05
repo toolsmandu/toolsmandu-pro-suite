@@ -34,6 +34,7 @@ import AdminHeroSlides from "./pages/admin/AdminHeroSlides";
 import AdminTickets from "./pages/admin/AdminTickets";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminMedia from "./pages/admin/AdminMedia";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="product-types" element={<AdminProductTypes />} />
                 <Route path="orders" element={<AdminOrders />} />
+                <Route path="media" element={<AdminMedia />} />
                 <Route path="hero-slides" element={<AdminHeroSlides />} />
                 <Route path="tickets" element={<AdminTickets />} />
                 <Route path="users" element={<AdminUsers />} />
