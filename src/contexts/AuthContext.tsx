@@ -47,8 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setProfile(profileRes.data ?? null);
   };
 
-  const syncAuthState = async (nextSession: Session | null) => {
-    setLoading(true);
+  const syncAuthState = async (nextSession: Session | null, isInitial = false) => {
+    if (isInitial) setLoading(true);
     setSession(nextSession);
     setUser(nextSession?.user ?? null);
 
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setProfile(null);
     }
 
-    setLoading(false);
+    if (isInitial) setLoading(false);
   };
 
   const refreshProfile = async () => {
@@ -69,14 +69,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let initialized = false;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (initialized) {
-        await syncAuthState(nextSession);
+        syncAuthState(nextSession, false);
       }
     });
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      await syncAuthState(session);
+      await syncAuthState(session, true);
       initialized = true;
     });
 
