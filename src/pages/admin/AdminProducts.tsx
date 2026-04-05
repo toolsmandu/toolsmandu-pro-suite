@@ -217,7 +217,7 @@ const AdminProducts = () => {
               </div>
               <div className="col-span-2"><Label>Image URL</Label><Input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} /></div>
               <div className="col-span-2"><Label>Description</Label><Textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} /></div>
-              <div className="col-span-2"><Label>Features (one per line)</Label><Textarea value={form.features} onChange={e => setForm({...form, features: e.target.value})} rows={3} /></div>
+              
 
               {/* Variations Section */}
               <div className="col-span-2">

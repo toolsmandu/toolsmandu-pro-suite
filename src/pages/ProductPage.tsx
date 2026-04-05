@@ -162,23 +162,7 @@ const ProductPage = () => {
             {/* Description */}
             {product.description && (
               <div className="mb-8">
-                <h3 className="font-semibold text-foreground mb-3 text-lg">Description</h3>
                 <p className="text-muted-foreground whitespace-pre-line leading-relaxed">{product.description}</p>
-              </div>
-            )}
-
-            {/* Features */}
-            {features.length > 0 && (
-              <div className="mb-8">
-                <h3 className="font-semibold text-foreground mb-3 text-lg">Features</h3>
-                <ul className="space-y-2">
-                  {features.map((f, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Check className="h-4 w-4 text-success flex-shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
               </div>
             )}
           </div>
