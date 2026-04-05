@@ -161,7 +161,7 @@ const ProductPage = () => {
 
             {/* Description */}
             {product.description && (
-              <div className="mb-8 prose prose-sm prose-invert max-w-none text-muted-foreground [&_a]:text-primary [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" dangerouslySetInnerHTML={{ __html: product.description }} />
+              <div className="mb-8 prose prose-sm prose-invert max-w-none text-white [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" style={{ color: 'white' }} dangerouslySetInnerHTML={{ __html: product.description.replace(/<a /g, '<a style="color:#f97015" ') }} />
             )}
           </div>
 
