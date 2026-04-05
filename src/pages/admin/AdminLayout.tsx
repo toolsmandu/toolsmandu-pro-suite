@@ -1,27 +1,26 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from '@/components/NavLink';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
-  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger,
+  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem,
+  SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings } from 'lucide-react';
-
-const adminLinks = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
-  { to: '/admin/products', icon: Package, label: 'Products' },
-  { to: '/admin/categories', icon: FolderOpen, label: 'Categories' },
-  { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
-  { to: '/admin/hero-slides', icon: Image, label: 'Hero Slider' },
-  { to: '/admin/tickets', icon: MessageCircle, label: 'Tickets' },
-  { to: '/admin/users', icon: Users, label: 'Users' },
-  { to: '/admin/settings', icon: Settings, label: 'Settings' },
-];
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories');
+  const [productsOpen, setProductsOpen] = useState(isProductsSection);
+
+  useEffect(() => {
+    if (isProductsSection) setProductsOpen(true);
+  }, [isProductsSection]);
 
   useEffect(() => {
     if (!loading && (!user || (!isAdmin && !isEditor))) navigate('/');
@@ -30,10 +29,17 @@ const AdminLayout = () => {
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
   if (!user || (!isAdmin && !isEditor)) return null;
 
-  const visibleLinks = adminLinks.filter(l => {
-    if (isEditor && (l.to === '/admin/users' || l.to === '/admin/settings')) return false;
-    return true;
-  });
+  const topLinks = [
+    { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
+  ];
+
+  const bottomLinks = [
+    { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
+    { to: '/admin/hero-slides', icon: Image, label: 'Hero Slider' },
+    { to: '/admin/tickets', icon: MessageCircle, label: 'Tickets' },
+    ...(isAdmin ? [{ to: '/admin/users', icon: Users, label: 'Users' }] : []),
+    ...(isAdmin ? [{ to: '/admin/settings', icon: Settings, label: 'Settings' }] : []),
+  ];
 
   return (
     <SidebarProvider>
@@ -44,10 +50,54 @@ const AdminLayout = () => {
               <SidebarGroupLabel>Admin Panel</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {visibleLinks.map(({ to, icon: Icon, label, end }) => (
+                  {topLinks.map(({ to, icon: Icon, label, end }) => (
                     <SidebarMenuItem key={to}>
                       <SidebarMenuButton asChild>
                         <NavLink to={to} end={end} className="hover:bg-muted/50" activeClassName="bg-muted text-primary font-medium">
+                          <Icon className="mr-2 h-4 w-4" />
+                          <span>{label}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+
+                  {/* Products with Categories sub-menu */}
+                  <Collapsible open={productsOpen} onOpenChange={setProductsOpen} className="group/collapsible">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="hover:bg-muted/50">
+                          <Package className="mr-2 h-4 w-4" />
+                          <span>Products</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/products" end className="hover:bg-muted/50" activeClassName="text-primary font-medium">
+                                <Package className="mr-2 h-3 w-3" />
+                                <span>All Products</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/categories" className="hover:bg-muted/50" activeClassName="text-primary font-medium">
+                                <FolderOpen className="mr-2 h-3 w-3" />
+                                <span>Categories</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+                  {bottomLinks.map(({ to, icon: Icon, label }) => (
+                    <SidebarMenuItem key={to}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={to} className="hover:bg-muted/50" activeClassName="bg-muted text-primary font-medium">
                           <Icon className="mr-2 h-4 w-4" />
                           <span>{label}</span>
                         </NavLink>
