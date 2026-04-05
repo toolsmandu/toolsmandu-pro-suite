@@ -152,7 +152,7 @@ const AdminProducts = () => {
         <div className="border border-border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Price</TableHead><TableHead>Flags</TableHead><TableHead className="w-24">Actions</TableHead></TableRow>
+              <TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Price</TableHead><TableHead>Status</TableHead><TableHead>Flags</TableHead><TableHead className="w-24">Actions</TableHead></TableRow>
             </TableHeader>
             <TableBody>
               {products?.map(p => (
