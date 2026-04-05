@@ -120,6 +120,7 @@ const AdminProducts = () => {
               </div>
               <div><Label>Selling Price</Label><Input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})} /></div>
               <div><Label>Full Price</Label><Input type="number" value={form.original_price} onChange={e => setForm({...form, original_price: e.target.value})} /></div>
+              <div><Label>Duration</Label><Input value={form.duration} onChange={e => setForm({...form, duration: e.target.value})} placeholder="e.g. 1 Year" /></div>
               <div><Label>Stock Status</Label>
                 <Select value={form.stock_status} onValueChange={v => setForm({...form, stock_status: v})}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
@@ -129,7 +130,6 @@ const AdminProducts = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div></div>
               <div className="col-span-2"><Label>Image URL</Label><Input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} /></div>
               <div className="col-span-2"><Label>Description</Label><Textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} /></div>
               <div className="col-span-2"><Label>Features (one per line)</Label><Textarea value={form.features} onChange={e => setForm({...form, features: e.target.value})} rows={3} /></div>

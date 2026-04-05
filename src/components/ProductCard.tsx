@@ -46,6 +46,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         <Link to={`/product/${slug}`}>
           <h3 className="font-medium text-foreground text-sm line-clamp-2 hover:text-primary transition-colors">{name}</h3>
         </Link>
+        {duration && <p className="text-xs text-muted-foreground mt-1">{duration}</p>}
         <div className="mt-auto pt-3 flex items-center justify-between">
           <div>
             <span className="text-lg font-bold text-foreground">${price}</span>
