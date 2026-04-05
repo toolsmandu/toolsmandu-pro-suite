@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -215,7 +216,7 @@ const AdminProducts = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="col-span-2"><Label>Image URL</Label><Input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} /></div>
+              <div className="col-span-2"><ImageUpload value={form.image_url} onChange={v => setForm({...form, image_url: v})} label="Product Image" /></div>
               <div className="col-span-2"><Label>Description</Label><RichTextEditor value={form.description} onChange={v => setForm({...form, description: v})} /></div>
               
 
