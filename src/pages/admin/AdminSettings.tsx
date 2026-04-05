@@ -51,6 +51,7 @@ const AdminSettings = () => {
       { key: 'footer_about', value: footerAbout },
       { key: 'order_mode', value: orderMode },
       { key: 'whatsapp_number', value: whatsappNumber },
+      { key: 'product_banner_image', value: productBannerImage },
     ];
     for (const item of keys) {
       const { data: existing } = await supabase.from('site_settings').select('id').eq('key', item.key).maybeSingle();
