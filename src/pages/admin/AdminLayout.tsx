@@ -8,14 +8,14 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories');
+  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
 
   useEffect(() => {
