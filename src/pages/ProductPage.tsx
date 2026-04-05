@@ -115,20 +115,20 @@ const ProductPage = () => {
   );
 
   return (
-    <>
+    <div className="relative">
       {product.meta_title && <title>{product.meta_title}</title>}
       {bannerImage && (
-        <div className="relative w-full overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 overflow-hidden" style={{ height: '60%', zIndex: 0 }}>
           <img
             src={bannerImage}
             alt="Product banner"
-            className="w-full h-auto object-cover"
+            className="w-full h-full object-cover"
             style={{ opacity: 0.5 }}
           />
           <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to bottom, transparent, hsl(var(--background)))' }} />
         </div>
       )}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative z-10">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
           {/* Left Column - Product Info */}
@@ -296,7 +296,7 @@ const ProductPage = () => {
           </section>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
