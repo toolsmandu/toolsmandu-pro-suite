@@ -222,11 +222,11 @@ const ProductPage = () => {
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-foreground text-sm">{v.name}</div>
+                          <div className="font-semibold text-foreground text-sm">{v.name}</div>
                           {v.expiry_days && (
                             <div className="text-xs text-muted-foreground">{v.expiry_days} Days Validity</div>
                           )}
-                          <div className="font-bold text-foreground text-sm mt-1">NPR {v.price}</div>
+                          <div className="font-semibold text-foreground text-sm mt-1">NPR {v.price}</div>
                         </div>
 
                         <ShoppingCart className={cn("h-4 w-4 flex-shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
