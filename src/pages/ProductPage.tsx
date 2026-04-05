@@ -226,16 +226,7 @@ const ProductPage = () => {
                           {v.expiry_days && (
                             <div className="text-xs text-muted-foreground">{v.expiry_days} Days Validity</div>
                           )}
-                        </div>
-
-                        <div className="text-right flex-shrink-0">
-                          <div className="font-bold text-foreground">NPR {v.price}</div>
-                          {v.original_price && v.original_price > v.price && (
-                            <div className="text-xs text-muted-foreground line-through">NPR {v.original_price}</div>
-                          )}
-                          {discount > 0 && (
-                            <Badge className="bg-success text-success-foreground text-[10px] px-1.5 py-0">-{discount}%</Badge>
-                          )}
+                          <div className="font-bold text-foreground text-sm mt-1">NPR {v.price}</div>
                         </div>
 
                         <ShoppingCart className={cn("h-4 w-4 flex-shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
