@@ -71,9 +71,6 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         <div className="mt-auto pt-3 flex items-center justify-between">
           <div>
             <span className="text-lg font-bold text-foreground">NPR {displayPrice}</span>
-            {displayOriginal && displayOriginal > displayPrice && (
-              <span className="text-sm text-muted-foreground line-through ml-2">NPR {displayOriginal}</span>
-            )}
           </div>
           {isOutOfStock ? (
             <Button size="icon" variant="secondary" className="h-8 w-8 opacity-50" disabled aria-label="Out of stock">
