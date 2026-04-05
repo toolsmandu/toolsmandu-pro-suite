@@ -1,8 +1,15 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Heart, Star } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/CartContext';
+
+interface Variation {
+  id: string;
+  price: number;
+  original_price?: number | null;
+  is_active: boolean;
+}
 
 interface ProductCardProps {
   id: string;
@@ -17,12 +24,25 @@ interface ProductCardProps {
   flash_sale_label?: string | null;
   is_bestseller?: boolean | null;
   stock_status?: string | null;
+  product_variations?: Variation[] | null;
 }
 
-const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, rating, is_flash_sale, flash_sale_label, is_bestseller, stock_status }: ProductCardProps) => {
+const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, is_flash_sale, flash_sale_label, stock_status, product_variations }: ProductCardProps) => {
   const { addItem } = useCart();
   const isOutOfStock = stock_status === 'out_of_stock';
-  const discount = original_price ? Math.round(((original_price - price) / original_price) * 100) : 0;
+
+  // Compute lowest price from active variations
+  const activeVariations = product_variations?.filter(v => v.is_active) || [];
+  const displayPrice = activeVariations.length > 0
+    ? Math.min(...activeVariations.map(v => v.price))
+    : price;
+  const displayOriginal = activeVariations.length > 0
+    ? Math.max(...activeVariations.filter(v => v.original_price).map(v => v.original_price!), 0) || null
+    : original_price;
+
+  const discount = displayOriginal && displayOriginal > displayPrice
+    ? Math.round(((displayOriginal - displayPrice) / displayOriginal) * 100)
+    : 0;
 
   return (
     <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 flex flex-col">
@@ -49,9 +69,9 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         {duration && <p className="text-xs text-muted-foreground mt-1">{duration}</p>}
         <div className="mt-auto pt-3 flex items-center justify-between">
           <div>
-            <span className="text-lg font-bold text-foreground">NPR {price}</span>
-            {original_price && original_price > price && (
-              <span className="text-sm text-muted-foreground line-through ml-2">NPR {original_price}</span>
+            <span className="text-lg font-bold text-foreground">NPR {displayPrice}</span>
+            {displayOriginal && displayOriginal > displayPrice && (
+              <span className="text-sm text-muted-foreground line-through ml-2">NPR {displayOriginal}</span>
             )}
           </div>
           {isOutOfStock ? (
@@ -63,7 +83,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
               size="icon"
               variant="secondary"
               className="h-8 w-8"
-              onClick={(e) => { e.preventDefault(); addItem({ id, name, price, image_url, duration }); }}
+              onClick={(e) => { e.preventDefault(); addItem({ id, name, price: displayPrice, image_url, duration }); }}
               aria-label="Add to cart"
             >
               <ShoppingCart className="h-4 w-4" />

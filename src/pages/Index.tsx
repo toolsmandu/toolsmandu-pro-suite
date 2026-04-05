@@ -91,7 +91,7 @@ const Index = () => {
     queryKey: ['all-products'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+      const { data } = await supabase.from('products').select('*, product_variations(*)').order('created_at', { ascending: false });
       return data || [];
     },
   });

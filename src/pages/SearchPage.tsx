@@ -12,7 +12,7 @@ const SearchPage = () => {
   const { data: products, isLoading } = useQuery({
     queryKey: ['search', q],
     queryFn: async () => {
-      const { data } = await supabase.from('products').select('*').ilike('name', `%${q}%`).limit(20);
+      const { data } = await supabase.from('products').select('*, product_variations(*)').ilike('name', `%${q}%`).limit(20);
       return data || [];
     },
     enabled: q.length > 0,
