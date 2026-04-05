@@ -160,6 +160,7 @@ const AdminProducts = () => {
                   <TableCell className="font-medium text-foreground">{p.name}</TableCell>
                   <TableCell className="text-muted-foreground">{(p.categories as any)?.name || '-'}</TableCell>
                   <TableCell className="text-foreground">${p.price}</TableCell>
+                  <TableCell><span className={`text-xs font-medium ${(p as any).stock_status === 'out_of_stock' ? 'text-destructive' : 'text-success'}`}>{(p as any).stock_status === 'out_of_stock' ? 'Out of Stock' : 'In Stock'}</span></TableCell>
                   <TableCell className="text-xs space-x-1">
                     {p.is_featured && <span className="text-primary">Featured</span>}
                     {p.is_bestseller && <span className="text-warning">Best</span>}
