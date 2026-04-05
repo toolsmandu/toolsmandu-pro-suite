@@ -116,7 +116,16 @@ const ProductPage = () => {
 
   return (
     <>
-      {product.meta_title && <title>{product.meta_title}</title>}
+      {bannerImage && (
+        <div className="relative w-full overflow-hidden">
+          <img
+            src={bannerImage}
+            alt="Product banner"
+            className="w-full h-auto object-cover"
+            style={{ opacity: 0.5 }}
+          />
+        </div>
+      )}
       <div className="container mx-auto px-4 py-8">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
