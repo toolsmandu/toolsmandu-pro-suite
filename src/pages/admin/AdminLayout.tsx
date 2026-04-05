@@ -89,6 +89,14 @@ const AdminLayout = () => {
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/product-types" className="hover:bg-muted/50" activeClassName="text-primary font-medium">
+                                <Tag className="mr-2 h-3 w-3" />
+                                <span>Product Types</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>

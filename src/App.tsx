@@ -28,6 +28,7 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCategories from "./pages/admin/AdminCategories";
+import AdminProductTypes from "./pages/admin/AdminProductTypes";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminHeroSlides from "./pages/admin/AdminHeroSlides";
 import AdminTickets from "./pages/admin/AdminTickets";
@@ -66,6 +67,7 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="categories" element={<AdminCategories />} />
+                <Route path="product-types" element={<AdminProductTypes />} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="hero-slides" element={<AdminHeroSlides />} />
                 <Route path="tickets" element={<AdminTickets />} />
