@@ -34,16 +34,14 @@ const ProductPage = () => {
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
-  const [bannerImage, setBannerImage] = useState('');
 
   useQuery({
     queryKey: ['order-mode-settings'],
     queryFn: async () => {
-      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number', 'product_banner_image']);
+      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number']);
       data?.forEach((s: any) => {
         if (s.key === 'order_mode') setOrderMode(s.value);
         if (s.key === 'whatsapp_number') setWhatsappNumber(s.value);
-        if (s.key === 'product_banner_image') setBannerImage(s.value || '');
       });
       return data;
     },
@@ -117,19 +115,15 @@ const ProductPage = () => {
   return (
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
-      {/* Top banner with product image extending into it */}
-      <div className="w-full h-24 relative overflow-hidden" style={{
-        background: bannerImage ? `url(${bannerImage}) center/cover no-repeat` : 'linear-gradient(to right, #0a2e5c, #1e3a8a, #0a2e5c)',
-      }} />
       <div className="container mx-auto px-4 py-8">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
           {/* Left Column - Product Info */}
           <div>
             {/* Product Header: Image + Title */}
-            <div className="flex flex-col md:flex-row gap-6 mb-8 md:items-center">
-              <div className="w-full md:w-[300px] flex-shrink-0 -mt-20">
-                <div className="h-[450px] bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
+            <div className="flex flex-col md:flex-row gap-6 mb-8">
+              <div className="w-full md:w-60 flex-shrink-0">
+                <div className="aspect-square bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
                   {product.image_url ? (
                     <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                   ) : (
@@ -151,23 +145,21 @@ const ProductPage = () => {
                     <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
                   )}
                 </div>
-                <h1 className="text-3xl font-bold text-foreground mb-4">{product.name}</h1>
-                {/* Separator line */}
-                <div className="border-t border-border mb-4" />
-                <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-3xl font-bold text-foreground mb-2">{product.name}</h1>
+                <div className="flex items-center gap-2 mb-3">
                   {product.categories && (
-                    <Badge className="flex items-center gap-1 bg-[#f97015] text-white hover:bg-[#f97015]/90">
+                    <Badge variant="secondary" className="flex items-center gap-1">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
                       Category: {(product.categories as any).name}
                     </Badge>
                   )}
                   {product.duration && (
-                    <Badge className="bg-[#f97015] text-white hover:bg-[#f97015]/90">
+                    <Badge variant="secondary">
                       {product.duration}
                     </Badge>
                   )}
                   {(product as any).region && (
-                    <Badge className="bg-[#f97015] text-white hover:bg-[#f97015]/90">
+                    <Badge variant="secondary">
                       Region: {(product as any).region}
                     </Badge>
                   )}
