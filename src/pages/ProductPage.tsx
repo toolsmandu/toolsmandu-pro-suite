@@ -207,8 +207,8 @@ const ProductPage = () => {
                         className={cn(
                           "w-full border rounded-lg p-3 text-left transition-all flex items-center gap-3",
                           isSelected
-                            ? "border-primary bg-primary/5 ring-1 ring-primary"
-                            : "border-border hover:border-primary/50",
+                            ? "border-[#f97015] ring-1 ring-[#f97015]"
+                            : "border-border hover:border-[#f97015]/50",
                           isOutOfStock && "opacity-50 cursor-not-allowed"
                         )}
                       >
@@ -256,7 +256,8 @@ const ProductPage = () => {
               ) : (
                 <Button
                   size="lg"
-                  className="w-full"
+                  className="w-full hover:opacity-90"
+                  style={{ backgroundColor: '#f97015' }}
                   onClick={handleAddToCart}
                   disabled={activeVariations.length > 0 && !selectedVariant}
                 >
