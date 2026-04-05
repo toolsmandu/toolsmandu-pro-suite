@@ -122,7 +122,7 @@ const ProductPage = () => {
           <img
             src={bannerImage}
             alt="Product banner"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover bg-gradient-to-t from-background to-transparent"
             style={{ opacity: 0.25 }}
           />
           <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to bottom, transparent, hsl(var(--background)))' }} />
