@@ -156,18 +156,18 @@ const ProductPage = () => {
                 <div className="border-t border-border mb-4" />
                 <div className="flex items-center gap-2 flex-wrap">
                   {product.categories && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
+                    <Badge className="flex items-center gap-1 bg-[#f97015] text-white hover:bg-[#f97015]/90">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
                       Category: {(product.categories as any).name}
                     </Badge>
                   )}
                   {product.duration && (
-                    <Badge variant="secondary">
+                    <Badge className="bg-[#f97015] text-white hover:bg-[#f97015]/90">
                       {product.duration}
                     </Badge>
                   )}
                   {(product as any).region && (
-                    <Badge variant="secondary">
+                    <Badge className="bg-[#f97015] text-white hover:bg-[#f97015]/90">
                       Region: {(product as any).region}
                     </Badge>
                   )}
