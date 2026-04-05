@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Plus, Trash2 } from 'lucide-react';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 const AdminHeroSlides = () => {
   const queryClient = useQueryClient();
@@ -51,7 +52,7 @@ const AdminHeroSlides = () => {
           <DialogContent>
             <DialogHeader><DialogTitle>Add Hero Slide</DialogTitle></DialogHeader>
             <div className="space-y-4">
-              <div><Label>Image URL</Label><Input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} /></div>
+              <ImageUpload value={form.image_url} onChange={v => setForm({...form, image_url: v})} label="Slide Image" />
               <div><Label>Link URL</Label><Input value={form.link_url} onChange={e => setForm({...form, link_url: e.target.value})} /></div>
               <div><Label>Sort Order</Label><Input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: e.target.value})} /></div>
               <Button onClick={() => form.image_url && addSlide.mutate()} className="w-full">Add Slide</Button>
