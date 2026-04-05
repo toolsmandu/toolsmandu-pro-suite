@@ -187,7 +187,6 @@ const ProductPage = () => {
           <div className="lg:sticky lg:top-24 h-fit">
             <Card className="p-6" style={{ backgroundColor: '#0a2e5c' }}>
               <h3 className="font-bold text-foreground text-lg mb-4">
-                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm mr-2">1</span>
                 Select a Plan
               </h3>
 
@@ -226,7 +225,7 @@ const ProductPage = () => {
                           {v.variation_info && (
                             <div className="text-xs text-muted-foreground">{v.variation_info}</div>
                           )}
-                          <div className="font-semibold text-foreground text-sm mt-1">NPR {v.price}</div>
+                          <div className="font-semibold text-sm mt-1" style={{ color: '#f97015' }}>NPR {v.price}</div>
                         </div>
 
                         {isSelected ? (
