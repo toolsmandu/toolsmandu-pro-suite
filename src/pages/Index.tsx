@@ -11,6 +11,7 @@ const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
   const { data: slides } = useQuery({
     queryKey: ['hero-slides'],
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const { data } = await supabase.from('hero_slides').select('*').eq('is_active', true).order('sort_order');
       return data || [];
@@ -55,17 +56,10 @@ const HeroSlider = () => {
   );
 };
 
-const CategorySection = ({ category }: { category: { id: string; name: string; slug: string } }) => {
+const CategorySection = ({ category, products }: { category: { id: string; name: string; slug: string }; products: any[] }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { data: products, isLoading } = useQuery({
-    queryKey: ['category-products', category.id],
-    queryFn: async () => {
-      const { data } = await supabase.from('products').select('*').eq('category_id', category.id).limit(10);
-      return data || [];
-    },
-  });
 
-  if (!isLoading && !products?.length) return null;
+  if (!products.length) return null;
 
   const scroll = (dir: number) => {
     scrollRef.current?.scrollBy({ left: dir * 280, behavior: 'smooth' });
@@ -81,9 +75,7 @@ const CategorySection = ({ category }: { category: { id: string; name: string; s
         </div>
       </div>
       <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-        {isLoading ? Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="min-w-[220px] max-w-[220px]"><ProductCardSkeleton /></div>
-        )) : products?.map(p => (
+        {products.map(p => (
           <div key={p.id} className="min-w-[220px] max-w-[220px]">
             <ProductCard {...p} />
           </div>
@@ -94,29 +86,28 @@ const CategorySection = ({ category }: { category: { id: string; name: string; s
 };
 
 const Index = () => {
-  const { data: featuredProducts, isLoading: loadingFeatured } = useQuery({
-    queryKey: ['featured-products'],
+  // Single query to fetch ALL products, then filter client-side
+  const { data: allProducts, isLoading } = useQuery({
+    queryKey: ['all-products'],
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const { data } = await supabase.from('products').select('*').eq('is_featured', true).limit(9);
-      return data || [];
-    },
-  });
-
-  const { data: bestSellers, isLoading: loadingBest } = useQuery({
-    queryKey: ['bestseller-products'],
-    queryFn: async () => {
-      const { data } = await supabase.from('products').select('*').eq('is_bestseller', true).limit(9);
+      const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false });
       return data || [];
     },
   });
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const { data } = await supabase.from('categories').select('*').order('sort_order');
       return data || [];
     },
   });
+
+  const featuredProducts = allProducts?.filter(p => p.is_featured).slice(0, 9) || [];
+  const bestSellers = allProducts?.filter(p => p.is_bestseller).slice(0, 9) || [];
+  const productsByCategory = (catId: string) => allProducts?.filter(p => p.category_id === catId).slice(0, 10) || [];
 
   return (
     <>
@@ -124,13 +115,13 @@ const Index = () => {
 
       <div className="container mx-auto px-4 py-12">
         {/* Featured Products */}
-        {(loadingFeatured || (featuredProducts && featuredProducts.length > 0)) && (
+        {(isLoading || featuredProducts.length > 0) && (
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-6">Featured Products</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {loadingFeatured
+              {isLoading
                 ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                : featuredProducts?.map(p => <ProductCard key={p.id} {...p} />)}
+                : featuredProducts.map(p => <ProductCard key={p.id} {...p} />)}
             </div>
           </section>
         )}
@@ -156,19 +147,28 @@ const Index = () => {
         </section>
 
         {/* Best Sellers */}
-        {(loadingBest || (bestSellers && bestSellers.length > 0)) && (
+        {(isLoading || bestSellers.length > 0) && (
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-6">Best Sellers</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {loadingBest
+              {isLoading
                 ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                : bestSellers?.map(p => <ProductCard key={p.id} {...p} />)}
+                : bestSellers.map(p => <ProductCard key={p.id} {...p} />)}
             </div>
           </section>
         )}
 
         {/* Category Sections */}
-        {categories?.map(cat => <CategorySection key={cat.id} category={cat} />)}
+        {isLoading
+          ? Array.from({ length: 3 }).map((_, i) => (
+              <section key={i} className="mb-12">
+                <div className="h-8 w-48 bg-muted rounded animate-pulse mb-6" />
+                <div className="flex gap-4">
+                  {Array.from({ length: 4 }).map((_, j) => <div key={j} className="min-w-[220px] max-w-[220px]"><ProductCardSkeleton /></div>)}
+                </div>
+              </section>
+            ))
+          : categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
       </div>
     </>
   );
