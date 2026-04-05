@@ -31,13 +31,14 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
   const { addItem } = useCart();
   const isOutOfStock = stock_status === 'out_of_stock';
 
-  // Compute lowest price from active variations
-  const activeVariations = product_variations?.filter(v => v.is_active) || [];
-  const displayPrice = activeVariations.length > 0
-    ? Math.min(...activeVariations.map(v => v.price))
-    : price;
+  // Compute lowest price from active variations, fallback to product price
+  const activeVariations = (product_variations as any[])?.filter((v: any) => v.is_active) || [];
+  const lowestVariationPrice = activeVariations.length > 0
+    ? Math.min(...activeVariations.map((v: any) => Number(v.price)))
+    : null;
+  const displayPrice = lowestVariationPrice ?? price;
   const displayOriginal = activeVariations.length > 0
-    ? Math.max(...activeVariations.filter(v => v.original_price).map(v => v.original_price!), 0) || null
+    ? Math.max(...activeVariations.filter((v: any) => v.original_price).map((v: any) => Number(v.original_price)), 0) || null
     : original_price;
 
   const discount = displayOriginal && displayOriginal > displayPrice

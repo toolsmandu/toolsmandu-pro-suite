@@ -9,7 +9,7 @@ const WishlistPage = () => {
   const { data: wishlist, isLoading } = useQuery({
     queryKey: ['my-wishlist'],
     queryFn: async () => {
-      const { data } = await supabase.from('wishlist').select('*, products(*)').eq('user_id', user!.id);
+      const { data } = await supabase.from('wishlist').select('*, products(*, product_variations(*))').eq('user_id', user!.id);
       return data || [];
     },
     enabled: !!user,
