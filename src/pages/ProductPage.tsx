@@ -157,6 +157,11 @@ const ProductPage = () => {
                       {product.duration}
                     </Badge>
                   )}
+                  {(product as any).region && (
+                    <Badge variant="secondary">
+                      {(product as any).region}
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
