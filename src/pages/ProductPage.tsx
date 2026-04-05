@@ -115,7 +115,7 @@ const ProductPage = () => {
   );
 
   return (
-    <>
+    <div className="relative">
       {product.meta_title && <title>{product.meta_title}</title>}
       {bannerImage && (
         <div className="absolute top-0 left-0 right-0 overflow-hidden" style={{ height: '60%', zIndex: 0 }}>
@@ -296,7 +296,7 @@ const ProductPage = () => {
           </section>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
