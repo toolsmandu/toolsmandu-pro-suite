@@ -80,6 +80,7 @@ const AdminProducts = () => {
         meta_title: form.meta_title || null,
         meta_description: form.meta_description || null,
         features: form.features ? form.features.split('\n').filter(Boolean) : [],
+        stock_status: form.stock_status,
       };
       if (editingId) {
         await supabase.from('products').update(payload).eq('id', editingId);
