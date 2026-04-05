@@ -146,7 +146,7 @@ const ProductPage = () => {
                   )}
                 </div>
                 <h1 className="text-3xl font-bold text-foreground mb-3">{product.name}</h1>
-                <div className="border-t border-border mb-3"></div>
+                <div className="border-t mb-3" style={{ borderColor: '#f97015' }}></div>
                 <div className="flex items-center gap-2">
                   {product.categories && (
                     <Badge variant="secondary" className="flex items-center gap-1">
