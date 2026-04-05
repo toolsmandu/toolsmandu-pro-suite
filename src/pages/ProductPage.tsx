@@ -116,20 +116,6 @@ const ProductPage = () => {
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
       <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-foreground">Home</Link>
-          <span>/</span>
-          {product.categories && (
-            <>
-              <Link to={`/category/${(product.categories as any).slug}`} className="hover:text-foreground">
-                {(product.categories as any).name}
-              </Link>
-              <span>/</span>
-            </>
-          )}
-          <span className="text-foreground">{product.name}</span>
-        </nav>
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
           {/* Left Column - Product Info */}
