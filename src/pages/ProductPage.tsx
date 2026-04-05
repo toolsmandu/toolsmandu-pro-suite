@@ -115,13 +115,17 @@ const ProductPage = () => {
   return (
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
+      {/* Decorative top banner */}
+      <div className="w-full h-24 bg-gradient-to-r from-[#0a2e5c] via-[#1e3a8a] to-[#0a2e5c] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 50%)' }} />
+      </div>
       <div className="container mx-auto px-4 py-8">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
           {/* Left Column - Product Info */}
           <div>
             {/* Product Header: Image + Title */}
-            <div className="flex flex-col md:flex-row gap-6 mb-8">
+            <div className="flex flex-col md:flex-row gap-6 mb-8 md:items-center">
               <div className="w-full md:w-60 flex-shrink-0">
                 <div className="aspect-square bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
                   {product.image_url ? (
@@ -145,8 +149,10 @@ const ProductPage = () => {
                     <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
                   )}
                 </div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">{product.name}</h1>
-                <div className="flex items-center gap-2 mb-3">
+                <h1 className="text-3xl font-bold text-foreground mb-4">{product.name}</h1>
+                {/* Separator line */}
+                <div className="border-t border-border mb-4" />
+                <div className="flex items-center gap-2 flex-wrap">
                   {product.categories && (
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
