@@ -1,57 +1,29 @@
 
 
-# Redesign Product Page Layout (Matching Reference Design)
+# Visually Separate Variation Cards (Matching Reference Design)
 
-## Current State
-The product page uses a 2-column grid: image on left, all details on right. Variations are not displayed — only a single "Add to Cart" button with the base product price.
+## What Changes
 
-## Target Design
-Based on the reference at new.toolsmandu.com/product/adobe:
-- **Left column**: Product image + title + category badge + description (stacked)
-- **Right sidebar (sticky)**: "Select a Plan" card showing all product variations as selectable options, each with thumbnail, name, validity (expiry days), and price. An "Add to Cart" button at the bottom adds the selected variation.
+Update the variation buttons in `src/pages/ProductPage.tsx` to match the reference screenshot from the other project — each variation gets a distinct card-like appearance with a larger cart icon container on the right.
 
-## Plan
+## Changes in `src/pages/ProductPage.tsx`
 
-### 1. Redesign ProductPage.tsx layout
+**1. Increase spacing** between variations: `space-y-2` to `space-y-3`
 
-**Layout change**: Switch from `grid-cols-2` (image | details) to `grid-cols-[1fr_380px]` (content | sidebar).
+**2. Enlarge the cart/tick icon area** on the right side — change from a small 6x6 circle (tick) or bare icon (cart) to a `w-10 h-10 rounded-lg` box with background color, matching the reference:
+- Selected: `bg-[#f97015]` box with white check icon
+- Unselected: `bg-white/10` box with muted cart icon
 
-**Left column** (top to bottom):
-- Image (240px width on desktop) + title/category badge side by side (flex-row on md+)
-- Description below (rendered as HTML with `dangerouslySetInnerHTML` if it contains HTML, or plain text)
+**3. Increase thumbnail size** from `w-10 h-10` to `w-12 h-12` with `rounded-md`
 
-**Right sidebar** (sticky card):
-- Numbered heading: "1 Select a Plan"
-- List of active `product_variations` as selectable buttons, each showing:
-  - Product thumbnail (small)
-  - Variation name (e.g. "1 Month")
-  - Expiry days as "X Days Validity"
-  - Price in NPR
-  - Cart icon on the right
-- Selected variation highlighted with primary border + background tint
-- First variation auto-selected
-- "Add to Cart" button at bottom that adds the selected variation
+**4. Add padding** from `p-3` to `p-4` for more breathing room
 
-### 2. Update data fetching
+**5. Add subtle background** to each variation button:
+- Selected: add `bg-[#f97015]/10`
+- Unselected: add `bg-white/5`
 
-- Add `product_variations(*)` to the product query so variations are available
-- Add `useState` for `selectedVariant` (default to first active variation)
+These changes create clear visual separation between each variation, matching the uploaded reference screenshot.
 
-### 3. Update CartContext for variation support
-
-- Modify `CartItem` to include optional `variantId` and `variantName` fields
-- Update `addItem` to use `variantId` as the unique key (so different variations of the same product are separate cart items)
-- Keep backward compatibility
-
-### 4. Keep existing elements
-
-- Breadcrumb navigation stays
-- Out of stock handling stays
-- Flash sale / bestseller badges stay (moved into the title area)
-- Features list stays (below description)
-- Related products section stays at bottom
-
-### Files to modify
-- `src/pages/ProductPage.tsx` — full layout redesign
-- `src/contexts/CartContext.tsx` — add variant support to cart items
+### File to modify
+- `src/pages/ProductPage.tsx` (lines ~176-220)
 
