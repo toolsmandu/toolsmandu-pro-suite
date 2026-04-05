@@ -113,7 +113,7 @@ const AdminProducts = () => {
               <div><Label>Category</Label>
                 <Select value={form.category_id} onValueChange={v => setForm({...form, category_id: v})}>
                   <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-                  <SelectContent>{categories?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
+                  <SelectContent position="popper" className="z-[9999]">{categories?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div><Label>Price</Label><Input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})} /></div>
