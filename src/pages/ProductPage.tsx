@@ -128,7 +128,7 @@ const ProductPage = () => {
           <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to bottom, transparent, hsl(var(--background)))' }} />
         </div>
       )}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative z-10">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
           {/* Left Column - Product Info */}
