@@ -41,7 +41,7 @@ const AdminProducts = () => {
   });
 
   const resetForm = () => {
-    setForm({ name: '', slug: '', description: '', price: '', original_price: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '', features: '' });
+    setForm({ name: '', slug: '', description: '', price: '', original_price: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', rating: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock' });
     setEditingId(null);
   };
 
