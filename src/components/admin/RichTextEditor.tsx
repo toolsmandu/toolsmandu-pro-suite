@@ -1,7 +1,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
-import Image from '@tiptap/extension-image';
+import ImageResize from 'tiptap-extension-resize-image';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Youtube from '@tiptap/extension-youtube';
@@ -24,7 +24,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       StarterKit.configure({ heading: { levels: [2, 3, 4] } }),
       Underline,
       Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-primary underline' } }),
-      Image.configure({ inline: false, allowBase64: true }),
+      ImageResize.configure({ inline: false, allowBase64: true }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Youtube.configure({ inline: false, ccLanguage: 'en' }),
     ],
