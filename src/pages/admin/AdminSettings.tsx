@@ -19,6 +19,7 @@ const AdminSettings = () => {
   const [footerAbout, setFooterAbout] = useState('');
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [productBannerImage, setProductBannerImage] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newLink, setNewLink] = useState({ column_name: '', label: '', url: '', sort_order: '0' });
 
