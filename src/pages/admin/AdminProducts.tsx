@@ -55,6 +55,7 @@ const AdminProducts = () => {
       flash_sale_label: product.flash_sale_label || '', rating: product.rating ? String(product.rating) : '',
       meta_title: product.meta_title || '', meta_description: product.meta_description || '',
       features: Array.isArray(product.features) ? (product.features as string[]).join('\n') : '',
+      stock_status: product.stock_status || 'in_stock',
     });
     setEditingId(product.id);
     setDialogOpen(true);
