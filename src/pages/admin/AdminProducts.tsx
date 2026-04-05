@@ -131,6 +131,15 @@ const AdminProducts = () => {
               <div className="flex items-center gap-4"><Switch checked={form.is_featured} onCheckedChange={v => setForm({...form, is_featured: v})} /><Label>Featured</Label></div>
               <div className="flex items-center gap-4"><Switch checked={form.is_bestseller} onCheckedChange={v => setForm({...form, is_bestseller: v})} /><Label>Bestseller</Label></div>
               <div className="flex items-center gap-4"><Switch checked={form.is_flash_sale} onCheckedChange={v => setForm({...form, is_flash_sale: v})} /><Label>Flash Sale</Label></div>
+              <div><Label>Stock Status</Label>
+                <Select value={form.stock_status} onValueChange={v => setForm({...form, stock_status: v})}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent position="popper" className="z-[9999]">
+                    <SelectItem value="in_stock">In Stock</SelectItem>
+                    <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <Button onClick={() => saveMutation.mutate()} className="w-full mt-4" disabled={!form.name || !form.price}>
               {editingId ? 'Update Product' : 'Create Product'}
