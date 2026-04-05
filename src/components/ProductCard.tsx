@@ -63,7 +63,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         </div>
       </Link>
 
-      <div className="p-4 flex-1 flex flex-col">
+      <div className="p-4 flex-1 flex flex-col" style={{ backgroundColor: '#0a2e5c' }}>
         <Link to={`/product/${slug}`}>
           <h3 className="font-medium text-foreground text-sm line-clamp-2 hover:text-primary transition-colors">{name}</h3>
         </Link>
