@@ -146,16 +146,18 @@ const ProductPage = () => {
                   )}
                 </div>
                 <h1 className="text-3xl font-bold text-foreground mb-2">{product.name}</h1>
-                {product.categories && (
-                  <Badge variant="secondary" className="mb-3">
-                    {(product.categories as any).name}
-                  </Badge>
-                )}
-                {product.duration && (
-                  <p className="text-muted-foreground">
-                    Product type: <span className="text-foreground font-medium">{product.duration}</span>
-                  </p>
-                )}
+                <div className="flex items-center gap-2 mb-3">
+                  {product.categories && (
+                    <Badge variant="secondary">
+                      {(product.categories as any).name}
+                    </Badge>
+                  )}
+                  {product.duration && (
+                    <Badge variant="secondary">
+                      {product.duration}
+                    </Badge>
+                  )}
+                </div>
               </div>
             </div>
 
