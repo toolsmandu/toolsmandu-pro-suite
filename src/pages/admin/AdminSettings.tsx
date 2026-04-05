@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -18,6 +19,7 @@ const AdminSettings = () => {
   const [footerAbout, setFooterAbout] = useState('');
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [productBannerImage, setProductBannerImage] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newLink, setNewLink] = useState({ column_name: '', label: '', url: '', sort_order: '0' });
 
@@ -30,6 +32,7 @@ const AdminSettings = () => {
       setFooterAbout(map.footer_about?.value || '');
       setOrderMode(map.order_mode?.value || 'cart');
       setWhatsappNumber(map.whatsapp_number?.value || '');
+      setProductBannerImage(map.product_banner_image?.value || '');
       return map;
     },
   });
@@ -48,6 +51,7 @@ const AdminSettings = () => {
       { key: 'footer_about', value: footerAbout },
       { key: 'order_mode', value: orderMode },
       { key: 'whatsapp_number', value: whatsappNumber },
+      { key: 'product_banner_image', value: productBannerImage },
     ];
     for (const item of keys) {
       const { data: existing } = await supabase.from('site_settings').select('id').eq('key', item.key).maybeSingle();
@@ -135,6 +139,7 @@ const AdminSettings = () => {
         <CardContent className="space-y-4">
           <div><Label>Logo URL</Label><Input value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://..." /></div>
           <div><Label>Footer About Text</Label><Textarea value={footerAbout} onChange={e => setFooterAbout(e.target.value)} rows={3} /></div>
+          <ImageUpload value={productBannerImage} onChange={setProductBannerImage} label="Product Page Banner Image" />
           <Button onClick={saveSettings}>Save Settings</Button>
         </CardContent>
       </Card>

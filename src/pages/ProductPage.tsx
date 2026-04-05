@@ -34,14 +34,16 @@ const ProductPage = () => {
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [bannerImage, setBannerImage] = useState('');
 
   useQuery({
     queryKey: ['order-mode-settings'],
     queryFn: async () => {
-      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number']);
+      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number', 'product_banner_image']);
       data?.forEach((s: any) => {
         if (s.key === 'order_mode') setOrderMode(s.value);
         if (s.key === 'whatsapp_number') setWhatsappNumber(s.value);
+        if (s.key === 'product_banner_image') setBannerImage(s.value);
       });
       return data;
     },
@@ -115,6 +117,16 @@ const ProductPage = () => {
   return (
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
+      {bannerImage && (
+        <div className="relative w-full overflow-hidden">
+          <img
+            src={bannerImage}
+            alt="Product banner"
+            className="w-full h-auto object-cover"
+            style={{ opacity: 0.5 }}
+          />
+        </div>
+      )}
       <div className="container mx-auto px-4 py-8">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
