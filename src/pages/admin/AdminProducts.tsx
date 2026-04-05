@@ -34,7 +34,7 @@ const AdminProducts = () => {
     name: '', slug: '', description: '', duration: '',
     image_url: '', category_id: '', is_featured: false, is_bestseller: false,
     is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '',
-    features: '', stock_status: 'in_stock' as string,
+    features: '', stock_status: 'in_stock' as string, order_mode: 'cart' as string,
   });
 
   const { data: products, isLoading } = useQuery({
@@ -62,7 +62,7 @@ const AdminProducts = () => {
   });
 
   const resetForm = () => {
-    setForm({ name: '', slug: '', description: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock' });
+    setForm({ name: '', slug: '', description: '', duration: '', image_url: '', category_id: '', is_featured: false, is_bestseller: false, is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '', features: '', stock_status: 'in_stock', order_mode: 'cart' });
     setVariations([]);
     setEditingId(null);
   };
@@ -77,6 +77,7 @@ const AdminProducts = () => {
       meta_description: product.meta_description || '',
       features: Array.isArray(product.features) ? (product.features as string[]).join('\n') : '',
       stock_status: product.stock_status || 'in_stock',
+      order_mode: product.order_mode || 'cart',
     });
     // Load variations
     const { data } = await supabase.from('product_variations').select('*').eq('product_id', product.id).order('sort_order');
@@ -129,6 +130,7 @@ const AdminProducts = () => {
         meta_description: form.meta_description || null,
         features: form.features ? form.features.split('\n').filter(Boolean) : [],
         stock_status: form.stock_status,
+        order_mode: form.order_mode,
       };
 
       let productId = editingId;
@@ -201,6 +203,15 @@ const AdminProducts = () => {
                   <SelectContent position="popper" className="z-[9999]">
                     <SelectItem value="in_stock">In Stock</SelectItem>
                     <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div><Label>Order Mode</Label>
+                <Select value={form.order_mode} onValueChange={v => setForm({...form, order_mode: v})}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent position="popper" className="z-[9999]">
+                    <SelectItem value="cart">Online Order (Add to Cart)</SelectItem>
+                    <SelectItem value="whatsapp">Order via WhatsApp</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

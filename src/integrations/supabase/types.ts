@@ -245,6 +245,7 @@ export type Database = {
           meta_description: string | null
           meta_title: string | null
           name: string
+          order_mode: string
           original_price: number | null
           price: number
           rating: number | null
@@ -267,6 +268,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           name: string
+          order_mode?: string
           original_price?: number | null
           price: number
           rating?: number | null
@@ -289,6 +291,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           name?: string
+          order_mode?: string
           original_price?: number | null
           price?: number
           rating?: number | null

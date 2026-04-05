@@ -249,7 +249,7 @@ const ProductPage = () => {
                 <Button size="lg" className="w-full" disabled>
                   Out of Stock
                 </Button>
-              ) : orderMode === 'whatsapp' ? (
+              ) : (orderMode === 'whatsapp' || (orderMode === 'cart' && (product as any)?.order_mode === 'whatsapp')) ? (
                 <Button
                   size="lg"
                   className="w-full hover:opacity-90"
