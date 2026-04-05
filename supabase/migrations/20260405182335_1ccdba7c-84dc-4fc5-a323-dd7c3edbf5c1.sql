@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN stock_status text NOT NULL DEFAULT 'in_stock' CHECK (stock_status IN ('in_stock', 'out_of_stock'));
