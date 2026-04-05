@@ -24,7 +24,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       StarterKit.configure({ heading: { levels: [2, 3, 4] } }),
       Underline,
       Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-primary underline' } }),
-      ImageResize.configure({ inline: false, allowBase64: true }),
+      ImageResize,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Youtube.configure({ inline: false, ccLanguage: 'en' }),
     ],
@@ -57,7 +57,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const addImage = () => {
     const url = prompt('Enter image URL:');
     if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+      (editor.chain().focus() as any).setImage({ src: url }).run();
     }
   };
 
