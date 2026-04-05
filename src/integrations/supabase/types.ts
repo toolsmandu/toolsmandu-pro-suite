@@ -193,6 +193,7 @@ export type Database = {
           price: number
           product_id: string
           sort_order: number
+          variation_info: string | null
         }
         Insert: {
           created_at?: string
@@ -204,6 +205,7 @@ export type Database = {
           price: number
           product_id: string
           sort_order?: number
+          variation_info?: string | null
         }
         Update: {
           created_at?: string
@@ -215,6 +217,7 @@ export type Database = {
           price?: number
           product_id?: string
           sort_order?: number
+          variation_info?: string | null
         }
         Relationships: [
           {

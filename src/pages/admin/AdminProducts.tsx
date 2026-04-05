@@ -19,10 +19,11 @@ interface Variation {
   price: string;
   original_price: string;
   expiry_days: string;
+  variation_info: string;
   is_active: boolean;
 }
 
-const emptyVariation = (): Variation => ({ name: '', price: '', original_price: '', expiry_days: '', is_active: true });
+const emptyVariation = (): Variation => ({ name: '', price: '', original_price: '', expiry_days: '', variation_info: '', is_active: true });
 
 const AdminProducts = () => {
   const queryClient = useQueryClient();
@@ -85,6 +86,7 @@ const AdminProducts = () => {
       price: String(v.price),
       original_price: v.original_price ? String(v.original_price) : '',
       expiry_days: v.expiry_days ? String(v.expiry_days) : '',
+      variation_info: v.variation_info || '',
       is_active: v.is_active,
     })));
     setEditingId(product.id);
@@ -147,6 +149,7 @@ const AdminProducts = () => {
           price: parseFloat(v.price),
           original_price: v.original_price ? parseFloat(v.original_price) : null,
           expiry_days: v.expiry_days ? parseInt(v.expiry_days) : null,
+          variation_info: v.variation_info || null,
           is_active: v.is_active,
           sort_order: i,
         }));
@@ -237,6 +240,7 @@ const AdminProducts = () => {
                         <div><Label className="text-xs">Selling Price</Label><Input type="number" value={v.price} onChange={e => updateVariation(i, 'price', e.target.value)} className="h-8 text-sm" /></div>
                         <div><Label className="text-xs">Full Price</Label><Input type="number" value={v.original_price} onChange={e => updateVariation(i, 'original_price', e.target.value)} className="h-8 text-sm" /></div>
                         <div className="col-span-2"><Label className="text-xs">Expiry Days (validity after order)</Label><Input type="number" value={v.expiry_days} onChange={e => updateVariation(i, 'expiry_days', e.target.value)} placeholder="e.g. 30, 365" className="h-8 text-sm" /></div>
+                        <div className="col-span-2"><Label className="text-xs">Variation Info</Label><Input value={v.variation_info} onChange={e => updateVariation(i, 'variation_info', e.target.value)} placeholder="e.g. 1 Year License, Family Plan" className="h-8 text-sm" /></div>
                       </div>
                     </div>
                   ))}

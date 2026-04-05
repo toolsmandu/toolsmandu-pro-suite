@@ -1,0 +1,1 @@
+ALTER TABLE public.product_variations ADD COLUMN variation_info text DEFAULT NULL;
