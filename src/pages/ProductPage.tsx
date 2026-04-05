@@ -149,7 +149,7 @@ const ProductPage = () => {
                 <div className="flex items-center gap-2 mb-3">
                   {product.categories && (
                     <Badge variant="secondary">
-                      {(product.categories as any).name}
+                      Category: {(product.categories as any).name}
                     </Badge>
                   )}
                   {product.duration && (
