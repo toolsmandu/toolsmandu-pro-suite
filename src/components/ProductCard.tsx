@@ -16,6 +16,7 @@ interface ProductCardProps {
   is_flash_sale?: boolean | null;
   flash_sale_label?: string | null;
   is_bestseller?: boolean | null;
+  stock_status?: string | null;
 }
 
 const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, rating, is_flash_sale, flash_sale_label, is_bestseller }: ProductCardProps) => {
