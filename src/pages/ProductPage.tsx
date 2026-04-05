@@ -131,7 +131,7 @@ const ProductPage = () => {
               <div className="w-full md:w-[300px] flex-shrink-0 -mt-20">
                 <div className="h-[450px] bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
                   {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                    <img src={product.image_url} alt={product.name} className="w-full h-full object-contain" />
                   ) : (
                     <div className="text-6xl">📦</div>
                   )}
