@@ -120,7 +120,7 @@ const AdminProducts = () => {
               </div>
               <div><Label>Selling Price</Label><Input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})} /></div>
               <div><Label>Full Price</Label><Input type="number" value={form.original_price} onChange={e => setForm({...form, original_price: e.target.value})} /></div>
-              <div><Label>Duration</Label><Input value={form.duration} onChange={e => setForm({...form, duration: e.target.value})} placeholder="e.g. 1 Year" /></div>
+              <div><Label>Product Type</Label><Input value={form.duration} onChange={e => setForm({...form, duration: e.target.value})} placeholder="e.g. 1 Year Subscription" /></div>
               <div><Label>Stock Status</Label>
                 <Select value={form.stock_status} onValueChange={v => setForm({...form, stock_status: v})}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
