@@ -19,7 +19,7 @@ const CategoryPage = () => {
   const { data: products, isLoading } = useQuery({
     queryKey: ['category-products-page', category?.id],
     queryFn: async () => {
-      const { data } = await supabase.from('products').select('*').eq('category_id', category!.id).order('created_at', { ascending: false });
+      const { data } = await supabase.from('products').select('*, product_variations(*)').eq('category_id', category!.id).order('created_at', { ascending: false });
       return data || [];
     },
     enabled: !!category?.id,

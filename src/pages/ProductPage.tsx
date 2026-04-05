@@ -24,7 +24,7 @@ const ProductPage = () => {
   const { data: related } = useQuery({
     queryKey: ['related-products', product?.category_id],
     queryFn: async () => {
-      const { data } = await supabase.from('products').select('*').eq('category_id', product!.category_id!).neq('id', product!.id).limit(4);
+      const { data } = await supabase.from('products').select('*, product_variations(*)').eq('category_id', product!.category_id!).neq('id', product!.id).limit(4);
       return data || [];
     },
     enabled: !!product?.category_id,
