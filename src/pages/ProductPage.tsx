@@ -263,6 +263,22 @@ const ProductPage = () => {
                 <Button size="lg" className="w-full" disabled>
                   Out of Stock
                 </Button>
+              ) : orderMode === 'whatsapp' ? (
+                <Button
+                  size="lg"
+                  className="w-full hover:opacity-90"
+                  style={{ backgroundColor: 'hsl(142, 70%, 45%)' }}
+                  disabled={activeVariations.length > 0 && !selectedVariant}
+                  onClick={() => {
+                    const name = product?.name || '';
+                    const price = selectedVariant ? selectedVariant.price : product?.price;
+                    const msg = encodeURIComponent(`Hi, I'd like to order:\n${name}\nPrice: NPR ${Number(price).toLocaleString()}`);
+                    window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, '_blank');
+                  }}
+                >
+                  <MessageCircle className="h-5 w-5 mr-2" />
+                  Order via WhatsApp
+                </Button>
               ) : (
                 <Button
                   size="lg"
