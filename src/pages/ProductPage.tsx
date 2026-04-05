@@ -117,7 +117,7 @@ const ProductPage = () => {
   return (
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
-      {/* Top banner */}
+      {/* Top banner with product image extending into it */}
       <div className="w-full h-24 relative overflow-hidden" style={{
         background: bannerImage ? `url(${bannerImage}) center/cover no-repeat` : 'linear-gradient(to right, #0a2e5c, #1e3a8a, #0a2e5c)',
       }} />
@@ -128,8 +128,8 @@ const ProductPage = () => {
           <div>
             {/* Product Header: Image + Title */}
             <div className="flex flex-col md:flex-row gap-6 mb-8 md:items-center">
-              <div className="w-full md:w-60 flex-shrink-0">
-                <div className="aspect-square bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
+              <div className="w-full md:w-[300px] flex-shrink-0 -mt-20">
+                <div className="h-[450px] bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
                   {product.image_url ? (
                     <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                   ) : (
