@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check, MessageCircle } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
@@ -32,6 +32,20 @@ const ProductPage = () => {
     .sort((a: any, b: any) => a.sort_order - b.sort_order);
 
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
+  const [orderMode, setOrderMode] = useState('cart');
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+
+  useQuery({
+    queryKey: ['order-mode-settings'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number']);
+      data?.forEach((s: any) => {
+        if (s.key === 'order_mode') setOrderMode(s.value);
+        if (s.key === 'whatsapp_number') setWhatsappNumber(s.value);
+      });
+      return data;
+    },
+  });
 
   useEffect(() => {
     if (activeVariations.length > 0 && !selectedVariant) {
