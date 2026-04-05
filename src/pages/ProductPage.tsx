@@ -185,7 +185,7 @@ const ProductPage = () => {
 
           {/* Right Sidebar - Select a Plan */}
           <div className="lg:sticky lg:top-24 h-fit">
-            <Card className="p-6" style={{ backgroundColor: '#f97015' }}>
+            <Card className="p-6">
               <h3 className="font-bold text-foreground text-lg mb-4">
                 <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm mr-2">1</span>
                 Select a Plan
