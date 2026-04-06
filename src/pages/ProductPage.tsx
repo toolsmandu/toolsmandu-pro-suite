@@ -220,8 +220,8 @@ const ProductPage = () => {
 
                         <div className={cn(
                           "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-                          isSelected ? "bg-[#f97015]" : "bg-white/10"
-                        )}>
+                          !isSelected && "bg-white/10"
+                        )} style={isSelected ? { background: 'linear-gradient(90deg, #228be6, #15aabf)' } : undefined}>
                           {isSelected ? (
                             <Check className="h-5 w-5 text-white" />
                           ) : (
