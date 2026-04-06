@@ -72,9 +72,14 @@ const Navbar = () => {
             <span>⚡ Instant Delivery</span>
             <span>🎧 24/7 Support</span>
           </div>
-          <a href="https://link.toolsmandu.com/trustpilot" target="_blank" rel="noopener noreferrer">
-            <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-4 object-contain" />
-          </a>
+          <div className="flex items-center gap-3">
+            <a href="https://link.toolsmandu.com/trustpilot" target="_blank" rel="noopener noreferrer">
+              <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-4 object-contain" />
+            </a>
+            <a href="https://link.toolsmandu.com/googlereviews" target="_blank" rel="noopener noreferrer">
+              <img src={googleReviewsImg} alt="Google Reviews" className="h-4 object-contain" />
+            </a>
+          </div>
         </div>
       </div>
 
