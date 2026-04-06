@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
+import paymentsImg from '@/assets/payments.webp';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
