@@ -19,11 +19,13 @@ const HeroSlider = () => {
     },
   });
 
+  const maxIndex = Math.max(0, (slides?.length || 0) - 3);
+
   useEffect(() => {
-    if (!slides?.length) return;
-    const timer = setInterval(() => setCurrent(c => (c + 1) % slides.length), 5000);
+    if (!slides?.length || slides.length <= 3) return;
+    const timer = setInterval(() => setCurrent(c => (c >= maxIndex ? 0 : c + 1)), 5000);
     return () => clearInterval(timer);
-  }, [slides]);
+  }, [slides, maxIndex]);
 
   if (!slides?.length) return (
     <div className="gradient-primary py-20 text-center">
@@ -35,20 +37,22 @@ const HeroSlider = () => {
     </div>
   );
 
+  
+
   return (
     <div className="relative gradient-primary overflow-hidden">
-      <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${current * 100}%)` }}>
+      <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${current * (100 / 3)}%)` }}>
         {slides.map(slide => (
-          <div key={slide.id} className="min-w-full">
+          <div key={slide.id} className="min-w-[33.333%] px-1">
             <Link to={slide.link_url || '#'} className="block">
-              <img src={slide.image_url} alt="" className="w-full h-48 md:h-80 object-cover" />
+              <img src={slide.image_url} alt="" className="w-full h-48 md:h-80 object-cover rounded-lg" />
             </Link>
           </div>
         ))}
       </div>
-      {slides.length > 1 && (
+      {slides.length > 3 && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          {slides.map((_, i) => (
+          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)} className={`h-2 rounded-full transition-all ${i === current ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/50'}`} />
           ))}
         </div>
