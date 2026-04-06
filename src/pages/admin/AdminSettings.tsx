@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import ImageUpload from '@/components/admin/ImageUpload';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -397,7 +398,7 @@ const AdminSettings = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div><Label>Footer About Text</Label><Textarea value={footerAbout} onChange={e => setFooterAbout(e.target.value)} rows={3} /></div>
+          <div><Label>Footer About Text</Label><RichTextEditor value={footerAbout} onChange={setFooterAbout} /></div>
           <Button onClick={saveSettings} size="sm">Save About Text</Button>
           <Table>
             <TableHeader><TableRow><TableHead>Column</TableHead><TableHead>Label</TableHead><TableHead>URL</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
