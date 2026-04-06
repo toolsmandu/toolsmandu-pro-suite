@@ -166,8 +166,6 @@ const Index = () => {
     },
   });
 
-  const featuredProducts = allProducts?.filter(p => p.is_featured).slice(0, 9) || [];
-  const bestSellers = allProducts?.filter(p => p.is_bestseller).slice(0, 9) || [];
   const productsByCategory = (catId: string) => allProducts?.filter(p => p.category_id === catId).slice(0, 10) || [];
 
   return (
