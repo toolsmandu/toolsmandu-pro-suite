@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Shield, Headphones, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
 import CategoryNavbar from '@/components/layout/CategoryNavbar';
