@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Plus, Trash2, ShoppingCart, MessageCircle, icons } from 'lucide-react';
+import { Plus, Trash2, ShoppingCart, MessageCircle, Pencil, icons } from 'lucide-react';
 
 const AdminSettings = () => {
   const queryClient = useQueryClient();
