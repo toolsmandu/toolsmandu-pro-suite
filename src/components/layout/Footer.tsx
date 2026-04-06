@@ -60,6 +60,15 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                   </li>
                 ))}
               </ul>
+              {name === 'Information' && (
+                <div className="mt-6">
+                  <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider" style={{ color: '#ffffff' }}>Check Our Reviews</h4>
+                  <div className="flex items-center gap-3">
+                    <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-10 object-contain" />
+                    <img src={googleReviewsImg} alt="Google Reviews" className="h-10 object-contain" />
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
