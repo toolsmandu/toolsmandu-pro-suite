@@ -36,7 +36,7 @@ const CategoryNavbar = () => {
     if (!iconName) return null;
     const LucideIcon = (icons as Record<string, any>)[iconName];
     if (!LucideIcon) return null;
-    return <LucideIcon className="h-4 w-4" />;
+    return <LucideIcon className="h-4 w-4 text-white" />;
   };
 
   const isExternal = (url: string) => url.startsWith('http');
