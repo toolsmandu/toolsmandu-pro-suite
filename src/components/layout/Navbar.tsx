@@ -6,6 +6,15 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { Badge } from '@/components/ui/badge';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +30,27 @@ const Navbar = () => {
   const { user, isAdmin, isEditor, signOut } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
+
+  const { data: settings } = useQuery({
+    queryKey: ['site-settings'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_settings').select('*');
+      return data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string | null>) || {};
+    },
+  });
+
+  // Dynamic favicon
+  useEffect(() => {
+    if (settings?.favicon_url) {
+      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = settings.favicon_url;
+    }
+  }, [settings?.favicon_url]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -54,7 +84,11 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="text-xl font-bold text-foreground flex items-center gap-2">
-              <span className="text-primary">Tools</span>mandu
+              {settings?.logo_url ? (
+                <img src={settings.logo_url} alt="Toolsmandu" className="h-8 object-contain" />
+              ) : (
+                <><span className="text-primary">Tools</span>mandu</>
+              )}
             </Link>
 
             {/* Desktop search */}
