@@ -396,7 +396,9 @@ const AdminSettings = () => {
             </Dialog>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          <div><Label>Footer About Text</Label><Textarea value={footerAbout} onChange={e => setFooterAbout(e.target.value)} rows={3} /></div>
+          <Button onClick={saveSettings} size="sm">Save About Text</Button>
           <Table>
             <TableHeader><TableRow><TableHead>Column</TableHead><TableHead>Label</TableHead><TableHead>URL</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
             <TableBody>
@@ -405,11 +407,33 @@ const AdminSettings = () => {
                   <TableCell className="text-foreground">{l.column_name}</TableCell>
                   <TableCell className="text-foreground">{l.label}</TableCell>
                   <TableCell className="text-muted-foreground text-sm">{l.url}</TableCell>
-                  <TableCell><Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteLink.mutate(l.id)}><Trash2 className="h-4 w-4" /></Button></TableCell>
+                  <TableCell className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => {
+                      setEditLink({ id: l.id, column_name: l.column_name, label: l.label, url: l.url, sort_order: String(l.sort_order) });
+                      setEditLinkDialogOpen(true);
+                    }}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteLink.mutate(l.id)}><Trash2 className="h-4 w-4" /></Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+
+          {/* Edit Footer Link Dialog */}
+          <Dialog open={editLinkDialogOpen} onOpenChange={setEditLinkDialogOpen}>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Edit Footer Link</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <div><Label>Column</Label><Input value={editLink.column_name} onChange={e => setEditLink({...editLink, column_name: e.target.value})} /></div>
+                <div><Label>Label</Label><Input value={editLink.label} onChange={e => setEditLink({...editLink, label: e.target.value})} /></div>
+                <div><Label>URL</Label><Input value={editLink.url} onChange={e => setEditLink({...editLink, url: e.target.value})} /></div>
+                <div><Label>Sort Order</Label><Input type="number" value={editLink.sort_order} onChange={e => setEditLink({...editLink, sort_order: e.target.value})} /></div>
+                <Button onClick={() => editLink.column_name && editLink.label && updateLink.mutate()} className="w-full">Save Changes</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </div>
