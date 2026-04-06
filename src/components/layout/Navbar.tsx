@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import trustpilotImg from '@/assets/trustpilot.webp';
 import googleReviewsImg from '@/assets/google-reviews.webp';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, Menu, X, Heart } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Heart, icons } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
@@ -33,6 +33,21 @@ const Navbar = () => {
       return data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string | null>) || {};
     },
   });
+
+  const { data: navMenuItems } = useQuery({
+    queryKey: ['nav-menu-items'],
+    queryFn: async () => {
+      const { data } = await supabase.from('nav_menu_items').select('*').eq('is_active', true).order('sort_order');
+      return data || [];
+    },
+  });
+
+  const renderNavIcon = (iconName: string | null) => {
+    if (!iconName) return null;
+    const LucideIcon = (icons as Record<string, any>)[iconName];
+    if (!LucideIcon) return null;
+    return <LucideIcon className="h-4 w-4" />;
+  };
 
   // Dynamic favicon
   useEffect(() => {
@@ -207,6 +222,27 @@ const Navbar = () => {
                   <Input placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-secondary" />
                 </div>
               </form>
+
+              {/* Nav menu items */}
+              {navMenuItems && navMenuItems.length > 0 && (
+                <div className="space-y-1 border-b border-border pb-3">
+                  {navMenuItems.map((item) => {
+                    const content = (
+                      <span className="flex items-center gap-2 py-2 text-foreground hover:text-primary transition-colors">
+                        {renderNavIcon(item.icon)}
+                        {item.label}
+                      </span>
+                    );
+                    const isExternal = item.url.startsWith('http');
+                    return isExternal ? (
+                      <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="block">{content}</a>
+                    ) : (
+                      <Link key={item.id} to={item.url} onClick={() => setMobileMenuOpen(false)} className="block">{content}</Link>
+                    );
+                  })}
+                </div>
+              )}
+
               {user ? (
                 <>
                   <Link to="/dashboard" className="block py-2 text-foreground" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
