@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Shield, Headphones, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
 import CategoryNavbar from '@/components/layout/CategoryNavbar';
@@ -166,8 +166,6 @@ const Index = () => {
     },
   });
 
-  const featuredProducts = allProducts?.filter(p => p.is_featured).slice(0, 9) || [];
-  const bestSellers = allProducts?.filter(p => p.is_bestseller).slice(0, 9) || [];
   const productsByCategory = (catId: string) => allProducts?.filter(p => p.category_id === catId).slice(0, 10) || [];
 
   return (
@@ -176,46 +174,6 @@ const Index = () => {
       <HeroSlider />
 
       <div className="container mx-auto px-4 py-12">
-        {/* Featured Products */}
-        {featuredProducts.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Featured Products</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {featuredProducts.map(p => <ProductCard key={p.id} {...p} />)}
-            </div>
-          </section>
-        )}
-
-        {/* Why Buy From Us */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Why Buy From Us</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { icon: Zap, title: 'Instant Delivery', desc: 'Get your digital subscriptions delivered instantly after purchase' },
-              { icon: Headphones, title: 'After-sales Support', desc: 'Dedicated customer service team available to help you anytime' },
-              { icon: Shield, title: 'Service Warranty', desc: 'All products come with a warranty for your peace of mind' },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-card border border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
-                  <Icon className="h-6 w-6" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{title}</h3>
-                <p className="text-sm text-muted-foreground">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Best Sellers */}
-        {bestSellers.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Best Sellers</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {bestSellers.map(p => <ProductCard key={p.id} {...p} />)}
-            </div>
-          </section>
-        )}
-
         {/* Category Sections */}
         {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
       </div>
