@@ -26,7 +26,9 @@ const AdminSettings = () => {
 
   // Nav menu state
   const [navDialogOpen, setNavDialogOpen] = useState(false);
+  const [editNavDialogOpen, setEditNavDialogOpen] = useState(false);
   const [newNavItem, setNewNavItem] = useState({ label: '', url: '', icon: '', sort_order: '0' });
+  const [editNavItem, setEditNavItem] = useState<{ id: string; label: string; url: string; icon: string; sort_order: string }>({ id: '', label: '', url: '', icon: '', sort_order: '0' });
   const [iconSearch, setIconSearch] = useState('');
 
   const { data: settings } = useQuery({
