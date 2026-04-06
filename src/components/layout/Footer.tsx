@@ -61,7 +61,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           ))}
         </div>
 
-        <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
+        <div className="border-t border-border mt-8 pt-8 text-sm text-muted-foreground text-left">
           © {new Date().getFullYear()} Toolsmandu. All rights reserved.
         </div>
       </div>
