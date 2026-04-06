@@ -19,11 +19,13 @@ const HeroSlider = () => {
     },
   });
 
+  const maxIndex = Math.max(0, (slides?.length || 0) - 3);
+
   useEffect(() => {
-    if (!slides?.length) return;
-    const timer = setInterval(() => setCurrent(c => (c + 1) % slides.length), 5000);
+    if (!slides?.length || slides.length <= 3) return;
+    const timer = setInterval(() => setCurrent(c => (c >= maxIndex ? 0 : c + 1)), 5000);
     return () => clearInterval(timer);
-  }, [slides]);
+  }, [slides, maxIndex]);
 
   if (!slides?.length) return (
     <div className="gradient-primary py-20 text-center">
