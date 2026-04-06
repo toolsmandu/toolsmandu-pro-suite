@@ -125,6 +125,36 @@ export type Database = {
         }
         Relationships: []
       }
+      nav_menu_items: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          label: string
+          sort_order: number
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          sort_order?: number
+          url: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          sort_order?: number
+          url?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
