@@ -117,17 +117,6 @@ const ProductPage = () => {
   return (
     <>
       {product.meta_title && <title>{product.meta_title}</title>}
-      {bannerImage && (
-        <div className="relative w-full overflow-hidden h-40">
-          <img
-            src={bannerImage}
-            alt="Product banner"
-            className="w-full h-full object-fill bg-gradient-to-t from-background to-transparent"
-            style={{ opacity: 0.4 }}
-          />
-          <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to bottom, transparent, hsl(var(--background)))' }} />
-        </div>
-      )}
       <div className="container mx-auto px-4 py-8">
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
