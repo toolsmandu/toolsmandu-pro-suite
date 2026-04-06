@@ -72,7 +72,7 @@ const CategoryNavbar = () => {
           <div className="md:hidden pb-3 space-y-1">
             {items.map((item) => {
               const content = (
-                <span className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary">
+                <span className="flex items-center gap-2 px-3 py-2 text-sm text-white hover:text-white/80 transition-colors rounded-md hover:bg-secondary">
                   {renderIcon(item.icon)}
                   {item.label}
                 </span>
