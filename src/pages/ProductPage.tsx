@@ -95,17 +95,7 @@ const ProductPage = () => {
     }
   };
 
-  if (isLoading) return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-        <div className="space-y-4">
-          <div className="h-60 bg-card rounded-lg animate-pulse" />
-          <div className="h-8 bg-card rounded w-3/4 animate-pulse" />
-        </div>
-        <div className="h-96 bg-card rounded-lg animate-pulse" />
-      </div>
-    </div>
-  );
+  if (isLoading) return null;
 
   if (!product) return (
     <div className="container mx-auto px-4 py-20 text-center">

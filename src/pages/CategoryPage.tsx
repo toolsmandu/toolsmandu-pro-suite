@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from '@/components/ProductCard';
-import ProductCardSkeleton from '@/components/ProductCardSkeleton';
+
 
 const CategoryPage = () => {
   const { slug } = useParams();
