@@ -23,6 +23,8 @@ const AdminSettings = () => {
   const [faviconUrl, setFaviconUrl] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newLink, setNewLink] = useState({ column_name: '', label: '', url: '', sort_order: '0' });
+  const [editLinkDialogOpen, setEditLinkDialogOpen] = useState(false);
+  const [editLink, setEditLink] = useState<{ id: string; column_name: string; label: string; url: string; sort_order: string }>({ id: '', column_name: '', label: '', url: '', sort_order: '0' });
 
   // Nav menu state
   const [navDialogOpen, setNavDialogOpen] = useState(false);
