@@ -241,7 +241,7 @@ const AdminSettings = () => {
         <CardHeader><CardTitle>Site Settings</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <ImageUpload value={logoUrl} onChange={setLogoUrl} label="Site Logo" />
-          <div><Label>Footer About Text</Label><Textarea value={footerAbout} onChange={e => setFooterAbout(e.target.value)} rows={3} /></div>
+          <ImageUpload value={faviconUrl} onChange={setFaviconUrl} label="Favicon Image" />
           <ImageUpload value={faviconUrl} onChange={setFaviconUrl} label="Favicon Image" />
           <Button onClick={saveSettings}>Save Settings</Button>
         </CardContent>
