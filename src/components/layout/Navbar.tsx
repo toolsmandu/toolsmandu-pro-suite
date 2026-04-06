@@ -243,17 +243,7 @@ const Navbar = () => {
                 </div>
               )}
 
-              {user ? (
-                <>
-                  <Link to="/dashboard" className="block py-2 text-foreground" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
-                  <Link to="/dashboard/orders" className="block py-2 text-foreground" onClick={() => setMobileMenuOpen(false)}>My Orders</Link>
-                  <Link to="/dashboard/tickets" className="block py-2 text-foreground" onClick={() => setMobileMenuOpen(false)}>Support</Link>
-                  {(isAdmin || isEditor) && (
-                    <Link to="/admin" className="block py-2 text-foreground" onClick={() => setMobileMenuOpen(false)}>Admin Panel</Link>
-                  )}
-                  <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="block py-2 text-destructive">Sign Out</button>
-                </>
-              ) : (
+              {!user && (
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" className="flex-1" onClick={() => { navigate('/login'); setMobileMenuOpen(false); }}>Login</Button>
                   <Button size="sm" className="flex-1" onClick={() => { navigate('/signup'); setMobileMenuOpen(false); }}>Sign Up</Button>
