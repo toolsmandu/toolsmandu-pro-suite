@@ -62,8 +62,9 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           ))}
         </div>
 
-        <div className="border-t border-border mt-8 pt-8 text-sm text-muted-foreground text-left">
-          © {new Date().getFullYear()} Toolsmandu. All rights reserved.
+        <div className="border-t border-border mt-8 pt-8 text-sm text-muted-foreground flex items-center justify-between">
+          <span>© {new Date().getFullYear()} Toolsmandu. All rights reserved.</span>
+          <img src={paymentsImg} alt="Payment methods" className="h-6 object-contain" />
         </div>
       </div>
     </footer>
