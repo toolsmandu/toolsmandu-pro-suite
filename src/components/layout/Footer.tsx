@@ -39,9 +39,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                 <><span className="text-primary">Tools</span>mandu</>
               )}
             </Link>
-            <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-              {settings?.footer_about || 'Your trusted destination for premium digital software subscriptions.'}
-            </p>
+            <div className="mt-4 text-sm text-muted-foreground leading-relaxed prose prose-sm prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: settings?.footer_about || 'Your trusted destination for premium digital software subscriptions.' }} />
           </div>
 
           <div className="hidden md:block" />
