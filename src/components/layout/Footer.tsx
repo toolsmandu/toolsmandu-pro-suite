@@ -46,8 +46,8 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
 
           <div className="hidden md:block" />
 
-          {/* Link columns */}
-          {Object.entries(columns).map(([name, links]) => (
+          {/* Link columns - ordered */}
+          {['Information', 'Our Policy', 'Support'].filter(name => columns[name]).map(name => [name, columns[name]] as const).concat(Object.entries(columns).filter(([name]) => !['Information', 'Our Policy', 'Support'].includes(name)) as any).map(([name, links]) => (
             <div key={name}>
               <h3 className="font-semibold text-foreground mb-4">{name}</h3>
               <ul className="space-y-2">
