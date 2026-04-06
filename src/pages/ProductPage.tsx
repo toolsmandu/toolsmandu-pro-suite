@@ -109,65 +109,8 @@ const ProductPage = () => {
       {product.meta_title && <title>{product.meta_title}</title>}
       <div className="container mx-auto px-4 py-8">
 
-        <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-          {/* Left Column - Product Info */}
-          <div>
-            {/* Product Header: Image + Title */}
-            <div className="flex flex-col md:flex-row gap-6 mb-8">
-              <div className="w-full md:w-60 flex-shrink-0 order-2 md:order-1">
-                <div className="aspect-square bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
-                  {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="text-6xl">📦</div>
-                  )}
-                </div>
-              </div>
-              <div className="flex-1 flex flex-col justify-center order-1 md:order-2">
-                <div className="flex items-center gap-2 mb-2">
-                  {product.is_flash_sale && (
-                    <Badge className="bg-destructive text-destructive-foreground">
-                      {product.flash_sale_label || '🔥 Sale'}
-                    </Badge>
-                  )}
-                  {product.is_bestseller && (
-                    <Badge className="bg-warning text-warning-foreground">⭐ Bestseller</Badge>
-                  )}
-                  {isOutOfStock && (
-                    <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
-                  )}
-                </div>
-                <h1 className="text-3xl font-bold text-foreground mb-3">{product.name}</h1>
-                <div className="border-t mb-3" style={{ borderColor: 'white' }}></div>
-                <div className="flex items-center gap-2">
-                  {product.categories && (
-                    <Badge className="flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
-                      {(product.categories as any).name}
-                    </Badge>
-                  )}
-                  {(product as any).region && (
-                    <Badge className="flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9"/><path d="M12 3c-2.5 2.5-3.5 5.5-3.5 9s1 6.5 3.5 9"/></svg>
-                      Region: {(product as any).region}
-                    </Badge>
-                  )}
-                  <Badge className="hidden md:flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                    Warranty & Support Included
-                  </Badge>
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            {product.description && (
-              <div className="mb-8 prose prose-sm prose-invert max-w-none text-white [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" style={{ color: 'white' }} dangerouslySetInnerHTML={{ __html: product.description.replace(/<a /g, '<a style="color:#f97015" ') }} />
-            )}
-          </div>
-
-          {/* Right Sidebar - Select a Plan */}
-          <div className="lg:sticky lg:top-24 h-fit">
+        {(() => {
+          const planCard = (
             <Card className="p-6" style={{ backgroundColor: '#0a2e5c' }}>
               <h3 className="font-bold text-foreground text-lg mb-4">
                 Select a Plan
@@ -191,7 +134,6 @@ const ProductPage = () => {
                           isOutOfStock && "opacity-50 cursor-not-allowed"
                         )}
                       >
-                        {/* Small product thumbnail */}
                         <div className="w-12 h-12 rounded-md bg-secondary overflow-hidden flex-shrink-0">
                           {product.image_url ? (
                             <img src={product.image_url} alt="" className="w-full h-full object-cover" />
@@ -262,8 +204,78 @@ const ProductPage = () => {
                 </Button>
               )}
             </Card>
-          </div>
-        </div>
+          );
+
+          return (
+            <div className="grid lg:grid-cols-[1fr_380px] gap-8">
+              {/* Left Column - Product Info */}
+              <div>
+                {/* Product Header: Image + Title */}
+                <div className="flex flex-col md:flex-row gap-6 mb-8">
+                  <div className="w-full md:w-60 flex-shrink-0 order-2 md:order-1">
+                    <div className="aspect-square bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
+                      {product.image_url ? (
+                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="text-6xl">📦</div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center order-1 md:order-2">
+                    <div className="flex items-center gap-2 mb-2">
+                      {product.is_flash_sale && (
+                        <Badge className="bg-destructive text-destructive-foreground">
+                          {product.flash_sale_label || '🔥 Sale'}
+                        </Badge>
+                      )}
+                      {product.is_bestseller && (
+                        <Badge className="bg-warning text-warning-foreground">⭐ Bestseller</Badge>
+                      )}
+                      {isOutOfStock && (
+                        <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
+                      )}
+                    </div>
+                    <h1 className="text-3xl font-bold text-foreground mb-3">{product.name}</h1>
+                    <div className="border-t mb-3" style={{ borderColor: 'white' }}></div>
+                    <div className="flex items-center gap-2">
+                      {product.categories && (
+                        <Badge className="flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
+                          {(product.categories as any).name}
+                        </Badge>
+                      )}
+                      {(product as any).region && (
+                        <Badge className="flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9"/><path d="M12 3c-2.5 2.5-3.5 5.5-3.5 9s1 6.5 3.5 9"/></svg>
+                          Region: {(product as any).region}
+                        </Badge>
+                      )}
+                      <Badge className="hidden md:flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                        Warranty & Support Included
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plan card on mobile - shown after image */}
+                <div className="lg:hidden mb-8">
+                  {planCard}
+                </div>
+
+                {/* Description */}
+                {product.description && (
+                  <div className="mb-8 prose prose-sm prose-invert max-w-none text-white [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" style={{ color: 'white' }} dangerouslySetInnerHTML={{ __html: product.description.replace(/<a /g, '<a style="color:#f97015" ') }} />
+                )}
+              </div>
+
+              {/* Right Sidebar - desktop only */}
+              <div className="hidden lg:block lg:sticky lg:top-24 h-fit">
+                {planCard}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Related Products */}
         {related && related.length > 0 && (
