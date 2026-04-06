@@ -11,7 +11,23 @@ import CategoryNavbar from '@/components/layout/CategoryNavbar';
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : 1);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const count = window.innerWidth >= 1024 ? 3 : 1;
+      setVisibleCount(prev => {
+        if (prev !== count) {
+          setCurrent(0);
+          setIsTransitioning(false);
+        }
+        return count;
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const { data: slides } = useQuery({
     queryKey: ['hero-slides'],
@@ -22,32 +38,32 @@ const HeroSlider = () => {
     },
   });
 
-  // Clone first 3 slides at the end for seamless looping
-  const extendedSlides = slides && slides.length > 3
-    ? [...slides, ...slides.slice(0, 3)]
-    : slides || [];
-
   const totalOriginal = slides?.length || 0;
 
+  // Clone first `visibleCount` slides at the end for seamless looping
+  const extendedSlides = slides && totalOriginal > visibleCount
+    ? [...slides, ...slides.slice(0, visibleCount)]
+    : slides || [];
+
   useEffect(() => {
-    if (!slides?.length || slides.length <= 3) return;
+    if (!slides?.length || totalOriginal <= visibleCount) return;
     const timer = setInterval(() => {
       setCurrent(c => c + 1);
       setIsTransitioning(true);
     }, 5000);
     return () => clearInterval(timer);
-  }, [slides]);
+  }, [slides, visibleCount, totalOriginal]);
 
   // When we reach the cloned region, snap back to start without transition
   useEffect(() => {
-    if (current >= totalOriginal && totalOriginal > 3) {
+    if (current >= totalOriginal && totalOriginal > visibleCount) {
       const timeout = setTimeout(() => {
         setIsTransitioning(false);
         setCurrent(0);
-      }, 500); // wait for transition to finish
+      }, 500);
       return () => clearTimeout(timeout);
     }
-  }, [current, totalOriginal]);
+  }, [current, totalOriginal, visibleCount]);
 
   // Re-enable transition after snap-back
   useEffect(() => {
@@ -71,18 +87,19 @@ const HeroSlider = () => {
     </div>
   );
 
-  const dotCount = totalOriginal > 3 ? totalOriginal : 0;
+  const dotCount = totalOriginal > visibleCount ? totalOriginal : 0;
   const activeDot = current % totalOriginal;
+  const slideWidth = 100 / visibleCount;
 
   return (
     <div className="relative gradient-primary overflow-hidden">
       <div
         ref={trackRef}
         className={`flex ${isTransitioning ? 'transition-transform duration-500 ease-out' : ''}`}
-        style={{ transform: `translateX(-${current * (100 / 3)}%)` }}
+        style={{ transform: `translateX(-${current * slideWidth}%)` }}
       >
         {extendedSlides.map((slide, idx) => (
-          <div key={`${slide.id}-${idx}`} className="min-w-[33.333%] px-1">
+          <div key={`${slide.id}-${idx}`} className="px-1" style={{ minWidth: `${slideWidth}%` }}>
             <Link to={slide.link_url || '#'} className="block">
               <img src={slide.image_url} alt="" className="w-full h-48 md:h-80 object-cover rounded-lg" />
             </Link>
