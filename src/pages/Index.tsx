@@ -10,6 +10,9 @@ import CategoryNavbar from '@/components/layout/CategoryNavbar';
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+  const trackRef = useRef<HTMLDivElement>(null);
+
   const { data: slides } = useQuery({
     queryKey: ['hero-slides'],
     staleTime: 5 * 60 * 1000,
@@ -19,13 +22,44 @@ const HeroSlider = () => {
     },
   });
 
-  const maxIndex = Math.max(0, (slides?.length || 0) - 3);
+  // Clone first 3 slides at the end for seamless looping
+  const extendedSlides = slides && slides.length > 3
+    ? [...slides, ...slides.slice(0, 3)]
+    : slides || [];
+
+  const totalOriginal = slides?.length || 0;
 
   useEffect(() => {
     if (!slides?.length || slides.length <= 3) return;
-    const timer = setInterval(() => setCurrent(c => (c >= maxIndex ? 0 : c + 1)), 5000);
+    const timer = setInterval(() => {
+      setCurrent(c => c + 1);
+      setIsTransitioning(true);
+    }, 5000);
     return () => clearInterval(timer);
-  }, [slides, maxIndex]);
+  }, [slides]);
+
+  // When we reach the cloned region, snap back to start without transition
+  useEffect(() => {
+    if (current >= totalOriginal && totalOriginal > 3) {
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrent(0);
+      }, 500); // wait for transition to finish
+      return () => clearTimeout(timeout);
+    }
+  }, [current, totalOriginal]);
+
+  // Re-enable transition after snap-back
+  useEffect(() => {
+    if (!isTransitioning && current === 0) {
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsTransitioning(true);
+        });
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [isTransitioning, current]);
 
   if (!slides?.length) return (
     <div className="gradient-primary py-20 text-center">
@@ -37,23 +71,28 @@ const HeroSlider = () => {
     </div>
   );
 
-  
+  const dotCount = totalOriginal > 3 ? totalOriginal : 0;
+  const activeDot = current % totalOriginal;
 
   return (
     <div className="relative gradient-primary overflow-hidden">
-      <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${current * (100 / 3)}%)` }}>
-        {slides.map(slide => (
-          <div key={slide.id} className="min-w-[33.333%] px-1">
+      <div
+        ref={trackRef}
+        className={`flex ${isTransitioning ? 'transition-transform duration-500 ease-out' : ''}`}
+        style={{ transform: `translateX(-${current * (100 / 3)}%)` }}
+      >
+        {extendedSlides.map((slide, idx) => (
+          <div key={`${slide.id}-${idx}`} className="min-w-[33.333%] px-1">
             <Link to={slide.link_url || '#'} className="block">
               <img src={slide.image_url} alt="" className="w-full h-48 md:h-80 object-cover rounded-lg" />
             </Link>
           </div>
         ))}
       </div>
-      {slides.length > 3 && (
+      {dotCount > 0 && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-            <button key={i} onClick={() => setCurrent(i)} className={`h-2 rounded-full transition-all ${i === current ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/50'}`} />
+          {Array.from({ length: dotCount }).map((_, i) => (
+            <button key={i} onClick={() => { setCurrent(i); setIsTransitioning(true); }} className={`h-2 rounded-full transition-all ${i === activeDot ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/50'}`} />
           ))}
         </div>
       )}
