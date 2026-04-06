@@ -112,6 +112,7 @@ const Index = () => {
 
   return (
     <>
+      <CategoryNavbar />
       <HeroSlider />
 
       <div className="container mx-auto px-4 py-12">
