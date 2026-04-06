@@ -28,7 +28,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
   }, {} as Record<string, typeof footerLinks>) || {};
 
   return (
-    <footer ref={ref} className="border-t border-border mt-16" style={{ backgroundColor: '#011D3E', color: '#ffffff' }}>
+    <footer ref={ref} className="border-t border-border mt-16 bg-accent" style={{ color: '#ffffff' }}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
           {/* About */}
