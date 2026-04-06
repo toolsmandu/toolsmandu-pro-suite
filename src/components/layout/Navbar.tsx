@@ -65,10 +65,15 @@ const Navbar = () => {
     <>
       {/* Top bar */}
       <div className="bg-primary text-primary-foreground text-xs py-2">
-        <div className="container mx-auto px-4 gap-6 md:gap-12 flex-row flex items-start justify-start">
-          <span>🔒 100% Safe & Secure</span>
-          <span>⚡ Instant Delivery</span>
-          <span>🎧 24/7 Support</span>
+        <div className="container mx-auto px-4 gap-6 md:gap-12 flex-row flex items-center justify-between">
+          <div className="flex items-center gap-6 md:gap-12">
+            <span>🔒 100% Safe & Secure</span>
+            <span>⚡ Instant Delivery</span>
+            <span>🎧 24/7 Support</span>
+          </div>
+          <a href="https://link.toolsmandu.com/trustpilot" target="_blank" rel="noopener noreferrer">
+            <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-4 object-contain" />
+          </a>
         </div>
       </div>
 
