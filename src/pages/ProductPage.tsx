@@ -114,7 +114,7 @@ const ProductPage = () => {
           <div>
             {/* Product Header: Image + Title */}
             <div className="flex flex-col md:flex-row gap-6 mb-8">
-              <div className="w-full md:w-60 flex-shrink-0">
+              <div className="w-full md:w-60 flex-shrink-0 order-2 md:order-1">
                 <div className="aspect-square bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
                   {product.image_url ? (
                     <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
@@ -123,7 +123,7 @@ const ProductPage = () => {
                   )}
                 </div>
               </div>
-              <div className="flex-1 flex flex-col justify-center">
+              <div className="flex-1 flex flex-col justify-center order-1 md:order-2">
                 <div className="flex items-center gap-2 mb-2">
                   {product.is_flash_sale && (
                     <Badge className="bg-destructive text-destructive-foreground">
