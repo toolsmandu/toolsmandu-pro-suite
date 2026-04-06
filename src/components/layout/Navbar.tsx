@@ -70,7 +70,7 @@ const Navbar = () => {
           <div className="flex items-center gap-6 md:gap-12">
             <span>🔒 100% Safe & Secure</span>
             <span>⚡ Instant Delivery</span>
-            <span>🎧 24/7 Support</span>
+            <span>💬 Whatsapp Live Support</span>
           </div>
           <div className="flex items-center gap-3">
             <a href="https://link.toolsmandu.com/trustpilot" target="_blank" rel="noopener noreferrer">
