@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import trustpilotImg from '@/assets/trustpilot-navbar.webp';
-import googleReviewsImg from '@/assets/google-reviews-navbar.webp';
+const trustpilotImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494880317-8uue9fe7kpp.webp';
+const googleReviewsImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494878578-cse3wn6nvgm.webp';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, X, Heart, icons } from 'lucide-react';
 import { Button } from '@/components/ui/button';
