@@ -28,7 +28,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
   }, {} as Record<string, typeof footerLinks>) || {};
 
   return (
-    <footer ref={ref} className="border-t border-border mt-16" style={{ backgroundColor: '#011D3E' }}>
+    <footer ref={ref} className="border-t border-border mt-16" style={{ backgroundColor: '#011D3E', color: '#ffffff' }}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
           {/* About */}
@@ -40,7 +40,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                 <><span className="text-primary">Tools</span>mandu</>
               )}
             </Link>
-            <div className="mt-4 text-sm text-muted-foreground leading-relaxed prose prose-sm prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: settings?.footer_about || 'Your trusted destination for premium digital software subscriptions.' }} />
+            <div className="mt-4 text-sm leading-relaxed prose prose-sm prose-invert max-w-none" style={{ color: '#ffffff' }} dangerouslySetInnerHTML={{ __html: settings?.footer_about || 'Your trusted destination for premium digital software subscriptions.' }} />
           </div>
 
           <div className="hidden md:block" />
@@ -48,11 +48,11 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           {/* Link columns - ordered */}
           {['Information', 'Our Policy', 'Support'].filter(name => columns[name]).map(name => [name, columns[name]] as const).concat(Object.entries(columns).filter(([name]) => !['Information', 'Our Policy', 'Support'].includes(name)) as any).map(([name, links]) => (
             <div key={name}>
-              <h3 className="font-semibold text-foreground mb-4">{name}</h3>
+              <h3 className="font-semibold mb-4" style={{ color: '#ffffff' }}>{name}</h3>
               <ul className="space-y-2">
                 {links.map(link => (
                   <li key={link.id}>
-                    <Link to={link.url} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <Link to={link.url} className="text-sm hover:underline transition-colors" style={{ color: 'rgba(255,255,255,0.8)' }}>
                       {link.label}
                     </Link>
                   </li>
@@ -62,7 +62,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           ))}
         </div>
 
-        <div className="border-t border-border mt-8 pt-8 text-sm text-muted-foreground flex items-center justify-between">
+        <div className="border-t border-white/20 mt-8 pt-8 text-sm flex items-center justify-between" style={{ color: 'rgba(255,255,255,0.7)' }}>
           <span>© {new Date().getFullYear()} Toolsmandu. All rights reserved.</span>
           <img src={paymentsImg} alt="Payment methods" className="h-6 object-contain" />
         </div>
