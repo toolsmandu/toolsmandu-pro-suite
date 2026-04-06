@@ -21,6 +21,7 @@ import {
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAdmin, isEditor, signOut } = useAuth();
   const { itemCount } = useCart();
@@ -99,7 +100,7 @@ const Navbar = () => {
       </div>
 
       {/* Main navbar */}
-      <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/95 backdrop-blur-md shadow-lg shadow-primary/5' : 'bg-background/80 backdrop-blur-sm'} border-b border-border`}>
+      <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/95 backdrop-blur-md shadow-lg shadow-primary/5' : 'bg-background/80 backdrop-blur-sm'} border-b border-border mt-2 lg:mt-0`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Mobile hamburger + Logo */}
@@ -109,7 +110,7 @@ const Navbar = () => {
               </Button>
               <Link to="/" className="text-xl font-bold text-foreground flex items-center gap-2">
                 {settings?.logo_url ? (
-                  <img src={settings.logo_url} alt="Toolsmandu" className="h-8 object-contain" />
+                  <img src={settings.logo_url} alt="Toolsmandu" className="h-8 md:h-8 max-h-[28.8px] md:max-h-none object-contain" />
                 ) : (
                   <><span className="text-primary">Tools</span>mandu</>
                 )}
@@ -174,6 +175,9 @@ const Navbar = () => {
 
             {/* Mobile actions */}
             <div className="flex md:hidden items-center gap-1">
+              <Button variant="ghost" size="icon" onClick={() => setMobileSearchOpen(!mobileSearchOpen)}>
+                <Search className="h-5 w-5" />
+              </Button>
               <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')}>
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -213,15 +217,21 @@ const Navbar = () => {
             </div>
           </div>
 
+          {/* Mobile search bar */}
+          {mobileSearchOpen && (
+            <div className="md:hidden pb-3 border-t border-border pt-3">
+              <form onSubmit={(e) => { handleSearch(e); setMobileSearchOpen(false); }}>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Search products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-secondary" autoFocus />
+                </div>
+              </form>
+            </div>
+          )}
+
           {/* Mobile menu */}
           {mobileMenuOpen && (
             <div className="md:hidden pb-4 space-y-3 border-t border-border pt-3">
-              <form onSubmit={handleSearch}>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-secondary" />
-                </div>
-              </form>
 
               {/* Nav menu items */}
               {navMenuItems && navMenuItems.length > 0 && (
