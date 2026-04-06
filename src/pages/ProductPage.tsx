@@ -159,16 +159,16 @@ const ProductPage = () => {
                   )}
                 </div>
                 <h1 className="text-3xl font-bold text-foreground mb-3">{product.name}</h1>
-                <div className="border-t mb-3" style={{ borderColor: '#f97015' }}></div>
+                <div className="border-t mb-3" style={{ borderColor: 'white' }}></div>
                 <div className="flex items-center gap-2">
                   {product.categories && (
-                    <Badge className="flex items-center gap-1" style={{ backgroundColor: '#f97015', color: 'white', borderColor: 'transparent' }}>
+                    <Badge className="flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
                       Category: {(product.categories as any).name}
                     </Badge>
                   )}
                   {(product as any).region && (
-                    <Badge className="flex items-center gap-1" style={{ backgroundColor: '#f97015', color: 'white', borderColor: 'transparent' }}>
+                    <Badge className="flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9"/><path d="M12 3c-2.5 2.5-3.5 5.5-3.5 9s1 6.5 3.5 9"/></svg>
                       Region: {(product as any).region}
                     </Badge>
