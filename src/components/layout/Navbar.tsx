@@ -238,7 +238,7 @@ const Navbar = () => {
                 <div className="space-y-1 border-b border-border pb-3">
                   {navMenuItems.map((item) => {
                     const content = (
-                      <span className="flex items-center gap-2 py-2 text-foreground hover:text-primary transition-colors">
+                      <span className="flex items-center gap-2 py-2 font-bold uppercase text-foreground hover:text-primary transition-colors">
                         {renderNavIcon(item.icon)}
                         {item.label}
                       </span>
