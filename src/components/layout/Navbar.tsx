@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import trustpilotImg from '@/assets/trustpilot.webp';
+import googleReviewsImg from '@/assets/google-reviews.webp';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, X, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
