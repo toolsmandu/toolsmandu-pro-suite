@@ -140,6 +140,23 @@ const AdminSettings = () => {
     },
   });
 
+  const updateNavItem = useMutation({
+    mutationFn: async () => {
+      await supabase.from('nav_menu_items').update({
+        label: editNavItem.label,
+        url: editNavItem.url,
+        icon: editNavItem.icon || null,
+        sort_order: parseInt(editNavItem.sort_order) || 0,
+      }).eq('id', editNavItem.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-nav-menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['nav-menu-items'] });
+      setEditNavDialogOpen(false);
+      toast.success('Menu item updated!');
+    },
+  });
+
   // Filter icon names for search
   const iconNames = Object.keys(icons).filter(name => name !== 'createLucideIcon');
   const filteredIcons = iconSearch
