@@ -178,7 +178,7 @@ const ProductPage = () => {
 
           {/* Right Sidebar - Select a Plan */}
           <div className="lg:sticky lg:top-24 h-fit">
-            <Card className="p-6" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
+            <Card className="p-6" style={{ backgroundColor: '#0a2e5c' }}>
               <h3 className="font-bold text-foreground text-lg mb-4">
                 Select a Plan
               </h3>
