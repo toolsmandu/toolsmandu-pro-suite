@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Plus, Trash2, ShoppingCart, MessageCircle, icons } from 'lucide-react';
+import { Plus, Trash2, ShoppingCart, MessageCircle, Pencil, icons } from 'lucide-react';
 
 const AdminSettings = () => {
   const queryClient = useQueryClient();
@@ -26,7 +26,9 @@ const AdminSettings = () => {
 
   // Nav menu state
   const [navDialogOpen, setNavDialogOpen] = useState(false);
+  const [editNavDialogOpen, setEditNavDialogOpen] = useState(false);
   const [newNavItem, setNewNavItem] = useState({ label: '', url: '', icon: '', sort_order: '0' });
+  const [editNavItem, setEditNavItem] = useState<{ id: string; label: string; url: string; icon: string; sort_order: string }>({ id: '', label: '', url: '', icon: '', sort_order: '0' });
   const [iconSearch, setIconSearch] = useState('');
 
   const { data: settings } = useQuery({
@@ -135,6 +137,23 @@ const AdminSettings = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-nav-menu-items'] });
       queryClient.invalidateQueries({ queryKey: ['nav-menu-items'] });
+    },
+  });
+
+  const updateNavItem = useMutation({
+    mutationFn: async () => {
+      await supabase.from('nav_menu_items').update({
+        label: editNavItem.label,
+        url: editNavItem.url,
+        icon: editNavItem.icon || null,
+        sort_order: parseInt(editNavItem.sort_order) || 0,
+      }).eq('id', editNavItem.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-nav-menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['nav-menu-items'] });
+      setEditNavDialogOpen(false);
+      toast.success('Menu item updated!');
     },
   });
 
@@ -279,7 +298,13 @@ const AdminSettings = () => {
                       onCheckedChange={(checked) => toggleNavItem.mutate({ id: item.id, is_active: checked })}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => {
+                      setEditNavItem({ id: item.id, label: item.label, url: item.url, icon: item.icon || '', sort_order: String(item.sort_order) });
+                      setEditNavDialogOpen(true);
+                    }}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteNavItem.mutate(item.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -291,6 +316,45 @@ const AdminSettings = () => {
               )}
             </TableBody>
           </Table>
+
+          {/* Edit Nav Item Dialog */}
+          <Dialog open={editNavDialogOpen} onOpenChange={setEditNavDialogOpen}>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Edit Menu Item</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <div><Label>Label</Label><Input value={editNavItem.label} onChange={e => setEditNavItem({...editNavItem, label: e.target.value})} /></div>
+                <div><Label>URL</Label><Input value={editNavItem.url} onChange={e => setEditNavItem({...editNavItem, url: e.target.value})} /></div>
+                <div>
+                  <Label>Icon (Lucide icon name)</Label>
+                  <Input
+                    value={editNavItem.icon}
+                    onChange={e => { setEditNavItem({...editNavItem, icon: e.target.value}); setIconSearch(e.target.value); }}
+                    placeholder="e.g. Tv, Music, ShoppingBag"
+                  />
+                  {iconSearch && filteredIcons.length > 0 && (
+                    <div className="mt-1 max-h-32 overflow-y-auto border border-border rounded-md bg-background p-2 grid grid-cols-4 gap-1">
+                      {filteredIcons.map(name => {
+                        const Icon = (icons as Record<string, any>)[name];
+                        return (
+                          <button
+                            key={name}
+                            type="button"
+                            className={`flex flex-col items-center gap-0.5 p-1.5 rounded text-xs hover:bg-secondary transition-colors ${editNavItem.icon === name ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+                            onClick={() => { setEditNavItem({...editNavItem, icon: name}); setIconSearch(''); }}
+                          >
+                            <Icon className="h-4 w-4" />
+                            <span className="truncate w-full text-center text-[10px]">{name}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+                <div><Label>Sort Order</Label><Input type="number" value={editNavItem.sort_order} onChange={e => setEditNavItem({...editNavItem, sort_order: e.target.value})} /></div>
+                <Button onClick={() => editNavItem.label && editNavItem.url && updateNavItem.mutate()} className="w-full">Save Changes</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
 
