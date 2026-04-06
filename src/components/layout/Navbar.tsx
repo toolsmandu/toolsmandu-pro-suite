@@ -87,14 +87,19 @@ const Navbar = () => {
       <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/95 backdrop-blur-md shadow-lg shadow-primary/5' : 'bg-background/80 backdrop-blur-sm'} border-b border-border`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="text-xl font-bold text-foreground flex items-center gap-2">
-              {settings?.logo_url ? (
-                <img src={settings.logo_url} alt="Toolsmandu" className="h-8 object-contain" />
-              ) : (
-                <><span className="text-primary">Tools</span>mandu</>
-              )}
-            </Link>
+            {/* Mobile hamburger + Logo */}
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+              <Link to="/" className="text-xl font-bold text-foreground flex items-center gap-2">
+                {settings?.logo_url ? (
+                  <img src={settings.logo_url} alt="Toolsmandu" className="h-8 object-contain" />
+                ) : (
+                  <><span className="text-primary">Tools</span>mandu</>
+                )}
+              </Link>
+            </div>
 
             {/* Desktop search */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8">
@@ -152,8 +157,8 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile menu toggle */}
-            <div className="flex md:hidden items-center gap-2">
+            {/* Mobile actions */}
+            <div className="flex md:hidden items-center gap-1">
               <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')}>
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -162,9 +167,34 @@ const Navbar = () => {
                   </Badge>
                 )}
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative">
+                      <div className="h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+                        {user.email?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>Dashboard</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/dashboard/orders')}>My Orders</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/dashboard/tickets')}>Support</DropdownMenuItem>
+                    {(isAdmin || isEditor) && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => navigate('/admin')}>Admin Panel</DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={signOut}>Sign Out</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="ghost" size="icon" onClick={() => navigate('/login')}>
+                  <User className="h-5 w-5" />
+                </Button>
+              )}
             </div>
           </div>
 
