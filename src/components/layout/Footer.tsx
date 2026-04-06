@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import paymentsImg from '@/assets/payments.webp';
-import trustpilotImg from '@/assets/trustpilot.webp';
-import googleReviewsImg from '@/assets/google-reviews.webp';
+const trustpilotImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494932262-m7k4sg8o5zs.webp';
+const googleReviewsImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494931231-3rpqqvt644i.webp';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
