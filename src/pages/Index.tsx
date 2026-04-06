@@ -101,7 +101,7 @@ const HeroSlider = () => {
         {extendedSlides.map((slide, idx) => (
           <div key={`${slide.id}-${idx}`} className="px-1" style={{ minWidth: `${slideWidth}%` }}>
             <Link to={slide.link_url || '#'} className="block">
-              <img src={slide.image_url} alt="" className="w-full h-48 md:h-80 rounded-lg object-cover" />
+              <img src={slide.image_url} alt="" className="w-full h-64 md:h-[416px] rounded-lg object-cover" />
             </Link>
           </div>
         ))}
