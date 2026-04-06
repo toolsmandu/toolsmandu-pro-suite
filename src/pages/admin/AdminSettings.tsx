@@ -104,6 +104,23 @@ const AdminSettings = () => {
     },
   });
 
+  const updateLink = useMutation({
+    mutationFn: async () => {
+      await supabase.from('footer_links').update({
+        column_name: editLink.column_name,
+        label: editLink.label,
+        url: editLink.url,
+        sort_order: parseInt(editLink.sort_order) || 0,
+      }).eq('id', editLink.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-footer-links'] });
+      queryClient.invalidateQueries({ queryKey: ['footer-links'] });
+      setEditLinkDialogOpen(false);
+      toast.success('Link updated!');
+    },
+  });
+
   // Nav menu mutations
   const addNavItem = useMutation({
     mutationFn: async () => {
