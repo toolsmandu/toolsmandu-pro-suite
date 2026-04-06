@@ -37,7 +37,7 @@ const HeroSlider = () => {
     </div>
   );
 
-  const maxIndex = Math.max(0, slides.length - 3);
+  
 
   return (
     <div className="relative gradient-primary overflow-hidden">
