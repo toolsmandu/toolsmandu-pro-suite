@@ -2,7 +2,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from '@/components/ProductCard';
-import ProductCardSkeleton from '@/components/ProductCardSkeleton';
+
 import { SearchX } from 'lucide-react';
 
 const SearchPage = () => {
@@ -22,11 +22,7 @@ const SearchPage = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-foreground mb-2">Search Results</h1>
       <p className="text-muted-foreground mb-8">Showing results for "{q}"</p>
-      {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
-        </div>
-      ) : products && products.length > 0 ? (
+      {isLoading ? null : products && products.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {products.map(p => <ProductCard key={p.id} {...p} />)}
         </div>

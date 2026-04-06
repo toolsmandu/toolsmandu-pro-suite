@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Shield, Headphones, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
-import ProductCardSkeleton from '@/components/ProductCardSkeleton';
+
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
@@ -115,13 +115,11 @@ const Index = () => {
 
       <div className="container mx-auto px-4 py-12">
         {/* Featured Products */}
-        {(isLoading || featuredProducts.length > 0) && (
+        {featuredProducts.length > 0 && (
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-6">Featured Products</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {isLoading
-                ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                : featuredProducts.map(p => <ProductCard key={p.id} {...p} />)}
+              {featuredProducts.map(p => <ProductCard key={p.id} {...p} />)}
             </div>
           </section>
         )}
@@ -147,28 +145,17 @@ const Index = () => {
         </section>
 
         {/* Best Sellers */}
-        {(isLoading || bestSellers.length > 0) && (
+        {bestSellers.length > 0 && (
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-6">Best Sellers</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {isLoading
-                ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                : bestSellers.map(p => <ProductCard key={p.id} {...p} />)}
+              {bestSellers.map(p => <ProductCard key={p.id} {...p} />)}
             </div>
           </section>
         )}
 
         {/* Category Sections */}
-        {isLoading
-          ? Array.from({ length: 3 }).map((_, i) => (
-              <section key={i} className="mb-12">
-                <div className="h-8 w-48 bg-muted rounded animate-pulse mb-6" />
-                <div className="flex gap-4">
-                  {Array.from({ length: 4 }).map((_, j) => <div key={j} className="min-w-[220px] max-w-[220px]"><ProductCardSkeleton /></div>)}
-                </div>
-              </section>
-            ))
-          : categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
+        {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
       </div>
     </>
   );
