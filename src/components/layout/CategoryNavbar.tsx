@@ -36,7 +36,7 @@ const CategoryNavbar = () => {
     if (!iconName) return null;
     const LucideIcon = (icons as Record<string, any>)[iconName];
     if (!LucideIcon) return null;
-    return <LucideIcon className="h-4 w-4" />;
+    return <LucideIcon className="h-4 w-4 text-white" />;
   };
 
   const isExternal = (url: string) => url.startsWith('http');
@@ -48,7 +48,7 @@ const CategoryNavbar = () => {
         <div className="hidden md:flex items-center gap-1 h-10 overflow-x-auto">
           {items.map((item) => {
             const content = (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary">
+              <span className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white hover:text-white/80 transition-colors rounded-md hover:bg-secondary">
                 {renderIcon(item.icon)}
                 {item.label}
               </span>
@@ -63,7 +63,7 @@ const CategoryNavbar = () => {
 
         {/* Mobile */}
         <div className="md:hidden flex items-center justify-between h-10">
-          <span className="text-sm text-muted-foreground font-medium">Menu</span>
+          <span className="text-sm text-white font-medium">Menu</span>
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
@@ -72,7 +72,7 @@ const CategoryNavbar = () => {
           <div className="md:hidden pb-3 space-y-1">
             {items.map((item) => {
               const content = (
-                <span className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary">
+                <span className="flex items-center gap-2 px-3 py-2 text-sm text-white hover:text-white/80 transition-colors rounded-md hover:bg-secondary">
                   {renderIcon(item.icon)}
                   {item.label}
                 </span>
