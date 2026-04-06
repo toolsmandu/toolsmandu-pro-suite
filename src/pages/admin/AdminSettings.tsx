@@ -19,7 +19,7 @@ const AdminSettings = () => {
   const [footerAbout, setFooterAbout] = useState('');
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
-  const [productBannerImage, setProductBannerImage] = useState('');
+  const [faviconUrl, setFaviconUrl] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newLink, setNewLink] = useState({ column_name: '', label: '', url: '', sort_order: '0' });
 
@@ -32,7 +32,7 @@ const AdminSettings = () => {
       setFooterAbout(map.footer_about?.value || '');
       setOrderMode(map.order_mode?.value || 'cart');
       setWhatsappNumber(map.whatsapp_number?.value || '');
-      setProductBannerImage(map.product_banner_image?.value || '');
+      setFaviconUrl(map.favicon_url?.value || '');
       return map;
     },
   });
@@ -51,7 +51,7 @@ const AdminSettings = () => {
       { key: 'footer_about', value: footerAbout },
       { key: 'order_mode', value: orderMode },
       { key: 'whatsapp_number', value: whatsappNumber },
-      { key: 'product_banner_image', value: productBannerImage },
+      { key: 'favicon_url', value: faviconUrl },
     ];
     for (const item of keys) {
       const { data: existing } = await supabase.from('site_settings').select('id').eq('key', item.key).maybeSingle();
@@ -137,9 +137,9 @@ const AdminSettings = () => {
       <Card>
         <CardHeader><CardTitle>Site Settings</CardTitle></CardHeader>
         <CardContent className="space-y-4">
-          <div><Label>Logo URL</Label><Input value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://..." /></div>
+          <ImageUpload value={logoUrl} onChange={setLogoUrl} label="Site Logo" />
           <div><Label>Footer About Text</Label><Textarea value={footerAbout} onChange={e => setFooterAbout(e.target.value)} rows={3} /></div>
-          <ImageUpload value={productBannerImage} onChange={setProductBannerImage} label="Product Page Banner Image" />
+          <ImageUpload value={faviconUrl} onChange={setFaviconUrl} label="Favicon Image" />
           <Button onClick={saveSettings}>Save Settings</Button>
         </CardContent>
       </Card>
