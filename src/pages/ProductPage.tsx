@@ -196,8 +196,8 @@ const ProductPage = () => {
                         className={cn(
                           "w-full border-2 rounded-xl p-4 text-left transition-all flex items-center gap-4",
                           isSelected
-                            ? "bg-[#f97015]/10 border-[#f97015] ring-1 ring-[#f97015]"
-                            : "bg-white/5 border-white/10 hover:border-[#f97015]/50 hover:bg-white/10",
+                            ? "bg-[#228be6]/10 border-[#228be6] ring-1 ring-[#15aabf]"
+                            : "bg-white/5 border-white/10 hover:border-[#228be6]/50 hover:bg-white/10",
                           isOutOfStock && "opacity-50 cursor-not-allowed"
                         )}
                       >
