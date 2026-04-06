@@ -63,7 +63,7 @@ const CategoryNavbar = () => {
 
         {/* Mobile */}
         <div className="md:hidden flex items-center justify-between h-10">
-          <span className="text-sm text-muted-foreground font-medium">Menu</span>
+          <span className="text-sm text-white font-medium">Menu</span>
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
