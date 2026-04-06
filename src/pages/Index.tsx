@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Shield, Headphones, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
+import CategoryNavbar from '@/components/layout/CategoryNavbar';
 
 
 const HeroSlider = () => {
@@ -111,6 +112,7 @@ const Index = () => {
 
   return (
     <>
+      <CategoryNavbar />
       <HeroSlider />
 
       <div className="container mx-auto px-4 py-12">
