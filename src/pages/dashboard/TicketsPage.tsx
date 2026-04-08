@@ -8,19 +8,38 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { MessageCircle, Plus, Send } from 'lucide-react';
+import { Plus, List, ArrowLeft } from 'lucide-react';
+
+type TicketView = 'home' | 'create' | 'list';
 
 const TicketsPage = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [newSubject, setNewSubject] = useState('');
-  const [newMessage, setNewMessage] = useState('');
-  const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
-  const [replyMsg, setReplyMsg] = useState('');
+  const [view, setView] = useState<TicketView>('home');
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  // Form state
+  const [orderId, setOrderId] = useState('');
+  const [problemTitle, setProblemTitle] = useState('');
+  const [problemDesc, setProblemDesc] = useState('');
+
+  // Fetch user's orders for the dropdown
+  const { data: orders } = useQuery({
+    queryKey: ['my-orders-for-ticket'],
+    queryFn: async () => {
+      const { data } = await supabase.from('orders').select('id, order_number').eq('user_id', user!.id).order('created_at', { ascending: false });
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  // Fetch tickets
   const { data: tickets, isLoading } = useQuery({
     queryKey: ['my-tickets'],
     queryFn: async () => {
@@ -30,119 +49,198 @@ const TicketsPage = () => {
     enabled: !!user,
   });
 
+  // Fetch messages for selected ticket (admin replies only)
   const { data: messages } = useQuery({
-    queryKey: ['ticket-messages', selectedTicket],
+    queryKey: ['ticket-messages', selectedTicketId],
     queryFn: async () => {
-      const { data } = await supabase.from('ticket_messages').select('*').eq('ticket_id', selectedTicket!).order('created_at');
-      return data || [];
+      const { data } = await supabase.from('ticket_messages').select('*').eq('ticket_id', selectedTicketId!).order('created_at');
+      // Filter to only show messages NOT from the current user (admin replies)
+      return (data || []).filter(msg => msg.sender_id !== user?.id);
     },
-    enabled: !!selectedTicket,
+    enabled: !!selectedTicketId,
   });
 
   const createTicket = useMutation({
     mutationFn: async () => {
-      const { data: ticket } = await supabase.from('tickets').insert({ user_id: user!.id, subject: newSubject }).select().single();
-      if (ticket && newMessage) {
-        await supabase.from('ticket_messages').insert({ ticket_id: ticket.id, sender_id: user!.id, message: newMessage });
+      const insertData: any = { user_id: user!.id, subject: problemTitle };
+      if (orderId) insertData.order_id = orderId;
+      const { data: ticket, error } = await supabase.from('tickets').insert(insertData).select().single();
+      if (error) throw error;
+      if (ticket && problemDesc) {
+        await supabase.from('ticket_messages').insert({ ticket_id: ticket.id, sender_id: user!.id, message: problemDesc });
       }
       return ticket;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-tickets'] });
-      setNewSubject(''); setNewMessage(''); setDialogOpen(false);
-      toast.success('Ticket created!');
+      setOrderId(''); setProblemTitle(''); setProblemDesc('');
+      toast.success('Ticket created successfully!');
+      setView('list');
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Failed to create ticket');
     },
   });
 
-  const sendReply = useMutation({
-    mutationFn: async () => {
-      await supabase.from('ticket_messages').insert({ ticket_id: selectedTicket!, sender_id: user!.id, message: replyMsg });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ticket-messages', selectedTicket] });
-      setReplyMsg('');
-    },
-  });
-
-  const closeTicket = async (ticketId: string) => {
-    await supabase.from('tickets').update({ status: 'closed' as const }).eq('id', ticketId);
-    queryClient.invalidateQueries({ queryKey: ['my-tickets'] });
-    toast.success('Ticket closed');
+  const handleViewResponse = (ticketId: string) => {
+    setSelectedTicketId(ticketId);
+    setDialogOpen(true);
   };
 
-  if (selectedTicket) {
-    const ticket = tickets?.find(t => t.id === selectedTicket);
+  // HOME VIEW - Two boxes
+  if (view === 'home') {
     return (
-      <div>
-        <Button variant="ghost" onClick={() => setSelectedTicket(null)} className="mb-4">← Back to Tickets</Button>
-        <Card style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">{ticket?.subject}</CardTitle>
-              <Badge className={ticket?.status === 'open' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}>{ticket?.status}</Badge>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card
+          className="cursor-pointer hover:border-primary/50 transition-all hover:shadow-lg"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}
+          onClick={() => setView('create')}
+        >
+          <CardContent className="flex flex-col items-center justify-center py-16 gap-4">
+            <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
+              <Plus className="h-8 w-8 text-primary" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4 max-h-96 overflow-y-auto mb-4">
-              {messages?.map(msg => (
-                <div key={msg.id} className={`p-3 rounded-lg ${msg.sender_id === user?.id ? 'bg-primary/10 ml-8' : 'bg-secondary mr-8'}`}>
-                  <p className="text-sm text-foreground">{msg.message}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{formatDateTime(msg.created_at)}</p>
-                </div>
-              ))}
+            <h3 className="text-xl font-bold text-foreground">Create New Ticket</h3>
+            <p className="text-sm text-muted-foreground text-center">Submit a new support request</p>
+          </CardContent>
+        </Card>
+
+        <Card
+          className="cursor-pointer hover:border-primary/50 transition-all hover:shadow-lg"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}
+          onClick={() => setView('list')}
+        >
+          <CardContent className="flex flex-col items-center justify-center py-16 gap-4">
+            <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
+              <List className="h-8 w-8 text-primary" />
             </div>
-            {ticket?.status === 'open' && (
-              <div className="flex gap-2">
-                <Input value={replyMsg} onChange={e => setReplyMsg(e.target.value)} placeholder="Type a reply..." onKeyDown={e => e.key === 'Enter' && replyMsg && sendReply.mutate()} />
-                <Button onClick={() => replyMsg && sendReply.mutate()} disabled={!replyMsg}><Send className="h-4 w-4" /></Button>
-                <Button variant="outline" onClick={() => closeTicket(selectedTicket)}>Close</Button>
-              </div>
-            )}
+            <h3 className="text-xl font-bold text-foreground">List All Tickets</h3>
+            <p className="text-sm text-muted-foreground text-center">View your existing support tickets</p>
           </CardContent>
         </Card>
       </div>
     );
   }
 
+  // CREATE VIEW - Form
+  if (view === 'create') {
+    return (
+      <div>
+        <Button variant="ghost" onClick={() => setView('home')} className="mb-4">
+          <ArrowLeft className="h-4 w-4 mr-2" /> Back
+        </Button>
+        <Card style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}>
+          <CardHeader><CardTitle>Create New Ticket</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label>Order ID</Label>
+              <Select value={orderId} onValueChange={setOrderId}>
+                <SelectTrigger className="border-0">
+                  <SelectValue placeholder="Select an order (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {orders?.map(order => (
+                    <SelectItem key={order.id} value={order.id}>{order.order_number}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Problem Title</Label>
+              <Input value={problemTitle} onChange={e => setProblemTitle(e.target.value)} placeholder="Brief title of your issue" className="border-0" />
+            </div>
+            <div>
+              <Label>Problem Description</Label>
+              <Textarea value={problemDesc} onChange={e => setProblemDesc(e.target.value)} placeholder="Describe your issue in detail..." rows={5} className="border-0" />
+            </div>
+            <Button
+              onClick={() => problemTitle && createTicket.mutate()}
+              disabled={!problemTitle || createTicket.isPending}
+              className="w-full"
+            >
+              {createTicket.isPending ? 'Submitting...' : 'Submit Ticket'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // LIST VIEW - Table
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-foreground">Support Tickets</h2>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" /> New Ticket</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Create New Ticket</DialogTitle></DialogHeader>
-            <div className="space-y-4">
-              <Input placeholder="Subject" value={newSubject} onChange={e => setNewSubject(e.target.value)} />
-              <Textarea placeholder="Describe your issue..." value={newMessage} onChange={e => setNewMessage(e.target.value)} />
-              <Button onClick={() => newSubject && createTicket.mutate()} disabled={!newSubject} className="w-full">Create Ticket</Button>
+      <Button variant="ghost" onClick={() => setView('home')} className="mb-4">
+        <ArrowLeft className="h-4 w-4 mr-2" /> Back
+      </Button>
+      <Card style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}>
+        <CardHeader><CardTitle>All Tickets</CardTitle></CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <p className="text-muted-foreground">Loading...</p>
+          ) : !tickets?.length ? (
+            <p className="text-center text-muted-foreground py-8">No tickets yet</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-center">Ticket No.</TableHead>
+                    <TableHead className="text-center">Problem Title</TableHead>
+                    <TableHead className="text-center">Opened Date</TableHead>
+                    <TableHead className="text-center">Status</TableHead>
+                    <TableHead className="text-center">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tickets.map(ticket => (
+                    <TableRow key={ticket.id}>
+                      <TableCell className="text-center font-medium">#{(ticket as any).ticket_number}</TableCell>
+                      <TableCell className="text-center">{ticket.subject}</TableCell>
+                      <TableCell className="text-center">{formatDate(ticket.created_at)}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge className={ticket.status === 'open' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}>
+                          {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleViewResponse(ticket.id)}
+                          style={{ backgroundColor: '#16a249', color: 'white', borderColor: '#16a249' }}
+                        >
+                          View Response
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
+          )}
+        </CardContent>
+      </Card>
 
-      {isLoading ? <p className="text-muted-foreground">Loading...</p> : !tickets?.length ? (
-        <div className="text-center py-16">
-          <MessageCircle className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <p className="text-xl text-muted-foreground">No tickets yet</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {tickets.map(ticket => (
-            <Card key={ticket.id} className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setSelectedTicket(ticket.id)}>
-              <CardContent className="p-4 flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-foreground">{ticket.subject}</h3>
-                  <p className="text-xs text-muted-foreground">{formatDate(ticket.created_at)}</p>
+      {/* View Response Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-success">Admin's Response</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {!messages?.length ? (
+              <p className="text-muted-foreground text-center py-4">No response from admin yet.</p>
+            ) : (
+              messages.map(msg => (
+                <div key={msg.id} className="p-3 rounded-lg bg-secondary">
+                  <p className="text-sm text-foreground">{msg.message}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{formatDateTime(msg.created_at)}</p>
                 </div>
-                <Badge className={ticket.status === 'open' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}>{ticket.status}</Badge>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
