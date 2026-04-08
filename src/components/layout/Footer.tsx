@@ -55,7 +55,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
           {/* About */}
-          <div className="md:col-span-2">
+          <div className="col-span-2 md:col-span-2">
             <Link to="/" className="text-xl font-bold flex items-center gap-2">
               {settings?.logo_url ? (
                 <img src={settings.logo_url} alt="Toolsmandu" className="h-8 object-contain" />
