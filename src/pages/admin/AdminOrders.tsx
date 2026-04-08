@@ -8,9 +8,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, Send, Save } from 'lucide-react';
+import { ChevronRight, Send, Save, Trash2, Plus } from 'lucide-react';
 import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { toast } from 'sonner';
+
+interface EditItem {
+  id: string;
+  isNew?: boolean;
+  product_id: string;
+  variation_id: string;
+  variation_name: string;
+  price: number;
+  quantity: number;
+}
 
 const AdminOrders = () => {
   const queryClient = useQueryClient();
@@ -18,7 +28,7 @@ const AdminOrders = () => {
   const [orderNote, setOrderNote] = useState('');
   const [editTotal, setEditTotal] = useState('');
   const [editStatus, setEditStatus] = useState('');
-  const [editItems, setEditItems] = useState<any[]>([]);
+  const [editItems, setEditItems] = useState<EditItem[]>([]);
   const [sending, setSending] = useState(false);
 
   const { data: orders, isLoading } = useQuery({
@@ -28,6 +38,17 @@ const AdminOrders = () => {
         .from('orders')
         .select('*, profiles(email, phone), order_items(*, products(name))')
         .order('created_at', { ascending: false });
+      return data || [];
+    },
+  });
+
+  const { data: products } = useQuery({
+    queryKey: ['all-products-for-orders'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('products')
+        .select('id, name, price, product_variations(id, name, price)')
+        .order('name');
       return data || [];
     },
   });
@@ -43,14 +64,32 @@ const AdminOrders = () => {
   });
 
   const updateOrder = useMutation({
-    mutationFn: async ({ id, total, status, items }: { id: string; total: number; status: string; items: any[] }) => {
+    mutationFn: async ({ id, total, status, items, deletedItemIds }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[] }) => {
       await supabase.from('orders').update({ total, status: status as any }).eq('id', id);
+
+      if (deletedItemIds.length > 0) {
+        await supabase.from('order_items').delete().in('id', deletedItemIds);
+      }
+
       for (const item of items) {
-        await supabase.from('order_items').update({
-          variation_name: item.variation_name || null,
-          price: item.price,
-          quantity: item.quantity,
-        }).eq('id', item.id);
+        if (item.isNew) {
+          await supabase.from('order_items').insert({
+            order_id: id,
+            product_id: item.product_id || null,
+            variation_id: item.variation_id || null,
+            variation_name: item.variation_name || null,
+            price: item.price,
+            quantity: item.quantity,
+          });
+        } else {
+          await supabase.from('order_items').update({
+            product_id: item.product_id || null,
+            variation_id: item.variation_id || null,
+            variation_name: item.variation_name || null,
+            price: item.price,
+            quantity: item.quantity,
+          }).eq('id', item.id);
+        }
       }
     },
     onSuccess: () => {
@@ -60,14 +99,18 @@ const AdminOrders = () => {
     },
   });
 
+  const [deletedItemIds, setDeletedItemIds] = useState<string[]>([]);
+
   const openOrderDetail = (order: any) => {
     setSelectedOrder(order);
     setEditTotal(String(order.total));
     setEditStatus(order.status);
+    setDeletedItemIds([]);
     setEditItems(
       (order.order_items || []).map((item: any) => ({
         id: item.id,
-        productName: item.products?.name || 'Product',
+        product_id: item.product_id || '',
+        variation_id: item.variation_id || '',
         variation_name: item.variation_name || '',
         price: item.price,
         quantity: item.quantity,
@@ -83,11 +126,66 @@ const AdminOrders = () => {
       total: parseFloat(editTotal) || selectedOrder.total,
       status: editStatus,
       items: editItems,
+      deletedItemIds,
     });
   };
 
   const updateItemField = (index: number, field: string, value: any) => {
     setEditItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
+  };
+
+  const handleProductChange = (index: number, productId: string) => {
+    const product = products?.find((p: any) => p.id === productId);
+    setEditItems(prev => prev.map((item, i) =>
+      i === index ? {
+        ...item,
+        product_id: productId,
+        variation_id: '',
+        variation_name: '',
+        price: product?.price || 0,
+      } : item
+    ));
+  };
+
+  const handleVariationChange = (index: number, variationId: string) => {
+    const item = editItems[index];
+    const product = products?.find((p: any) => p.id === item.product_id);
+    const variation = (product as any)?.product_variations?.find((v: any) => v.id === variationId);
+    if (variation) {
+      setEditItems(prev => prev.map((it, i) =>
+        i === index ? {
+          ...it,
+          variation_id: variationId,
+          variation_name: variation.name,
+          price: variation.price,
+        } : it
+      ));
+    }
+  };
+
+  const addItem = () => {
+    setEditItems(prev => [...prev, {
+      id: crypto.randomUUID(),
+      isNew: true,
+      product_id: '',
+      variation_id: '',
+      variation_name: '',
+      price: 0,
+      quantity: 1,
+    }]);
+  };
+
+  const removeItem = (index: number) => {
+    const item = editItems[index];
+    if (!item.isNew) {
+      setDeletedItemIds(prev => [...prev, item.id]);
+    }
+    setEditItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const getVariationsForProduct = (productId: string) => {
+    const product = products?.find((p: any) => p.id === productId);
+    return (product as any)?.product_variations || [];
   };
 
   const handleSendNote = async () => {
@@ -170,9 +268,7 @@ const AdminOrders = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {['processing', 'completed', 'cancelled', 'refunded'].map((s) => (
-                          <SelectItem key={s} value={s}>
-                            {s}
-                          </SelectItem>
+                          <SelectItem key={s} value={s}>{s}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -191,9 +287,9 @@ const AdminOrders = () => {
 
       {/* Order Detail Dialog */}
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Order #{selectedOrder?.order_number || selectedOrder?.id?.slice(0, 8)}</DialogTitle>
+            <DialogTitle>Edit Order #{selectedOrder?.order_number || selectedOrder?.id?.slice(0, 8)}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -206,42 +302,77 @@ const AdminOrders = () => {
 
             {/* Editable Products */}
             <div>
-              <Label className="text-xs text-muted-foreground mb-2 block">Products</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-xs text-muted-foreground">Products</Label>
+                <Button variant="outline" size="sm" onClick={addItem} className="h-7 text-xs">
+                  <Plus className="h-3 w-3 mr-1" /> Add Item
+                </Button>
+              </div>
               <div className="space-y-3">
-                {editItems.map((item, index) => (
-                  <div key={item.id} className="bg-muted/20 rounded-lg p-3 space-y-2">
-                    <p className="text-sm font-medium text-foreground">{item.productName}</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div>
-                        <Label className="text-[10px] text-muted-foreground">Variation</Label>
-                        <Input
-                          value={item.variation_name}
-                          onChange={(e) => updateItemField(index, 'variation_name', e.target.value)}
-                          placeholder="Variation"
-                          className="h-8 text-xs"
-                        />
+                {editItems.map((item, index) => {
+                  const variations = getVariationsForProduct(item.product_id);
+                  return (
+                    <div key={item.id} className="bg-muted/20 rounded-lg p-3 space-y-2">
+                      <div className="flex items-start gap-2">
+                        <div className="flex-1 grid grid-cols-2 gap-2">
+                          <div>
+                            <Label className="text-[10px] text-muted-foreground">Product</Label>
+                            <Select value={item.product_id} onValueChange={(v) => handleProductChange(index, v)}>
+                              <SelectTrigger className="h-8 text-xs">
+                                <SelectValue placeholder="Select product" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {products?.map((p: any) => (
+                                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label className="text-[10px] text-muted-foreground">Variation</Label>
+                            <Select
+                              value={item.variation_id}
+                              onValueChange={(v) => handleVariationChange(index, v)}
+                              disabled={!variations.length}
+                            >
+                              <SelectTrigger className="h-8 text-xs">
+                                <SelectValue placeholder={variations.length ? "Select variation" : "No variations"} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {variations.map((v: any) => (
+                                  <SelectItem key={v.id} value={v.id}>{v.name} — NPR {v.price}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 mt-4 text-destructive hover:text-destructive" onClick={() => removeItem(index)}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
                       </div>
-                      <div>
-                        <Label className="text-[10px] text-muted-foreground">Price (NPR)</Label>
-                        <Input
-                          value={item.price}
-                          onChange={(e) => updateItemField(index, 'price', parseFloat(e.target.value) || 0)}
-                          type="number"
-                          className="h-8 text-xs"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-[10px] text-muted-foreground">Qty</Label>
-                        <Input
-                          value={item.quantity}
-                          onChange={(e) => updateItemField(index, 'quantity', parseInt(e.target.value) || 1)}
-                          type="number"
-                          className="h-8 text-xs"
-                        />
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <Label className="text-[10px] text-muted-foreground">Price (NPR)</Label>
+                          <Input
+                            value={item.price}
+                            onChange={(e) => updateItemField(index, 'price', parseFloat(e.target.value) || 0)}
+                            type="number"
+                            className="h-8 text-xs"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-[10px] text-muted-foreground">Quantity</Label>
+                          <Input
+                            value={item.quantity}
+                            onChange={(e) => updateItemField(index, 'quantity', parseInt(e.target.value) || 1)}
+                            type="number"
+                            className="h-8 text-xs"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
