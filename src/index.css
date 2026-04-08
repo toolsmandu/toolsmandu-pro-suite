@@ -112,3 +112,7 @@
     background: linear-gradient(180deg, hsl(222 47% 11%) 0%, hsl(222 47% 8%) 100%);
   }
 }
+
+.admin-light .admin-active-link {
+  color: rgb(249, 112, 21) !important;
+}
