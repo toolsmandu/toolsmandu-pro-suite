@@ -46,7 +46,7 @@ const AdminLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full" style={{ backgroundColor: '#ffffff' }}>
+      <div className="min-h-screen flex w-full">
         <Sidebar collapsible="icon">
           <SidebarContent>
             <SidebarGroup>
