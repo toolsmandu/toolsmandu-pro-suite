@@ -27,7 +27,7 @@ const CategoryPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-foreground mb-8">{category?.name || 'Category'}</h1>
+      <h1 className="text-3xl font-bold text-foreground mb-8 text-center">{category?.name || 'Category'}</h1>
       {isLoading ? null : products && products.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {products.map(p => <ProductCard key={p.id} {...p} />)}
