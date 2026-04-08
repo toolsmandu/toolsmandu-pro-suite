@@ -78,7 +78,7 @@ const AdminLayout = () => {
                         <SidebarMenuSub>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <NavLink to="/admin/products" end className="hover:bg-muted/50" activeClassName="text-primary font-medium">
+                              <NavLink to="/admin/products" end className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                 <Package className="mr-2 h-3 w-3" />
                                 <span>All Products</span>
                               </NavLink>
@@ -86,7 +86,7 @@ const AdminLayout = () => {
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <NavLink to="/admin/categories" className="hover:bg-muted/50" activeClassName="text-primary font-medium">
+                              <NavLink to="/admin/categories" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                 <FolderOpen className="mr-2 h-3 w-3" />
                                 <span>Categories</span>
                               </NavLink>
@@ -94,7 +94,7 @@ const AdminLayout = () => {
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <NavLink to="/admin/product-types" className="hover:bg-muted/50" activeClassName="text-primary font-medium">
+                              <NavLink to="/admin/product-types" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                 <Tag className="mr-2 h-3 w-3" />
                                 <span>Product Types</span>
                               </NavLink>
@@ -108,7 +108,7 @@ const AdminLayout = () => {
                   {bottomLinks.map(({ to, icon: Icon, label }) => (
                     <SidebarMenuItem key={to}>
                       <SidebarMenuButton asChild>
-                        <NavLink to={to} className="hover:bg-muted/50" activeClassName="bg-muted text-primary font-medium">
+                        <NavLink to={to} className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
                           <Icon className="mr-2 h-4 w-4" />
                           <span>{label}</span>
                         </NavLink>
