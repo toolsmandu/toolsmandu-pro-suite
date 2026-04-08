@@ -407,7 +407,50 @@ const AdminSettings = () => {
         </CardContent>
       </Card>
 
+      {/* Footer Appearance */}
       <Card>
+        <CardHeader><CardTitle>Footer Appearance</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Background Color</Label>
+              <div className="flex gap-2 items-center">
+                <Input type="color" value={footerBgColor} onChange={e => setFooterBgColor(e.target.value)} className="w-12 h-10 p-1 cursor-pointer" />
+                <Input value={footerBgColor} onChange={e => setFooterBgColor(e.target.value)} placeholder="#011D3E" />
+              </div>
+            </div>
+            <div>
+              <Label>Text Color</Label>
+              <div className="flex gap-2 items-center">
+                <Input type="color" value={footerTextColor} onChange={e => setFooterTextColor(e.target.value)} className="w-12 h-10 p-1 cursor-pointer" />
+                <Input value={footerTextColor} onChange={e => setFooterTextColor(e.target.value)} placeholder="#ffffff" />
+              </div>
+            </div>
+          </div>
+          <div>
+            <Label>Copyright Text</Label>
+            <Input value={footerCopyright} onChange={e => setFooterCopyright(e.target.value)} placeholder="© {year} Toolsmandu. All rights reserved." />
+            <p className="text-xs text-muted-foreground mt-1">Use {'{year}'} to auto-insert the current year.</p>
+          </div>
+          <div>
+            <Label>Reviews Section Title</Label>
+            <Input value={footerReviewsTitle} onChange={e => setFooterReviewsTitle(e.target.value)} placeholder="Check Our Reviews" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <ImageUpload value={footerTrustpilotImage} onChange={setFooterTrustpilotImage} label="Trustpilot Image" />
+              <div><Label>Trustpilot Link URL</Label><Input value={footerTrustpilotLink} onChange={e => setFooterTrustpilotLink(e.target.value)} placeholder="https://..." /></div>
+            </div>
+            <div className="space-y-2">
+              <ImageUpload value={footerGoogleImage} onChange={setFooterGoogleImage} label="Google Reviews Image" />
+              <div><Label>Google Reviews Link URL</Label><Input value={footerGoogleLink} onChange={e => setFooterGoogleLink(e.target.value)} placeholder="https://..." /></div>
+            </div>
+          </div>
+          <ImageUpload value={footerPaymentImage} onChange={setFooterPaymentImage} label="Payment Methods Image" />
+          <Button onClick={saveSettings}>Save Footer Settings</Button>
+        </CardContent>
+      </Card>
+
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Footer Links</CardTitle>
