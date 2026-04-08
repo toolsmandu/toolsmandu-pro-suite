@@ -81,23 +81,6 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                   </li>
                 ))}
               </ul>
-              {name === 'Information' && (trustpilotImg || googleImg) && (
-                <div className="mt-6 col-span-full">
-                  {reviewsTitle && <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider" style={{ color: textColor }}>{reviewsTitle}</h4>}
-                  <div className="flex items-center gap-8">
-                    {trustpilotImg && (
-                      <a href={trustpilotLink || '#'} target="_blank" rel="noopener noreferrer">
-                        <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-12 md:h-16 object-contain" />
-                      </a>
-                    )}
-                    {googleImg && (
-                      <a href={googleLink || '#'} target="_blank" rel="noopener noreferrer">
-                        <img src={googleImg} alt="Google Reviews" className="h-12 md:h-16 object-contain" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           ))}
         </div>
