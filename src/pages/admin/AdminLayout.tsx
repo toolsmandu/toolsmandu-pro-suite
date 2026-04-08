@@ -8,7 +8,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film } from 'lucide-react';
+import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film, HelpCircle } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
@@ -37,6 +37,7 @@ const AdminLayout = () => {
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/admin/media', icon: Film, label: 'Media' },
     { to: '/admin/hero-slides', icon: Image, label: 'Hero Slider' },
+    { to: '/admin/faqs', icon: HelpCircle, label: 'FAQs' },
     { to: '/admin/tickets', icon: MessageCircle, label: 'Tickets' },
     ...(isAdmin ? [{ to: '/admin/users', icon: Users, label: 'Users' }] : []),
     ...(isAdmin ? [{ to: '/admin/settings', icon: Settings, label: 'Settings' }] : []),
