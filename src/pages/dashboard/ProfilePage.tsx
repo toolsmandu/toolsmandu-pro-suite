@@ -30,7 +30,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <Card>
+    <Card style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}>
       <CardHeader><CardTitle>Profile Settings</CardTitle></CardHeader>
       <CardContent className="space-y-4">
         <div><Label>Name</Label><Input value={name} onChange={e => setName(e.target.value)} placeholder="Your name" /></div>

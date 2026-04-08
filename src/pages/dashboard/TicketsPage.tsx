@@ -75,7 +75,7 @@ const TicketsPage = () => {
     return (
       <div>
         <Button variant="ghost" onClick={() => setSelectedTicket(null)} className="mb-4">← Back to Tickets</Button>
-        <Card>
+        <Card style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}>
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">{ticket?.subject}</CardTitle>
