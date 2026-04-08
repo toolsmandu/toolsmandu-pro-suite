@@ -17,6 +17,8 @@ const statusColors: Record<string, string> = {
   refunded: 'bg-muted text-muted-foreground border-border',
 };
 
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);
   toast.success("Copied to clipboard");
@@ -46,6 +48,28 @@ const OrdersPage = () => {
     },
     enabled: !!user,
   });
+
+  // Fetch all non-admin notes for all user orders to determine which orders have admin messages
+  const { data: allNotes } = useQuery({
+    queryKey: ['my-all-order-notes'],
+    queryFn: async () => {
+      if (!orders?.length) return [];
+      const orderIds = orders.map(o => o.id);
+      const { data } = await supabase
+        .from('order_notes')
+        .select('*')
+        .in('order_id', orderIds)
+        .eq('is_admin_only', false)
+        .order('created_at', { ascending: true });
+      return data || [];
+    },
+    enabled: !!orders && orders.length > 0,
+  });
+
+  const getNotesForOrder = (orderId: string) => {
+    if (!allNotes) return [];
+    return allNotes.filter((n: any) => n.order_id === orderId);
+  };
 
   const { data: orderNotes } = useQuery({
     queryKey: ['my-order-notes', selectedOrder?.id],
@@ -118,20 +142,27 @@ const OrdersPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map(order => (
-              <TableRow key={order.id}>
-                <TableCell className="font-mono text-xs">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
-                <TableCell className="text-sm">{getProductLabel(order)}</TableCell>
-                <TableCell className="text-xs text-muted-foreground">{formatDate(order.created_at)}</TableCell>
-                <TableCell className="font-semibold">NPR {order.total}</TableCell>
-                <TableCell><Badge className={statusColors[order.status]}>{order.status}</Badge></TableCell>
-                <TableCell>
-                  <Button variant="link" size="sm" className="text-primary p-0 h-auto" onClick={() => setSelectedOrder(order)}>
-                    View Details
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {orders.map(order => {
+              const hasNotes = getNotesForOrder(order.id).length > 0;
+              return (
+                <TableRow key={order.id}>
+                  <TableCell className="font-mono text-xs">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
+                  <TableCell className="text-sm">{getProductLabel(order)}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">{formatDate(order.created_at)}</TableCell>
+                  <TableCell className="font-semibold">NPR {order.total}</TableCell>
+                  <TableCell><Badge className={statusColors[order.status]}>{capitalize(order.status)}</Badge></TableCell>
+                  <TableCell>
+                    {hasNotes ? (
+                      <Button variant="link" size="sm" className="text-primary p-0 h-auto" onClick={() => setSelectedOrder(order)}>
+                        View Admin's Message
+                      </Button>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
@@ -150,7 +181,7 @@ const OrdersPage = () => {
                 <div className="flex justify-between"><span className="text-muted-foreground">Product</span><span className="text-foreground">{getProductLabel(selectedOrder)}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Price</span><span className="font-semibold text-foreground">NPR {selectedOrder.total}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="text-foreground">{formatDate(selectedOrder.created_at)}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge className={statusColors[selectedOrder.status]}>{selectedOrder.status}</Badge></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge className={statusColors[selectedOrder.status]}>{capitalize(selectedOrder.status)}</Badge></div>
               </div>
 
               {/* Credentials */}
@@ -203,7 +234,7 @@ const OrdersPage = () => {
 
               {/* Order Notes */}
               <div className="border-t border-border pt-3">
-                <p className="text-xs font-semibold text-primary mb-2">Order Notes</p>
+                <p className="text-xs font-semibold text-primary mb-2">Admin's Message</p>
                 {orderNotes && orderNotes.length > 0 ? (
                   <div className="space-y-2">
                     {orderNotes.map((note: any) => (
@@ -214,7 +245,7 @@ const OrdersPage = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-muted-foreground">No notes for this order.</p>
+                  <p className="text-xs text-muted-foreground">No messages for this order.</p>
                 )}
               </div>
             </div>
