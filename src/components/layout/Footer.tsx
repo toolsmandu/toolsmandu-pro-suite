@@ -84,18 +84,18 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
               {name === 'Information' && (
                 <div className="mt-6">
                   {reviewsTitle && <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider" style={{ color: textColor }}>{reviewsTitle}</h4>}
-                  {trustpilotImg && (
-                    <a href={trustpilotLink || '#'} target="_blank" rel="noopener noreferrer">
-                      <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-10 md:h-16 object-contain" />
-                    </a>
-                  )}
-                </div>
-              )}
-              {name === 'Our Policy' && googleImg && (
-                <div className="mt-6">
-                  <a href={googleLink || '#'} target="_blank" rel="noopener noreferrer">
-                    <img src={googleImg} alt="Google Reviews" className="h-10 md:h-16 object-contain" />
-                  </a>
+                  <div className="flex items-center gap-6">
+                    {trustpilotImg && (
+                      <a href={trustpilotLink || '#'} target="_blank" rel="noopener noreferrer">
+                        <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-10 md:h-16 object-contain" />
+                      </a>
+                    )}
+                    {googleImg && (
+                      <a href={googleLink || '#'} target="_blank" rel="noopener noreferrer">
+                        <img src={googleImg} alt="Google Reviews" className="h-10 md:h-16 object-contain" />
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
