@@ -54,6 +54,8 @@ const ProductFAQs = ({ productName }: { productName: string }) => {
 const ProductPage = () => {
   const { slug } = useParams();
   const { addItem } = useCart();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', slug],
