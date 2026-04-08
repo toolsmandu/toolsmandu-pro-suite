@@ -742,28 +742,41 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          order_id: string | null
           status: Database["public"]["Enums"]["ticket_status"]
           subject: string
+          ticket_number: number
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          order_id?: string | null
           status?: Database["public"]["Enums"]["ticket_status"]
           subject: string
+          ticket_number?: number
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          order_id?: string | null
           status?: Database["public"]["Enums"]["ticket_status"]
           subject?: string
+          ticket_number?: number
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tickets_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tickets_user_id_profiles_fkey"
             columns: ["user_id"]
