@@ -37,6 +37,8 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminMedia from "./pages/admin/AdminMedia";
 import AdminFAQs from "./pages/admin/AdminFAQs";
+import AdminFamilySharing from "./pages/admin/AdminFamilySharing";
+import AdminFamilySharingDetail from "./pages/admin/AdminFamilySharingDetail";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +82,8 @@ const App = () => (
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="faqs" element={<AdminFAQs />} />
+                <Route path="family-sharing" element={<AdminFamilySharing />} />
+                <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
               </Route>
             </Routes>
           </BrowserRouter>
