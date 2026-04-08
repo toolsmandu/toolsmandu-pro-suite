@@ -236,10 +236,6 @@ const AdminOrders = () => {
     } finally {
       setSending(false);
     }
-      toast.error('Failed to send note');
-    } finally {
-      setSending(false);
-    }
   };
 
   return (
