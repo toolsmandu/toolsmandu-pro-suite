@@ -47,7 +47,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
 
   return (
     <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 flex flex-col">
-      <Link to={`/product/${slug}`} className="block relative overflow-hidden">
+      <Link to={`/item/${slug}`} className="block relative overflow-hidden">
         <div className="aspect-square bg-secondary flex items-center justify-center">
           {image_url ? (
             <img src={image_url} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
@@ -64,7 +64,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
       </Link>
 
       <div className="p-4 flex-1 flex flex-col" style={{ backgroundColor: '#0a2e5c' }}>
-        <Link to={`/product/${slug}`}>
+        <Link to={`/item/${slug}`}>
           <h3 className="font-medium text-foreground text-sm line-clamp-2 hover:text-primary transition-colors">{name}</h3>
         </Link>
         {duration && <p className="text-xs text-muted-foreground mt-1">{duration}</p>}
