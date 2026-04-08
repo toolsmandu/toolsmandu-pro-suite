@@ -98,7 +98,7 @@ const TicketsPage = () => {
         >
           <CardContent className="flex flex-col items-center justify-center py-16 gap-4">
             <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
-              <Plus className="h-8 w-8 text-primary" />
+              <Plus className="h-8 w-8 text-foreground" />
             </div>
             <h3 className="text-xl font-bold text-foreground">Create New Ticket</h3>
             <p className="text-sm text-muted-foreground text-center">Submit a new support request</p>
@@ -112,7 +112,7 @@ const TicketsPage = () => {
         >
           <CardContent className="flex flex-col items-center justify-center py-16 gap-4">
             <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
-              <List className="h-8 w-8 text-primary" />
+              <List className="h-8 w-8 text-foreground" />
             </div>
             <h3 className="text-xl font-bold text-foreground">List All Tickets</h3>
             <p className="text-sm text-muted-foreground text-center">View your existing support tickets</p>
