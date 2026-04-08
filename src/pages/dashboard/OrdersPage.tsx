@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Package, Copy, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/formatDate';
@@ -21,6 +24,7 @@ const copyToClipboard = (text: string) => {
 
 const OrdersPage = () => {
   const { user } = useAuth();
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['my-orders'],
@@ -41,6 +45,20 @@ const OrdersPage = () => {
       return (data || []) as any[];
     },
     enabled: !!user,
+  });
+
+  const { data: orderNotes } = useQuery({
+    queryKey: ['my-order-notes', selectedOrder?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('order_notes')
+        .select('*')
+        .eq('order_id', selectedOrder!.id)
+        .eq('is_admin_only', false)
+        .order('created_at', { ascending: true });
+      return data || [];
+    },
+    enabled: !!selectedOrder,
   });
 
   const getOrderCredentials = (orderId: string) => {
@@ -65,6 +83,14 @@ const OrdersPage = () => {
     return remaining > 0 ? remaining : 0;
   };
 
+  const getProductLabel = (order: any) => {
+    const items = (order.order_items as any[]) || [];
+    if (!items.length) return 'N/A';
+    const item = items[0];
+    const name = item.products?.name || 'Product';
+    return item.variation_name ? `${name} - ${item.variation_name}` : name;
+  };
+
   if (isLoading) return <div className="text-muted-foreground">Loading orders...</div>;
 
   if (!orders?.length) return (
@@ -74,36 +100,62 @@ const OrdersPage = () => {
     </div>
   );
 
+  const creds = selectedOrder ? getOrderCredentials(selectedOrder.id) : [];
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-bold text-foreground">My Orders</h2>
-      {orders.map(order => {
-        const creds = getOrderCredentials(order.id);
-        return (
-          <Card key={order.id}>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-mono text-muted-foreground">#{(order as any).order_number || order.id.slice(0, 8)}</CardTitle>
-                <Badge className={statusColors[order.status]}>{order.status}</Badge>
-              </div>
-              <p className="text-xs text-muted-foreground">{formatDate(order.created_at)}</p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {(order.order_items as any[])?.map((item: any) => (
-                  <div key={item.id} className="flex items-center justify-between text-sm">
-                    <span className="text-foreground">{item.products?.name || 'Product'}{item.variation_name ? ` - ${item.variation_name}` : ''}</span>
-                    <span className="text-muted-foreground">NPR {item.price}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="border-t border-border mt-3 pt-3 flex justify-between font-bold text-foreground">
-                <span>Total</span><span>NPR {order.total}</span>
+      <div className="border border-border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Order ID</TableHead>
+              <TableHead>Product</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {orders.map(order => (
+              <TableRow key={order.id}>
+                <TableCell className="font-mono text-xs">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
+                <TableCell className="text-sm">{getProductLabel(order)}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{formatDate(order.created_at)}</TableCell>
+                <TableCell className="font-semibold">NPR {order.total}</TableCell>
+                <TableCell><Badge className={statusColors[order.status]}>{order.status}</Badge></TableCell>
+                <TableCell>
+                  <Button variant="link" size="sm" className="text-primary p-0 h-auto" onClick={() => setSelectedOrder(order)}>
+                    View Details
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Order Details Dialog */}
+      <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Order #{(selectedOrder as any)?.order_number || selectedOrder?.id?.slice(0, 8)}</DialogTitle>
+          </DialogHeader>
+
+          {selectedOrder && (
+            <div className="space-y-4">
+              {/* Order Info */}
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between"><span className="text-muted-foreground">Product</span><span className="text-foreground">{getProductLabel(selectedOrder)}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Price</span><span className="font-semibold text-foreground">NPR {selectedOrder.total}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="text-foreground">{formatDate(selectedOrder.created_at)}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge className={statusColors[selectedOrder.status]}>{selectedOrder.status}</Badge></div>
               </div>
 
               {/* Credentials */}
               {creds.length > 0 && (
-                <div className="border-t border-border mt-3 pt-3">
+                <div className="border-t border-border pt-3">
                   <p className="text-xs font-semibold text-primary mb-2">Your Credentials</p>
                   <div className="space-y-2">
                     {creds.map((a: any) => {
@@ -112,16 +164,12 @@ const OrdersPage = () => {
                       return (
                         <div key={a.id} className="bg-muted/30 rounded-lg p-3 space-y-2">
                           <div className="grid grid-cols-2 gap-2">
-                            <button
-                              onClick={() => copyToClipboard(cred?.username || "")}
-                              className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-primary/20 text-primary text-xs font-medium hover:bg-primary/30 transition-colors"
-                            >
+                            <button onClick={() => copyToClipboard(cred?.username || "")}
+                              className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-primary/20 text-primary text-xs font-medium hover:bg-primary/30 transition-colors">
                               {cred?.username} <Copy className="h-3 w-3" />
                             </button>
-                            <button
-                              onClick={() => copyToClipboard(cred?.password || "")}
-                              className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors"
-                            >
+                            <button onClick={() => copyToClipboard(cred?.password || "")}
+                              className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
                               {cred?.password} <Copy className="h-3 w-3" />
                             </button>
                           </div>
@@ -152,10 +200,27 @@ const OrdersPage = () => {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
-        );
-      })}
+
+              {/* Order Notes */}
+              <div className="border-t border-border pt-3">
+                <p className="text-xs font-semibold text-primary mb-2">Order Notes</p>
+                {orderNotes && orderNotes.length > 0 ? (
+                  <div className="space-y-2">
+                    {orderNotes.map((note: any) => (
+                      <div key={note.id} className="bg-muted/30 rounded-lg p-3">
+                        <p className="text-sm text-foreground">{note.note}</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">{formatDate(note.created_at)}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">No notes for this order.</p>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
