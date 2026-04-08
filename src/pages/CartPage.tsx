@@ -77,7 +77,6 @@ const CartPage = () => {
                 <p className="font-bold text-foreground mt-1">NPR {item.price}</p>
               </div>
               <Button variant="ghost" size="icon" onClick={() => removeItem(item.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => removeItem(item.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
             </div>
           ))}
         </div>
