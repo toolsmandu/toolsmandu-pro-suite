@@ -154,7 +154,7 @@ const OrdersPage = () => {
                   <TableCell>
                     {hasNotes ? (
                       <Badge
-                        className="bg-primary/20 text-primary border-primary/30 cursor-pointer hover:bg-primary/30 transition-colors"
+                        className="bg-success text-white border-success/30 cursor-pointer hover:bg-success/80 transition-colors"
                         onClick={() => setSelectedOrder(order)}
                       >
                         View Admin's Message
