@@ -136,7 +136,7 @@ const OrdersPage = () => {
               <TableHead>Order ID</TableHead>
               <TableHead>Product</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Price</TableHead>
+              <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
@@ -153,9 +153,12 @@ const OrdersPage = () => {
                   <TableCell><Badge className={statusColors[order.status]}>{capitalize(order.status)}</Badge></TableCell>
                   <TableCell>
                     {hasNotes ? (
-                      <Button variant="link" size="sm" className="text-primary p-0 h-auto" onClick={() => setSelectedOrder(order)}>
+                      <Badge
+                        className="bg-primary/20 text-primary border-primary/30 cursor-pointer hover:bg-primary/30 transition-colors"
+                        onClick={() => setSelectedOrder(order)}
+                      >
                         View Admin's Message
-                      </Button>
+                      </Badge>
                     ) : (
                       <span className="text-muted-foreground">-</span>
                     )}
@@ -179,7 +182,7 @@ const OrdersPage = () => {
               {/* Order Info */}
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Product</span><span className="text-foreground">{getProductLabel(selectedOrder)}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Price</span><span className="font-semibold text-foreground">NPR {selectedOrder.total}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><span className="font-semibold text-foreground">NPR {selectedOrder.total}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="text-foreground">{formatDate(selectedOrder.created_at)}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge className={statusColors[selectedOrder.status]}>{capitalize(selectedOrder.status)}</Badge></div>
               </div>

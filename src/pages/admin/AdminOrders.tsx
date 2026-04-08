@@ -353,7 +353,7 @@ const AdminOrders = () => {
                           </Select>
                         </div>
                         <div className="w-24">
-                          <Label className="text-[10px] text-muted-foreground">Price</Label>
+                          <Label className="text-[10px] text-muted-foreground">Amount</Label>
                           <Input
                             value={item.price}
                             onChange={(e) => updateItemField(index, 'price', parseFloat(e.target.value) || 0)}
