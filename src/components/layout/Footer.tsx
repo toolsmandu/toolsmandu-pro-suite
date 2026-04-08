@@ -65,10 +65,10 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                   <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider" style={{ color: '#ffffff' }}>Check Our Reviews</h4>
                   <div className="flex items-center gap-6">
                     <a href="https://link.toolsmandu.com/trustpilot" target="_blank" rel="noopener noreferrer">
-                      <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-10 object-contain" />
+                      <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-10 md:h-14 object-contain" />
                     </a>
                     <a href="https://link.toolsmandu.com/googlereviews" target="_blank" rel="noopener noreferrer">
-                      <img src={googleReviewsImg} alt="Google Reviews" className="h-10 object-contain" />
+                      <img src={googleReviewsImg} alt="Google Reviews" className="h-10 md:h-14 object-contain" />
                     </a>
                   </div>
                 </div>
