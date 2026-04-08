@@ -42,7 +42,7 @@ const AdminDashboard = () => {
       <h2 className="text-2xl font-bold text-foreground mb-6">Dashboard Overview</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map(({ label, value, icon: Icon, color }) => (
-          <Card key={label}>
+          <Card key={label} className="border border-border shadow-sm">
             <CardContent className="p-6 flex items-center gap-4">
               <div className={`p-3 rounded-lg bg-secondary ${color}`}><Icon className="h-6 w-6" /></div>
               <div>

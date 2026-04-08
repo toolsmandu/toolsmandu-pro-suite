@@ -46,7 +46,7 @@ const AdminLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="admin-light min-h-screen flex w-full bg-background text-foreground">
         <Sidebar collapsible="icon">
           <SidebarContent>
             <SidebarGroup>
@@ -121,14 +121,14 @@ const AdminLayout = () => {
           </SidebarContent>
         </Sidebar>
         <div className="flex-1 flex flex-col">
-          <header className="h-14 flex items-center border-b border-border px-4 gap-4">
-            <SidebarTrigger />
+          <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background">
+            <SidebarTrigger className="text-foreground" />
             <h1 className="font-semibold text-foreground">Toolsmandu Admin</h1>
             <div className="ml-auto">
               <a href="/" className="text-sm text-muted-foreground hover:text-foreground">← Back to Store</a>
             </div>
           </header>
-          <main className="flex-1 p-6 overflow-auto">
+          <main className="flex-1 p-6 overflow-auto bg-muted/30">
             <Outlet />
           </main>
         </div>
