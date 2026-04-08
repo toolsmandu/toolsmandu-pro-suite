@@ -12,6 +12,13 @@ import { ChevronRight, Send, Save, Trash2, Plus } from 'lucide-react';
 import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { toast } from 'sonner';
 
+const statusColors: Record<string, string> = {
+  processing: 'bg-warning/20 text-warning',
+  completed: 'bg-success/20 text-success',
+  cancelled: 'bg-destructive/20 text-destructive',
+  refunded: 'bg-muted text-muted-foreground',
+};
+
 interface EditItem {
   id: string;
   isNew?: boolean;
@@ -53,15 +60,6 @@ const AdminOrders = () => {
     },
   });
 
-  const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      await supabase.from('orders').update({ status: status as any }).eq('id', id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
-      toast.success('Status updated');
-    },
-  });
 
   const updateOrder = useMutation({
     mutationFn: async ({ id, total, status, items, deletedItemIds }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[] }) => {
@@ -262,16 +260,9 @@ const AdminOrders = () => {
                   </TableCell>
                   <TableCell className="font-bold text-foreground">NPR {order.total}</TableCell>
                   <TableCell>
-                    <Select value={order.status} onValueChange={(v) => updateStatus.mutate({ id: order.id, status: v })}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['processing', 'completed', 'cancelled', 'refunded'].map((s) => (
-                          <SelectItem key={s} value={s}>{s}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[order.status] || ''}`}>
+                      {order.status}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="icon" onClick={() => openOrderDetail(order)}>
