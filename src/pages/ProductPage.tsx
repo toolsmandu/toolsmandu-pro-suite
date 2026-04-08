@@ -334,7 +334,7 @@ const ProductPage = () => {
                         {isWishlisted ? 'Wishlisted' : 'Wishlist'}
                       </button>
                     </div>
-                    <div className="border-t mt-3 mb-3" style={{ borderColor: 'white' }}></div>
+                    <div className="border-t mt-1 mb-3" style={{ borderColor: 'white' }}></div>
                     <div className="flex items-center gap-8">
                       {product.categories && (
                         <Link to={`/item-category/${(product.categories as any).slug}`}>
