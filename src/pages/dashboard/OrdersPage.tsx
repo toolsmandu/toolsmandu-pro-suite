@@ -92,7 +92,7 @@ const OrdersPage = () => {
               <div className="space-y-2">
                 {(order.order_items as any[])?.map((item: any) => (
                   <div key={item.id} className="flex items-center justify-between text-sm">
-                    <span className="text-foreground">{item.products?.name || 'Product'}{item.variation_name ? ` - ${item.variation_name}` : ''} × {item.quantity}</span>
+                    <span className="text-foreground">{item.products?.name || 'Product'}{item.variation_name ? ` - ${item.variation_name}` : ''}</span>
                     <span className="text-muted-foreground">NPR {item.price}</span>
                   </div>
                 ))}
