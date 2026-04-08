@@ -49,16 +49,18 @@ const TicketsPage = () => {
     enabled: !!user,
   });
 
-  // Fetch messages for selected ticket (admin replies only)
-  const { data: messages } = useQuery({
+  // Fetch all messages for selected ticket
+  const { data: allMessages } = useQuery({
     queryKey: ['ticket-messages', selectedTicketId],
     queryFn: async () => {
       const { data } = await supabase.from('ticket_messages').select('*').eq('ticket_id', selectedTicketId!).order('created_at');
-      // Filter to only show messages NOT from the current user (admin replies)
-      return (data || []).filter(msg => msg.sender_id !== user?.id);
+      return data || [];
     },
     enabled: !!selectedTicketId,
   });
+
+  const userMessage = allMessages?.find(msg => msg.sender_id === user?.id);
+  const adminMessages = allMessages?.filter(msg => msg.sender_id !== user?.id) || [];
 
   const createTicket = useMutation({
     mutationFn: async () => {
