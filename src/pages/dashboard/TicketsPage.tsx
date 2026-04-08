@@ -135,7 +135,7 @@ const TicketsPage = () => {
             <div>
               <Label>Order ID</Label>
               <Select value={orderId} onValueChange={setOrderId}>
-                <SelectTrigger className="border-0">
+                <SelectTrigger className="border-0 focus:ring-0">
                   <SelectValue placeholder="Select an order (optional)" />
                 </SelectTrigger>
                 <SelectContent>
