@@ -451,6 +451,7 @@ const AdminSettings = () => {
         </CardContent>
       </Card>
 
+      <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Footer Links</CardTitle>
