@@ -49,16 +49,18 @@ const TicketsPage = () => {
     enabled: !!user,
   });
 
-  // Fetch messages for selected ticket (admin replies only)
-  const { data: messages } = useQuery({
+  // Fetch all messages for selected ticket
+  const { data: allMessages } = useQuery({
     queryKey: ['ticket-messages', selectedTicketId],
     queryFn: async () => {
       const { data } = await supabase.from('ticket_messages').select('*').eq('ticket_id', selectedTicketId!).order('created_at');
-      // Filter to only show messages NOT from the current user (admin replies)
-      return (data || []).filter(msg => msg.sender_id !== user?.id);
+      return data || [];
     },
     enabled: !!selectedTicketId,
   });
+
+  const userMessage = allMessages?.find(msg => msg.sender_id === user?.id);
+  const adminMessages = allMessages?.filter(msg => msg.sender_id !== user?.id) || [];
 
   const createTicket = useMutation({
     mutationFn: async () => {
@@ -184,17 +186,19 @@ const TicketsPage = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-center">Ticket No.</TableHead>
-                    <TableHead className="text-center">Problem Title</TableHead>
-                    <TableHead className="text-center">Opened Date</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-center">Action</TableHead>
+                     <TableHead className="text-center">Ticket No.</TableHead>
+                     <TableHead className="text-center">Order ID</TableHead>
+                     <TableHead className="text-center">Problem Title</TableHead>
+                     <TableHead className="text-center">Opened Date</TableHead>
+                     <TableHead className="text-center">Status</TableHead>
+                     <TableHead className="text-center">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tickets.map(ticket => (
                     <TableRow key={ticket.id}>
-                      <TableCell className="text-center font-medium">#{(ticket as any).ticket_number}</TableCell>
+                       <TableCell className="text-center font-medium">#{(ticket as any).ticket_number}</TableCell>
+                       <TableCell className="text-center">{orders?.find(o => o.id === (ticket as any).order_id)?.order_number || '-'}</TableCell>
                       <TableCell className="text-center">{ticket.subject}</TableCell>
                       <TableCell className="text-center">{formatDate(ticket.created_at)}</TableCell>
                       <TableCell className="text-center">
@@ -228,10 +232,17 @@ const TicketsPage = () => {
             <DialogTitle className="text-success">Admin's Response</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 max-h-96 overflow-y-auto">
-            {!messages?.length ? (
+            {userMessage && (
+              <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                <p className="text-xs font-semibold text-muted-foreground mb-1">Your Message</p>
+                <p className="text-sm text-foreground">{userMessage.message}</p>
+                <p className="text-xs text-muted-foreground mt-1">{formatDateTime(userMessage.created_at)}</p>
+              </div>
+            )}
+            {!adminMessages.length ? (
               <p className="text-muted-foreground text-center py-4">No response from admin yet.</p>
             ) : (
-              messages.map(msg => (
+              adminMessages.map(msg => (
                 <div key={msg.id} className="p-3 rounded-lg bg-secondary">
                   <p className="text-sm text-foreground">{msg.message}</p>
                   <p className="text-xs text-muted-foreground mt-1">{formatDateTime(msg.created_at)}</p>
