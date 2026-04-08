@@ -227,7 +227,15 @@ export type Database = {
           login_link?: string | null
           product_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "family_sharing_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       faqs: {
         Row: {
