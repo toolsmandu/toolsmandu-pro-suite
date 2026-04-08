@@ -49,8 +49,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const key = getItemKey(item);
       const existing = prev.find(i => getItemKey(i) === key);
       if (existing) {
-        toast.success('Item quantity updated ✓');
-        return prev.map(i => getItemKey(i) === key ? { ...i, quantity: i.quantity + 1 } : i);
+        toast.info('This item is already in your cart');
+        return prev;
       }
       toast.success('Item added to cart ✓');
       return [...prev, { ...item, quantity: 1 }];

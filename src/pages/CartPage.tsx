@@ -76,11 +76,7 @@ const CartPage = () => {
                 {item.duration && !item.variantName && <p className="text-xs text-muted-foreground">{item.duration}</p>}
                 <p className="font-bold text-foreground mt-1">NPR {item.price}</p>
               </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}><Minus className="h-3 w-3" /></Button>
-                <span className="w-8 text-center text-foreground">{item.quantity}</span>
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity + 1)}><Plus className="h-3 w-3" /></Button>
-              </div>
+              <Button variant="ghost" size="icon" onClick={() => removeItem(item.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
               <Button variant="ghost" size="icon" onClick={() => removeItem(item.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
             </div>
           ))}
