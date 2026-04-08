@@ -221,20 +221,13 @@ const AdminOrders = () => {
         sent_by: user!.id,
         is_admin_only: isAdminOnly,
       } as any);
-      await supabase.functions.invoke('send-transactional-email', {
-        body: {
-          templateName: 'order-note',
-          recipientEmail: email,
-          idempotencyKey: `order-note-${selectedOrder.id}-${Date.now()}`,
-          templateData: {
-            orderNumber: selectedOrder.order_number || selectedOrder.id.slice(0, 8),
-            note: orderNote,
-          },
-        },
-      });
+      if (!isAdminOnly) {
+        // Email sending will be set up later
+      }
       queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
-      toast.success('Note sent to customer');
+      toast.success(isAdminOnly ? 'Admin note saved' : 'Note sent');
       setOrderNote('');
+      setIsAdminOnly(false);
     } catch {
       toast.error('Failed to send note');
     } finally {
