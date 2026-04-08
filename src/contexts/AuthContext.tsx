@@ -11,7 +11,7 @@ interface AuthContextType {
   roles: UserRole[];
   isAdmin: boolean;
   isEditor: boolean;
-  profile: { email: string | null; phone: string | null; avatar_url: string | null } | null;
+  profile: { name: string | null; email: string | null; phone: string | null; avatar_url: string | null } | null;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchUserData = async (userId: string) => {
     const [rolesRes, profileRes] = await Promise.all([
       supabase.from('user_roles').select('role').eq('user_id', userId),
-      supabase.from('profiles').select('email, phone, avatar_url').eq('user_id', userId).single(),
+      supabase.from('profiles').select('name, email, phone, avatar_url').eq('user_id', userId).single(),
     ]);
 
     setRoles((rolesRes.data ?? []).map((roleRecord) => roleRecord.role as UserRole));
