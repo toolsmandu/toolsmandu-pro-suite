@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -53,7 +53,8 @@ const ProductFAQs = ({ productName }: { productName: string }) => {
 
 const ProductPage = () => {
   const { slug } = useParams();
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -139,8 +140,16 @@ const ProductPage = () => {
   const isOutOfStock = (product as any)?.stock_status === 'out_of_stock';
   const features = (product?.features as string[] | null) || [];
 
+  const isVariantInCart = product && selectedVariant
+    ? items.some(i => i.id === product.id && i.variantId === selectedVariant.id)
+    : product ? items.some(i => i.id === product.id && !i.variantId) : false;
+
   const handleAddToCart = () => {
     if (!product || isOutOfStock) return;
+    if (isVariantInCart) {
+      navigate('/cart');
+      return;
+    }
     if (selectedVariant) {
       addItem({
         id: product.id,
@@ -275,7 +284,7 @@ const ProductPage = () => {
                   disabled={activeVariations.length > 0 && !selectedVariant}
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  {selectedVariant ? `Proceed to Payment · NPR ${selectedVariant.price}` : 'Add to Cart'}
+                  {isVariantInCart ? 'Proceed to Payment' : selectedVariant ? `Add to Cart · NPR ${selectedVariant.price}` : 'Add to Cart'}
                 </Button>
               )}
             </Card>
