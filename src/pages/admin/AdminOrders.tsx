@@ -406,7 +406,7 @@ const AdminOrders = () => {
               />
               <div className="flex items-center gap-4 mt-2">
                 <div className="flex items-center gap-2">
-                  <Checkbox id="admin-only" checked={isAdminOnly} onCheckedChange={(v) => setIsAdminOnly(!!v)} />
+                  <Checkbox id="admin-only" checked={isAdminOnly} onCheckedChange={(v) => setIsAdminOnly(!!v)} className="border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
                   <Label htmlFor="admin-only" className="text-xs text-muted-foreground cursor-pointer">Admin only (not visible to customer)</Label>
                 </div>
                 <Button onClick={handleSendNote} disabled={sending} className="ml-auto" variant="secondary" size="sm">
