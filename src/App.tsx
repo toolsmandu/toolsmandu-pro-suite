@@ -82,6 +82,8 @@ const App = () => (
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="faqs" element={<AdminFAQs />} />
+                <Route path="family-sharing" element={<AdminFamilySharing />} />
+                <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
               </Route>
             </Routes>
           </BrowserRouter>
