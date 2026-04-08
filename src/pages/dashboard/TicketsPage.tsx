@@ -140,7 +140,7 @@ const TicketsPage = () => {
                 <SelectTrigger className="border-0 focus:ring-0">
                   <SelectValue placeholder="Select an order (optional)" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-0">
                   {orders?.map(order => (
                     <SelectItem key={order.id} value={order.id}>{order.order_number}</SelectItem>
                   ))}
