@@ -37,6 +37,8 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminMedia from "./pages/admin/AdminMedia";
 import AdminFAQs from "./pages/admin/AdminFAQs";
+import AdminFamilySharing from "./pages/admin/AdminFamilySharing";
+import AdminFamilySharingDetail from "./pages/admin/AdminFamilySharingDetail";
 
 const queryClient = new QueryClient();
 
