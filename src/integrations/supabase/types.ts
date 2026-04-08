@@ -427,6 +427,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          order_number: string
           status: Database["public"]["Enums"]["order_status"]
           total: number
           updated_at: string
@@ -435,6 +436,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          order_number?: string
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
@@ -443,6 +445,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          order_number?: string
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
