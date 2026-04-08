@@ -436,6 +436,30 @@ export type Database = {
           },
         ]
       }
+      order_notes: {
+        Row: {
+          created_at: string
+          id: string
+          note: string
+          order_id: string
+          sent_by: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note: string
+          order_id: string
+          sent_by: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string
+          order_id?: string
+          sent_by?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
