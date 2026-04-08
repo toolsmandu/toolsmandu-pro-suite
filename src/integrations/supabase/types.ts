@@ -41,6 +41,194 @@ export type Database = {
         }
         Relationships: []
       }
+      credential_assignments: {
+        Row: {
+          assigned_at: string
+          credential_id: string
+          id: string
+          order_id: string
+          user_id: string
+          validity_days: number | null
+        }
+        Insert: {
+          assigned_at?: string
+          credential_id: string
+          id?: string
+          order_id: string
+          user_id: string
+          validity_days?: number | null
+        }
+        Update: {
+          assigned_at?: string
+          credential_id?: string
+          id?: string
+          order_id?: string
+          user_id?: string
+          validity_days?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credential_assignments_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "family_sharing_credentials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credential_assignments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credential_variant_links: {
+        Row: {
+          created_at: string
+          credential_id: string
+          id: string
+          priority: string
+          variant_id: string
+        }
+        Insert: {
+          created_at?: string
+          credential_id: string
+          id?: string
+          priority?: string
+          variant_id: string
+        }
+        Update: {
+          created_at?: string
+          credential_id?: string
+          id?: string
+          priority?: string
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credential_variant_links_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "family_sharing_credentials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credential_variant_links_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_sharing_credentials: {
+        Row: {
+          assigned_count: number
+          created_at: string
+          expiry_date: string | null
+          family_product_id: string
+          id: string
+          max_limit: number
+          password: string
+          remarks: string | null
+          twofa_link: string | null
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          assigned_count?: number
+          created_at?: string
+          expiry_date?: string | null
+          family_product_id: string
+          id?: string
+          max_limit?: number
+          password: string
+          remarks?: string | null
+          twofa_link?: string | null
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          assigned_count?: number
+          created_at?: string
+          expiry_date?: string | null
+          family_product_id?: string
+          id?: string
+          max_limit?: number
+          password?: string
+          remarks?: string | null
+          twofa_link?: string | null
+          updated_at?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_sharing_credentials_family_product_id_fkey"
+            columns: ["family_product_id"]
+            isOneToOne: false
+            referencedRelation: "family_sharing_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_sharing_product_variants: {
+        Row: {
+          created_at: string
+          family_product_id: string
+          id: string
+          variant_id: string
+        }
+        Insert: {
+          created_at?: string
+          family_product_id: string
+          id?: string
+          variant_id: string
+        }
+        Update: {
+          created_at?: string
+          family_product_id?: string
+          id?: string
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_sharing_product_variants_family_product_id_fkey"
+            columns: ["family_product_id"]
+            isOneToOne: false
+            referencedRelation: "family_sharing_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_sharing_product_variants_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_sharing_products: {
+        Row: {
+          created_at: string
+          id: string
+          login_link: string | null
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          login_link?: string | null
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          login_link?: string | null
+          product_id?: string
+        }
+        Relationships: []
+      }
       faqs: {
         Row: {
           answer: string
