@@ -56,7 +56,7 @@ const AdminLayout = () => {
                   {topLinks.map(({ to, icon: Icon, label, end }) => (
                     <SidebarMenuItem key={to}>
                       <SidebarMenuButton asChild>
-                        <NavLink to={to} end={end} className="hover:bg-muted/50" activeClassName="bg-muted font-medium" style={({ isActive }: any) => isActive ? { color: 'rgb(249, 112, 21)' } : {}}>
+                        <NavLink to={to} end={end} className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
                           <Icon className="mr-2 h-4 w-4" />
                           <span>{label}</span>
                         </NavLink>
