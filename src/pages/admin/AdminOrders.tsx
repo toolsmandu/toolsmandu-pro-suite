@@ -31,6 +31,7 @@ interface EditItem {
 }
 
 const AdminOrders = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [orderNote, setOrderNote] = useState('');
