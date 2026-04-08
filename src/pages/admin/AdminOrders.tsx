@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChevronRight, Send, Save, Trash2, Plus } from 'lucide-react';
-import { formatDate, formatDateTime } from '@/lib/formatDate';
+import { formatDate, formatDateTime, formatRelativeDate } from '@/lib/formatDate';
 import { toast } from 'sonner';
 
 const statusColors: Record<string, string> = {
@@ -256,7 +256,7 @@ const AdminOrders = () => {
                       .join(', ')}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {formatDate(order.created_at)}
+                    {formatRelativeDate(order.created_at)}
                   </TableCell>
                   <TableCell className="font-bold text-foreground">NPR {order.total}</TableCell>
                   <TableCell>
