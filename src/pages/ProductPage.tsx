@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ShoppingCart, Check, MessageCircle } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
@@ -267,6 +268,9 @@ const ProductPage = () => {
                 {product.description && (
                   <div className="mb-8 prose prose-sm prose-invert max-w-none text-white [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" style={{ color: 'white' }} dangerouslySetInnerHTML={{ __html: product.description.replace(/<a /g, '<a style="color:#f97015" ') }} />
                 )}
+
+                {/* FAQ Section */}
+                <ProductFAQs productName={product.name} />
               </div>
 
               {/* Right Sidebar - desktop only */}
