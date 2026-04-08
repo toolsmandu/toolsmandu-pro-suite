@@ -212,6 +212,11 @@ const AdminOrders = () => {
     }
     setSending(true);
     try {
+      await supabase.from('order_notes').insert({
+        order_id: selectedOrder.id,
+        note: orderNote,
+        sent_by: user!.id,
+      });
       await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'order-note',
@@ -223,9 +228,14 @@ const AdminOrders = () => {
           },
         },
       });
+      queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
       toast.success('Note sent to customer');
       setOrderNote('');
     } catch {
+      toast.error('Failed to send note');
+    } finally {
+      setSending(false);
+    }
       toast.error('Failed to send note');
     } finally {
       setSending(false);
