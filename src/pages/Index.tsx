@@ -92,27 +92,29 @@ const HeroSlider = () => {
   const slideWidth = 100 / visibleCount;
 
   return (
-    <div className="relative gradient-primary overflow-hidden">
-      <div
-        ref={trackRef}
-        className={`flex ${isTransitioning ? 'transition-transform duration-500 ease-out' : ''}`}
-        style={{ transform: `translateX(-${current * slideWidth}%)` }}
-      >
-        {extendedSlides.map((slide, idx) => (
-          <div key={`${slide.id}-${idx}`} className="px-1" style={{ minWidth: `${slideWidth}%` }}>
-            <Link to={slide.link_url || '#'} className="block">
-              <img src={slide.image_url} alt="" className="w-full rounded-lg object-cover aspect-[4/3]" />
-            </Link>
-          </div>
-        ))}
-      </div>
-      {dotCount > 0 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          {Array.from({ length: dotCount }).map((_, i) => (
-            <button key={i} onClick={() => { setCurrent(i); setIsTransitioning(true); }} className={`h-2 rounded-full transition-all ${i === activeDot ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/50'}`} />
+    <div className="gradient-primary overflow-hidden">
+      <div className="container mx-auto px-4 relative">
+        <div
+          ref={trackRef}
+          className={`flex ${isTransitioning ? 'transition-transform duration-500 ease-out' : ''}`}
+          style={{ transform: `translateX(-${current * slideWidth}%)` }}
+        >
+          {extendedSlides.map((slide, idx) => (
+            <div key={`${slide.id}-${idx}`} className="px-1" style={{ minWidth: `${slideWidth}%` }}>
+              <Link to={slide.link_url || '#'} className="block">
+                <img src={slide.image_url} alt="" className="w-full rounded-lg object-cover aspect-[4/3]" />
+              </Link>
+            </div>
           ))}
         </div>
-      )}
+        {dotCount > 0 && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {Array.from({ length: dotCount }).map((_, i) => (
+              <button key={i} onClick={() => { setCurrent(i); setIsTransitioning(true); }} className={`h-2 rounded-full transition-all ${i === activeDot ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/50'}`} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
