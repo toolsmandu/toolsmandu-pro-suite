@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ShoppingCart, Check, MessageCircle } from 'lucide-react';
+import { ShoppingCart, Check, Heart } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
+import { toast } from 'sonner';
 
 const ProductFAQs = ({ productName }: { productName: string }) => {
   const { data: faqs } = useQuery({
@@ -52,6 +54,8 @@ const ProductFAQs = ({ productName }: { productName: string }) => {
 const ProductPage = () => {
   const { slug } = useParams();
   const { addItem } = useCart();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', slug],
@@ -64,6 +68,30 @@ const ProductPage = () => {
       return data;
     },
     enabled: !!slug,
+  });
+
+  const { data: isWishlisted } = useQuery({
+    queryKey: ['wishlist-check', product?.id, user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from('wishlist').select('id').eq('product_id', product!.id).eq('user_id', user!.id).maybeSingle();
+      return !!data;
+    },
+    enabled: !!product?.id && !!user,
+  });
+
+  const toggleWishlist = useMutation({
+    mutationFn: async () => {
+      if (!user || !product) throw new Error('Login required');
+      if (isWishlisted) {
+        await supabase.from('wishlist').delete().eq('product_id', product.id).eq('user_id', user.id);
+      } else {
+        await supabase.from('wishlist').insert({ product_id: product.id, user_id: user.id });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wishlist-check', product?.id, user?.id] });
+      toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+    },
   });
 
   const activeVariations = ((product as any)?.product_variations as any[] || [])
@@ -283,7 +311,20 @@ const ProductPage = () => {
                         <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
                       )}
                     </div>
-                    <h1 className="text-3xl font-bold text-foreground mb-3">{product.name}</h1>
+                    <div className="flex items-center gap-3">
+                      <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
+                      <button
+                        onClick={() => user ? toggleWishlist.mutate() : toast.error('Please login to add to wishlist')}
+                        className={cn(
+                          "p-2 rounded-full transition-all duration-300 hover:scale-110",
+                          isWishlisted
+                            ? "text-red-500"
+                            : "text-muted-foreground hover:text-red-400"
+                        )}
+                      >
+                        <Heart className={cn("h-6 w-6", isWishlisted && "fill-current")} />
+                      </button>
+                    </div>
                     <div className="border-t mb-3" style={{ borderColor: 'white' }}></div>
                     <div className="flex items-center gap-8">
                       {product.categories && (
