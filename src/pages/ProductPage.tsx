@@ -320,17 +320,18 @@ const ProductPage = () => {
                       )}
                     </div>
                     <div className="flex items-center gap-3">
-                      <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
+                      <h1 className="text-3xl font-bold text-foreground flex-1">{product.name}</h1>
                       <button
                         onClick={() => user ? toggleWishlist.mutate() : toast.error('Please login to add to wishlist')}
                         className={cn(
-                          "p-2 rounded-full transition-all duration-300 hover:scale-110",
+                          "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-300",
                           isWishlisted
-                            ? "text-red-500"
-                            : "text-muted-foreground hover:text-red-400"
+                            ? "bg-red-500/10 border-red-500/30 text-red-500"
+                            : "bg-muted/30 border-border text-muted-foreground hover:border-red-500/30 hover:text-red-400 hover:bg-red-500/10"
                         )}
                       >
-                        <Heart className={cn("h-6 w-6", isWishlisted && "fill-current")} />
+                        <Heart className={cn("h-4 w-4", isWishlisted && "fill-current")} />
+                        {isWishlisted ? 'Wishlisted' : 'Wishlist'}
                       </button>
                     </div>
                     <div className="border-t mb-3" style={{ borderColor: 'white' }}></div>
