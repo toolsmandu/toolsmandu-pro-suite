@@ -60,15 +60,6 @@ const AdminOrders = () => {
     },
   });
 
-  const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      await supabase.from('orders').update({ status: status as any }).eq('id', id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
-      toast.success('Status updated');
-    },
-  });
 
   const updateOrder = useMutation({
     mutationFn: async ({ id, total, status, items, deletedItemIds }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[] }) => {
