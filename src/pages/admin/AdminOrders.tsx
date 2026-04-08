@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChevronRight, Send } from 'lucide-react';
+import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { toast } from 'sonner';
 
 const statusColors: Record<string, string> = {
@@ -144,7 +145,7 @@ const AdminOrders = () => {
                       .join(', ')}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {new Date(order.created_at).toLocaleDateString()}
+                    {formatDate(order.created_at)}
                   </TableCell>
                   <TableCell className="font-bold text-foreground">NPR {order.total}</TableCell>
                   <TableCell>
@@ -185,7 +186,7 @@ const AdminOrders = () => {
             <div className="bg-muted/30 rounded-lg p-3 space-y-1 text-sm">
               <p><span className="text-muted-foreground">Customer:</span> <span className="text-foreground">{selectedOrder?.profiles?.email || '-'}</span></p>
               <p><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{selectedOrder?.profiles?.phone || '-'}</span></p>
-              <p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{selectedOrder && new Date(selectedOrder.created_at).toLocaleString()}</span></p>
+              <p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{selectedOrder && formatDateTime(selectedOrder.created_at)}</span></p>
             </div>
 
             {/* Products */}

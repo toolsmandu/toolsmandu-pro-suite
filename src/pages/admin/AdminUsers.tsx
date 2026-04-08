@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { formatDate } from '@/lib/formatDate';
 import { supabase } from '@/integrations/supabase/client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -50,7 +51,7 @@ const AdminUsers = () => {
                     </SelectContent>
                   </Select>
                 </TableCell>
-                <TableCell className="text-xs text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{formatDate(u.created_at)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

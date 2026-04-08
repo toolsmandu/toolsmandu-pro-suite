@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatDate } from '@/lib/formatDate';
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, ArrowLeft, Trash2, Edit, Link2 } from "lucide-react";
@@ -222,7 +223,7 @@ const AdminFamilySharingDetail = () => {
                   </div>
                 </TableCell>
                 <TableCell>{c.remarks || "—"}</TableCell>
-                <TableCell>{c.expiry_date ? new Date(c.expiry_date).toLocaleDateString() : "—"}</TableCell>
+                <TableCell>{c.expiry_date ? formatDate(c.expiry_date) : "—"}</TableCell>
                 <TableCell>{c.max_limit}</TableCell>
                 <TableCell>{c.assigned_count}</TableCell>
                 <TableCell className="text-right">

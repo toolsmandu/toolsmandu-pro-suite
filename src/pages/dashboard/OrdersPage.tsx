@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package, Copy, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatDate } from '@/lib/formatDate';
 
 const statusColors: Record<string, string> = {
   processing: 'bg-warning/20 text-warning border-warning/30',
@@ -85,7 +86,7 @@ const OrdersPage = () => {
                 <CardTitle className="text-sm font-mono text-muted-foreground">#{(order as any).order_number || order.id.slice(0, 8)}</CardTitle>
                 <Badge className={statusColors[order.status]}>{order.status}</Badge>
               </div>
-              <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString()}</p>
+              <p className="text-xs text-muted-foreground">{formatDate(order.created_at)}</p>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
