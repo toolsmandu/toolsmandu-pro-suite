@@ -303,47 +303,40 @@ const AdminOrders = () => {
                 {editItems.map((item, index) => {
                   const variations = getVariationsForProduct(item.product_id);
                   return (
-                    <div key={item.id} className="bg-muted/20 rounded-lg p-3 space-y-2">
-                      <div className="flex items-start gap-2">
-                        <div className="flex-1 grid grid-cols-2 gap-2">
-                          <div>
-                            <Label className="text-[10px] text-muted-foreground">Product</Label>
-                            <Select value={item.product_id} onValueChange={(v) => handleProductChange(index, v)}>
-                              <SelectTrigger className="h-8 text-xs">
-                                <SelectValue placeholder="Select product" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {products?.map((p: any) => (
-                                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label className="text-[10px] text-muted-foreground">Variation</Label>
-                            <Select
-                              value={item.variation_id}
-                              onValueChange={(v) => handleVariationChange(index, v)}
-                              disabled={!variations.length}
-                            >
-                              <SelectTrigger className="h-8 text-xs">
-                                <SelectValue placeholder={variations.length ? "Select variation" : "No variations"} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {variations.map((v: any) => (
-                                  <SelectItem key={v.id} value={v.id}>{v.name} — NPR {v.price}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
+                    <div key={item.id} className="bg-muted/20 rounded-lg p-2">
+                      <div className="flex items-end gap-2">
+                        <div className="flex-1">
+                          <Label className="text-[10px] text-muted-foreground">Product</Label>
+                          <Select value={item.product_id} onValueChange={(v) => handleProductChange(index, v)}>
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue placeholder="Select product" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {products?.map((p: any) => (
+                                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 mt-4 text-destructive hover:text-destructive" onClick={() => removeItem(index)}>
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <Label className="text-[10px] text-muted-foreground">Price (NPR)</Label>
+                        <div className="flex-1">
+                          <Label className="text-[10px] text-muted-foreground">Variation</Label>
+                          <Select
+                            value={item.variation_id}
+                            onValueChange={(v) => handleVariationChange(index, v)}
+                            disabled={!variations.length}
+                          >
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue placeholder={variations.length ? "Select variation" : "No variations"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {variations.map((v: any) => (
+                                <SelectItem key={v.id} value={v.id}>{v.name} — NPR {v.price}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="w-24">
+                          <Label className="text-[10px] text-muted-foreground">Price</Label>
                           <Input
                             value={item.price}
                             onChange={(e) => updateItemField(index, 'price', parseFloat(e.target.value) || 0)}
@@ -351,15 +344,9 @@ const AdminOrders = () => {
                             className="h-8 text-xs"
                           />
                         </div>
-                        <div>
-                          <Label className="text-[10px] text-muted-foreground">Quantity</Label>
-                          <Input
-                            value={item.quantity}
-                            onChange={(e) => updateItemField(index, 'quantity', parseInt(e.target.value) || 1)}
-                            type="number"
-                            className="h-8 text-xs"
-                          />
-                        </div>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => removeItem(index)}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
                       </div>
                     </div>
                   );
