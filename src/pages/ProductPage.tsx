@@ -311,7 +311,20 @@ const ProductPage = () => {
                         <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
                       )}
                     </div>
-                    <h1 className="text-3xl font-bold text-foreground mb-3">{product.name}</h1>
+                    <div className="flex items-center gap-3">
+                      <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
+                      <button
+                        onClick={() => user ? toggleWishlist.mutate() : toast.error('Please login to add to wishlist')}
+                        className={cn(
+                          "p-2 rounded-full transition-all duration-300 hover:scale-110",
+                          isWishlisted
+                            ? "text-red-500"
+                            : "text-muted-foreground hover:text-red-400"
+                        )}
+                      >
+                        <Heart className={cn("h-6 w-6", isWishlisted && "fill-current")} />
+                      </button>
+                    </div>
                     <div className="border-t mb-3" style={{ borderColor: 'white' }}></div>
                     <div className="flex items-center gap-8">
                       {product.categories && (
