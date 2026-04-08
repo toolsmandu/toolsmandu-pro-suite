@@ -26,7 +26,7 @@ const CartPage = () => {
       setPlacing(false);
       return;
     }
-    const orderItems = items.map(i => ({ order_id: order.id, product_id: i.id, price: i.price, quantity: i.quantity }));
+    const orderItems = items.map(i => ({ order_id: order.id, product_id: i.id, price: i.price, quantity: i.quantity, variation_id: i.variantId || null, variation_name: i.variantName || null }));
     await supabase.from('order_items').insert(orderItems);
     clearCart();
     toast.success('Order placed successfully!');
