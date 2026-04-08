@@ -237,7 +237,7 @@ const OrdersPage = () => {
 
               {/* Order Notes */}
               <div className="border-t border-border pt-3">
-                <p className="text-xs font-semibold text-primary mb-2">Admin's Message</p>
+                <p className="text-xs font-semibold text-success mb-2">Admin's Message</p>
                 {orderNotes && orderNotes.length > 0 ? (
                   <div className="space-y-2">
                     {orderNotes.map((note: any) => (
