@@ -12,6 +12,13 @@ import { ChevronRight, Send, Save, Trash2, Plus } from 'lucide-react';
 import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { toast } from 'sonner';
 
+const statusColors: Record<string, string> = {
+  processing: 'bg-warning/20 text-warning',
+  completed: 'bg-success/20 text-success',
+  cancelled: 'bg-destructive/20 text-destructive',
+  refunded: 'bg-muted text-muted-foreground',
+};
+
 interface EditItem {
   id: string;
   isNew?: boolean;
