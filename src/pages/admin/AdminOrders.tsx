@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,16 +8,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, Send } from 'lucide-react';
+import { ChevronRight, Send, Save } from 'lucide-react';
 import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { toast } from 'sonner';
-
-const statusColors: Record<string, string> = {
-  processing: 'bg-warning/20 text-warning',
-  completed: 'bg-success/20 text-success',
-  cancelled: 'bg-destructive/20 text-destructive',
-  refunded: 'bg-muted text-muted-foreground',
-};
 
 const AdminOrders = () => {
   const queryClient = useQueryClient();
@@ -26,6 +18,7 @@ const AdminOrders = () => {
   const [orderNote, setOrderNote] = useState('');
   const [editTotal, setEditTotal] = useState('');
   const [editStatus, setEditStatus] = useState('');
+  const [editItems, setEditItems] = useState<any[]>([]);
   const [sending, setSending] = useState(false);
 
   const { data: orders, isLoading } = useQuery({
@@ -50,12 +43,20 @@ const AdminOrders = () => {
   });
 
   const updateOrder = useMutation({
-    mutationFn: async ({ id, total, status }: { id: string; total: number; status: string }) => {
+    mutationFn: async ({ id, total, status, items }: { id: string; total: number; status: string; items: any[] }) => {
       await supabase.from('orders').update({ total, status: status as any }).eq('id', id);
+      for (const item of items) {
+        await supabase.from('order_items').update({
+          variation_name: item.variation_name || null,
+          price: item.price,
+          quantity: item.quantity,
+        }).eq('id', item.id);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
       toast.success('Order updated');
+      setSelectedOrder(null);
     },
   });
 
@@ -63,6 +64,15 @@ const AdminOrders = () => {
     setSelectedOrder(order);
     setEditTotal(String(order.total));
     setEditStatus(order.status);
+    setEditItems(
+      (order.order_items || []).map((item: any) => ({
+        id: item.id,
+        productName: item.products?.name || 'Product',
+        variation_name: item.variation_name || '',
+        price: item.price,
+        quantity: item.quantity,
+      }))
+    );
     setOrderNote('');
   };
 
@@ -72,7 +82,12 @@ const AdminOrders = () => {
       id: selectedOrder.id,
       total: parseFloat(editTotal) || selectedOrder.total,
       status: editStatus,
+      items: editItems,
     });
+  };
+
+  const updateItemField = (index: number, field: string, value: any) => {
+    setEditItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
   };
 
   const handleSendNote = async () => {
@@ -176,7 +191,7 @@ const AdminOrders = () => {
 
       {/* Order Detail Dialog */}
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Order #{selectedOrder?.order_number || selectedOrder?.id?.slice(0, 8)}</DialogTitle>
           </DialogHeader>
@@ -189,22 +204,48 @@ const AdminOrders = () => {
               <p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{selectedOrder && formatDateTime(selectedOrder.created_at)}</span></p>
             </div>
 
-            {/* Products */}
+            {/* Editable Products */}
             <div>
-              <Label className="text-xs text-muted-foreground mb-1 block">Products</Label>
-              <div className="space-y-1">
-                {selectedOrder?.order_items?.map((item: any) => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <span className="text-foreground">
-                      {item.products?.name || 'Product'}{item.variation_name ? ` - ${item.variation_name}` : ''} × {item.quantity}
-                    </span>
-                    <span className="text-muted-foreground">NPR {item.price}</span>
+              <Label className="text-xs text-muted-foreground mb-2 block">Products</Label>
+              <div className="space-y-3">
+                {editItems.map((item, index) => (
+                  <div key={item.id} className="bg-muted/20 rounded-lg p-3 space-y-2">
+                    <p className="text-sm font-medium text-foreground">{item.productName}</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <Label className="text-[10px] text-muted-foreground">Variation</Label>
+                        <Input
+                          value={item.variation_name}
+                          onChange={(e) => updateItemField(index, 'variation_name', e.target.value)}
+                          placeholder="Variation"
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-[10px] text-muted-foreground">Price (NPR)</Label>
+                        <Input
+                          value={item.price}
+                          onChange={(e) => updateItemField(index, 'price', parseFloat(e.target.value) || 0)}
+                          type="number"
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-[10px] text-muted-foreground">Qty</Label>
+                        <Input
+                          value={item.quantity}
+                          onChange={(e) => updateItemField(index, 'quantity', parseInt(e.target.value) || 1)}
+                          type="number"
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Editable fields */}
+            {/* Total & Status */}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label htmlFor="edit-total" className="text-xs text-muted-foreground">Total (NPR)</Label>
@@ -222,7 +263,10 @@ const AdminOrders = () => {
                 </Select>
               </div>
             </div>
-            <Button onClick={handleSaveOrder} className="w-full">Save Changes</Button>
+            <Button onClick={handleSaveOrder} className="w-full">
+              <Save className="h-4 w-4 mr-2" />
+              Save Changes
+            </Button>
 
             {/* Send Note */}
             <div className="border-t border-border pt-4">
