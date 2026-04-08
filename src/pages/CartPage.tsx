@@ -20,18 +20,35 @@ const CartPage = () => {
       return;
     }
     setPlacing(true);
-    const { data: order, error } = await supabase.from('orders').insert({ user_id: user.id, total, status: 'processing' as const }).select().single();
-    if (error || !order) {
-      toast.error('Failed to place order');
+    try {
+      for (const item of items) {
+        const itemTotal = item.price * item.quantity;
+        const { data: order, error } = await supabase
+          .from('orders')
+          .insert({ user_id: user.id, total: itemTotal, status: 'processing' as const })
+          .select()
+          .single();
+        if (error || !order) {
+          toast.error(`Failed to place order for ${item.name}`);
+          continue;
+        }
+        await supabase.from('order_items').insert({
+          order_id: order.id,
+          product_id: item.id,
+          price: item.price,
+          quantity: item.quantity,
+          variation_id: item.variantId || null,
+          variation_name: item.variantName || null,
+        });
+      }
+      clearCart();
+      toast.success('Orders placed successfully!');
+      navigate('/dashboard/orders');
+    } catch {
+      toast.error('Failed to place orders');
+    } finally {
       setPlacing(false);
-      return;
     }
-    const orderItems = items.map(i => ({ order_id: order.id, product_id: i.id, price: i.price, quantity: i.quantity, variation_id: i.variantId || null, variation_name: i.variantName || null }));
-    await supabase.from('order_items').insert(orderItems);
-    clearCart();
-    toast.success('Order placed successfully!');
-    navigate('/dashboard/orders');
-    setPlacing(false);
   };
 
   if (items.length === 0) return (
