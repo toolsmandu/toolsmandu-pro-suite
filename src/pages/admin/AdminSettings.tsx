@@ -27,6 +27,17 @@ const AdminSettings = () => {
   const [editLinkDialogOpen, setEditLinkDialogOpen] = useState(false);
   const [editLink, setEditLink] = useState<{ id: string; column_name: string; label: string; url: string; sort_order: string }>({ id: '', column_name: '', label: '', url: '', sort_order: '0' });
 
+  // Footer appearance state
+  const [footerBgColor, setFooterBgColor] = useState('#011D3E');
+  const [footerTextColor, setFooterTextColor] = useState('#ffffff');
+  const [footerCopyright, setFooterCopyright] = useState('© {year} Toolsmandu. All rights reserved.');
+  const [footerReviewsTitle, setFooterReviewsTitle] = useState('Check Our Reviews');
+  const [footerTrustpilotImage, setFooterTrustpilotImage] = useState('');
+  const [footerTrustpilotLink, setFooterTrustpilotLink] = useState('');
+  const [footerGoogleImage, setFooterGoogleImage] = useState('');
+  const [footerGoogleLink, setFooterGoogleLink] = useState('');
+  const [footerPaymentImage, setFooterPaymentImage] = useState('');
+
   // Nav menu state
   const [navDialogOpen, setNavDialogOpen] = useState(false);
   const [editNavDialogOpen, setEditNavDialogOpen] = useState(false);
@@ -44,6 +55,15 @@ const AdminSettings = () => {
       setOrderMode(map.order_mode?.value || 'cart');
       setWhatsappNumber(map.whatsapp_number?.value || '');
       setFaviconUrl(map.favicon_url?.value || '');
+      setFooterBgColor(map.footer_bg_color?.value || '#011D3E');
+      setFooterTextColor(map.footer_text_color?.value || '#ffffff');
+      setFooterCopyright(map.footer_copyright?.value || '© {year} Toolsmandu. All rights reserved.');
+      setFooterReviewsTitle(map.footer_reviews_title?.value || 'Check Our Reviews');
+      setFooterTrustpilotImage(map.footer_trustpilot_image?.value || '');
+      setFooterTrustpilotLink(map.footer_trustpilot_link?.value || '');
+      setFooterGoogleImage(map.footer_google_image?.value || '');
+      setFooterGoogleLink(map.footer_google_link?.value || '');
+      setFooterPaymentImage(map.footer_payment_image?.value || '');
       return map;
     },
   });
@@ -71,6 +91,15 @@ const AdminSettings = () => {
       { key: 'order_mode', value: orderMode },
       { key: 'whatsapp_number', value: whatsappNumber },
       { key: 'favicon_url', value: faviconUrl },
+      { key: 'footer_bg_color', value: footerBgColor },
+      { key: 'footer_text_color', value: footerTextColor },
+      { key: 'footer_copyright', value: footerCopyright },
+      { key: 'footer_reviews_title', value: footerReviewsTitle },
+      { key: 'footer_trustpilot_image', value: footerTrustpilotImage },
+      { key: 'footer_trustpilot_link', value: footerTrustpilotLink },
+      { key: 'footer_google_image', value: footerGoogleImage },
+      { key: 'footer_google_link', value: footerGoogleLink },
+      { key: 'footer_payment_image', value: footerPaymentImage },
     ];
     for (const item of keys) {
       const { data: existing } = await supabase.from('site_settings').select('id').eq('key', item.key).maybeSingle();
