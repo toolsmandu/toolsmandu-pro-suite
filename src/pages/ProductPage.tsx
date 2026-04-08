@@ -70,6 +70,30 @@ const ProductPage = () => {
     enabled: !!slug,
   });
 
+  const { data: isWishlisted } = useQuery({
+    queryKey: ['wishlist-check', product?.id, user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from('wishlist').select('id').eq('product_id', product!.id).eq('user_id', user!.id).maybeSingle();
+      return !!data;
+    },
+    enabled: !!product?.id && !!user,
+  });
+
+  const toggleWishlist = useMutation({
+    mutationFn: async () => {
+      if (!user || !product) throw new Error('Login required');
+      if (isWishlisted) {
+        await supabase.from('wishlist').delete().eq('product_id', product.id).eq('user_id', user.id);
+      } else {
+        await supabase.from('wishlist').insert({ product_id: product.id, user_id: user.id });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wishlist-check', product?.id, user?.id] });
+      toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+    },
+  });
+
   const activeVariations = ((product as any)?.product_variations as any[] || [])
     .filter((v: any) => v.is_active)
     .sort((a: any, b: any) => a.sort_order - b.sort_order);
