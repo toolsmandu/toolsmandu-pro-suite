@@ -50,47 +50,47 @@
   }
 
   .admin-light {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --background: 220 16% 22%;
+    --foreground: 218 27% 92%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 220 16% 26%;
+    --card-foreground: 218 27% 92%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 220 16% 26%;
+    --popover-foreground: 218 27% 92%;
 
-    --primary: 224 76% 48%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 193 43% 67%;
+    --primary-foreground: 220 16% 15%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 220 16% 30%;
+    --secondary-foreground: 218 27% 92%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 220 16% 30%;
+    --muted-foreground: 218 17% 72%;
 
-    --accent: 220 14% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 220 16% 34%;
+    --accent-foreground: 218 27% 92%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 354 49% 56%;
+    --destructive-foreground: 218 27% 92%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 76% 48%;
+    --border: 220 16% 32%;
+    --input: 220 16% 32%;
+    --ring: 193 43% 67%;
 
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 224 76% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 40% 90%;
-    --sidebar-border: 217 33% 20%;
-    --sidebar-ring: 224 76% 48%;
+    --sidebar-background: 220 16% 20%;
+    --sidebar-foreground: 218 27% 85%;
+    --sidebar-primary: 193 43% 67%;
+    --sidebar-primary-foreground: 220 16% 15%;
+    --sidebar-accent: 220 16% 28%;
+    --sidebar-accent-foreground: 218 27% 85%;
+    --sidebar-border: 220 16% 28%;
+    --sidebar-ring: 193 43% 67%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 0%;
+    --warning: 40 81% 73%;
+    --warning-foreground: 220 16% 15%;
   }
 }
 
