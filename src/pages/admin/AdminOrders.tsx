@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -30,6 +31,7 @@ interface EditItem {
 }
 
 const AdminOrders = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [orderNote, setOrderNote] = useState('');
@@ -60,6 +62,18 @@ const AdminOrders = () => {
     },
   });
 
+  const { data: orderNotes } = useQuery({
+    queryKey: ['order-notes', selectedOrder?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('order_notes')
+        .select('*')
+        .eq('order_id', selectedOrder!.id)
+        .order('created_at', { ascending: false });
+      return data || [];
+    },
+    enabled: !!selectedOrder,
+  });
 
   const updateOrder = useMutation({
     mutationFn: async ({ id, total, status, items, deletedItemIds }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[] }) => {
@@ -198,6 +212,11 @@ const AdminOrders = () => {
     }
     setSending(true);
     try {
+      await supabase.from('order_notes').insert({
+        order_id: selectedOrder.id,
+        note: orderNote,
+        sent_by: user!.id,
+      });
       await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'order-note',
@@ -209,6 +228,7 @@ const AdminOrders = () => {
           },
         },
       });
+      queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
       toast.success('Note sent to customer');
       setOrderNote('');
     } catch {
@@ -391,6 +411,19 @@ const AdminOrders = () => {
                 <Send className="h-4 w-4 mr-2" />
                 {sending ? 'Sending...' : 'Send Note via Email'}
               </Button>
+
+              {/* Sent Notes History */}
+              {orderNotes && orderNotes.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <Label className="text-xs text-muted-foreground block">Sent Notes</Label>
+                  {orderNotes.map((n: any) => (
+                    <div key={n.id} className="bg-muted/30 rounded-lg p-3 text-sm">
+                      <p className="text-foreground whitespace-pre-wrap">{n.note}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(n.created_at)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>
