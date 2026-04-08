@@ -23,7 +23,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-foreground mb-8">My Dashboard</h1>
+      
       <div className="grid lg:grid-cols-4 gap-8">
         <nav className="space-y-1">
           {links.map(({ to, icon: Icon, label, end }) => (
