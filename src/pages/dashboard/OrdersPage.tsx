@@ -133,12 +133,12 @@ const OrdersPage = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead className="text-center">Order ID</TableHead>
+              <TableHead className="text-center">Product</TableHead>
+              <TableHead className="text-center">Date</TableHead>
+              <TableHead className="text-center">Amount</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -146,12 +146,12 @@ const OrdersPage = () => {
               const hasNotes = getNotesForOrder(order.id).length > 0;
               return (
                 <TableRow key={order.id}>
-                  <TableCell className="font-mono text-xs">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
-                  <TableCell className="text-sm">{getProductLabel(order)}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{formatDate(order.created_at)}</TableCell>
-                  <TableCell className="font-semibold">NPR {order.total}</TableCell>
-                  <TableCell><Badge className={statusColors[order.status]}>{capitalize(order.status)}</Badge></TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono text-xs text-center">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
+                  <TableCell className="text-sm text-center">{getProductLabel(order)}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground text-center">{formatDate(order.created_at)}</TableCell>
+                  <TableCell className="font-semibold text-center">NPR {order.total}</TableCell>
+                  <TableCell className="text-center"><Badge className={statusColors[order.status]}>{capitalize(order.status)}</Badge></TableCell>
+                  <TableCell className="text-center">
                     {hasNotes ? (
                       <Badge
                         className="bg-success text-white border-success/30 cursor-pointer hover:bg-success/80 transition-colors"
