@@ -27,11 +27,6 @@ const CategoryPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        <Link to="/" className="hover:text-foreground">Home</Link>
-        <span>/</span>
-        <span className="text-foreground">{category?.name || 'Category'}</span>
-      </nav>
       <h1 className="text-3xl font-bold text-foreground mb-8">{category?.name || 'Category'}</h1>
       {isLoading ? null : products && products.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
