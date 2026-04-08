@@ -85,7 +85,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           ))}
         </div>
 
-        <div className="border-t mt-8 pt-8 text-sm flex items-center justify-between" style={{ borderColor: `${textColor}33`, color: `${textColor}b3` }}>
+        <div className="border-t mt-8 pt-8 text-sm flex flex-col items-center gap-4 md:flex-row md:justify-between" style={{ borderColor: `${textColor}33`, color: `${textColor}b3` }}>
           <span>{copyrightText}</span>
           {paymentImg && <img src={paymentImg} alt="Payment methods" className="h-6 object-contain" />}
         </div>
