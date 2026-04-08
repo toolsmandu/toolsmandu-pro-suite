@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatDate } from '@/lib/formatDate';
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, ArrowLeft, Trash2, Edit, Link2 } from "lucide-react";
