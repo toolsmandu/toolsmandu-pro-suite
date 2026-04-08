@@ -63,17 +63,18 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             </div>
           ))}
 
-          {/* Reviews section - full width below link columns */}
-          <div className="md:col-span-3 mt-2">
-            <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider" style={{ color: '#ffffff' }}>Check Our Reviews</h4>
-            <div className="flex items-center gap-6">
-              <a href="https://link.toolsmandu.com/trustpilot" target="_blank" rel="noopener noreferrer">
-                <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-10 md:h-16 object-contain" />
-              </a>
-              <a href="https://link.toolsmandu.com/googlereviews" target="_blank" rel="noopener noreferrer">
-                <img src={googleReviewsImg} alt="Google Reviews" className="h-10 md:h-16 object-contain" />
-              </a>
-            </div>
+        </div>
+
+        {/* Reviews section - below the grid */}
+        <div className="mt-8">
+          <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider" style={{ color: '#ffffff' }}>Check Our Reviews</h4>
+          <div className="flex items-center gap-6">
+            <a href="https://link.toolsmandu.com/trustpilot" target="_blank" rel="noopener noreferrer">
+              <img src={trustpilotImg} alt="Trustpilot Reviews" className="h-10 md:h-16 object-contain" />
+            </a>
+            <a href="https://link.toolsmandu.com/googlereviews" target="_blank" rel="noopener noreferrer">
+              <img src={googleReviewsImg} alt="Google Reviews" className="h-10 md:h-16 object-contain" />
+            </a>
           </div>
         </div>
 
