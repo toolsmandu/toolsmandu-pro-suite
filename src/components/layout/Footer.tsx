@@ -53,7 +53,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
   return (
     <footer ref={ref} className="border-t border-border mt-16" style={{ backgroundColor: bgColor, color: textColor }}>
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
           {/* About */}
           <div className="md:col-span-2">
             <Link to="/" className="text-xl font-bold flex items-center gap-2">
