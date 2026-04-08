@@ -1,0 +1,1 @@
+ALTER TABLE public.order_notes ADD COLUMN is_admin_only boolean NOT NULL DEFAULT false;

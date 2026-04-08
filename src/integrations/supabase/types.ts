@@ -440,6 +440,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_admin_only: boolean
           note: string
           order_id: string
           sent_by: string
@@ -447,6 +448,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_admin_only?: boolean
           note: string
           order_id: string
           sent_by: string
@@ -454,6 +456,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_admin_only?: boolean
           note?: string
           order_id?: string
           sent_by?: string

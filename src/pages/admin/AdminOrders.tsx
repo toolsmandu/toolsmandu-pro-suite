@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChevronRight, Send, Save, Trash2, Plus } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate } from '@/lib/formatDate';
 import { toast } from 'sonner';
 
@@ -39,6 +40,7 @@ const AdminOrders = () => {
   const [editStatus, setEditStatus] = useState('');
   const [editItems, setEditItems] = useState<EditItem[]>([]);
   const [sending, setSending] = useState(false);
+  const [isAdminOnly, setIsAdminOnly] = useState(false);
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
@@ -129,6 +131,7 @@ const AdminOrders = () => {
       }))
     );
     setOrderNote('');
+    setIsAdminOnly(false);
   };
 
   const handleSaveOrder = () => {
@@ -216,21 +219,15 @@ const AdminOrders = () => {
         order_id: selectedOrder.id,
         note: orderNote,
         sent_by: user!.id,
-      });
-      await supabase.functions.invoke('send-transactional-email', {
-        body: {
-          templateName: 'order-note',
-          recipientEmail: email,
-          idempotencyKey: `order-note-${selectedOrder.id}-${Date.now()}`,
-          templateData: {
-            orderNumber: selectedOrder.order_number || selectedOrder.id.slice(0, 8),
-            note: orderNote,
-          },
-        },
-      });
+        is_admin_only: isAdminOnly,
+      } as any);
+      if (!isAdminOnly) {
+        // Email sending will be set up later
+      }
       queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
-      toast.success('Note sent to customer');
+      toast.success(isAdminOnly ? 'Admin note saved' : 'Note sent');
       setOrderNote('');
+      setIsAdminOnly(false);
     } catch {
       toast.error('Failed to send note');
     } finally {
@@ -407,10 +404,16 @@ const AdminOrders = () => {
                 placeholder="Type a note to send to the customer's email..."
                 rows={3}
               />
-              <Button onClick={handleSendNote} disabled={sending} className="mt-2 w-full" variant="secondary">
-                <Send className="h-4 w-4 mr-2" />
-                {sending ? 'Sending...' : 'Send Note via Email'}
-              </Button>
+              <div className="flex items-center gap-4 mt-2">
+                <div className="flex items-center gap-2">
+                  <Checkbox id="admin-only" checked={isAdminOnly} onCheckedChange={(v) => setIsAdminOnly(!!v)} />
+                  <Label htmlFor="admin-only" className="text-xs text-muted-foreground cursor-pointer">Admin only (not visible to customer)</Label>
+                </div>
+                <Button onClick={handleSendNote} disabled={sending} className="ml-auto" variant="secondary" size="sm">
+                  <Send className="h-4 w-4 mr-2" />
+                  {sending ? 'Saving...' : isAdminOnly ? 'Save Note' : 'Send Note'}
+                </Button>
+              </div>
 
               {/* Sent Notes History */}
               {orderNotes && orderNotes.length > 0 && (
@@ -418,7 +421,10 @@ const AdminOrders = () => {
                   <Label className="text-xs text-muted-foreground block">Sent Notes</Label>
                   {orderNotes.map((n: any) => (
                     <div key={n.id} className="bg-muted/30 rounded-lg p-3 text-sm">
-                      <p className="text-foreground whitespace-pre-wrap">{n.note}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-foreground whitespace-pre-wrap flex-1">{n.note}</p>
+                        {n.is_admin_only && <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded-full font-medium">Admin Only</span>}
+                      </div>
                       <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(n.created_at)}</p>
                     </div>
                   ))}
