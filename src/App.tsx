@@ -65,8 +65,9 @@ const App = () => (
                   <Route path="orders" element={<OrdersPage />} />
                   <Route path="tickets" element={<TicketsPage />} />
                   <Route path="wishlist" element={<WishlistPage />} />
-                </Route>
               </Route>
+              <Route path="*" element={<NotFound />} />
+            </Route>
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />
@@ -80,7 +81,6 @@ const App = () => (
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="faqs" element={<AdminFAQs />} />
               </Route>
-              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </CartProvider>
