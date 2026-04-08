@@ -275,8 +275,7 @@ const ProductPage = () => {
                   disabled={activeVariations.length > 0 && !selectedVariant}
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  Add to Cart
-                  {selectedVariant && <span className="ml-1">· NPR {selectedVariant.price}</span>}
+                  {selectedVariant ? `Proceed to Payment · NPR ${selectedVariant.price}` : 'Add to Cart'}
                 </Button>
               )}
             </Card>
