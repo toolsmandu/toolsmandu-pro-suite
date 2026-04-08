@@ -62,6 +62,18 @@ const AdminOrders = () => {
     },
   });
 
+  const { data: orderNotes } = useQuery({
+    queryKey: ['order-notes', selectedOrder?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('order_notes')
+        .select('*')
+        .eq('order_id', selectedOrder!.id)
+        .order('created_at', { ascending: false });
+      return data || [];
+    },
+    enabled: !!selectedOrder,
+  });
 
   const updateOrder = useMutation({
     mutationFn: async ({ id, total, status, items, deletedItemIds }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[] }) => {
