@@ -223,7 +223,7 @@ const ProductPage = () => {
                           {v.variation_info && (
                             <div className="text-xs text-muted-foreground">{v.variation_info}</div>
                           )}
-                          <div className="font-semibold text-sm" style={{ color: '#f97015' }}>NPR {v.price}</div>
+                          <div className="font-semibold text-sm" style={{ color: '#16a249' }}>NPR {v.price}</div>
                         </div>
 
                         <div className={cn(
@@ -326,8 +326,8 @@ const ProductPage = () => {
                         className={cn(
                           "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-300",
                           isWishlisted
-                            ? "bg-red-500/10 border-red-500/30 text-red-500"
-                            : "bg-muted/30 border-border text-muted-foreground hover:border-red-500/30 hover:text-red-400 hover:bg-red-500/10"
+                            ? "border-[#16a249]/30 text-[#16a249]"
+                            : "bg-muted/30 border-border text-muted-foreground hover:border-[#16a249]/30 hover:text-[#16a249] hover:bg-[#16a249]/10"
                         )}
                       >
                         <Heart className={cn("h-4 w-4", isWishlisted && "fill-current")} />
@@ -365,7 +365,7 @@ const ProductPage = () => {
 
                 {/* Description */}
                 {product.description && (
-                  <div className="mb-8 prose prose-sm prose-invert max-w-none text-white [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" style={{ color: 'white' }} dangerouslySetInnerHTML={{ __html: product.description.replace(/<a /g, '<a style="color:#f97015" ') }} />
+                  <div className="mb-8 prose prose-sm prose-invert max-w-none text-white [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" style={{ color: 'white' }} dangerouslySetInnerHTML={{ __html: product.description.replace(/<a /g, '<a style="color:#16a249" ') }} />
                 )}
 
                 {/* FAQ Section */}
