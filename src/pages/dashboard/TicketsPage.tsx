@@ -86,7 +86,7 @@ const TicketsPage = () => {
               {messages?.map(msg => (
                 <div key={msg.id} className={`p-3 rounded-lg ${msg.sender_id === user?.id ? 'bg-primary/10 ml-8' : 'bg-secondary mr-8'}`}>
                   <p className="text-sm text-foreground">{msg.message}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{new Date(msg.created_at).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{formatDateTime(msg.created_at)}</p>
                 </div>
               ))}
             </div>
@@ -134,7 +134,7 @@ const TicketsPage = () => {
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <h3 className="font-medium text-foreground">{ticket.subject}</h3>
-                  <p className="text-xs text-muted-foreground">{new Date(ticket.created_at).toLocaleDateString()}</p>
+                  <p className="text-xs text-muted-foreground">{formatDate(ticket.created_at)}</p>
                 </div>
                 <Badge className={ticket.status === 'open' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}>{ticket.status}</Badge>
               </CardContent>

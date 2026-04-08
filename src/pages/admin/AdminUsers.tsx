@@ -50,7 +50,7 @@ const AdminUsers = () => {
                     </SelectContent>
                   </Select>
                 </TableCell>
-                <TableCell className="text-xs text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{formatDate(u.created_at)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

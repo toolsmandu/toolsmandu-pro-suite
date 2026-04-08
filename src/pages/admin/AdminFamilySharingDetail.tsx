@@ -222,7 +222,7 @@ const AdminFamilySharingDetail = () => {
                   </div>
                 </TableCell>
                 <TableCell>{c.remarks || "—"}</TableCell>
-                <TableCell>{c.expiry_date ? new Date(c.expiry_date).toLocaleDateString() : "—"}</TableCell>
+                <TableCell>{c.expiry_date ? formatDate(c.expiry_date) : "—"}</TableCell>
                 <TableCell>{c.max_limit}</TableCell>
                 <TableCell>{c.assigned_count}</TableCell>
                 <TableCell className="text-right">

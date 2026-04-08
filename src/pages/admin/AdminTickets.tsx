@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Send } from 'lucide-react';
+import { formatDate, formatDateTime } from '@/lib/formatDate';
 
 const AdminTickets = () => {
   const { user } = useAuth();
@@ -67,7 +68,7 @@ const AdminTickets = () => {
                 <div key={msg.id} className={`p-3 rounded-lg ${msg.sender_id === user?.id ? 'bg-primary/10 ml-8' : 'bg-secondary mr-8'}`}>
                   <p className="text-xs text-muted-foreground mb-1">{msg.profiles?.email || 'Unknown'}</p>
                   <p className="text-sm text-foreground">{msg.message}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{new Date(msg.created_at).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{formatDateTime(msg.created_at)}</p>
                 </div>
               ))}
             </div>
@@ -91,7 +92,7 @@ const AdminTickets = () => {
             <CardContent className="p-4 flex items-center justify-between">
               <div>
                 <h3 className="font-medium text-foreground">{t.subject}</h3>
-                <p className="text-xs text-muted-foreground">{t.profiles?.email} • {new Date(t.created_at).toLocaleDateString()}</p>
+                <p className="text-xs text-muted-foreground">{t.profiles?.email} • {formatDate(t.created_at)}</p>
               </div>
               <Badge className={t.status === 'open' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}>{t.status}</Badge>
             </CardContent>
