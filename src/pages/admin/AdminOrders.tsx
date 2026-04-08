@@ -411,6 +411,19 @@ const AdminOrders = () => {
                 <Send className="h-4 w-4 mr-2" />
                 {sending ? 'Sending...' : 'Send Note via Email'}
               </Button>
+
+              {/* Sent Notes History */}
+              {orderNotes && orderNotes.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <Label className="text-xs text-muted-foreground block">Sent Notes</Label>
+                  {orderNotes.map((n: any) => (
+                    <div key={n.id} className="bg-muted/30 rounded-lg p-3 text-sm">
+                      <p className="text-foreground whitespace-pre-wrap">{n.note}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(n.created_at)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>
