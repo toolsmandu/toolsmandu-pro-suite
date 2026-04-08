@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChevronRight, Send, Save, Trash2, Plus } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate } from '@/lib/formatDate';
 import { toast } from 'sonner';
 
@@ -39,6 +40,7 @@ const AdminOrders = () => {
   const [editStatus, setEditStatus] = useState('');
   const [editItems, setEditItems] = useState<EditItem[]>([]);
   const [sending, setSending] = useState(false);
+  const [isAdminOnly, setIsAdminOnly] = useState(false);
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
@@ -129,6 +131,7 @@ const AdminOrders = () => {
       }))
     );
     setOrderNote('');
+    setIsAdminOnly(false);
   };
 
   const handleSaveOrder = () => {
@@ -216,7 +219,8 @@ const AdminOrders = () => {
         order_id: selectedOrder.id,
         note: orderNote,
         sent_by: user!.id,
-      });
+        is_admin_only: isAdminOnly,
+      } as any);
       await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'order-note',
