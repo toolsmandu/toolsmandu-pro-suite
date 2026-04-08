@@ -110,9 +110,9 @@ const OrdersPage = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Order ID</TableHead>
-              <TableHead>Product</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Price</TableHead>
+              <TableHead>Product</TableHead>
+              <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
@@ -121,8 +121,8 @@ const OrdersPage = () => {
             {orders.map(order => (
               <TableRow key={order.id}>
                 <TableCell className="font-mono text-xs">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
-                <TableCell className="text-sm">{getProductLabel(order)}</TableCell>
                 <TableCell className="text-xs text-muted-foreground">{formatDate(order.created_at)}</TableCell>
+                <TableCell className="text-sm">{getProductLabel(order)}</TableCell>
                 <TableCell className="font-semibold">NPR {order.total}</TableCell>
                 <TableCell><Badge className={statusColors[order.status]}>{order.status}</Badge></TableCell>
                 <TableCell>
@@ -148,7 +148,7 @@ const OrdersPage = () => {
               {/* Order Info */}
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Product</span><span className="text-foreground">{getProductLabel(selectedOrder)}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Price</span><span className="font-semibold text-foreground">NPR {selectedOrder.total}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><span className="font-semibold text-foreground">NPR {selectedOrder.total}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="text-foreground">{formatDate(selectedOrder.created_at)}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge className={statusColors[selectedOrder.status]}>{selectedOrder.status}</Badge></div>
               </div>
