@@ -262,16 +262,9 @@ const AdminOrders = () => {
                   </TableCell>
                   <TableCell className="font-bold text-foreground">NPR {order.total}</TableCell>
                   <TableCell>
-                    <Select value={order.status} onValueChange={(v) => updateStatus.mutate({ id: order.id, status: v })}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['processing', 'completed', 'cancelled', 'refunded'].map((s) => (
-                          <SelectItem key={s} value={s}>{s}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[order.status] || ''}`}>
+                      {order.status}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="icon" onClick={() => openOrderDetail(order)}>
