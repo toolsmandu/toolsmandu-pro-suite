@@ -130,9 +130,15 @@ const CategorySection = ({ category, products }: { category: { id: string; name:
 
   return (
     <section className="mb-12">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-foreground">{category.name}</h2>
-        <div className="flex gap-2">
+      <div className="flex items-center gap-4 mb-6">
+        <h2 className="text-2xl font-bold text-foreground whitespace-nowrap">{category.name}</h2>
+        <div className="flex-1 h-px bg-border" />
+        <div className="flex items-center gap-2">
+          <Link to={`/item-category/${category.slug}`}>
+            <Button variant="outline" size="sm" className="h-8 text-xs font-medium">
+              View All <ChevronRight className="h-3.5 w-3.5 ml-1" />
+            </Button>
+          </Link>
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => scroll(-1)}><ChevronLeft className="h-4 w-4" /></Button>
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => scroll(1)}><ChevronRight className="h-4 w-4" /></Button>
         </div>
