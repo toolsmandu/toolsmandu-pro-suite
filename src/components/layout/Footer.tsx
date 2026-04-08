@@ -76,6 +76,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
               <img src={googleReviewsImg} alt="Google Reviews" className="h-10 md:h-16 object-contain" />
             </a>
           </div>
+        </div>
 
         <div className="border-t border-white/20 mt-8 pt-8 text-sm flex items-center justify-between" style={{ color: 'rgba(255,255,255,0.7)' }}>
           <span>© {new Date().getFullYear()} Toolsmandu. All rights reserved.</span>
