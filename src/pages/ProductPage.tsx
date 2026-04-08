@@ -5,10 +5,49 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ShoppingCart, Check, MessageCircle } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
+
+const ProductFAQs = ({ productName }: { productName: string }) => {
+  const { data: faqs } = useQuery({
+    queryKey: ['product-faqs'],
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data } = await supabase.from('faqs').select('*').eq('is_active', true).order('sort_order');
+      return data || [];
+    },
+  });
+
+  if (!faqs?.length) return null;
+
+  const replacePlaceholder = (text: string) => text.replace(/\[product\]/gi, productName);
+
+  return (
+    <div className="mb-8">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-8 w-1 rounded-full" style={{ background: 'linear-gradient(180deg, #228be6, #15aabf)' }} />
+        <h2 className="text-xl font-bold text-foreground">Frequently Asked Questions</h2>
+      </div>
+      <Card className="overflow-hidden border-border/50" style={{ backgroundColor: 'rgba(10, 46, 92, 0.5)' }}>
+        <Accordion type="single" collapsible className="w-full">
+          {faqs.map((faq, idx) => (
+            <AccordionItem key={faq.id} value={faq.id} className={cn("border-border/30", idx === faqs.length - 1 && "border-b-0")}>
+              <AccordionTrigger className="px-5 py-4 text-sm font-semibold text-foreground hover:no-underline hover:text-primary transition-colors [&[data-state=open]]:text-primary">
+                {replacePlaceholder(faq.question)}
+              </AccordionTrigger>
+              <AccordionContent className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed">
+                {replacePlaceholder(faq.answer)}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </Card>
+    </div>
+  );
+};
 
 const ProductPage = () => {
   const { slug } = useParams();
@@ -267,6 +306,9 @@ const ProductPage = () => {
                 {product.description && (
                   <div className="mb-8 prose prose-sm prose-invert max-w-none text-white [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full" style={{ color: 'white' }} dangerouslySetInnerHTML={{ __html: product.description.replace(/<a /g, '<a style="color:#f97015" ') }} />
                 )}
+
+                {/* FAQ Section */}
+                <ProductFAQs productName={product.name} />
               </div>
 
               {/* Right Sidebar - desktop only */}
