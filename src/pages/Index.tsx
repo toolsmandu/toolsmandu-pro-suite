@@ -97,8 +97,8 @@ const HeroSlider = () => {
   const slideWidth = 100 / visibleCount;
 
   return (
-    <div className="gradient-primary overflow-hidden">
-      <div className="container mx-auto px-4 relative">
+    <div className="gradient-primary">
+      <div className="container mx-auto px-4 relative overflow-hidden">
         <div
           ref={trackRef}
           className={`flex ${isTransitioning ? 'transition-transform duration-500 ease-out' : ''}`}
