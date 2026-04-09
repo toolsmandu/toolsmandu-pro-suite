@@ -185,8 +185,8 @@ const OrdersPage = () => {
                             const cred = a.family_sharing_credentials;
                             const remaining = getRemainingTime(a);
                             return (
-                              <div key={a.id} className="bg-muted/30 rounded-lg px-6 py-4">
-                              <div className="flex flex-wrap items-center justify-evenly gap-4">
+                              <div key={a.id} className="bg-muted/30 rounded-lg px-6 py-4 overflow-x-auto">
+                              <div className="flex items-center justify-evenly gap-4 flex-nowrap min-w-max lg:min-w-0 lg:flex-wrap">
                                   <button onClick={() => copyToClipboard(cred?.username || "")}
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
                                     <User className="h-3 w-3" /> Username: {cred?.username} <Copy className="h-3 w-3" />
