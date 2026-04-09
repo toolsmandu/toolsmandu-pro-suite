@@ -29,7 +29,7 @@ const HeroSlider = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const { data: slides } = useQuery({
+  const { data: slides, isLoading: slidesLoading } = useQuery({
     queryKey: ['hero-slides'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
