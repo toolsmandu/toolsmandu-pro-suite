@@ -5,8 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
-import { Skeleton } from '@/components/ui/skeleton';
-import ProductCardSkeleton from '@/components/ProductCardSkeleton';
+import { Loader2 } from 'lucide-react';
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
