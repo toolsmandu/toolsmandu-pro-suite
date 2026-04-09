@@ -78,7 +78,7 @@ const AdminOrders = () => {
   });
 
   const updateOrder = useMutation({
-    mutationFn: async ({ id, total, status, items, deletedItemIds }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[] }) => {
+    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string }) => {
       await supabase.from('orders').update({ total, status: status as any }).eq('id', id);
 
       if (deletedItemIds.length > 0) {
@@ -103,6 +103,62 @@ const AdminOrders = () => {
             price: item.price,
             quantity: item.quantity,
           }).eq('id', item.id);
+        }
+      }
+
+      // Auto-assign credentials when status changes to completed
+      if (status === 'completed' && previousStatus !== 'completed') {
+        for (const item of items) {
+          if (!item.variation_id) continue;
+          // Find credentials linked to this variant
+          const { data: links } = await supabase
+            .from('credential_variant_links')
+            .select('credential_id, priority')
+            .eq('variant_id', item.variation_id)
+            .order('priority');
+          if (!links?.length) continue;
+
+          for (const link of links) {
+            // Check if already assigned
+            const { data: existing } = await supabase
+              .from('credential_assignments')
+              .select('id')
+              .eq('order_id', id)
+              .eq('credential_id', link.credential_id)
+              .eq('user_id', userId);
+            if (existing && existing.length > 0) continue;
+
+            // Get credential to check limits
+            const { data: cred } = await supabase
+              .from('family_sharing_credentials')
+              .select('assigned_count, max_limit')
+              .eq('id', link.credential_id)
+              .single();
+            if (!cred || cred.assigned_count >= cred.max_limit) continue;
+
+            // Get variation expiry_days
+            const { data: variation } = await supabase
+              .from('product_variations')
+              .select('expiry_days')
+              .eq('id', item.variation_id)
+              .single();
+
+            // Assign credential
+            await supabase.from('credential_assignments').insert({
+              credential_id: link.credential_id,
+              order_id: id,
+              user_id: userId,
+              validity_days: variation?.expiry_days || null,
+            });
+
+            // Increment assigned_count
+            await supabase
+              .from('family_sharing_credentials')
+              .update({ assigned_count: (cred.assigned_count || 0) + 1 })
+              .eq('id', link.credential_id);
+
+            break; // Only assign one credential per variant (primary first)
+          }
         }
       }
     },
@@ -142,6 +198,8 @@ const AdminOrders = () => {
       status: editStatus,
       items: editItems,
       deletedItemIds,
+      previousStatus: selectedOrder.status,
+      userId: selectedOrder.user_id,
     });
   };
 
