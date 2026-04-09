@@ -203,7 +203,7 @@ const OrdersPage = () => {
                                   ) : (
                                     <span className="text-muted-foreground text-xs ml-auto">No expiry</span>
                                   )}
-                              </div>
+                                </div>
                             );
                           })}
                         </div>
