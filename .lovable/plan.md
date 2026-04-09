@@ -1,21 +1,34 @@
 
 
-## Plan: Move Footer About Text & Add Edit for Footer Links
+## Problem
 
-### Changes
+The HeroSlider shows a fallback "Premium Digital Subscriptions" template while the hero slides query is still loading (`slides` is undefined/empty during fetch). Once data arrives, it switches to the real slider — causing a visible flash.
 
-**1. Move "Footer About Text" from Site Settings into the Footer Links card**
-- In `AdminSettings.tsx`, remove the footer about text field from the "Site Settings" card
-- Add it at the top of the "Footer Links" card so all footer content is managed together
+The same issue applies to the categories/products section which shows nothing while loading.
 
-**2. Add Edit functionality for Footer Links**
-- Add edit state and an edit dialog (similar to how nav menu items already have edit)
-- Add a Pencil/edit button in the Actions column of each footer link row
-- Add an `updateLink` mutation that updates the footer link by ID
-- Edit dialog has fields: Column, Label, URL, Sort Order
+## Plan
 
-### Files to modify
-- `src/pages/admin/AdminSettings.tsx` — move footer about textarea, add edit link dialog + mutation + edit button
+**File: `src/pages/Index.tsx`**
 
-No database changes needed — the `footer_links` table already supports updates via the admin RLS policy.
+1. **HeroSlider**: Get `isLoading` from the `useQuery` call for hero slides. While loading, render a skeleton placeholder (matching the slider dimensions) instead of the fallback template. Only show the "Premium Digital Subscriptions" fallback when loading is done AND there are genuinely no slides.
+
+2. **Index component**: Get `isLoading` from the products and categories queries. Show skeleton placeholders for category sections while data is loading.
+
+This ensures no old/fallback template flashes before real content appears.
+
+### Technical detail
+
+```
+// In HeroSlider:
+const { data: slides, isLoading } = useQuery({ ... });
+
+if (isLoading) return <div className="gradient-primary py-20"><Skeleton className="h-64 ..." /></div>;
+if (!slides?.length) return <fallback>;
+
+// In Index:
+const { data: allProducts, isLoading: productsLoading } = useQuery({ ... });
+const { data: categories, isLoading: categoriesLoading } = useQuery({ ... });
+
+// Show skeletons while loading
+```
 
