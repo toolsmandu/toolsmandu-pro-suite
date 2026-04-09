@@ -175,7 +175,7 @@ const OrdersPage = () => {
                             const remaining = getRemainingDays(a);
                             return (
                               <div key={a.id} className="bg-muted/30 rounded-lg p-3 space-y-2">
-                                <div className="flex flex-wrap items-center gap-2">
+                              <div className="flex flex-wrap items-center gap-2">
                                   <button onClick={() => copyToClipboard(cred?.username || "")}
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
                                     <User className="h-3 w-3" /> Username: {cred?.username} <Copy className="h-3 w-3" />
@@ -187,21 +187,21 @@ const OrdersPage = () => {
                                   {cred?.twofa_link && (
                                     <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/30 transition-colors">
-                                      <RotateCcwKey className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
+                                      <RotateCcwKey className="h-3 w-3" /> Get OTP Code
                                     </a>
                                   )}
                                   {cred?.family_sharing_products?.login_link && (
                                     <a href={cred.family_sharing_products.login_link} target="_blank" rel="noopener noreferrer"
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs font-medium hover:bg-blue-500/30 transition-colors">
-                                      <Link2 className="h-3 w-3" /> Login Link <ExternalLink className="h-3 w-3" />
+                                      <Link2 className="h-3 w-3" /> Login Link
                                     </a>
                                   )}
                                   {remaining !== null ? (
-                                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold ml-auto">
+                                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold">
                                       <Clock className="h-3 w-3" /> Remaining: {remaining} Days
                                     </span>
                                   ) : (
-                                    <span className="text-muted-foreground text-xs ml-auto">No expiry</span>
+                                    <span className="text-muted-foreground text-xs">No expiry</span>
                                   )}
                                 </div>
                               </div>
@@ -267,13 +267,13 @@ const OrdersPage = () => {
                               {cred?.family_sharing_products?.login_link && (
                                 <a href={cred.family_sharing_products.login_link} target="_blank" rel="noopener noreferrer"
                                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs hover:bg-blue-500/30 transition-colors">
-                                  <Link2 className="h-3 w-3" /> Login Link <ExternalLink className="h-3 w-3" />
+                                  <Link2 className="h-3 w-3" /> Login Link
                                 </a>
                               )}
                               {cred?.twofa_link && (
                                 <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
                                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition-colors">
-                                  <RotateCcwKey className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
+                                  <RotateCcwKey className="h-3 w-3" /> Get OTP Code
                                 </a>
                               )}
                             </div>
