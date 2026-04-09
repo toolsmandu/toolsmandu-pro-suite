@@ -68,7 +68,7 @@ const HeroSlider = () => {
   const activeDot = current % totalOriginal;
 
   return (
-    <div className="gradient-primary">
+    <div>
       <div className="container mx-auto px-4 relative">
         <div className="flex gap-2 overflow-hidden">
           {visibleSlides.map((slide, idx) => (
