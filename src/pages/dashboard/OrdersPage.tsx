@@ -247,31 +247,33 @@ const OrdersPage = () => {
                         <div key={a.id} className="bg-muted/30 rounded-lg p-3 space-y-2">
                           <div className="grid grid-cols-2 gap-2">
                             <button onClick={() => copyToClipboard(cred?.username || "")}
-                              className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-primary/20 text-primary text-xs font-medium hover:bg-primary/30 transition-colors">
-                              {cred?.username} <Copy className="h-3 w-3" />
+                              className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
+                              <User className="h-3 w-3" /> Username: {cred?.username} <Copy className="h-3 w-3" />
                             </button>
                             <button onClick={() => copyToClipboard(cred?.password || "")}
                               className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
-                              {cred?.password} <Copy className="h-3 w-3" />
+                              <KeyRound className="h-3 w-3" /> Password: {cred?.password} <Copy className="h-3 w-3" />
                             </button>
                           </div>
                           <div className="flex items-center justify-between text-xs">
                             {remaining !== null ? (
-                              <span className="text-yellow-400 font-semibold">{remaining} days remaining</span>
+                              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold">
+                                <Clock className="h-3 w-3" /> Remaining: {remaining} Days
+                              </span>
                             ) : (
                               <span className="text-muted-foreground">No expiry</span>
                             )}
                             <div className="flex gap-2">
                               {cred?.family_sharing_products?.login_link && (
                                 <a href={cred.family_sharing_products.login_link} target="_blank" rel="noopener noreferrer"
-                                  className="flex items-center gap-1 px-3 py-1 rounded-md bg-blue-500/20 text-blue-400 text-xs hover:bg-blue-500/30 transition-colors">
-                                  Login <ExternalLink className="h-3 w-3" />
+                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs hover:bg-blue-500/30 transition-colors">
+                                  <LogIn className="h-3 w-3" /> Login Link <ExternalLink className="h-3 w-3" />
                                 </a>
                               )}
                               {cred?.twofa_link && (
                                 <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
-                                  className="flex items-center gap-1 px-3 py-1 rounded-md bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition-colors">
-                                  Get OTP <ExternalLink className="h-3 w-3" />
+                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition-colors">
+                                  <ShieldCheck className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
                                 </a>
                               )}
                             </div>
