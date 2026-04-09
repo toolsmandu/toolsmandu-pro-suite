@@ -175,7 +175,7 @@ const OrdersPage = () => {
                             const remaining = getRemainingDays(a);
                             return (
                               <div key={a.id} className="bg-muted/30 rounded-lg p-3 space-y-2">
-                              <div className="flex flex-wrap items-center gap-2">
+                              <div className="flex flex-wrap items-center justify-center gap-2">
                                   <button onClick={() => copyToClipboard(cred?.username || "")}
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
                                     <User className="h-3 w-3" /> Username: {cred?.username} <Copy className="h-3 w-3" />
