@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Package, Copy, ExternalLink, User, KeyRound, LockKeyholeOpen, Link2, Clock } from 'lucide-react';
+import { Package, Copy, ExternalLink, User, KeyRound, RotateCcwKey, Link2, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/formatDate';
 
@@ -187,7 +187,7 @@ const OrdersPage = () => {
                                   {cred?.twofa_link && (
                                     <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/30 transition-colors">
-                                      <LockKeyholeOpen className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
+                                      <RotateCcwKey className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
                                     </a>
                                   )}
                                   {cred?.family_sharing_products?.login_link && (
@@ -273,7 +273,7 @@ const OrdersPage = () => {
                               {cred?.twofa_link && (
                                 <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
                                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition-colors">
-                                  <LockKeyholeOpen className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
+                                  <RotateCcwKey className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
                                 </a>
                               )}
                             </div>
