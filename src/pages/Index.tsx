@@ -5,8 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
-import { Skeleton } from '@/components/ui/skeleton';
-import ProductCardSkeleton from '@/components/ProductCardSkeleton';
+import { Loader2 } from 'lucide-react';
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
@@ -78,14 +77,8 @@ const HeroSlider = () => {
   }, [isTransitioning, current]);
 
   if (slidesLoading) return (
-    <div className="gradient-primary overflow-hidden">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex gap-1">
-          {Array.from({ length: typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : 1 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-[4/3] flex-1 rounded-lg" />
-          ))}
-        </div>
-      </div>
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <Loader2 className="h-10 w-10 animate-spin text-primary" />
     </div>
   );
 
@@ -192,26 +185,18 @@ const Index = () => {
 
   return (
     <>
-      <HeroSlider />
-
-      <div className="container mx-auto px-4 py-12">
-        {loading ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <section key={i} className="mb-12">
-              <Skeleton className="h-8 w-48 mb-6" />
-              <div className="flex gap-4 overflow-hidden">
-                {Array.from({ length: 5 }).map((_, j) => (
-                  <div key={j} className="min-w-[220px] max-w-[220px]">
-                    <ProductCardSkeleton />
-                  </div>
-                ))}
-              </div>
-            </section>
-          ))
-        ) : (
-          categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)
-        )}
-      </div>
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[80vh]">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        </div>
+      ) : (
+        <>
+          <HeroSlider />
+          <div className="container mx-auto px-4 py-12">
+            {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
+          </div>
+        </>
+      )}
     </>
   );
 };
