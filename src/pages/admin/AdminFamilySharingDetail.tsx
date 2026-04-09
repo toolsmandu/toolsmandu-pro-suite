@@ -172,7 +172,8 @@ const AdminFamilySharingDetail = () => {
     const links = credentialVariantLinks[credId] || [];
     return links.map(l => {
       const name = variants.find(v => v.id === l.variant_id)?.name;
-      return name ? `${name} (${l.priority})` : null;
+      const tag = l.priority === 'primary' ? 'P' : 'S';
+      return name ? `${name} (${tag})` : null;
     }).filter(Boolean);
   };
 
@@ -193,28 +194,24 @@ const AdminFamilySharingDetail = () => {
 
       <Table>
         <TableHeader>
-          <TableRow>
+           <TableRow>
             <TableHead>#</TableHead>
             <TableHead>Username</TableHead>
             <TableHead>Password</TableHead>
-            <TableHead>2FA Link</TableHead>
             <TableHead>Linked Variants</TableHead>
-            <TableHead>Remarks</TableHead>
-            <TableHead>Expiry</TableHead>
             <TableHead>Limit</TableHead>
             <TableHead>Assigned</TableHead>
             <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {credentials.map((c, idx) => {
+           </TableRow>
+         </TableHeader>
+         <TableBody>
+           {credentials.map((c, idx) => {
             const linkedNames = getLinkedVariantNames(c.id);
             return (
               <TableRow key={c.id}>
                 <TableCell>{idx + 1}</TableCell>
                 <TableCell className="font-medium">{c.username}</TableCell>
                 <TableCell>{c.password}</TableCell>
-                <TableCell className="max-w-[120px] truncate">{c.twofa_link || "—"}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {linkedNames.length > 0 ? linkedNames.map((name, i) => (
@@ -222,8 +219,6 @@ const AdminFamilySharingDetail = () => {
                     )) : <span className="text-muted-foreground text-xs">None</span>}
                   </div>
                 </TableCell>
-                <TableCell>{c.remarks || "—"}</TableCell>
-                <TableCell>{c.expiry_date ? formatDate(c.expiry_date) : "—"}</TableCell>
                 <TableCell>{c.max_limit}</TableCell>
                 <TableCell>{c.assigned_count}</TableCell>
                 <TableCell className="text-right">
@@ -244,7 +239,7 @@ const AdminFamilySharingDetail = () => {
           })}
           {credentials.length === 0 && (
             <TableRow>
-              <TableCell colSpan={10} className="text-center text-muted-foreground py-8">No credentials added yet.</TableCell>
+              <TableCell colSpan={7} className="text-center text-muted-foreground py-8">No credentials added yet.</TableCell>
             </TableRow>
           )}
         </TableBody>
