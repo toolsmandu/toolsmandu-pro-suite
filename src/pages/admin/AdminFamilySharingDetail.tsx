@@ -291,7 +291,7 @@ const AdminFamilySharingDetail = () => {
                   const isSelected = !!selectedVariantMap[v.id];
                   return (
                     <div key={v.id} className="flex items-center gap-3 p-3 border border-border rounded-lg">
-                      <Checkbox checked={isSelected} onCheckedChange={() => toggleVariant(v.id)} />
+                      <Checkbox checked={isSelected} onCheckedChange={() => toggleVariant(v.id)} className="border-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
                       <div className="flex-1">
                         <p className="text-foreground font-medium text-sm">{v.name}</p>
                         <p className="text-xs text-muted-foreground">
