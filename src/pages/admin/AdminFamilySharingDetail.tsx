@@ -153,9 +153,18 @@ const AdminFamilySharingDetail = () => {
 
   const handleSaveVariantLinks = async () => {
     if (!selectedCredentialId) return;
+    // Remove existing links for this credential
     await supabase.from("credential_variant_links").delete().eq("credential_id", selectedCredentialId);
     const entries = Object.entries(selectedVariantMap);
     if (entries.length > 0) {
+      // For each variant+priority, remove any OTHER credential that holds the same slot
+      for (const [vid, priority] of entries) {
+        await supabase.from("credential_variant_links")
+          .delete()
+          .eq("variant_id", vid)
+          .eq("priority", priority)
+          .neq("credential_id", selectedCredentialId);
+      }
       const inserts = entries.map(([vid, priority]) => ({
         credential_id: selectedCredentialId, variant_id: vid, priority,
       }));
