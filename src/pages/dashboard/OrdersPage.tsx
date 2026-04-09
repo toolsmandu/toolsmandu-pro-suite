@@ -87,14 +87,15 @@ const OrdersPage = () => {
 
   const getOrderCredentials = (orderId: string) => {
     if (!assignments) return [];
-    const now = new Date();
+    const now = Date.now();
     return assignments.filter((a: any) => {
       if (a.order_id !== orderId) return false;
       const validity = a.validity_days;
       if (!validity) return true;
       const assignedDate = new Date(a.assigned_at);
-      const expiryDate = new Date(assignedDate.getTime() + validity * 24 * 60 * 60 * 1000);
-      return expiryDate > now;
+      const expiryMs = assignedDate.getTime() + validity * 24 * 60 * 60 * 1000;
+      const remainingHours = Math.ceil((expiryMs - now) / (60 * 60 * 1000));
+      return remainingHours > 0;
     });
   };
 
@@ -175,7 +176,7 @@ const OrdersPage = () => {
                         <div className="space-y-2">
                           {orderCreds.map((a: any) => {
                             const cred = a.family_sharing_credentials;
-                            const remaining = getRemainingDays(a);
+                            const remaining = getRemainingTime(a);
                             return (
                               <div key={a.id} className="bg-muted/30 rounded-lg px-6 py-4">
                               <div className="flex flex-wrap items-center justify-evenly gap-4">
@@ -201,7 +202,7 @@ const OrdersPage = () => {
                                   )}
                                   {remaining !== null ? (
                                     <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold">
-                                      <Clock className="h-3 w-3" /> Remaining: {remaining} Days
+                                      <Clock className="h-3 w-3" /> Remaining: {remaining.value} {remaining.unit === 'hours' ? 'Hours' : 'Days'}
                                     </span>
                                   ) : (
                                     <span className="text-muted-foreground text-xs">No expiry</span>
@@ -245,7 +246,7 @@ const OrdersPage = () => {
                   <div className="space-y-2">
                     {creds.map((a: any) => {
                       const cred = a.family_sharing_credentials;
-                      const remaining = getRemainingDays(a);
+                      const remaining = getRemainingTime(a);
                       return (
                         <div key={a.id} className="bg-muted/30 rounded-lg p-3 space-y-2">
                           <div className="grid grid-cols-2 gap-2">
@@ -261,7 +262,7 @@ const OrdersPage = () => {
                           <div className="flex items-center justify-between text-xs">
                             {remaining !== null ? (
                               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold">
-                                <Clock className="h-3 w-3" /> Remaining: {remaining} Days
+                                <Clock className="h-3 w-3" /> Remaining: {remaining.value} {remaining.unit === 'hours' ? 'Hours' : 'Days'}
                               </span>
                             ) : (
                               <span className="text-muted-foreground">No expiry</span>
