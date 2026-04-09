@@ -77,6 +77,18 @@ const HeroSlider = () => {
     }
   }, [isTransitioning, current]);
 
+  if (slidesLoading) return (
+    <div className="gradient-primary overflow-hidden">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex gap-1">
+          {Array.from({ length: typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : 1 }).map((_, i) => (
+            <Skeleton key={i} className="aspect-[4/3] flex-1 rounded-lg" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   if (!slides?.length) return (
     <div className="gradient-primary py-20 text-center">
       <div className="container mx-auto px-4">
