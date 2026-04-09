@@ -23,14 +23,14 @@ const DashboardLayout = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
-      <nav className="flex items-center gap-2 border-b border-border overflow-x-auto">
+      <nav className="flex items-center gap-1 bg-muted/30 rounded-xl p-1.5 overflow-x-auto">
         {links.map(({ to, icon: Icon, label, end }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${isActive ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'}`
+              `flex items-center gap-2 px-5 py-2.5 text-sm font-medium whitespace-nowrap rounded-lg transition-all ${isActive ? 'bg-primary text-primary-foreground shadow-md' : 'text-foreground hover:bg-muted/50'}`
             }
           >
             <Icon className="h-4 w-4" />
