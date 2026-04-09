@@ -23,6 +23,7 @@ interface Credential {
   assigned_count: number;
   twofa_link: string | null;
   created_at: string;
+  index_number: number;
 }
 
 interface Variant {
@@ -32,7 +33,7 @@ interface Variant {
   expiry_days: number | null;
 }
 
-const emptyForm = { username: "", password: "", remarks: "", expiry_date: "", max_limit: "1", twofa_link: "" };
+const emptyForm = { username: "", password: "", remarks: "", expiry_date: "", max_limit: "1", twofa_link: "", index_number: "" };
 
 const AdminFamilySharingDetail = () => {
   const { id } = useParams();
@@ -73,7 +74,7 @@ const AdminFamilySharingDetail = () => {
       .from("family_sharing_credentials")
       .select("*")
       .eq("family_product_id", id)
-      .order("created_at", { ascending: true });
+      .order("index_number", { ascending: false });
     if (creds) setCredentials(creds as Credential[]);
 
     const { data: links } = await supabase
@@ -94,13 +95,19 @@ const AdminFamilySharingDetail = () => {
 
   useEffect(() => { fetchData(); }, [id]);
 
-  const openAdd = () => { setEditingId(null); setForm(emptyForm); setDialogOpen(true); };
+  const openAdd = () => {
+    setEditingId(null);
+    const maxIndex = credentials.length > 0 ? Math.max(...credentials.map(c => c.index_number)) : 0;
+    setForm({ ...emptyForm, index_number: String(maxIndex + 1) });
+    setDialogOpen(true);
+  };
 
   const openEdit = (c: Credential) => {
     setEditingId(c.id);
     setForm({
       username: c.username, password: c.password, remarks: c.remarks || "",
       expiry_date: c.expiry_date || "", max_limit: String(c.max_limit), twofa_link: c.twofa_link || "",
+      index_number: String(c.index_number),
     });
     setDialogOpen(true);
   };
@@ -121,6 +128,7 @@ const AdminFamilySharingDetail = () => {
       username: form.username, password: form.password,
       remarks: form.remarks || null, expiry_date: form.expiry_date || null,
       max_limit: parseInt(form.max_limit) || 1, twofa_link: form.twofa_link || null,
+      index_number: parseInt(form.index_number) || 1,
     };
 
     if (editingId) {
@@ -195,7 +203,7 @@ const AdminFamilySharingDetail = () => {
       <Table>
         <TableHeader>
            <TableRow>
-            <TableHead>#</TableHead>
+            <TableHead>Index</TableHead>
             <TableHead>Username</TableHead>
             <TableHead>Password</TableHead>
             <TableHead>Linked Variants</TableHead>
@@ -209,7 +217,7 @@ const AdminFamilySharingDetail = () => {
             const linkedNames = getLinkedVariantNames(c.id);
             return (
               <TableRow key={c.id}>
-                <TableCell>{idx + 1}</TableCell>
+                <TableCell>{c.index_number}</TableCell>
                 <TableCell className="font-medium">{c.username}</TableCell>
                 <TableCell>{c.password}</TableCell>
                 <TableCell>
@@ -260,6 +268,9 @@ const AdminFamilySharingDetail = () => {
               <div><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} /></div>
               <div><Label>Limit (max assignments)</Label><Input type="number" min="1" value={form.max_limit} onChange={(e) => setForm({ ...form, max_limit: e.target.value })} /></div>
             </div>
+            {editingId && (
+              <div><Label>Index Number</Label><Input type="number" min="1" value={form.index_number} onChange={(e) => setForm({ ...form, index_number: e.target.value })} /></div>
+            )}
             <Button onClick={handleSave} className="w-full">{editingId ? "Update" : "Add"}</Button>
           </div>
         </DialogContent>

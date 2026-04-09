@@ -129,6 +129,7 @@ export type Database = {
           expiry_date: string | null
           family_product_id: string
           id: string
+          index_number: number
           max_limit: number
           password: string
           remarks: string | null
@@ -142,6 +143,7 @@ export type Database = {
           expiry_date?: string | null
           family_product_id: string
           id?: string
+          index_number?: number
           max_limit?: number
           password: string
           remarks?: string | null
@@ -155,6 +157,7 @@ export type Database = {
           expiry_date?: string | null
           family_product_id?: string
           id?: string
+          index_number?: number
           max_limit?: number
           password?: string
           remarks?: string | null
