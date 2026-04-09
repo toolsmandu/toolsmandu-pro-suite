@@ -111,23 +111,12 @@ const OrdersPage = () => {
     return { value: Math.ceil(remainingMs / (24 * 60 * 60 * 1000)), unit: 'days' as const };
   };
 
-  // Auto-refresh every hour when any credential is showing hours
-  const hasHourlyCredentials = React.useMemo(() => {
-    if (!assignments) return false;
-    return assignments.some((a: any) => {
-      const t = getRemainingTime(a);
-      return t !== null && t.unit === 'hours';
-    });
-  }, [assignments]);
-
+  // Re-render every hour to update remaining time
+  const [, setTick] = useState(0);
   React.useEffect(() => {
-    if (!hasHourlyCredentials) return;
-    const interval = setInterval(() => {
-      // Force re-render by invalidating queries
-      import('@tanstack/react-query').then(({ QueryClient }) => {});
-    }, 60 * 60 * 1000);
+    const interval = setInterval(() => setTick(t => t + 1), 60 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [hasHourlyCredentials]);
+  }, []);
 
   const getProductLabel = (order: any) => {
     const items = (order.order_items as any[]) || [];
