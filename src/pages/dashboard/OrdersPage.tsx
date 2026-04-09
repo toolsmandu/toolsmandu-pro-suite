@@ -144,26 +144,72 @@ const OrdersPage = () => {
           <TableBody>
             {orders.map(order => {
               const hasNotes = getNotesForOrder(order.id).length > 0;
+              const orderCreds = getOrderCredentials(order.id);
               return (
-                <TableRow key={order.id}>
-                  <TableCell className="font-mono text-xs text-center">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
-                  <TableCell className="text-sm text-center">{getProductLabel(order)}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground text-center">{formatDate(order.created_at)}</TableCell>
-                  <TableCell className="font-semibold text-center">NPR {order.total}</TableCell>
-                  <TableCell className="text-center"><Badge className={statusColors[order.status]}>{capitalize(order.status)}</Badge></TableCell>
-                  <TableCell className="text-center">
-                    {hasNotes ? (
-                      <Badge
-                        className="bg-success text-white border-success/30 cursor-pointer hover:bg-success/80 transition-colors"
-                        onClick={() => setSelectedOrder(order)}
-                      >
-                        View Admin's Message
-                      </Badge>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </TableCell>
-                </TableRow>
+                <React.Fragment key={order.id}>
+                  <TableRow>
+                    <TableCell className="font-mono text-xs text-center">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
+                    <TableCell className="text-sm text-center">{getProductLabel(order)}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground text-center">{formatDate(order.created_at)}</TableCell>
+                    <TableCell className="font-semibold text-center">NPR {order.total}</TableCell>
+                    <TableCell className="text-center"><Badge className={statusColors[order.status]}>{capitalize(order.status)}</Badge></TableCell>
+                    <TableCell className="text-center">
+                      {hasNotes ? (
+                        <Badge
+                          className="bg-success text-white border-success/30 cursor-pointer hover:bg-success/80 transition-colors"
+                          onClick={() => setSelectedOrder(order)}
+                        >
+                          View Admin's Message
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                  {orderCreds.length > 0 && (
+                    <TableRow className="hover:bg-transparent border-b border-border">
+                      <TableCell colSpan={6} className="p-2">
+                        <div className="space-y-2">
+                          {orderCreds.map((a: any) => {
+                            const cred = a.family_sharing_credentials;
+                            const remaining = getRemainingDays(a);
+                            return (
+                              <div key={a.id} className="bg-muted/30 rounded-lg p-3 space-y-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <button onClick={() => copyToClipboard(cred?.username || "")}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary/20 text-primary text-xs font-medium hover:bg-primary/30 transition-colors">
+                                    <span className="text-muted-foreground mr-1">User:</span> {cred?.username} <Copy className="h-3 w-3" />
+                                  </button>
+                                  <button onClick={() => copyToClipboard(cred?.password || "")}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
+                                    <span className="text-muted-foreground mr-1">Pass:</span> {cred?.password} <Copy className="h-3 w-3" />
+                                  </button>
+                                  {cred?.twofa_link && (
+                                    <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
+                                      className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/30 transition-colors">
+                                      Get OTP <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  )}
+                                  {cred?.family_sharing_products?.login_link && (
+                                    <a href={cred.family_sharing_products.login_link} target="_blank" rel="noopener noreferrer"
+                                      className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs font-medium hover:bg-blue-500/30 transition-colors">
+                                      Login <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  )}
+                                  {remaining !== null ? (
+                                    <span className="text-yellow-400 text-xs font-semibold ml-auto">{remaining} days remaining</span>
+                                  ) : (
+                                    <span className="text-muted-foreground text-xs ml-auto">No expiry</span>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
               );
             })}
           </TableBody>
