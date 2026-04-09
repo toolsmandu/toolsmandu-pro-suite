@@ -39,6 +39,7 @@ import AdminMedia from "./pages/admin/AdminMedia";
 import AdminFAQs from "./pages/admin/AdminFAQs";
 import AdminFamilySharing from "./pages/admin/AdminFamilySharing";
 import AdminFamilySharingDetail from "./pages/admin/AdminFamilySharingDetail";
+import AdminCredentialDetail from "./pages/admin/AdminCredentialDetail";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ const App = () => (
                 <Route path="faqs" element={<AdminFAQs />} />
                 <Route path="family-sharing" element={<AdminFamilySharing />} />
                 <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
+                <Route path="family-sharing/:id/credential/:credentialId" element={<AdminCredentialDetail />} />
               </Route>
             </Routes>
           </BrowserRouter>
