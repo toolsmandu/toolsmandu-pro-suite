@@ -167,15 +167,15 @@ const OrdersPage = () => {
                     </TableCell>
                   </TableRow>
                   {orderCreds.length > 0 && (
-                    <TableRow className="hover:bg-transparent border-0">
-                      <TableCell colSpan={6} className="pt-0 pb-3 px-4">
+                    <TableRow className="hover:bg-transparent border-b border-border">
+                      <TableCell colSpan={6} className="p-2">
                         <div className="space-y-2">
                           {orderCreds.map((a: any) => {
                             const cred = a.family_sharing_credentials;
                             const remaining = getRemainingDays(a);
                             return (
-                              <div key={a.id} className="bg-muted/30 rounded-lg p-3">
-                                <div className="flex flex-wrap items-center justify-center gap-2">
+                              <div key={a.id} className="bg-muted/30 rounded-lg p-3 space-y-2">
+                              <div className="flex flex-wrap items-center justify-center gap-2">
                                   <button onClick={() => copyToClipboard(cred?.username || "")}
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
                                     <User className="h-3 w-3" /> Username: {cred?.username} <Copy className="h-3 w-3" />
