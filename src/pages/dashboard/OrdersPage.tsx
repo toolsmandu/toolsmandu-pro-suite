@@ -273,7 +273,7 @@ const OrdersPage = () => {
                               {cred?.twofa_link && (
                                 <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
                                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition-colors">
-                                  <ShieldCheck className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
+                                  <KeySquare className="h-3 w-3" /> Get OTP Code <ExternalLink className="h-3 w-3" />
                                 </a>
                               )}
                             </div>
