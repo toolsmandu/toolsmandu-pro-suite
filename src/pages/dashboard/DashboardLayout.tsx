@@ -22,28 +22,23 @@ const DashboardLayout = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      
-      <div className="grid lg:grid-cols-4 gap-8">
-        <nav className="space-y-1">
-          {links.map(({ to, icon: Icon, label, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`
-              }
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="lg:col-span-3">
-          <Outlet />
-        </div>
-      </div>
+    <div className="container mx-auto px-4 py-8 space-y-6">
+      <nav className="flex items-center gap-2 border-b border-border overflow-x-auto">
+        {links.map(({ to, icon: Icon, label, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${isActive ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'}`
+            }
+          >
+            <Icon className="h-4 w-4" />
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+      <Outlet />
     </div>
   );
 };
