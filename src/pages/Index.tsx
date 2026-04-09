@@ -5,8 +5,8 @@ import { useEffect, useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
-
-
+import { Skeleton } from '@/components/ui/skeleton';
+import ProductCardSkeleton from '@/components/ProductCardSkeleton';
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
@@ -29,7 +29,7 @@ const HeroSlider = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const { data: slides } = useQuery({
+  const { data: slides, isLoading: slidesLoading } = useQuery({
     queryKey: ['hero-slides'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
@@ -76,6 +76,18 @@ const HeroSlider = () => {
       return () => cancelAnimationFrame(raf);
     }
   }, [isTransitioning, current]);
+
+  if (slidesLoading) return (
+    <div className="gradient-primary overflow-hidden">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex gap-1">
+          {Array.from({ length: typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : 1 }).map((_, i) => (
+            <Skeleton key={i} className="aspect-[4/3] flex-1 rounded-lg" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   if (!slides?.length) return (
     <div className="gradient-primary py-20 text-center">
@@ -165,7 +177,7 @@ const Index = () => {
     },
   });
 
-  const { data: categories } = useQuery({
+  const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
@@ -176,13 +188,29 @@ const Index = () => {
 
   const productsByCategory = (catId: string) => allProducts?.filter(p => p.category_id === catId).slice(0, 10) || [];
 
+  const loading = isLoading || categoriesLoading;
+
   return (
     <>
       <HeroSlider />
 
       <div className="container mx-auto px-4 py-12">
-        {/* Category Sections */}
-        {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <section key={i} className="mb-12">
+              <Skeleton className="h-8 w-48 mb-6" />
+              <div className="flex gap-4 overflow-hidden">
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <div key={j} className="min-w-[220px] max-w-[220px]">
+                    <ProductCardSkeleton />
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))
+        ) : (
+          categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)
+        )}
       </div>
     </>
   );
