@@ -85,6 +85,7 @@ const App = () => (
                 <Route path="faqs" element={<AdminFAQs />} />
                 <Route path="family-sharing" element={<AdminFamilySharing />} />
                 <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
+                <Route path="family-sharing/:id/credential/:credentialId" element={<AdminCredentialDetail />} />
               </Route>
             </Routes>
           </BrowserRouter>
