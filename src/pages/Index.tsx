@@ -185,26 +185,18 @@ const Index = () => {
 
   return (
     <>
-      <HeroSlider />
-
-      <div className="container mx-auto px-4 py-12">
-        {loading ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <section key={i} className="mb-12">
-              <Skeleton className="h-8 w-48 mb-6" />
-              <div className="flex gap-4 overflow-hidden">
-                {Array.from({ length: 5 }).map((_, j) => (
-                  <div key={j} className="min-w-[220px] max-w-[220px]">
-                    <ProductCardSkeleton />
-                  </div>
-                ))}
-              </div>
-            </section>
-          ))
-        ) : (
-          categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)
-        )}
-      </div>
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[80vh]">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        </div>
+      ) : (
+        <>
+          <HeroSlider />
+          <div className="container mx-auto px-4 py-12">
+            {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
+          </div>
+        </>
+      )}
     </>
   );
 };
