@@ -1,0 +1,1 @@
+ALTER TABLE public.family_sharing_credentials ADD COLUMN index_number integer NOT NULL DEFAULT 0;
