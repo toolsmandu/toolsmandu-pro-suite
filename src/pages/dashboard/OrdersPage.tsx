@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Package, Copy, ExternalLink, User, KeyRound, KeySquare, Link2, Clock } from 'lucide-react';
+import { Package, Copy, ExternalLink, User, KeyRound, LockKeyholeOpen, Link2, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/formatDate';
 
