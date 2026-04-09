@@ -239,55 +239,6 @@ const OrdersPage = () => {
                 <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge className={statusColors[selectedOrder.status]}>{capitalize(selectedOrder.status)}</Badge></div>
               </div>
 
-              {/* Credentials */}
-              {creds.length > 0 && (
-                <div className="border-t border-border pt-3">
-                  <p className="text-xs font-semibold text-primary mb-2">Your Credentials</p>
-                  <div className="space-y-2">
-                    {creds.map((a: any) => {
-                      const cred = a.family_sharing_credentials;
-                      const remaining = getRemainingTime(a);
-                      return (
-                        <div key={a.id} className="bg-muted/30 rounded-lg p-3 space-y-2">
-                          <div className="grid grid-cols-2 gap-2">
-                            <button onClick={() => copyToClipboard(cred?.username || "")}
-                              className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
-                              <User className="h-3 w-3" /> Username: {cred?.username} <Copy className="h-3 w-3" />
-                            </button>
-                            <button onClick={() => copyToClipboard(cred?.password || "")}
-                              className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
-                              <KeyRound className="h-3 w-3" /> Password: {cred?.password} <Copy className="h-3 w-3" />
-                            </button>
-                          </div>
-                          <div className="flex items-center justify-between text-xs">
-                            {remaining !== null ? (
-                              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold">
-                                <Clock className="h-3 w-3" /> Remaining: {remaining.value} {remaining.unit === 'hours' ? 'Hours' : 'Days'}
-                              </span>
-                            ) : (
-                              <span className="text-muted-foreground">No expiry</span>
-                            )}
-                            <div className="flex gap-2">
-                              {cred?.family_sharing_products?.login_link && (
-                                <a href={cred.family_sharing_products.login_link} target="_blank" rel="noopener noreferrer"
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs hover:bg-blue-500/30 transition-colors">
-                                  <Link2 className="h-3 w-3" /> Login Link
-                                </a>
-                              )}
-                              {cred?.twofa_link && (
-                                <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition-colors">
-                                  <RotateCcwKey className="h-3 w-3" /> Get OTP Code
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
 
               {/* Order Notes */}
               <div className="border-t border-border pt-3">
