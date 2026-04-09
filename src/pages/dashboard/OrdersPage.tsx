@@ -107,9 +107,16 @@ const OrdersPage = () => {
     const remainingMs = expiryDate.getTime() - Date.now();
     if (remainingMs <= 0) return { value: 0, unit: 'hours' as const };
     const remainingHours = Math.ceil(remainingMs / (60 * 60 * 1000));
-    if (remainingHours < 24) return { value: remainingHours, unit: 'hours' as const };
+    if (remainingHours <= 24) return { value: remainingHours, unit: 'hours' as const };
     return { value: Math.ceil(remainingMs / (24 * 60 * 60 * 1000)), unit: 'days' as const };
   };
+
+  // Re-render every hour to update remaining time
+  const [, setTick] = useState(0);
+  React.useEffect(() => {
+    const interval = setInterval(() => setTick(t => t + 1), 60 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getProductLabel = (order: any) => {
     const items = (order.order_items as any[]) || [];
