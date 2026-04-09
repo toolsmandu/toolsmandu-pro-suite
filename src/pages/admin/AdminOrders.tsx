@@ -198,6 +198,8 @@ const AdminOrders = () => {
       status: editStatus,
       items: editItems,
       deletedItemIds,
+      previousStatus: selectedOrder.status,
+      userId: selectedOrder.user_id,
     });
   };
 
