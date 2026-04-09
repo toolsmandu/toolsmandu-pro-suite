@@ -39,6 +39,7 @@ import AdminMedia from "./pages/admin/AdminMedia";
 import AdminFAQs from "./pages/admin/AdminFAQs";
 import AdminFamilySharing from "./pages/admin/AdminFamilySharing";
 import AdminFamilySharingDetail from "./pages/admin/AdminFamilySharingDetail";
+import AdminCredentialDetail from "./pages/admin/AdminCredentialDetail";
 
 const queryClient = new QueryClient();
 
