@@ -23,7 +23,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
-      <nav className="flex items-center gap-1 bg-muted/30 rounded-xl p-1.5 overflow-x-auto">
+      <nav className="flex items-center justify-center gap-2 bg-muted/30 rounded-xl p-2 overflow-x-auto">
         {links.map(({ to, icon: Icon, label, end }) => (
           <NavLink
             key={to}
