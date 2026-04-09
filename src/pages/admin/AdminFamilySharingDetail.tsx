@@ -153,8 +153,25 @@ const AdminFamilySharingDetail = () => {
 
   const handleSaveVariantLinks = async () => {
     if (!selectedCredentialId) return;
-    await supabase.from("credential_variant_links").delete().eq("credential_id", selectedCredentialId);
     const entries = Object.entries(selectedVariantMap);
+
+    // Check for conflicts: each variant can only have one primary and one secondary credential
+    for (const [vid, priority] of entries) {
+      const { data: existing } = await supabase
+        .from("credential_variant_links")
+        .select("credential_id")
+        .eq("variant_id", vid)
+        .eq("priority", priority)
+        .neq("credential_id", selectedCredentialId);
+      if (existing && existing.length > 0) {
+        const variantName = variants.find(v => v.id === vid)?.name || "Unknown";
+        const label = priority === 'primary' ? 'Primary' : 'Secondary';
+        toast.error(`There is already assigned credential for "${variantName}" as ${label}, remove that first.`);
+        return;
+      }
+    }
+
+    await supabase.from("credential_variant_links").delete().eq("credential_id", selectedCredentialId);
     if (entries.length > 0) {
       const inserts = entries.map(([vid, priority]) => ({
         credential_id: selectedCredentialId, variant_id: vid, priority,
