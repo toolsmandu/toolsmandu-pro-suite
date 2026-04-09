@@ -193,7 +193,7 @@ const OrdersPage = () => {
                                   {cred?.family_sharing_products?.login_link && (
                                     <a href={cred.family_sharing_products.login_link} target="_blank" rel="noopener noreferrer"
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs font-medium hover:bg-blue-500/30 transition-colors">
-                                      <LogIn className="h-3 w-3" /> Login Link <ExternalLink className="h-3 w-3" />
+                                      <Link2 className="h-3 w-3" /> Login Link <ExternalLink className="h-3 w-3" />
                                     </a>
                                   )}
                                   {remaining !== null ? (
