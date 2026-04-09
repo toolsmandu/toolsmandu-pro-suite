@@ -147,7 +147,7 @@ const OrdersPage = () => {
               const orderCreds = getOrderCredentials(order.id);
               return (
                 <React.Fragment key={order.id}>
-                  <TableRow>
+                  <TableRow className={orderCreds.length > 0 ? "border-b-0" : ""}>
                     <TableCell className="font-mono text-xs text-center">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
                     <TableCell className="text-sm text-center">{getProductLabel(order)}</TableCell>
                     <TableCell className="text-xs text-muted-foreground text-center">{formatDate(order.created_at)}</TableCell>
