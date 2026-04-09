@@ -9,9 +9,7 @@ import { Loader2 } from 'lucide-react';
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(true);
   const [visibleCount, setVisibleCount] = useState(typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : 1);
-  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -19,7 +17,6 @@ const HeroSlider = () => {
       setVisibleCount(prev => {
         if (prev !== count) {
           setCurrent(0);
-          setIsTransitioning(false);
         }
         return count;
       });
@@ -38,43 +35,18 @@ const HeroSlider = () => {
   });
 
   const totalOriginal = slides?.length || 0;
-
-  // Clone first `visibleCount` slides at the end for seamless looping
-  const extendedSlides = slides && totalOriginal > visibleCount
-    ? [...slides, ...slides.slice(0, visibleCount)]
-    : slides || [];
+  const canSlide = totalOriginal > visibleCount;
+  const visibleSlides = totalOriginal
+    ? Array.from({ length: Math.min(visibleCount, totalOriginal) }, (_, index) => slides[(current + index) % totalOriginal])
+    : [];
 
   useEffect(() => {
-    if (!slides?.length || totalOriginal <= visibleCount) return;
+    if (!canSlide) return;
     const timer = setInterval(() => {
-      setCurrent(c => c + 1);
-      setIsTransitioning(true);
+      setCurrent(prev => (prev + 1) % totalOriginal);
     }, 5000);
     return () => clearInterval(timer);
-  }, [slides, visibleCount, totalOriginal]);
-
-  // When we reach the cloned region, snap back to start without transition
-  useEffect(() => {
-    if (current >= totalOriginal && totalOriginal > visibleCount) {
-      const timeout = setTimeout(() => {
-        setIsTransitioning(false);
-        setCurrent(0);
-      }, 500);
-      return () => clearTimeout(timeout);
-    }
-  }, [current, totalOriginal, visibleCount]);
-
-  // Re-enable transition after snap-back
-  useEffect(() => {
-    if (!isTransitioning && current === 0) {
-      const raf = requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsTransitioning(true);
-        });
-      });
-      return () => cancelAnimationFrame(raf);
-    }
-  }, [isTransitioning, current]);
+  }, [canSlide, totalOriginal]);
 
   if (slidesLoading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
@@ -92,20 +64,15 @@ const HeroSlider = () => {
     </div>
   );
 
-  const dotCount = totalOriginal > visibleCount ? totalOriginal : 0;
+  const dotCount = canSlide ? totalOriginal : 0;
   const activeDot = current % totalOriginal;
-  const slideWidth = 100 / visibleCount;
 
   return (
     <div className="gradient-primary">
-      <div className="container mx-auto px-4 relative overflow-hidden">
-        <div
-          ref={trackRef}
-          className={`flex ${isTransitioning ? 'transition-transform duration-500 ease-out' : ''}`}
-          style={{ transform: `translateX(-${current * slideWidth}%)` }}
-        >
-          {extendedSlides.map((slide, idx) => (
-            <div key={`${slide.id}-${idx}`} className="px-1" style={{ minWidth: `${slideWidth}%` }}>
+      <div className="container mx-auto px-4 relative">
+        <div className="flex gap-2 overflow-hidden">
+          {visibleSlides.map((slide, idx) => (
+            <div key={`${slide.id}-${current}-${idx}`} className="flex-1 min-w-0">
               <Link to={slide.link_url || '#'} className="block">
                 <img src={slide.image_url} alt="" className="w-full rounded-lg object-cover aspect-[4/3]" />
               </Link>
@@ -115,7 +82,7 @@ const HeroSlider = () => {
         {dotCount > 0 && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
             {Array.from({ length: dotCount }).map((_, i) => (
-              <button key={i} onClick={() => { setCurrent(i); setIsTransitioning(true); }} className={`h-2 rounded-full transition-all ${i === activeDot ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/50'}`} />
+              <button key={i} onClick={() => setCurrent(i)} className={`h-2 rounded-full transition-all ${i === activeDot ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/50'}`} />
             ))}
           </div>
         )}
