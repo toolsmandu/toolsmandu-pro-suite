@@ -177,7 +177,7 @@ const Index = () => {
     },
   });
 
-  const { data: categories } = useQuery({
+  const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
@@ -188,13 +188,29 @@ const Index = () => {
 
   const productsByCategory = (catId: string) => allProducts?.filter(p => p.category_id === catId).slice(0, 10) || [];
 
+  const loading = isLoading || categoriesLoading;
+
   return (
     <>
       <HeroSlider />
 
       <div className="container mx-auto px-4 py-12">
-        {/* Category Sections */}
-        {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <section key={i} className="mb-12">
+              <Skeleton className="h-8 w-48 mb-6" />
+              <div className="flex gap-4 overflow-hidden">
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <div key={j} className="min-w-[220px] max-w-[220px]">
+                    <ProductCardSkeleton />
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))
+        ) : (
+          categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)
+        )}
       </div>
     </>
   );
