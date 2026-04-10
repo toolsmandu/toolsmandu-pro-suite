@@ -32,7 +32,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
   const isOutOfStock = stock_status === 'out_of_stock';
 
   // Compute lowest price from active variations, fallback to product price
-  const activeVariations = (product_variations as any[])?.filter((v: any) => v.is_active) || [];
+  const activeVariations = (product_variations as any[])?.filter((v: any) => v.is_active && v.stock_status !== 'out_of_stock') || [];
   const lowestVariationPrice = activeVariations.length > 0
     ? Math.min(...activeVariations.map((v: any) => Number(v.price)))
     : null;
