@@ -25,6 +25,7 @@ const roleBadgeColors: Record<string, string> = {
 const AdminCustomers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const queryClient = useQueryClient();
 
   // View dialog
@@ -63,6 +64,10 @@ const AdminCustomers = () => {
       }
       if (roleFilter !== 'all') {
         if (!u.roles.includes(roleFilter)) return false;
+      }
+      if (statusFilter !== 'all') {
+        if (statusFilter === 'suspended' && !u.is_suspended) return false;
+        if (statusFilter === 'active' && u.is_suspended) return false;
       }
       return true;
     });
