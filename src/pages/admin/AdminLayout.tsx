@@ -8,7 +8,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2 } from 'lucide-react';
+import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
@@ -16,11 +16,17 @@ const AdminLayout = () => {
   const location = useLocation();
 
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types');
+  const isSettingsSection = location.pathname.startsWith('/admin/settings');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
+  const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
 
   useEffect(() => {
     if (isProductsSection) setProductsOpen(true);
   }, [isProductsSection]);
+
+  useEffect(() => {
+    if (isSettingsSection) setSettingsOpen(true);
+  }, [isSettingsSection]);
 
   useEffect(() => {
     if (!loading && (!user || (!isAdmin && !isEditor))) navigate('/');
