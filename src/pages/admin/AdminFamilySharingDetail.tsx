@@ -23,7 +23,7 @@ interface Credential {
   assigned_count: number;
   twofa_link: string | null;
   created_at: string;
-  index_number: number;
+  updated_at: string;
 }
 
 interface Variant {
@@ -217,8 +217,9 @@ const AdminFamilySharingDetail = () => {
             <TableHead>Password</TableHead>
             <TableHead>Linked Variants</TableHead>
             <TableHead>Limit</TableHead>
-            <TableHead>Assigned</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+             <TableHead>Assigned</TableHead>
+             <TableHead>Last Updated</TableHead>
+             <TableHead className="text-right">Actions</TableHead>
            </TableRow>
          </TableHeader>
          <TableBody>
@@ -237,8 +238,9 @@ const AdminFamilySharingDetail = () => {
                   </div>
                 </TableCell>
                 <TableCell>{c.max_limit}</TableCell>
-                <TableCell>{c.assigned_count}</TableCell>
-                <TableCell className="text-right">
+                 <TableCell>{c.assigned_count}</TableCell>
+                 <TableCell className="text-xs text-muted-foreground">{formatDate(c.updated_at)}</TableCell>
+                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">
                     <Button variant="ghost" size="icon" className="h-8 w-8" title="Assign Variants" onClick={() => openVariantDialog(c.id)}>
                       <Link2 className="h-4 w-4 text-primary" />
@@ -256,7 +258,7 @@ const AdminFamilySharingDetail = () => {
           })}
           {credentials.length === 0 && (
             <TableRow>
-              <TableCell colSpan={7} className="text-center text-muted-foreground py-8">No credentials added yet.</TableCell>
+              <TableCell colSpan={8} className="text-center text-muted-foreground py-8">No credentials added yet.</TableCell>
             </TableRow>
           )}
         </TableBody>
