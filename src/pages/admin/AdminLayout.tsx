@@ -41,6 +41,7 @@ const AdminLayout = () => {
 
   const bottomLinks = [
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
+    { to: '/admin/customers', icon: Users, label: 'Customers' },
     { to: '/admin/media', icon: Film, label: 'Media' },
     { to: '/admin/hero-slides', icon: Image, label: 'Hero Slider' },
     { to: '/admin/faqs', icon: HelpCircle, label: 'FAQs' },
