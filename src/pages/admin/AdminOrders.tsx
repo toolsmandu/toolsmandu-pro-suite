@@ -133,6 +133,11 @@ const AdminOrders = () => {
         }
       }
 
+      // Cleanup expired assignments first to free credential slots
+      if (status === 'completed' && previousStatus !== 'completed') {
+        await supabase.rpc('cleanup_expired_assignments');
+      }
+
       // Auto-assign credentials when status changes to completed
       if (status === 'completed' && previousStatus !== 'completed') {
         for (const item of items) {
@@ -329,8 +334,9 @@ const AdminOrders = () => {
       });
       if (itemError) throw itemError;
 
-      // Auto-assign family sharing credentials for completed manual orders
+      // Cleanup expired assignments and auto-assign family sharing credentials
       if (newVariationId) {
+        await supabase.rpc('cleanup_expired_assignments');
         const { data: links } = await supabase
           .from('credential_variant_links')
           .select('credential_id, priority')
