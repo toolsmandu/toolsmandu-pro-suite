@@ -3,12 +3,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { Plus, Pencil, Eye, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Eye, Trash2, ChevronsUpDown, Check } from 'lucide-react';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import { cn } from '@/lib/utils';
 
 const selectClassName =
   'flex h-10 w-full rounded-md border border-foreground bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
@@ -16,6 +19,8 @@ const selectClassName =
 const AdminNotes = () => {
   const queryClient = useQueryClient();
   const [productFilter, setProductFilter] = useState('all');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterSearch, setFilterSearch] = useState('');
 
   // Add/Edit dialog
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -98,12 +103,41 @@ const AdminNotes = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-foreground">Notes</h2>
         <div className="flex gap-2">
-          <select value={productFilter} onChange={e => setProductFilter(e.target.value)} className={selectClassName + ' w-48'}>
-            <option value="all">All Products</option>
-            {products?.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
+          <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-56 justify-between border-foreground">
+                {productFilter === 'all' ? 'All Products' : products?.find(p => p.id === productFilter)?.name || 'Select product'}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2" align="end">
+              <Input
+                placeholder="Search products..."
+                value={filterSearch}
+                onChange={e => setFilterSearch(e.target.value)}
+                className="mb-2 border-foreground"
+              />
+              <div className="max-h-60 overflow-y-auto space-y-0.5">
+                <button
+                  className={cn("w-full text-left px-2 py-1.5 text-sm rounded hover:bg-muted flex items-center", productFilter === 'all' && 'font-medium')}
+                  onClick={() => { setProductFilter('all'); setFilterOpen(false); setFilterSearch(''); }}
+                >
+                  {productFilter === 'all' && <Check className="h-3 w-3 mr-2" />}
+                  <span className={productFilter !== 'all' ? 'ml-5' : ''}>All Products</span>
+                </button>
+                {products?.filter(p => p.name.toLowerCase().includes(filterSearch.toLowerCase())).map(p => (
+                  <button
+                    key={p.id}
+                    className={cn("w-full text-left px-2 py-1.5 text-sm rounded hover:bg-muted flex items-center", productFilter === p.id && 'font-medium')}
+                    onClick={() => { setProductFilter(p.id); setFilterOpen(false); setFilterSearch(''); }}
+                  >
+                    {productFilter === p.id && <Check className="h-3 w-3 mr-2" />}
+                    <span className={productFilter !== p.id ? 'ml-5' : ''}>{p.name}</span>
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
           <Button onClick={() => { resetForm(); setDialogOpen(true); }}>
             <Plus className="h-4 w-4 mr-2" /> Add Note
           </Button>
