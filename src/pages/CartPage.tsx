@@ -1,36 +1,151 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, ShoppingBag } from 'lucide-react';
+import { Trash2, ShoppingBag, Tag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
+interface AppliedCoupon {
+  id: string;
+  code: string;
+  discount_type: string;
+  discount_value: number;
+  max_discount_amount: number | null;
+  discountAmount: number;
+}
+
 const CartPage = () => {
   const { items, removeItem, clearCart, total, itemCount } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [placing, setPlacing] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [applying, setApplying] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    if (!user) { toast.error('Please login to apply a coupon'); return; }
+
+    setApplying(true);
+    try {
+      const code = couponCode.trim().toUpperCase();
+
+      // Fetch coupon
+      const { data: coupon, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('code', code)
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!coupon) { toast.error('Coupon code is wrong.'); setApplying(false); return; }
+
+      // Check expiry
+      if (new Date(coupon.expiry_date) < new Date()) {
+        toast.error('Coupon code is Expired.'); setApplying(false); return;
+      }
+
+      // Check per-user usage
+      const { count } = await supabase
+        .from('coupon_usages')
+        .select('*', { count: 'exact', head: true })
+        .eq('coupon_id', coupon.id)
+        .eq('user_id', user.id);
+
+      if ((count || 0) >= coupon.max_uses_per_customer) {
+        toast.error('You have already used this Coupon.'); setApplying(false); return;
+      }
+
+      // Check total usage
+      const { count: totalUsed } = await supabase
+        .from('coupon_usages')
+        .select('*', { count: 'exact', head: true })
+        .eq('coupon_id', coupon.id);
+
+      if ((totalUsed || 0) >= coupon.total_quantity) {
+        toast.error('This coupon has reached its usage limit.'); setApplying(false); return;
+      }
+
+      // Check customer-specific
+      if (coupon.coupon_scope === 'specific_customer') {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('user_id', user.id)
+          .single();
+        if (profile?.email !== coupon.customer_email) {
+          toast.error('This coupon is assigned for another customer. You are not allowed to redeem.');
+          setApplying(false); return;
+        }
+      }
+
+      // Check product-specific
+      if (coupon.product_scope === 'specific_product' && coupon.product_id) {
+        const cartProductIds = items.map(i => i.id);
+        const cartVariantIds = items.map(i => i.variantId).filter(Boolean);
+        const productMatch = cartProductIds.includes(coupon.product_id);
+        const variantMatch = !coupon.variation_id || cartVariantIds.includes(coupon.variation_id);
+        if (!productMatch || !variantMatch) {
+          toast.error("This coupon can't be applied to the products in your cart. Please contact Support team.");
+          setApplying(false); return;
+        }
+      }
+
+      // Check min cart value
+      if (coupon.min_cart_value && total < Number(coupon.min_cart_value)) {
+        toast.error(`Your total order amount must be at least NPR ${Number(coupon.min_cart_value).toFixed(2)} to use this coupon.`);
+        setApplying(false); return;
+      }
+
+      // Calculate discount
+      let discountAmount = 0;
+      if (coupon.discount_type === 'percentage') {
+        discountAmount = (total * Number(coupon.discount_value)) / 100;
+        if (coupon.max_discount_amount && discountAmount > Number(coupon.max_discount_amount)) {
+          discountAmount = Number(coupon.max_discount_amount);
+          toast.info(`This coupon allows you to get discount upto NPR ${Number(coupon.max_discount_amount).toFixed(2)}.`);
+        }
+      } else {
+        discountAmount = Number(coupon.discount_value);
+      }
+      if (discountAmount > total) discountAmount = total;
+
+      setAppliedCoupon({
+        id: coupon.id,
+        code: coupon.code,
+        discount_type: coupon.discount_type,
+        discount_value: Number(coupon.discount_value),
+        max_discount_amount: coupon.max_discount_amount ? Number(coupon.max_discount_amount) : null,
+        discountAmount,
+      });
+      toast.success('Coupon applied successfully!');
+    } catch {
+      toast.error('Failed to apply coupon');
+    }
+    setApplying(false);
+  };
+
+  const removeCoupon = () => { setAppliedCoupon(null); setCouponCode(''); };
+  const finalTotal = appliedCoupon ? total - appliedCoupon.discountAmount : total;
 
   const handlePlaceOrder = async () => {
-    if (!user) {
-      toast.error('Please login to place an order');
-      navigate('/login');
-      return;
-    }
+    if (!user) { toast.error('Please login to place an order'); navigate('/login'); return; }
     setPlacing(true);
     try {
       const websiteUrl = window.location.origin;
       const { data, error } = await supabase.functions.invoke('khalti-initiate', {
         body: {
           items: items.map(item => ({
-            id: item.id,
-            price: item.price,
-            quantity: item.quantity,
-            variantId: item.variantId,
-            variantName: item.variantName,
+            id: item.id, price: item.price, quantity: item.quantity,
+            variantId: item.variantId, variantName: item.variantName,
           })),
+          coupon_id: appliedCoupon?.id || null,
+          discount_amount: appliedCoupon?.discountAmount || 0,
           return_url: `${websiteUrl}/payment/verify`,
           website_url: websiteUrl,
         },
@@ -38,14 +153,9 @@ const CartPage = () => {
 
       if (error || !data?.payment_url) {
         toast.error('Failed to initiate payment. Please try again.');
-        console.error('Khalti initiation error:', error, data);
-        setPlacing(false);
-        return;
+        setPlacing(false); return;
       }
-
-      // Clear cart before redirecting
       clearCart();
-      // Redirect to Khalti payment page
       window.location.href = data.payment_url;
     } catch {
       toast.error('Failed to initiate payment');
@@ -82,16 +192,37 @@ const CartPage = () => {
             </div>
           ))}
         </div>
-        <div className="bg-card border border-border rounded-lg p-6 h-fit sticky top-20">
-          <h2 className="text-xl font-bold text-foreground mb-4">Order Summary</h2>
-          <div className="space-y-2 text-sm mb-4">
+        <div className="bg-card border border-border rounded-lg p-6 h-fit sticky top-20 space-y-4">
+          <h2 className="text-xl font-bold text-foreground">Order Summary</h2>
+
+          {/* Coupon section */}
+          {appliedCoupon ? (
+            <div className="flex items-center justify-between bg-success/10 border border-success/30 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2">
+                <Tag className="h-4 w-4 text-success" />
+                <span className="font-mono text-sm font-medium text-success">{appliedCoupon.code}</span>
+                <span className="text-xs text-muted-foreground">(-NPR {appliedCoupon.discountAmount.toFixed(2)})</span>
+              </div>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={removeCoupon}><X className="h-3 w-3" /></Button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <Input placeholder="Coupon code" value={couponCode} onChange={e => setCouponCode(e.target.value.toUpperCase())} className="font-mono" onKeyDown={e => e.key === 'Enter' && applyCoupon()} />
+              <Button variant="outline" onClick={applyCoupon} disabled={applying}>{applying ? '...' : 'Apply'}</Button>
+            </div>
+          )}
+
+          <div className="space-y-2 text-sm">
             <div className="flex justify-between text-muted-foreground"><span>Subtotal</span><span>NPR {total.toFixed(2)}</span></div>
-            <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground"><span>Total</span><span>NPR {total.toFixed(2)}</span></div>
+            {appliedCoupon && (
+              <div className="flex justify-between text-success"><span>Discount</span><span>-NPR {appliedCoupon.discountAmount.toFixed(2)}</span></div>
+            )}
+            <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground"><span>Total</span><span>NPR {finalTotal.toFixed(2)}</span></div>
           </div>
           <Button className="w-full" size="lg" onClick={handlePlaceOrder} disabled={placing}>
             {placing ? 'Redirecting to Khalti...' : 'Pay with Khalti'}
           </Button>
-          <p className="text-xs text-muted-foreground text-center mt-2">You will be redirected to Khalti to complete payment</p>
+          <p className="text-xs text-muted-foreground text-center">You will be redirected to Khalti to complete payment</p>
         </div>
       </div>
     </div>
