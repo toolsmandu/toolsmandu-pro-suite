@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye } from 'lucide-react';
 
 const AdminCategories = () => {
   const queryClient = useQueryClient();
@@ -56,7 +56,6 @@ const AdminCategories = () => {
             <div className="space-y-4">
               <div><Label>Name</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
               <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({...form, slug: e.target.value})} placeholder="auto-generated" /></div>
-              <div><Label>Icon (emoji or URL)</Label><Input value={form.icon} onChange={e => setForm({...form, icon: e.target.value})} /></div>
               <div><Label>Sort Order</Label><Input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: e.target.value})} /></div>
               <Button onClick={() => form.name && saveMutation.mutate()} className="w-full" disabled={!form.name}>Save</Button>
             </div>
@@ -65,16 +64,16 @@ const AdminCategories = () => {
       </div>
       <div className="border border-border rounded-lg overflow-hidden">
         <Table>
-          <TableHeader><TableRow><TableHead>Icon</TableHead><TableHead>Name</TableHead><TableHead>Slug</TableHead><TableHead>Order</TableHead><TableHead className="w-24">Actions</TableHead></TableRow></TableHeader>
+          <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Slug</TableHead><TableHead>Order</TableHead><TableHead className="w-28">Actions</TableHead></TableRow></TableHeader>
           <TableBody>
             {categories?.map(c => (
               <TableRow key={c.id}>
-                <TableCell>{c.icon || '-'}</TableCell>
                 <TableCell className="font-medium text-foreground">{c.name}</TableCell>
                 <TableCell className="text-muted-foreground">{c.slug}</TableCell>
                 <TableCell>{c.sort_order}</TableCell>
                 <TableCell>
                   <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.open(`/category/${c.slug}`, '_blank')}><Eye className="h-3 w-3" /></Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setForm({ name: c.name, slug: c.slug, icon: c.icon || '', sort_order: String(c.sort_order) }); setEditingId(c.id); setDialogOpen(true); }}><Pencil className="h-3 w-3" /></Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(c.id)}><Trash2 className="h-3 w-3" /></Button>
                   </div>
