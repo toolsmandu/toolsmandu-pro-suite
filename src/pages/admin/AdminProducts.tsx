@@ -28,6 +28,7 @@ interface Variation {
 const emptyVariation = (): Variation => ({ name: '', price: '', original_price: '', expiry_days: '', variation_info: '', is_active: true });
 
 const AdminProducts = () => {
+  const location = useLocation();
   const queryClient = useQueryClient();
   const [view, setView] = useState<'list' | 'form'>('list');
   const [editingId, setEditingId] = useState<string | null>(null);
