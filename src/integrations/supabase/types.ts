@@ -384,6 +384,27 @@ export type Database = {
         }
         Relationships: []
       }
+      flash_sale_labels: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       footer_links: {
         Row: {
           column_name: string
