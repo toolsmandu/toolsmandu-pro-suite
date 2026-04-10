@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, ArrowRight, Trash2, Pencil } from "lucide-react";
+import { Plus, ArrowRight, Trash2, Pencil, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -25,6 +25,60 @@ interface ProductVariant {
   price: number;
   expiry_days: number | null;
 }
+
+const OrderSearch = ({ navigate }: { navigate: (path: string) => void }) => {
+  const [orderNumber, setOrderNumber] = useState("");
+  const [searching, setSearching] = useState(false);
+
+  const handleSearch = async () => {
+    if (!orderNumber.trim()) return;
+    setSearching(true);
+    try {
+      const { data: order } = await supabase
+        .from("orders")
+        .select("id")
+        .eq("order_number", orderNumber.trim())
+        .single();
+      if (!order) { toast.error("Order not found"); return; }
+
+      const { data: assignment } = await supabase
+        .from("credential_assignments")
+        .select("credential_id")
+        .eq("order_id", order.id)
+        .single();
+      if (!assignment) { toast.error("This order is not assigned to any credential"); return; }
+
+      const { data: cred } = await supabase
+        .from("family_sharing_credentials")
+        .select("family_product_id")
+        .eq("id", assignment.credential_id)
+        .single();
+      if (!cred) { toast.error("Credential not found"); return; }
+
+      navigate(`/admin/family-sharing/${cred.family_product_id}/credential/${assignment.credential_id}`);
+    } catch {
+      toast.error("Search failed");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  return (
+    <div className="flex items-end gap-2 max-w-md">
+      <div className="flex-1">
+        <Input
+          placeholder="Search by Order ID..."
+          value={orderNumber}
+          onChange={e => setOrderNumber(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleSearch()}
+        />
+      </div>
+      <Button variant="outline" onClick={handleSearch} disabled={searching || !orderNumber.trim()}>
+        <Search className="h-4 w-4 mr-1" /> {searching ? "Searching..." : "Search"}
+      </Button>
+    </div>
+  );
+};
 
 const AdminFamilySharing = () => {
   const [familyProducts, setFamilyProducts] = useState<FamilyProduct[]>([]);
@@ -146,6 +200,9 @@ const AdminFamilySharing = () => {
           <Plus className="h-4 w-4" /> Add Family Sharing
         </Button>
       </div>
+
+      {/* Order Search */}
+      <OrderSearch navigate={navigate} />
 
       <Table>
         <TableHeader>
