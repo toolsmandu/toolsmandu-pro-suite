@@ -132,7 +132,8 @@ const AdminCredentialDetail = () => {
           order_number: orderMap[a.order_id],
           user_email: profileMap[a.user_id]?.email || undefined,
           user_phone: profileMap[a.user_id]?.phone || undefined,
-          variation_name: itemMap[a.order_id],
+          product_name: itemMap[a.order_id]?.product_name,
+          variation_name: itemMap[a.order_id]?.variation_name,
           expiry_date: expiryDate,
           remaining_days: remainingDays,
         };
