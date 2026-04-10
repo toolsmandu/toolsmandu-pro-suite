@@ -23,11 +23,44 @@ Deno.serve(async (req) => {
     if (!caller) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
 
     const { data: callerRoles } = await supabase.from("user_roles").select("role").eq("user_id", caller.id);
-    const isAdminOrEditor = callerRoles?.some((r: any) => r.role === "admin" || r.role === "editor");
+    const isAdmin = callerRoles?.some((r: any) => r.role === "admin");
+    const isEditor = callerRoles?.some((r: any) => r.role === "editor");
+    const isAdminOrEditor = isAdmin || isEditor;
     if (!isAdminOrEditor) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: corsHeaders });
 
     const body = await req.json();
     const { action, user_id } = body;
+
+    if (action === "create") {
+      const { name, email, phone, role } = body;
+      // Editors can only create customers; admins can create customer or editor
+      if (isEditor && role !== "customer") {
+        return new Response(JSON.stringify({ error: "Editors can only create customer accounts" }), { status: 403, headers: corsHeaders });
+      }
+      if (!isAdmin && role === "admin") {
+        return new Response(JSON.stringify({ error: "Only admins can create admin accounts" }), { status: 403, headers: corsHeaders });
+      }
+
+      // Create auth user with email as password, email confirmed
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        email,
+        password: email,
+        email_confirm: true,
+      });
+      if (createError) return new Response(JSON.stringify({ error: createError.message }), { status: 400, headers: corsHeaders });
+
+      const newUserId = newUser.user.id;
+
+      // Update profile with name and phone (profile is auto-created by trigger)
+      await supabase.from("profiles").update({ name, phone }).eq("user_id", newUserId);
+
+      // If role is not customer, update the role (trigger creates 'customer' by default)
+      if (role && role !== "customer") {
+        await supabase.from("user_roles").update({ role }).eq("user_id", newUserId);
+      }
+
+      return new Response(JSON.stringify({ success: true, user_id: newUserId }), { headers: corsHeaders });
+    }
 
     if (action === "update") {
       const { name, email, phone, password, is_suspended, email_confirmed } = body;
