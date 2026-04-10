@@ -429,96 +429,109 @@ const AdminProducts = () => {
       <ScrollArea className="flex-1">
         <div className="w-full">
           <div className="space-y-4">
-              <div>
-                <Label>Name</Label>
-                <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
-              </div>
-
+              {/* Row 1: Product Name + Slug */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <Label>Slug</Label>
-                  <Input
-                    value={form.slug}
-                    onChange={(event) => setForm({ ...form, slug: event.target.value })}
-                    placeholder="auto-generated"
-                  />
+                  <Label>Product Name *</Label>
+                  <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
                 </div>
-
                 <div>
-                  <Label>Category</Label>
-                  <select
-                    value={form.category_id}
-                    onChange={(event) => setForm({ ...form, category_id: event.target.value })}
-                    className={selectClassName}
-                  >
+                  <Label>Slug</Label>
+                  <Input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="auto-generated" />
+                </div>
+              </div>
+
+              {/* Row 2: Category, Product Type, Region */}
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <Label>Category *</Label>
+                  <select value={form.category_id} onChange={(event) => setForm({ ...form, category_id: event.target.value })} className={selectClassName}>
                     <option value="">Select category</option>
                     {categories?.map((category: any) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
+                      <option key={category.id} value={category.id}>{category.name}</option>
                     ))}
                   </select>
                 </div>
-
                 <div>
-                  <Label>Product Type</Label>
-                  <select
-                    value={form.duration}
-                    onChange={(event) => setForm({ ...form, duration: event.target.value })}
-                    className={selectClassName}
-                  >
+                  <Label>Product Type *</Label>
+                  <select value={form.duration} onChange={(event) => setForm({ ...form, duration: event.target.value })} className={selectClassName}>
                     <option value="">Select product type</option>
                     {productTypes?.map((productType: any) => (
-                      <option key={productType.id} value={productType.name}>
-                        {productType.name}
-                      </option>
+                      <option key={productType.id} value={productType.name}>{productType.name}</option>
                     ))}
                   </select>
                 </div>
-
                 <div>
-                  <Label>Region</Label>
-                  <Input
-                    value={form.region}
-                    onChange={(event) => setForm({ ...form, region: event.target.value })}
-                    placeholder="e.g. Global, Nepal"
-                  />
+                  <Label>Region *</Label>
+                  <Input value={form.region} onChange={(event) => setForm({ ...form, region: event.target.value })} placeholder="e.g. Global, Nepal" />
                 </div>
+              </div>
 
+              {/* Row 3: Stock Status, Order Mode, Flash Sale Label */}
+              <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label>Stock Status</Label>
-                  <select
-                    value={form.stock_status}
-                    onChange={(event) => setForm({ ...form, stock_status: event.target.value })}
-                    className={selectClassName}
-                  >
+                  <select value={form.stock_status} onChange={(event) => setForm({ ...form, stock_status: event.target.value })} className={selectClassName}>
                     <option value="in_stock">In Stock</option>
                     <option value="out_of_stock">Out of Stock</option>
                   </select>
                 </div>
-
                 <div>
                   <Label>Order Mode</Label>
-                  <select
-                    value={form.order_mode}
-                    onChange={(event) => setForm({ ...form, order_mode: event.target.value })}
-                    className={selectClassName}
-                  >
+                  <select value={form.order_mode} onChange={(event) => setForm({ ...form, order_mode: event.target.value })} className={selectClassName}>
                     <option value="cart">Online Order (Add to Cart)</option>
                     <option value="whatsapp">Order via WhatsApp</option>
                   </select>
                 </div>
+                <div>
+                  <Label>Flash Sale Label</Label>
+                  <select value={form.flash_sale_label} onChange={(event) => setForm({ ...form, flash_sale_label: event.target.value })} className={selectClassName}>
+                    <option value="">No Label</option>
+                    {flashSaleLabels?.map((label: any) => (
+                      <option key={label.id} value={label.label}>{label.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
+              {/* Row 4: Featured, Bestseller, Flash Sale */}
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="flex items-center gap-4">
+                  <Switch checked={form.is_featured} onCheckedChange={(value) => setForm({ ...form, is_featured: value })} />
+                  <Label>Featured</Label>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Switch checked={form.is_bestseller} onCheckedChange={(value) => setForm({ ...form, is_bestseller: value })} />
+                  <Label>Bestseller</Label>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Switch checked={form.is_flash_sale} onCheckedChange={(value) => setForm({ ...form, is_flash_sale: value })} />
+                  <Label>Flash Sale</Label>
+                </div>
+              </div>
+
+              {/* Product Image */}
               <div>
                 <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
               </div>
 
+              {/* Meta Title + Meta Description */}
+              <div>
+                <Label>Meta Title</Label>
+                <Input value={form.meta_title} onChange={(event) => setForm({ ...form, meta_title: event.target.value })} />
+              </div>
+              <div>
+                <Label>Meta Description</Label>
+                <Input value={form.meta_description} onChange={(event) => setForm({ ...form, meta_description: event.target.value })} />
+              </div>
+
+              {/* Description */}
               <div>
                 <Label>Description</Label>
                 <RichTextEditor value={form.description} onChange={(value) => setForm({ ...form, description: value })} />
               </div>
 
+              {/* Variations */}
               <div>
                 <Separator className="my-2" />
                 <div className="flex items-center justify-between mb-3">
@@ -608,55 +621,10 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <div>
-                <Label>Flash Sale Label</Label>
-                <select
-                  value={form.flash_sale_label}
-                  onChange={(event) => setForm({ ...form, flash_sale_label: event.target.value })}
-                  className={selectClassName}
-                >
-                  <option value="">No Label</option>
-                  {flashSaleLabels?.map((label: any) => (
-                    <option key={label.id} value={label.label}>
-                      {label.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Meta Title</Label>
-                  <Input value={form.meta_title} onChange={(event) => setForm({ ...form, meta_title: event.target.value })} />
-                </div>
-
-                <div>
-                  <Label>Meta Description</Label>
-                  <Input value={form.meta_description} onChange={(event) => setForm({ ...form, meta_description: event.target.value })} />
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="flex items-center gap-4">
-                  <Switch checked={form.is_featured} onCheckedChange={(value) => setForm({ ...form, is_featured: value })} />
-                  <Label>Featured</Label>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <Switch checked={form.is_bestseller} onCheckedChange={(value) => setForm({ ...form, is_bestseller: value })} />
-                  <Label>Bestseller</Label>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <Switch checked={form.is_flash_sale} onCheckedChange={(value) => setForm({ ...form, is_flash_sale: value })} />
-                  <Label>Flash Sale</Label>
-                </div>
-              </div>
-
             <Button
               onClick={() => saveMutation.mutate()}
               className="w-full mt-4 mb-8"
-              disabled={!form.name || variations.filter((variation) => variation.name && variation.price).length === 0}
+              disabled={!form.name || !form.category_id || !form.duration || !form.region || variations.filter((variation) => variation.name && variation.price).length === 0}
             >
               {editingId ? 'Update Product' : 'Create Product'}
             </Button>
