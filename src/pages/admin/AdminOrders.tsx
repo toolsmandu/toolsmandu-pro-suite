@@ -476,6 +476,15 @@ const AdminOrders = () => {
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[order.status] || ''}`}>
                         {order.status}
                       </span>
+                      {firstOrderMap[order.user_id] === order.id ? (
+                        <span className="flex items-center gap-1 mt-1 text-[10px] text-yellow-400">
+                          <Star className="h-3 w-3" /> First Order
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 mt-1 text-[10px] text-muted-foreground">
+                          <RefreshCw className="h-3 w-3" /> Recurring
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); openOrderDetail(order); }}>
