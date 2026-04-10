@@ -8,7 +8,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2 } from 'lucide-react';
+import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
@@ -16,11 +16,17 @@ const AdminLayout = () => {
   const location = useLocation();
 
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types');
+  const isSettingsSection = location.pathname.startsWith('/admin/settings');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
+  const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
 
   useEffect(() => {
     if (isProductsSection) setProductsOpen(true);
   }, [isProductsSection]);
+
+  useEffect(() => {
+    if (isSettingsSection) setSettingsOpen(true);
+  }, [isSettingsSection]);
 
   useEffect(() => {
     if (!loading && (!user || (!isAdmin && !isEditor))) navigate('/');
@@ -41,7 +47,6 @@ const AdminLayout = () => {
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
     { to: '/admin/tickets', icon: MessageCircle, label: 'Tickets' },
     ...(isAdmin ? [{ to: '/admin/users', icon: Users, label: 'Users' }] : []),
-    ...(isAdmin ? [{ to: '/admin/settings', icon: Settings, label: 'Settings' }] : []),
   ];
 
   return (
@@ -115,6 +120,57 @@ const AdminLayout = () => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
+
+                  {/* Settings sub-menu (admin only) */}
+                  {isAdmin && (
+                    <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen} className="group/settings">
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton className="hover:bg-muted/50">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                            <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/settings:rotate-90" />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub>
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to="/admin/settings/site" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <Globe className="mr-2 h-3 w-3" />
+                                  <span>Site Setting</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to="/admin/settings/order-mode" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <ShoppingBag className="mr-2 h-3 w-3" />
+                                  <span>Order Mode</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to="/admin/settings/top-menu" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <Menu className="mr-2 h-3 w-3" />
+                                  <span>Top Menu</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to="/admin/settings/footer" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <PanelBottom className="mr-2 h-3 w-3" />
+                                  <span>Footer</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  )}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
