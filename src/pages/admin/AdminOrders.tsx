@@ -482,23 +482,21 @@ const AdminOrders = () => {
               <Save className="h-4 w-4 mr-2" />
               {sending ? 'Updating...' : 'Update Order'}
             </Button>
-
-              {/* Sent Notes History */}
-              {orderNotes && orderNotes.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  <Label className="text-xs text-muted-foreground block">Sent Notes</Label>
-                  {orderNotes.map((n: any) => (
-                    <div key={n.id} className="bg-muted/30 rounded-lg p-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <p className="text-foreground whitespace-pre-wrap flex-1">{n.note}</p>
-                        {n.is_admin_only && <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded-full font-medium">Admin Only</span>}
-                      </div>
-                      <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(n.created_at)}</p>
+            {/* Sent Notes History */}
+            {orderNotes && orderNotes.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground block">Sent Notes</Label>
+                {orderNotes.map((n: any) => (
+                  <div key={n.id} className="bg-muted/30 rounded-lg p-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <p className="text-foreground whitespace-pre-wrap flex-1">{n.note}</p>
+                      {n.is_admin_only && <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded-full font-medium">Admin Only</span>}
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(n.created_at)}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
