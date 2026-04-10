@@ -193,6 +193,22 @@ const AdminCredentialDetail = () => {
     fetchData();
   };
 
+  const handleUpdateExpiry = async (assignmentId: string, assignedAt: string, newExpiryDate: string) => {
+    // Calculate new validity_days from assigned_at to new expiry date
+    const assignedMs = new Date(assignedAt).getTime();
+    const expiryMs = new Date(newExpiryDate).getTime();
+    const newValidityDays = Math.max(1, Math.ceil((expiryMs - assignedMs) / (1000 * 60 * 60 * 24)));
+
+    const { error } = await supabase
+      .from("credential_assignments")
+      .update({ validity_days: newValidityDays })
+      .eq("id", assignmentId);
+
+    if (error) { toast.error(error.message); return; }
+    toast.success("Expiry date updated");
+    fetchData();
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-12">
