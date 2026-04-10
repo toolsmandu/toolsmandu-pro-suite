@@ -58,7 +58,7 @@ const AdminOrders = () => {
 
   // Add order state
   const [addingOrder, setAddingOrder] = useState(false);
-  const [newOrderDate, setNewOrderDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [newOrderDate, setNewOrderDate] = useState(() => new Date().toISOString().slice(0, 16));
   const [customerSearch, setCustomerSearch] = useState('');
   const [customerResults, setCustomerResults] = useState<any[]>([]);
   const [customerSearching, setCustomerSearching] = useState(false);
