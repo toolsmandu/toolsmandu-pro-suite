@@ -58,7 +58,7 @@ const AdminOrders = () => {
 
   // Add order state
   const [addingOrder, setAddingOrder] = useState(false);
-  const [newOrderDate, setNewOrderDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [newOrderDate, setNewOrderDate] = useState(() => new Date().toISOString().slice(0, 16));
   const [customerSearch, setCustomerSearch] = useState('');
   const [customerResults, setCustomerResults] = useState<any[]>([]);
   const [customerSearching, setCustomerSearching] = useState(false);
@@ -293,7 +293,7 @@ const AdminOrders = () => {
   const openAddOrder = () => {
     setSelectedOrder(null);
     setAddingOrder(true);
-    setNewOrderDate(new Date().toISOString().slice(0, 10));
+    setNewOrderDate(new Date().toISOString().slice(0, 16));
     setCustomerSearch('');
     setCustomerResults([]);
     setSelectedCustomer(null);
@@ -640,7 +640,7 @@ const AdminOrders = () => {
               {/* Order Date */}
               <div>
                 <Label>Order Date</Label>
-                <Input type="date" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} className="border-foreground" />
+                <Input type="datetime-local" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} className="border-foreground" />
               </div>
 
               {/* Customer Search */}
