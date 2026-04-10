@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, Save, Trash2, Plus, X, Search } from 'lucide-react';
+import { ChevronRight, Save, Trash2, Plus, X, Search, Copy } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate } from '@/lib/formatDate';
 import { toast } from 'sonner';
@@ -610,7 +610,10 @@ const AdminOrders = () => {
                     <div key={n.id} className="bg-muted/30 rounded-lg p-3 text-sm">
                       <div className="flex items-center gap-2">
                         <p className="text-foreground whitespace-pre-wrap flex-1">{n.note}</p>
-                        {n.is_admin_only && <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded-full font-medium">Admin Only</span>}
+                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => { navigator.clipboard.writeText(n.note); toast.success('Copied to clipboard'); }}>
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                        {n.is_admin_only && <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded-full font-medium shrink-0">Admin Only</span>}
                       </div>
                       <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(n.created_at)}</p>
                     </div>
