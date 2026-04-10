@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, Save, Trash2, Plus, X, Search, Copy } from 'lucide-react';
+import { ChevronRight, Save, Trash2, Plus, X, Search, Copy, Star, RefreshCw } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate, getKathmanduNowLocal, kathmanduToUTC } from '@/lib/formatDate';
 import { toast } from 'sonner';
@@ -345,6 +345,17 @@ const AdminOrders = () => {
     return (product as any)?.product_variations || [];
   }, [newProductId, products]);
 
+  // Compute each user's first order id
+  const firstOrderMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    if (!orders) return map;
+    const sorted = [...orders].sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    for (const o of sorted) {
+      if (!map[o.user_id]) map[o.user_id] = o.id;
+    }
+    return map;
+  }, [orders]);
+
   const filteredOrders = useMemo(() => {
     return (orders || []).filter((order: any) => {
       const term = searchTerm.trim().toLowerCase();
@@ -465,6 +476,15 @@ const AdminOrders = () => {
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[order.status] || ''}`}>
                         {order.status}
                       </span>
+                      {firstOrderMap[order.user_id] === order.id ? (
+                        <span className="flex items-center gap-1 mt-1 text-[10px] text-yellow-400">
+                          <Star className="h-3 w-3" /> First Order
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 mt-1 text-[10px] text-muted-foreground">
+                          <RefreshCw className="h-3 w-3" /> Recurring
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); openOrderDetail(order); }}>
