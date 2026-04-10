@@ -171,6 +171,7 @@ const OrdersPage = () => {
               <TableHead className="text-center">Product</TableHead>
               <TableHead className="text-center">Date</TableHead>
               <TableHead className="text-center">Amount</TableHead>
+              <TableHead className="text-center">Payment</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
