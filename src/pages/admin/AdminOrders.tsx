@@ -56,9 +56,16 @@ const AdminOrders = () => {
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
   const [paymentFilter, setPaymentFilter] = useState('all');
 
+  const getNepalNow = () => {
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const nepal = new Date(utc + (5 * 60 + 45) * 60000);
+    return nepal.toISOString().slice(0, 16);
+  };
+
   // Add order state
   const [addingOrder, setAddingOrder] = useState(false);
-  const [newOrderDate, setNewOrderDate] = useState(() => new Date().toISOString().slice(0, 16));
+  const [newOrderDate, setNewOrderDate] = useState(getNepalNow);
   const [customerSearch, setCustomerSearch] = useState('');
   const [customerResults, setCustomerResults] = useState<any[]>([]);
   const [customerSearching, setCustomerSearching] = useState(false);
