@@ -25,6 +25,7 @@ interface Variation {
   expiry_days: string;
   variation_info: string;
   is_active: boolean;
+  stock_status: string;
 }
 
 const emptyVariation = (): Variation => ({
@@ -34,6 +35,7 @@ const emptyVariation = (): Variation => ({
   expiry_days: '',
   variation_info: '',
   is_active: true,
+  stock_status: 'in_stock',
 });
 
 const emptyForm = () => ({
