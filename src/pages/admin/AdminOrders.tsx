@@ -191,17 +191,39 @@ const AdminOrders = () => {
     setIsAdminOnly(false);
   };
 
-  const handleSaveOrder = () => {
+  const handleUpdateOrder = async () => {
     if (!selectedOrder) return;
-    updateOrder.mutate({
-      id: selectedOrder.id,
-      total: parseFloat(editTotal) || selectedOrder.total,
-      status: editStatus,
-      items: editItems,
-      deletedItemIds,
-      previousStatus: selectedOrder.status,
-      userId: selectedOrder.user_id,
-    });
+    setSending(true);
+    try {
+      // Save order changes
+      await updateOrder.mutateAsync({
+        id: selectedOrder.id,
+        total: parseFloat(editTotal) || selectedOrder.total,
+        status: editStatus,
+        items: editItems,
+        deletedItemIds,
+        previousStatus: selectedOrder.status,
+        userId: selectedOrder.user_id,
+      });
+
+      // Send note if provided
+      if (orderNote.trim()) {
+        await supabase.from('order_notes').insert({
+          order_id: selectedOrder.id,
+          note: orderNote.trim(),
+          sent_by: user!.id,
+          is_admin_only: isAdminOnly,
+        } as any);
+        queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
+      }
+
+      toast.success('Order updated');
+      setSelectedOrder(null);
+    } catch {
+      toast.error('Failed to update order');
+    } finally {
+      setSending(false);
+    }
   };
 
   const updateItemField = (index: number, field: string, value: any) => {
