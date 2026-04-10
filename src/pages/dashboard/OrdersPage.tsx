@@ -54,6 +54,26 @@ const OrdersPage = () => {
     enabled: !!user,
   });
 
+  // Fetch family-sharing linked variant IDs to detect expired orders
+  const { data: fsVariantIds } = useQuery({
+    queryKey: ['fs-variant-ids'],
+    queryFn: async () => {
+      const { data } = await supabase.from('credential_variant_links').select('variant_id');
+      return (data || []).map((d: any) => d.variant_id);
+    },
+  });
+
+  const isOrderExpired = (order: any) => {
+    if (order.status !== 'completed') return false;
+    if (!fsVariantIds?.length) return false;
+    const items = (order.order_items as any[]) || [];
+    const hasFsItem = items.some((i: any) => i.variation_id && fsVariantIds.includes(i.variation_id));
+    if (!hasFsItem) return false;
+    // Has family sharing items but no active assignments
+    const activeCreds = getOrderCredentials(order.id);
+    return activeCreds.length === 0;
+  };
+
   // Fetch all non-admin notes for all user orders to determine which orders have admin messages
   const { data: allNotes } = useQuery({
     queryKey: ['my-all-order-notes'],
