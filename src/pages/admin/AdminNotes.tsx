@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
-import { Plus, Pencil, Eye, Trash2, ChevronsUpDown, Check, X, Save } from 'lucide-react';
+import { Plus, Pencil, Eye, Trash2, ChevronsUpDown, Check, X, Save, Copy } from 'lucide-react';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/formatDate';
