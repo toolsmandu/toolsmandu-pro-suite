@@ -43,6 +43,7 @@ const AdminCredentialDetail = () => {
   const navigate = useNavigate();
   const [credential, setCredential] = useState<CredentialData | null>(null);
   const [customers, setCustomers] = useState<AssignedCustomer[]>([]);
+  const [editedExpiry, setEditedExpiry] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
