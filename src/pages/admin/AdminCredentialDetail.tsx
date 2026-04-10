@@ -392,29 +392,55 @@ const AdminCredentialDetail = () => {
         </div>
         {addingManual && (
           <div className="border border-border rounded-lg p-4 space-y-3 bg-muted/30">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div>
+            <div className="flex items-end gap-3">
+              <div className="flex-1 max-w-xs">
                 <Label>Order Number</Label>
                 <Input
                   placeholder="e.g. TM25 or 38"
                   value={manualOrderNumber}
-                  onChange={e => setManualOrderNumber(e.target.value)}
+                  onChange={e => { setManualOrderNumber(e.target.value); setLookupResult(null); setLookupError(""); }}
                 />
               </div>
-              <div>
-                <Label>Custom Expiry Date (optional)</Label>
-                <Input
-                  type="date"
-                  value={manualExpiryDate}
-                  onChange={e => setManualExpiryDate(e.target.value)}
-                />
-              </div>
-              <div className="flex items-end">
-                <Button onClick={handleManualAssign} disabled={assigningManual || !manualOrderNumber.trim()}>
-                  {assigningManual ? "Assigning..." : "Assign"}
-                </Button>
-              </div>
+              <Button variant="outline" onClick={handleLookupOrder} disabled={lookingUp || !manualOrderNumber.trim()}>
+                {lookingUp ? "Looking up..." : "Lookup"}
+              </Button>
             </div>
+            {lookupError && <p className="text-xs text-destructive">{lookupError}</p>}
+            {lookupResult && (
+              <div className="space-y-3">
+                <div className="bg-background border border-border rounded-md p-3 space-y-1">
+                  <p className="text-sm font-medium text-foreground">
+                    {[lookupResult.productName, lookupResult.variationName].filter(Boolean).join(' - ')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Purchase Date: {formatDate(lookupResult.purchaseDate)}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <Label>Expiry Date (optional)</Label>
+                    <Input
+                      type="date"
+                      value={manualExpiryDate}
+                      onChange={e => setManualExpiryDate(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Remaining Days</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder={lookupResult.variationExpiryDays ? String(lookupResult.variationExpiryDays) : "—"}
+                      value={manualRemainingDays}
+                      onChange={e => handleRemainingDaysChange(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button onClick={handleManualAssign} disabled={assigningManual}>
+                      {assigningManual ? "Assigning..." : "Assign"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">
               Only orders with matching product can be assigned. Each order can only be assigned to one credential.
             </p>
