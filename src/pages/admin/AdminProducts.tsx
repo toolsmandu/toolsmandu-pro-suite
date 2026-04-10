@@ -186,6 +186,7 @@ const AdminProducts = () => {
         expiry_days: variation.expiry_days ? String(variation.expiry_days) : '',
         variation_info: variation.variation_info || '',
         is_active: variation.is_active,
+        stock_status: variation.stock_status || 'in_stock',
       })),
     );
 
