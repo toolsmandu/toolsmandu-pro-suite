@@ -343,10 +343,10 @@ const AdminProducts = () => {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Category</TableHead>
-                  <TableHead>Amount</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Order Mode</TableHead>
-                  <TableHead>Flags</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Sale Label</TableHead>
+                  <TableHead>Speciality</TableHead>
                   <TableHead className="w-24">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -357,14 +357,14 @@ const AdminProducts = () => {
                     <TableRow key={product.id} className="cursor-pointer" onClick={() => openEdit(product)}>
                       <TableCell className="font-medium text-foreground">{product.name}</TableCell>
                       <TableCell className="text-muted-foreground">{categoryName}</TableCell>
-                      <TableCell className="text-foreground">NPR {product.price}</TableCell>
                       <TableCell>
                         <span className={`text-xs font-medium ${product.stock_status === 'out_of_stock' ? 'text-destructive' : 'text-success'}`}>
                           {product.stock_status === 'out_of_stock' ? 'Out of Stock' : 'In Stock'}
                         </span>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {product.order_mode === 'whatsapp' ? 'WhatsApp' : 'Online Order'}
+                      <TableCell className="text-foreground">NPR {product.price}</TableCell>
+                      <TableCell className="text-muted-foreground text-xs">
+                        {product.flash_sale_label || '-'}
                       </TableCell>
                       <TableCell className="text-xs space-x-1">
                         {product.is_featured && <span className="text-primary">Featured</span>}
@@ -403,7 +403,7 @@ const AdminProducts = () => {
 
                 {filteredProducts.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
+                     <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                       No products found.
                     </TableCell>
                   </TableRow>
