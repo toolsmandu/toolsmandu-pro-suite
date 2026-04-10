@@ -1,0 +1,1 @@
+UPDATE public.site_settings SET value = 'production', updated_at = now() WHERE key = 'khalti_environment';
