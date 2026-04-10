@@ -203,7 +203,7 @@ const AdminProducts = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const activeVariations = variations.filter((variation) => variation.name && variation.price);
+      const activeVariations = variations.filter((variation) => variation.name && variation.price && variation.expiry_days);
       const prices = activeVariations.map((variation) => Number.parseFloat(variation.price)).filter((value) => !Number.isNaN(value));
       const originalPrices = activeVariations
         .map((variation) => Number.parseFloat(variation.original_price))
@@ -576,7 +576,7 @@ const AdminProducts = () => {
                         </div>
 
                         <div>
-                          <Label className="text-xs">Selling Price</Label>
+                          <Label className="text-xs">Selling Price <span className="text-destructive">*</span></Label>
                           <Input
                             type="number"
                             value={variation.price}
@@ -596,7 +596,7 @@ const AdminProducts = () => {
                         </div>
 
                         <div className="md:col-span-2">
-                          <Label className="text-xs">Expiry Days (validity after order)</Label>
+                          <Label className="text-xs">Expiry Days (validity after order) <span className="text-destructive">*</span></Label>
                           <Input
                             type="number"
                             value={variation.expiry_days}
@@ -624,7 +624,7 @@ const AdminProducts = () => {
             <Button
               onClick={() => saveMutation.mutate()}
               className="w-full mt-4 mb-8"
-              disabled={!form.name || !form.category_id || !form.duration || !form.region || variations.filter((variation) => variation.name && variation.price).length === 0}
+              disabled={!form.name || !form.category_id || !form.duration || !form.region || variations.filter((variation) => variation.name && variation.price && variation.expiry_days).length === 0}
             >
               {editingId ? 'Update Product' : 'Create Product'}
             </Button>
