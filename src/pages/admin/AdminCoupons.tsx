@@ -162,7 +162,7 @@ const AdminCoupons = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Code</TableHead><TableHead>Type</TableHead><TableHead>Discount</TableHead>
-                  <TableHead>Expiry</TableHead><TableHead>Uses</TableHead><TableHead>Scope</TableHead>
+                  <TableHead>Expiry</TableHead><TableHead>Customer Scope</TableHead><TableHead>Product Scope</TableHead>
                   <TableHead>Status</TableHead><TableHead className="w-20">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -177,14 +177,8 @@ const AdminCoupons = () => {
                     <TableCell className="text-muted-foreground capitalize">{c.discount_type}</TableCell>
                     <TableCell className="text-foreground">{c.discount_type === 'percentage' ? `${c.discount_value}%` : `NPR ${c.discount_value}`}</TableCell>
                     <TableCell className={isExpired(c.expiry_date) ? 'text-destructive' : 'text-muted-foreground'}>{format(new Date(c.expiry_date), 'PP')}</TableCell>
-                    <TableCell className="text-muted-foreground">{c.total_quantity}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        {c.coupon_scope === 'specific_customer' && <Badge variant="outline" className="text-xs">Specific User</Badge>}
-                        {c.product_scope === 'specific_product' && <Badge variant="outline" className="text-xs">Specific Product</Badge>}
-                        {c.coupon_scope === 'all_customers' && c.product_scope === 'all_products' && <span className="text-xs text-muted-foreground">All</span>}
-                      </div>
-                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{c.coupon_scope === 'all_customers' ? 'All' : 'Limited'}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{c.product_scope === 'all_products' ? 'All' : 'Limited'}</TableCell>
                     <TableCell>
                       <span className={`text-xs font-medium ${c.is_active && !isExpired(c.expiry_date) ? 'text-success' : 'text-destructive'}`}>
                         {!c.is_active ? 'Inactive' : isExpired(c.expiry_date) ? 'Expired' : 'Active'}
