@@ -433,15 +433,6 @@ const AdminOrders = () => {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="w-24">
-                          <Label className="text-[10px] text-muted-foreground">Amount</Label>
-                          <Input
-                            value={item.price}
-                            onChange={(e) => updateItemField(index, 'price', parseFloat(e.target.value) || 0)}
-                            type="number"
-                            className="h-8 text-xs"
-                          />
-                        </div>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => removeItem(index)}>
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
