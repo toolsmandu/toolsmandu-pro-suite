@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
       .insert({
         user_id: user.id,
         total,
-        status: "processing",
+        status: "pending",
         payment_status: "pending",
       })
       .select()
