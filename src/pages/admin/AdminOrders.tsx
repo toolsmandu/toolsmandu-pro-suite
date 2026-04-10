@@ -360,11 +360,33 @@ const AdminOrders = () => {
           </DialogHeader>
 
           <div className="space-y-4">
-            {/* Customer Info */}
-            <div className="bg-muted/30 rounded-lg p-3 space-y-1 text-sm">
-              <p><span className="text-muted-foreground">Customer:</span> <span className="text-foreground">{selectedOrder?.profiles?.email || '-'}</span></p>
-              <p><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{selectedOrder?.profiles?.phone || '-'}</span></p>
-              <p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{selectedOrder && formatDateTime(selectedOrder.created_at)}</span></p>
+            {/* Customer Information */}
+            <div>
+              <Label className="text-xs text-muted-foreground mb-1 block">Customer Information</Label>
+              <div className="bg-muted/30 rounded-lg p-3 space-y-1 text-sm">
+                <p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{selectedOrder && formatDateTime(selectedOrder.created_at)}</span></p>
+                <p><span className="text-muted-foreground">Customer:</span> <span className="text-foreground">{selectedOrder?.profiles?.email || '-'}</span></p>
+                <p><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{selectedOrder?.profiles?.phone || '-'}</span></p>
+              </div>
+            </div>
+
+            {/* Payment Information */}
+            <div>
+              <Label className="text-xs text-muted-foreground mb-1 block">Payment Information</Label>
+              <div className="bg-muted/30 rounded-lg p-3 space-y-1 text-sm">
+                <p><span className="text-muted-foreground">Payment Method:</span> <span className="text-foreground">{selectedOrder?.payment_pidx ? 'Khalti' : 'N/A'}</span></p>
+                <p><span className="text-muted-foreground">Total Amount:</span> <span className="font-semibold text-foreground">NPR {selectedOrder?.total}</span></p>
+                <p>
+                  <span className="text-muted-foreground">Payment Status:</span>{' '}
+                  {selectedOrder?.payment_status === 'completed' ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success/20 text-success">Success</span>
+                  ) : (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-destructive/20 text-destructive">
+                      {selectedOrder?.payment_status === 'failed' ? 'Failed' : selectedOrder?.payment_status === 'expired' ? 'Failed' : 'Cancelled'}
+                    </span>
+                  )}
+                </p>
+              </div>
             </div>
 
             {/* Editable Products */}
@@ -441,8 +463,8 @@ const AdminOrders = () => {
                 <Select value={editStatus} onValueChange={setEditStatus}>
                   <SelectTrigger id="edit-status"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {['processing', 'completed', 'cancelled', 'refunded'].map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    {['pending', 'processing', 'completed', 'cancelled', 'refunded'].map((s) => (
+                      <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
