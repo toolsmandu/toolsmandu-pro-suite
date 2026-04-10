@@ -402,6 +402,43 @@ const AdminCustomers = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Add Customer Dialog */}
+      <Dialog open={addOpen} onOpenChange={o => { setAddOpen(o); if (!o) setAddForm({ name: '', email: '', phone: '', role: 'customer' }); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Customer</DialogTitle>
+            <DialogDescription>Create a new user account. Password will be set to the email address.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="space-y-4">
+            <div>
+              <Label>Name</Label>
+              <Input value={addForm.name} onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))} required className="border-foreground" />
+            </div>
+            <div>
+              <Label>Email</Label>
+              <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required className="border-foreground" />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} className="border-foreground" />
+            </div>
+            <div>
+              <Label>Role</Label>
+              <select value={addForm.role} onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))} className={selectClassName + ' border-foreground'}>
+                <option value="customer">Customer</option>
+                {isAdmin && <option value="editor">Editor</option>}
+              </select>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
+              <Button type="submit" disabled={createUser.isPending || !addForm.name || !addForm.email}>
+                {createUser.isPending ? 'Creating...' : 'Create'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
