@@ -18,6 +18,7 @@ import SearchPage from "./pages/SearchPage";
 import CartPage from "./pages/CartPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import PaymentVerify from "./pages/PaymentVerify";
 
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import ProfilePage from "./pages/dashboard/ProfilePage";
@@ -63,6 +64,7 @@ const App = () => (
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/payment/verify" element={<PaymentVerify />} />
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
