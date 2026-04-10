@@ -260,15 +260,79 @@ const AdminOrders = () => {
     return (product as any)?.product_variations || [];
   };
 
+  const filteredOrders = useMemo(() => {
+    return (orders || []).filter((order: any) => {
+      const term = searchTerm.trim().toLowerCase();
+      if (term) {
+        const email = order.profiles?.email?.toLowerCase() || '';
+        const phone = order.profiles?.phone?.toLowerCase() || '';
+        const orderNum = (order.order_number || '').toLowerCase();
+        if (!email.includes(term) && !phone.includes(term) && !orderNum.includes(term)) return false;
+      }
+      if (productFilter !== 'all') {
+        const hasProduct = order.order_items?.some((i: any) => i.product_id === productFilter);
+        if (!hasProduct) return false;
+      }
+      if (statusFilter !== 'all' && order.status !== statusFilter) return false;
+      if (dateFilter) {
+        const orderDate = new Date(order.created_at);
+        if (orderDate.toDateString() !== dateFilter.toDateString()) return false;
+      }
+      if (paymentFilter !== 'all') {
+        const method = order.payment_pidx ? 'khalti' : 'manual';
+        if (paymentFilter !== method) return false;
+      }
+      return true;
+    });
+  }, [orders, searchTerm, productFilter, statusFilter, dateFilter, paymentFilter]);
+
   return (
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
       {/* Orders List */}
       <div className={`${selectedOrder ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
-        <h2 className="text-2xl font-bold text-foreground mb-6">Orders</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-foreground">Orders</h2>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5 mb-4">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search email, phone, order ID" className="pl-9" />
+          </div>
+          <select value={productFilter} onChange={e => setProductFilter(e.target.value)} className={selectClassName}>
+            <option value="all">All Products</option>
+            {products?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={selectClassName}>
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="refunded">Refunded</option>
+          </select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dateFilter && "text-muted-foreground")}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateFilter ? format(dateFilter, 'PP') : 'Filter by date'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar mode="single" selected={dateFilter} onSelect={setDateFilter} initialFocus className={cn("p-3 pointer-events-auto")} />
+            </PopoverContent>
+          </Popover>
+          <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} className={selectClassName}>
+            <option value="all">All Payments</option>
+            <option value="khalti">Khalti</option>
+            <option value="manual">Manual</option>
+          </select>
+        </div>
+
         {isLoading ? (
           <p className="text-muted-foreground">Loading...</p>
         ) : (
-          <div className="border border-border rounded-lg overflow-auto max-h-[calc(100vh-10rem)]">
+          <div className="border border-border rounded-lg overflow-auto max-h-[calc(100vh-14rem)]">
             <Table>
               <TableHeader>
                 <TableRow>
