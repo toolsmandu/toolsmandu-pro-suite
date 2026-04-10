@@ -674,6 +674,7 @@ export type Database = {
           price: number
           product_id: string
           sort_order: number
+          stock_status: string
           variation_info: string | null
         }
         Insert: {
@@ -686,6 +687,7 @@ export type Database = {
           price: number
           product_id: string
           sort_order?: number
+          stock_status?: string
           variation_info?: string | null
         }
         Update: {
@@ -698,6 +700,7 @@ export type Database = {
           price?: number
           product_id?: string
           sort_order?: number
+          stock_status?: string
           variation_info?: string | null
         }
         Relationships: [
