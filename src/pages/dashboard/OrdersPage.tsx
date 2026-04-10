@@ -106,9 +106,7 @@ const OrdersPage = () => {
     const assignedDate = new Date(a.assigned_at);
     const expiryDate = new Date(assignedDate.getTime() + validity * 24 * 60 * 60 * 1000);
     const remainingMs = expiryDate.getTime() - Date.now();
-    if (remainingMs <= 0) return { value: 0, unit: 'hours' as const };
-    const remainingHours = Math.ceil(remainingMs / (60 * 60 * 1000));
-    if (remainingHours <= 24) return { value: remainingHours, unit: 'hours' as const };
+    if (remainingMs <= 0) return { value: 0, unit: 'days' as const };
     return { value: Math.ceil(remainingMs / (24 * 60 * 60 * 1000)), unit: 'days' as const };
   };
 
@@ -210,7 +208,7 @@ const OrdersPage = () => {
                                   )}
                                   {remaining !== null ? (
                                     <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold">
-                                      <Clock className="h-3 w-3" /> Remaining: {remaining.value} {remaining.unit === 'hours' ? 'Hours' : 'Days'}
+                                      <Clock className="h-3 w-3" /> Remaining: {remaining.value} Days
                                     </span>
                                   ) : (
                                     <span className="text-muted-foreground text-xs">No expiry</span>
