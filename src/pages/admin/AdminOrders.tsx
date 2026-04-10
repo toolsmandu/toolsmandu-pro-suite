@@ -20,11 +20,11 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-orange-500/20 text-orange-400',
-  processing: 'bg-warning/20 text-warning',
-  completed: 'bg-success/20 text-success',
+  pending: 'bg-yellow-500/20 text-yellow-400',
+  processing: 'bg-blue-500/20 text-blue-400',
+  completed: 'bg-green-500/20 text-green-400',
   cancelled: 'bg-destructive/20 text-destructive',
-  refunded: 'bg-muted text-muted-foreground',
+  refunded: 'bg-red-500/20 text-red-400',
 };
 
 const selectClassName = 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
