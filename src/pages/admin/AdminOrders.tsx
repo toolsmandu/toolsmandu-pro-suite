@@ -322,7 +322,7 @@ const AdminOrders = () => {
         total: parseFloat(newAmount),
         status: 'completed' as any,
         payment_status: 'paid',
-        created_at: new Date(newOrderDate).toISOString(),
+        created_at: new Date(newOrderDate + '+05:45').toISOString(),
       }).select().single();
       if (orderError) throw orderError;
 
