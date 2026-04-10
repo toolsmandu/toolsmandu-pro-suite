@@ -196,13 +196,13 @@ const AdminFamilySharing = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-foreground">Family Sharing</h2>
-        <Button onClick={() => setAddOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" /> Add Family Sharing
-        </Button>
+        <div className="flex items-center gap-3">
+          <OrderSearch navigate={navigate} />
+          <Button onClick={() => setAddOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" /> Add Family Sharing
+          </Button>
+        </div>
       </div>
-
-      {/* Order Search */}
-      <OrderSearch navigate={navigate} />
 
       <Table>
         <TableHeader>
