@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,7 @@ interface Variation {
 const emptyVariation = (): Variation => ({ name: '', price: '', original_price: '', expiry_days: '', variation_info: '', is_active: true });
 
 const AdminProducts = () => {
+  const location = useLocation();
   const queryClient = useQueryClient();
   const [view, setView] = useState<'list' | 'form'>('list');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -37,6 +39,12 @@ const AdminProducts = () => {
     is_flash_sale: false, flash_sale_label: '', meta_title: '', meta_description: '',
     features: '', stock_status: 'in_stock' as string, order_mode: 'cart' as string,
   });
+
+  // Reset to list view when navigating away and back
+  useEffect(() => {
+    setView('list');
+    resetForm();
+  }, [location.pathname]);
 
   const { data: products, isLoading } = useQuery({
     queryKey: ['admin-products'],
