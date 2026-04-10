@@ -146,6 +146,23 @@ const AdminCustomers = () => {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const createUser = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('admin-manage-user', {
+        body: { action: 'create', name: addForm.name, email: addForm.email, phone: addForm.phone, role: addForm.role },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+    },
+    onSuccess: () => {
+      toast.success('Customer created successfully');
+      setAddOpen(false);
+      setAddForm({ name: '', email: '', phone: '', role: 'customer' });
+      queryClient.invalidateQueries({ queryKey: ['admin-customers'] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const statusColors: Record<string, string> = {
     pending: 'bg-warning/20 text-warning',
     processing: 'bg-blue-500/20 text-blue-400',
@@ -158,6 +175,7 @@ const AdminCustomers = () => {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-foreground">Customers</h2>
+        <Button onClick={() => setAddOpen(true)}><Plus className="h-4 w-4 mr-2" /> Add Customer</Button>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
