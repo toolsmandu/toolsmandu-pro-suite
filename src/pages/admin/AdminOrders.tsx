@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChevronRight, Save, Trash2, Plus, X, Search, Copy } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { formatDate, formatDateTime, formatRelativeDate } from '@/lib/formatDate';
+import { formatDate, formatDateTime, formatRelativeDate, getKathmanduNowLocal, kathmanduToUTC } from '@/lib/formatDate';
 import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -56,16 +56,9 @@ const AdminOrders = () => {
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
   const [paymentFilter, setPaymentFilter] = useState('all');
 
-  const getNepalNow = () => {
-    const now = new Date();
-    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-    const nepal = new Date(utc + (5 * 60 + 45) * 60000);
-    return nepal.toISOString().slice(0, 16);
-  };
-
   // Add order state
   const [addingOrder, setAddingOrder] = useState(false);
-  const [newOrderDate, setNewOrderDate] = useState(getNepalNow);
+  const [newOrderDate, setNewOrderDate] = useState(getKathmanduNowLocal);
   const [customerSearch, setCustomerSearch] = useState('');
   const [customerResults, setCustomerResults] = useState<any[]>([]);
   const [customerSearching, setCustomerSearching] = useState(false);
@@ -322,7 +315,7 @@ const AdminOrders = () => {
         total: parseFloat(newAmount),
         status: 'completed' as any,
         payment_status: 'paid',
-        created_at: new Date(newOrderDate + '+05:45').toISOString(),
+        created_at: kathmanduToUTC(newOrderDate),
       }).select().single();
       if (orderError) throw orderError;
 
