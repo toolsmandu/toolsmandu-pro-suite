@@ -329,6 +329,45 @@ const AdminOrders = () => {
       });
       if (itemError) throw itemError;
 
+      // Auto-assign family sharing credentials for completed manual orders
+      if (newVariationId) {
+        const { data: links } = await supabase
+          .from('credential_variant_links')
+          .select('credential_id, priority')
+          .eq('variant_id', newVariationId)
+          .order('priority');
+        if (links?.length) {
+          for (const link of links) {
+            const { data: cred } = await supabase
+              .from('family_sharing_credentials')
+              .select('assigned_count, max_limit')
+              .eq('id', link.credential_id)
+              .single();
+            if (!cred || cred.assigned_count >= cred.max_limit) continue;
+
+            const { data: varData } = await supabase
+              .from('product_variations')
+              .select('expiry_days')
+              .eq('id', newVariationId)
+              .single();
+
+            await supabase.from('credential_assignments').insert({
+              credential_id: link.credential_id,
+              order_id: order.id,
+              user_id: selectedCustomer.user_id,
+              validity_days: varData?.expiry_days || null,
+            });
+
+            await supabase
+              .from('family_sharing_credentials')
+              .update({ assigned_count: (cred.assigned_count || 0) + 1 })
+              .eq('id', link.credential_id);
+
+            break;
+          }
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
       toast.success('Order created successfully');
       setAddingOrder(false);
