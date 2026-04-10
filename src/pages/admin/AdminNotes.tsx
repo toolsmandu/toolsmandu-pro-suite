@@ -207,7 +207,6 @@ const AdminNotes = () => {
                   <TableRow>
                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">No notes found</TableCell>
                   </TableRow>
-                  </TableRow>
                 )}
               </TableBody>
             </Table>
