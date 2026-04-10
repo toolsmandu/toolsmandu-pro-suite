@@ -374,9 +374,10 @@ const AdminOrders = () => {
   return (
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
       {/* Orders List */}
-      <div className={`${selectedOrder ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
+      <div className={`${(selectedOrder || addingOrder) ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-foreground">Orders</h2>
+          <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5 mb-4">
