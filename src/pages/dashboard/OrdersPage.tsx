@@ -171,6 +171,7 @@ const OrdersPage = () => {
               <TableHead className="text-center">Product</TableHead>
               <TableHead className="text-center">Date</TableHead>
               <TableHead className="text-center">Amount</TableHead>
+              <TableHead className="text-center">Payment</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
@@ -188,6 +189,7 @@ const OrdersPage = () => {
                     <TableCell className="text-sm text-center">{getProductLabel(order)}</TableCell>
                     <TableCell className="text-sm text-center">{formatDate(order.created_at)}</TableCell>
                     <TableCell className="font-semibold text-center">NPR {order.total}</TableCell>
+                    <TableCell className="text-sm text-center">{(order as any).payment_pidx ? 'Khalti' : 'Manual'}</TableCell>
                     <TableCell className="text-center"><Badge className={statusColors[displayStatus] || statusColors[order.status]}>{capitalize(displayStatus)}</Badge></TableCell>
                     <TableCell className="text-center">
                       {hasNotes ? (
@@ -204,7 +206,7 @@ const OrdersPage = () => {
                   </TableRow>
                   {orderCreds.length > 0 && (
                     <TableRow className="hover:bg-transparent border-b border-border border-t-0">
-                      <TableCell colSpan={6} className="p-2">
+                      <TableCell colSpan={7} className="p-2">
                         <div className="space-y-2">
                           {orderCreds.map((a: any) => {
                             const cred = a.family_sharing_credentials;
