@@ -1,61 +1,51 @@
 
+Problem found:
+- The current code is still mixing UTC/browser-local time with Nepal time.
+- `getNepalNow()` uses `toISOString()`, which returns UTC text. That makes the `datetime-local` input show the wrong wall-clock time.
+- The save logic converts with `new Date(...)`, which can still be confusing depending on how the input string is formed.
+- Order display functions (`formatDateTime`, `formatRelativeDate`) also use the viewer’s local timezone, so even if the saved value is correct, the admin panel can still look wrong.
 
-# Khalti Payment Gateway Integration
+What I will change:
+1. Fix the Add Order default timestamp
+- Replace the current Nepal helper with one that formats the current time directly in `Asia/Kathmandu` as `YYYY-MM-DDTHH:mm` for the `datetime-local` input.
+- This avoids `toISOString()` entirely for the input value.
 
-## Overview
-Integrate Khalti (Nepal's payment gateway) into Toolsmandu's checkout flow. Khalti uses a server-initiated payment model: your backend creates a payment, the user is redirected to Khalti to pay, then redirected back where the backend verifies the payment.
+2. Fix how the manual order date is saved
+- Parse the `datetime-local` value as Kathmandu wall-clock time and convert it explicitly to a UTC ISO timestamp before insert.
+- Keep manual orders created as `completed` and `paid`, but ensure `created_at` is stored from the correct Nepal-selected time.
 
-## Flow
-```text
-Cart → "Pay with Khalti" → Edge Function initiates payment → User redirected to Khalti →
-User pays → Redirected back to /payment/verify → Edge Function verifies → Order created → Dashboard
-```
+3. Make admin order dates display in Kathmandu time
+- Update the shared date formatting helpers so admin-visible timestamps render in `Asia/Kathmandu`, not the browser/device timezone.
+- This will make the list view, detail panel, and note timestamps consistent with Nepal time.
 
-## What You Need First
-- A **Khalti Merchant Account** — sign up at [test-admin.khalti.com](https://test-admin.khalti.com) for sandbox or [admin.khalti.com](https://admin.khalti.com) for production
-- Your **Live Secret Key** from the Khalti merchant dashboard
-- Use OTP `987654` and test Khalti ID `9800000000` for sandbox testing
+4. Verify all affected places in `/admin/orders`
+- Add Order panel default value
+- Created order timestamp in DB insert logic
+- Order list “Date”
+- Right panel “Date”
+- Sent notes timestamps if they use the same formatter
 
-## Technical Plan
+Technical details:
+- File to update: `src/pages/admin/AdminOrders.tsx`
+  - remove `toISOString().slice(0, 16)`-based Nepal helper
+  - add a Kathmandu formatter for `datetime-local`
+  - add a safe converter from Kathmandu local string -> UTC ISO
+- File to update: `src/lib/formatDate.ts`
+  - use `Intl.DateTimeFormat` with `timeZone: 'Asia/Kathmandu'` for display helpers
+  - likely replace browser-local `getHours/getDate/...` usage
+- No database schema changes are needed.
+- No auth/RLS changes are needed.
 
-### Step 1: Store Khalti Secret Key
-- Use the secrets tool to securely store `KHALTI_SECRET_KEY` (your live_secret_key from Khalti dashboard)
+Why this should fix your issue:
+- Right now the input is being filled with a UTC-derived string, which is why the visible time is off.
+- After this change, both the displayed default time and the stored order time will be based on Kathmandu time consistently.
 
-### Step 2: Create Edge Function — `khalti-initiate`
-- Accepts cart items, total amount, user ID
-- Creates a pending order in the `orders` table with status `processing`
-- Calls Khalti's `https://a.khalti.com/api/v2/epayment/initiate/` (or sandbox URL) with:
-  - `return_url` pointing to your site's `/payment/verify` page
-  - `website_url`, `amount` (in paisa), `purchase_order_id`, `purchase_order_name`
-- Returns the Khalti `payment_url` for frontend redirect
+Checks after implementation:
+- Open `/admin/orders`
+- Click “Add Order”
+- Confirm the Order Date shows current Nepal time
+- Create a manual order
+- Confirm the saved order shows the same Nepal time in the table and right panel
+- Confirm old and new order timestamps render consistently in Nepal time
 
-### Step 3: Create Edge Function — `khalti-verify`
-- Called when user returns from Khalti with `pidx` query param
-- Calls Khalti's `https://a.khalti.com/api/v2/epayment/lookup/` to verify payment status
-- If verified (`Completed`), updates order status to `processing` (confirmed)
-- If failed, marks order as cancelled
-
-### Step 4: Add `payment_status` and `payment_pidx` columns to orders table
-- `payment_status` (text, default `'pending'`) — tracks Khalti payment state
-- `payment_pidx` (text, nullable) — stores Khalti's payment identifier for lookup
-
-### Step 5: Update CartPage
-- Replace direct order creation with a call to `khalti-initiate` edge function
-- Redirect user to Khalti's `payment_url`
-
-### Step 6: Create Payment Verification Page (`/payment/verify`)
-- Reads `pidx` from URL query params
-- Calls `khalti-verify` edge function
-- Shows success/failure and redirects to orders dashboard
-
-### Step 7: Admin — add Khalti environment toggle
-- Store a `khalti_environment` setting in `site_settings` (`sandbox` or `production`) so you can switch between test and live environments
-
-## Files to Create/Modify
-- `supabase/functions/khalti-initiate/index.ts` — new
-- `supabase/functions/khalti-verify/index.ts` — new
-- `src/pages/PaymentVerify.tsx` — new page
-- `src/pages/CartPage.tsx` — update checkout flow
-- `src/App.tsx` — add `/payment/verify` route
-- Database migration — add payment columns to orders
-
+If you approve, I’ll implement this directly.
