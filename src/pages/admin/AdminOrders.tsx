@@ -334,8 +334,9 @@ const AdminOrders = () => {
       });
       if (itemError) throw itemError;
 
-      // Auto-assign family sharing credentials for completed manual orders
+      // Cleanup expired assignments and auto-assign family sharing credentials
       if (newVariationId) {
+        await supabase.rpc('cleanup_expired_assignments');
         const { data: links } = await supabase
           .from('credential_variant_links')
           .select('credential_id, priority')
