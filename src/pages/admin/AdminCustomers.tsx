@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Eye, Pencil, Trash2, X } from 'lucide-react';
+import { Search, Eye, Pencil, Trash2, Plus } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -27,6 +28,11 @@ const AdminCustomers = () => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const queryClient = useQueryClient();
+  const { isAdmin } = useAuth();
+
+  // Add customer dialog
+  const [addOpen, setAddOpen] = useState(false);
+  const [addForm, setAddForm] = useState({ name: '', email: '', phone: '', role: 'customer' });
 
   // View dialog
   const [viewUser, setViewUser] = useState<any>(null);
@@ -140,6 +146,23 @@ const AdminCustomers = () => {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const createUser = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('admin-manage-user', {
+        body: { action: 'create', name: addForm.name, email: addForm.email, phone: addForm.phone, role: addForm.role },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+    },
+    onSuccess: () => {
+      toast.success('Customer created successfully');
+      setAddOpen(false);
+      setAddForm({ name: '', email: '', phone: '', role: 'customer' });
+      queryClient.invalidateQueries({ queryKey: ['admin-customers'] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const statusColors: Record<string, string> = {
     pending: 'bg-warning/20 text-warning',
     processing: 'bg-blue-500/20 text-blue-400',
@@ -152,6 +175,7 @@ const AdminCustomers = () => {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-foreground">Customers</h2>
+        <Button onClick={() => setAddOpen(true)}><Plus className="h-4 w-4 mr-2" /> Add Customer</Button>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
@@ -378,6 +402,43 @@ const AdminCustomers = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Add Customer Dialog */}
+      <Dialog open={addOpen} onOpenChange={o => { setAddOpen(o); if (!o) setAddForm({ name: '', email: '', phone: '', role: 'customer' }); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Customer</DialogTitle>
+            <DialogDescription>Create a new user account. Password will be set to the email address.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="space-y-4">
+            <div>
+              <Label>Name</Label>
+              <Input value={addForm.name} onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))} required className="border-foreground" />
+            </div>
+            <div>
+              <Label>Email</Label>
+              <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required className="border-foreground" />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} className="border-foreground" />
+            </div>
+            <div>
+              <Label>Role</Label>
+              <select value={addForm.role} onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))} className={selectClassName + ' border-foreground'}>
+                <option value="customer">Customer</option>
+                {isAdmin && <option value="editor">Editor</option>}
+              </select>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
+              <Button type="submit" disabled={createUser.isPending || !addForm.name || !addForm.email}>
+                {createUser.isPending ? 'Creating...' : 'Create'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
