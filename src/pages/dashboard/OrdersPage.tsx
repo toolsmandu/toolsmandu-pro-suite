@@ -208,7 +208,7 @@ const OrdersPage = () => {
                                   )}
                                   {remaining !== null ? (
                                     <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold">
-                                      <Clock className="h-3 w-3" /> Remaining: {remaining.value} {remaining.unit === 'hours' ? 'Hours' : 'Days'}
+                                      <Clock className="h-3 w-3" /> Remaining: {remaining.value} Days
                                     </span>
                                   ) : (
                                     <span className="text-muted-foreground text-xs">No expiry</span>
