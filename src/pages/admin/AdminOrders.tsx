@@ -640,7 +640,7 @@ const AdminOrders = () => {
               {/* Order Date */}
               <div>
                 <Label>Order Date</Label>
-                <Input type="date" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} className="border-foreground" />
+                <Input type="datetime-local" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} className="border-foreground" />
               </div>
 
               {/* Customer Search */}
