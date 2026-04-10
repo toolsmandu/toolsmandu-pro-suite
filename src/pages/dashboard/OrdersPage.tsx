@@ -119,8 +119,8 @@ const OrdersPage = () => {
       if (!validity) return true;
       const assignedDate = new Date(a.assigned_at);
       const expiryMs = assignedDate.getTime() + validity * 24 * 60 * 60 * 1000;
-      const remainingHours = Math.ceil((expiryMs - now) / (60 * 60 * 1000));
-      return remainingHours > 0;
+      const remainingDays = Math.ceil((expiryMs - now) / (24 * 60 * 60 * 1000));
+      return remainingDays > 0;
     });
   };
 
