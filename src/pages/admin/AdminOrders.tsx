@@ -313,7 +313,7 @@ const AdminOrders = () => {
       const { data: order, error: orderError } = await supabase.from('orders').insert({
         user_id: selectedCustomer.user_id,
         total: parseFloat(newAmount),
-        status: 'processing' as any,
+        status: 'completed' as any,
         payment_status: 'paid',
         created_at: new Date(newOrderDate).toISOString(),
       }).select().single();
