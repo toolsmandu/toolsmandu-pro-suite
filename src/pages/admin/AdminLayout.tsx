@@ -8,14 +8,14 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom } from 'lucide-react';
+import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types');
+  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons');
   const isSettingsSection = location.pathname.startsWith('/admin/settings');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
   const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
@@ -102,6 +102,14 @@ const AdminLayout = () => {
                               <NavLink to="/admin/product-types" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                 <Tag className="mr-2 h-3 w-3" />
                                 <span>Product Types</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/coupons" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <Ticket className="mr-2 h-3 w-3" />
+                                <span>Coupons</span>
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
