@@ -293,7 +293,7 @@ const AdminOrders = () => {
   const openAddOrder = () => {
     setSelectedOrder(null);
     setAddingOrder(true);
-    setNewOrderDate(getNepalNow());
+    setNewOrderDate(getKathmanduNowLocal());
     setCustomerSearch('');
     setCustomerResults([]);
     setSelectedCustomer(null);
