@@ -1,0 +1,1 @@
+ALTER TABLE public.orders ALTER COLUMN order_number SET DEFAULT nextval('order_number_seq'::regclass)::text;
