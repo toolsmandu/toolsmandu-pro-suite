@@ -160,7 +160,7 @@ const OrdersPage = () => {
               return (
                 <React.Fragment key={order.id}>
                   <TableRow className={orderCreds.length > 0 ? "border-b-0" : ""}>
-                    <TableCell className="text-sm text-center">#{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
+                    <TableCell className="text-sm text-center">{(order as any).order_number || order.id.slice(0, 8)}</TableCell>
                     <TableCell className="text-sm text-center">{getProductLabel(order)}</TableCell>
                     <TableCell className="text-sm text-center">{formatDate(order.created_at)}</TableCell>
                     <TableCell className="font-semibold text-center">NPR {order.total}</TableCell>
@@ -234,7 +234,7 @@ const OrdersPage = () => {
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Order #{(selectedOrder as any)?.order_number || selectedOrder?.id?.slice(0, 8)}</DialogTitle>
+            <DialogTitle>Order {(selectedOrder as any)?.order_number || selectedOrder?.id?.slice(0, 8)}</DialogTitle>
           </DialogHeader>
 
           {selectedOrder && (
