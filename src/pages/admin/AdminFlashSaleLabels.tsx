@@ -4,12 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Pencil } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const AdminFlashSaleLabels = () => {
   const queryClient = useQueryClient();
   const [newLabel, setNewLabel] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editLabel, setEditLabel] = useState('');
 
   const { data: labels, isLoading } = useQuery({
     queryKey: ['flash-sale-labels'],
@@ -29,6 +31,20 @@ const AdminFlashSaleLabels = () => {
       queryClient.invalidateQueries({ queryKey: ['flash-sale-labels'] });
       setNewLabel('');
       toast.success('Label added');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from('flash_sale_labels').update({ label: editLabel.trim() }).eq('id', editingId!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['flash-sale-labels'] });
+      setEditingId(null);
+      setEditLabel('');
+      toast.success('Label updated');
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -74,11 +90,20 @@ const AdminFlashSaleLabels = () => {
             <TableBody>
               {labels?.map((l) => (
                 <TableRow key={l.id}>
-                  <TableCell className="font-medium text-foreground">{l.label}</TableCell>
+                  <TableCell className="font-medium text-foreground">
+                    {editingId === l.id ? (
+                      <div className="flex gap-2 items-center">
+                        <Input value={editLabel} onChange={e => setEditLabel(e.target.value)} className="h-8 text-sm w-64" onKeyDown={e => e.key === 'Enter' && editLabel.trim() && updateMutation.mutate()} />
+                        <Button size="sm" onClick={() => updateMutation.mutate()} disabled={!editLabel.trim()}>Save</Button>
+                        <Button size="sm" variant="ghost" onClick={() => { setEditingId(null); setEditLabel(''); }}>Cancel</Button>
+                      </div>
+                    ) : l.label}
+                  </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(l.id)}>
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditingId(l.id); setEditLabel(l.label); }}><Pencil className="h-3 w-3" /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(l.id)}><Trash2 className="h-3 w-3" /></Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
