@@ -347,7 +347,7 @@ const AdminOrders = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders?.map((order: any) => (
+                {filteredOrders.map((order: any) => (
                   <TableRow
                     key={order.id}
                     className={`cursor-pointer ${selectedOrder?.id === order.id ? 'bg-muted/50' : ''}`}
