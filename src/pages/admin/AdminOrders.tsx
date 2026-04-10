@@ -50,6 +50,11 @@ const AdminOrders = () => {
   const [sending, setSending] = useState(false);
   const [isAdminOnly, setIsAdminOnly] = useState(false);
   const [deletedItemIds, setDeletedItemIds] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [productFilter, setProductFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
+  const [paymentFilter, setPaymentFilter] = useState('all');
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
