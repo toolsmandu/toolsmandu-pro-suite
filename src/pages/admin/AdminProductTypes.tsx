@@ -4,13 +4,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Pencil } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const AdminProductTypes = () => {
   const queryClient = useQueryClient();
   const [newName, setNewName] = useState('');
   const [adding, setAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
 
   const { data: types, isLoading } = useQuery({
     queryKey: ['product-types'],
@@ -30,6 +32,20 @@ const AdminProductTypes = () => {
       setNewName('');
       setAdding(false);
       toast.success('Product type added!');
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from('product_types').update({ name: editName.trim() }).eq('id', editingId!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['product-types'] });
+      setEditingId(null);
+      setEditName('');
+      toast.success('Product type updated!');
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -82,11 +98,20 @@ const AdminProductTypes = () => {
               )}
               {types?.map(t => (
                 <TableRow key={t.id}>
-                  <TableCell className="font-medium text-foreground">{t.name}</TableCell>
+                  <TableCell className="font-medium text-foreground">
+                    {editingId === t.id ? (
+                      <div className="flex gap-2 items-center">
+                        <Input value={editName} onChange={e => setEditName(e.target.value)} className="h-8 text-sm w-64" onKeyDown={e => e.key === 'Enter' && editName.trim() && updateMutation.mutate()} />
+                        <Button size="sm" onClick={() => updateMutation.mutate()} disabled={!editName.trim()}>Save</Button>
+                        <Button size="sm" variant="ghost" onClick={() => { setEditingId(null); setEditName(''); }}>Cancel</Button>
+                      </div>
+                    ) : t.name}
+                  </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(t.id)}>
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditingId(t.id); setEditName(t.name); }}><Pencil className="h-3 w-3" /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(t.id)}><Trash2 className="h-3 w-3" /></Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
