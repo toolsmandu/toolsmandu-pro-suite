@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, Send, Save, Trash2, Plus } from 'lucide-react';
+import { ChevronRight, Save, Trash2, Plus } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate } from '@/lib/formatDate';
 import { toast } from 'sonner';
