@@ -32,6 +32,7 @@ interface AssignedCustomer {
   order_number?: string;
   user_email?: string;
   user_phone?: string;
+  product_name?: string;
   variation_name?: string;
   expiry_date?: string;
   remaining_days?: number;
