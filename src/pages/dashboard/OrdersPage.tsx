@@ -179,6 +179,8 @@ const OrdersPage = () => {
             {orders.map(order => {
               const hasNotes = getNotesForOrder(order.id).length > 0;
               const orderCreds = getOrderCredentials(order.id);
+              const expired = isOrderExpired(order);
+              const displayStatus = expired ? 'expired' : order.status;
               return (
                 <React.Fragment key={order.id}>
                   <TableRow className={orderCreds.length > 0 ? "border-b-0" : ""}>
