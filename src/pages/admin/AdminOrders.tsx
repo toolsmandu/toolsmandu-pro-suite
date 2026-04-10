@@ -435,6 +435,7 @@ const AdminOrders = () => {
                   <TableHead>Products</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Total</TableHead>
+                  <TableHead>Payment</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -464,6 +465,9 @@ const AdminOrders = () => {
                       {formatRelativeDate(order.created_at)}
                     </TableCell>
                     <TableCell className="font-bold text-foreground">NPR {order.total}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {order.payment_pidx ? 'Khalti' : 'Manual'}
+                    </TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[order.status] || ''}`}>
                         {order.status}
