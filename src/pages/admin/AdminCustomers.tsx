@@ -28,6 +28,11 @@ const AdminCustomers = () => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const queryClient = useQueryClient();
+  const { isAdmin } = useAuth();
+
+  // Add customer dialog
+  const [addOpen, setAddOpen] = useState(false);
+  const [addForm, setAddForm] = useState({ name: '', email: '', phone: '', role: 'customer' });
 
   // View dialog
   const [viewUser, setViewUser] = useState<any>(null);
