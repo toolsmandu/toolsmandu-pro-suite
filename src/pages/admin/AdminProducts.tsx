@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, ArrowLeft } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -28,7 +28,7 @@ const emptyVariation = (): Variation => ({ name: '', price: '', original_price: 
 
 const AdminProducts = () => {
   const queryClient = useQueryClient();
-  const [showForm, setShowForm] = useState(false);
+  const [view, setView] = useState<'list' | 'form'>('list');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [form, setForm] = useState({
@@ -70,7 +70,7 @@ const AdminProducts = () => {
 
   const openAdd = () => {
     resetForm();
-    setShowForm(true);
+    setView('form');
   };
 
   const openEdit = async (product: any) => {
@@ -94,7 +94,7 @@ const AdminProducts = () => {
       variation_info: v.variation_info || '', is_active: v.is_active,
     })));
     setEditingId(product.id);
-    setShowForm(true);
+    setView('form');
   };
 
   const updateVariation = (index: number, field: keyof Variation, value: any) => {
@@ -165,9 +165,9 @@ const AdminProducts = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
-      setShowForm(false);
-      resetForm();
       toast.success(editingId ? 'Product updated!' : 'Product created!');
+      setView('list');
+      resetForm();
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -177,33 +177,24 @@ const AdminProducts = () => {
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-products'] }); toast.success('Product deleted'); },
   });
 
-  const closeForm = () => {
-    setShowForm(false);
-    resetForm();
-  };
-
-  return (
-    <div className="flex gap-6 h-[calc(100vh-5rem)]">
-      {/* Products List */}
-      <div className={`${showForm ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
+  // LIST VIEW
+  if (view === 'list') {
+    return (
+      <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-foreground">Products</h2>
           <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Product</Button>
         </div>
 
         {isLoading ? <p className="text-muted-foreground">Loading...</p> : (
-          <div className="border border-border rounded-lg overflow-auto max-h-[calc(100vh-10rem)]">
+          <div className="border border-border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Amount</TableHead><TableHead>Status</TableHead><TableHead>Flags</TableHead><TableHead className="w-24">Actions</TableHead></TableRow>
               </TableHeader>
               <TableBody>
                 {products?.map(p => (
-                  <TableRow
-                    key={p.id}
-                    className={`cursor-pointer ${editingId === p.id ? 'bg-muted/50' : ''}`}
-                    onClick={() => openEdit(p)}
-                  >
+                  <TableRow key={p.id} className="cursor-pointer" onClick={() => openEdit(p)}>
                     <TableCell className="font-medium text-foreground">{p.name}</TableCell>
                     <TableCell className="text-muted-foreground">{(p.categories as any)?.name || '-'}</TableCell>
                     <TableCell className="text-foreground">NPR {p.price}</TableCell>
@@ -226,107 +217,109 @@ const AdminProducts = () => {
           </div>
         )}
       </div>
+    );
+  }
 
-      {/* Add/Edit Panel */}
-      {showForm && (
-        <div className="w-full lg:w-[520px] lg:min-w-[520px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
-          <div className="flex items-center justify-between p-4 border-b border-border">
-            <h3 className="font-semibold text-foreground">{editingId ? 'Edit Product' : 'Add Product'}</h3>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={closeForm}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+  // FORM VIEW (full area)
+  return (
+    <div className="h-[calc(100vh-5rem)] flex flex-col">
+      <div className="flex items-center gap-3 mb-4">
+        <Button variant="ghost" size="sm" onClick={() => { setView('list'); resetForm(); }}>
+          <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        </Button>
+        <h2 className="text-2xl font-bold text-foreground">{editingId ? 'Edit Product' : 'Add Product'}</h2>
+      </div>
 
-          <ScrollArea className="flex-1 p-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2"><Label>Name</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
-              <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({...form, slug: e.target.value})} placeholder="auto-generated" /></div>
-              <div><Label>Category</Label>
-                <Select value={form.category_id} onValueChange={v => setForm({...form, category_id: v})}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-                  <SelectContent position="popper" className="z-[9999]">{categories?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div><Label>Product Type</Label>
-                <Select value={form.duration} onValueChange={v => setForm({...form, duration: v})}>
-                  <SelectTrigger><SelectValue placeholder="Select product type" /></SelectTrigger>
-                  <SelectContent position="popper" className="z-[9999]">{productTypes?.map(t => <SelectItem key={t.id} value={t.name}>{t.name}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div><Label>Region</Label><Input value={form.region} onChange={e => setForm({...form, region: e.target.value})} placeholder="e.g. Global, Nepal" /></div>
-              <div><Label>Stock Status</Label>
-                <Select value={form.stock_status} onValueChange={v => setForm({...form, stock_status: v})}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent position="popper" className="z-[9999]">
-                    <SelectItem value="in_stock">In Stock</SelectItem>
-                    <SelectItem value="out_of_stock">Out of Stock</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div><Label>Order Mode</Label>
-                <Select value={form.order_mode} onValueChange={v => setForm({...form, order_mode: v})}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent position="popper" className="z-[9999]">
-                    <SelectItem value="cart">Online Order (Add to Cart)</SelectItem>
-                    <SelectItem value="whatsapp">Order via WhatsApp</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="col-span-2"><ImageUpload value={form.image_url} onChange={v => setForm({...form, image_url: v})} label="Product Image" /></div>
-              <div className="col-span-2"><Label>Description</Label><RichTextEditor value={form.description} onChange={v => setForm({...form, description: v})} /></div>
+      <ScrollArea className="flex-1">
+        <div className="max-w-3xl">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2"><Label>Name</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
+            <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({...form, slug: e.target.value})} placeholder="auto-generated" /></div>
+            <div><Label>Category</Label>
+              <Select value={form.category_id} onValueChange={v => setForm({...form, category_id: v})}>
+                <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <SelectContent position="popper" className="z-[9999]">{categories?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>Product Type</Label>
+              <Select value={form.duration} onValueChange={v => setForm({...form, duration: v})}>
+                <SelectTrigger><SelectValue placeholder="Select product type" /></SelectTrigger>
+                <SelectContent position="popper" className="z-[9999]">{productTypes?.map(t => <SelectItem key={t.id} value={t.name}>{t.name}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>Region</Label><Input value={form.region} onChange={e => setForm({...form, region: e.target.value})} placeholder="e.g. Global, Nepal" /></div>
+            <div><Label>Stock Status</Label>
+              <Select value={form.stock_status} onValueChange={v => setForm({...form, stock_status: v})}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent position="popper" className="z-[9999]">
+                  <SelectItem value="in_stock">In Stock</SelectItem>
+                  <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div><Label>Order Mode</Label>
+              <Select value={form.order_mode} onValueChange={v => setForm({...form, order_mode: v})}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent position="popper" className="z-[9999]">
+                  <SelectItem value="cart">Online Order (Add to Cart)</SelectItem>
+                  <SelectItem value="whatsapp">Order via WhatsApp</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="col-span-2"><ImageUpload value={form.image_url} onChange={v => setForm({...form, image_url: v})} label="Product Image" /></div>
+            <div className="col-span-2"><Label>Description</Label><RichTextEditor value={form.description} onChange={v => setForm({...form, description: v})} /></div>
 
-              {/* Variations Section */}
-              <div className="col-span-2">
-                <Separator className="my-2" />
-                <div className="flex items-center justify-between mb-3">
-                  <Label className="text-base font-semibold">Variations</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setVariations(prev => [...prev, emptyVariation()])}>
-                    <Plus className="h-3 w-3 mr-1" /> Add Variation
-                  </Button>
-                </div>
-                {variations.length === 0 && (
-                  <p className="text-sm text-muted-foreground">No variations yet. Add at least one variation with pricing.</p>
-                )}
-                <div className="space-y-3">
-                  {variations.map((v, i) => (
-                    <div key={i} className="border border-border rounded-lg p-3 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-foreground">Variation {i + 1}</span>
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-2">
-                            <Switch checked={v.is_active} onCheckedChange={val => updateVariation(i, 'is_active', val)} />
-                            <span className={`text-xs ${v.is_active ? 'text-success' : 'text-muted-foreground'}`}>{v.is_active ? 'Active' : 'Inactive'}</span>
-                          </div>
-                          <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => removeVariation(i)}>
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
+            {/* Variations */}
+            <div className="col-span-2">
+              <Separator className="my-2" />
+              <div className="flex items-center justify-between mb-3">
+                <Label className="text-base font-semibold">Variations</Label>
+                <Button type="button" variant="outline" size="sm" onClick={() => setVariations(prev => [...prev, emptyVariation()])}>
+                  <Plus className="h-3 w-3 mr-1" /> Add Variation
+                </Button>
+              </div>
+              {variations.length === 0 && (
+                <p className="text-sm text-muted-foreground">No variations yet. Add at least one variation with pricing.</p>
+              )}
+              <div className="space-y-3">
+                {variations.map((v, i) => (
+                  <div key={i} className="border border-border rounded-lg p-3 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-foreground">Variation {i + 1}</span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <Switch checked={v.is_active} onCheckedChange={val => updateVariation(i, 'is_active', val)} />
+                          <span className={`text-xs ${v.is_active ? 'text-success' : 'text-muted-foreground'}`}>{v.is_active ? 'Active' : 'Inactive'}</span>
                         </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="col-span-2"><Label className="text-xs">Name</Label><Input value={v.name} onChange={e => updateVariation(i, 'name', e.target.value)} placeholder="e.g. 1 Month, 1 Year" className="h-8 text-sm" /></div>
-                        <div><Label className="text-xs">Selling Price</Label><Input type="number" value={v.price} onChange={e => updateVariation(i, 'price', e.target.value)} className="h-8 text-sm" /></div>
-                        <div><Label className="text-xs">Full Price</Label><Input type="number" value={v.original_price} onChange={e => updateVariation(i, 'original_price', e.target.value)} className="h-8 text-sm" /></div>
-                        <div className="col-span-2"><Label className="text-xs">Expiry Days (validity after order)</Label><Input type="number" value={v.expiry_days} onChange={e => updateVariation(i, 'expiry_days', e.target.value)} placeholder="e.g. 30, 365" className="h-8 text-sm" /></div>
-                        <div className="col-span-2"><Label className="text-xs">Variation Info</Label><Input value={v.variation_info} onChange={e => updateVariation(i, 'variation_info', e.target.value)} placeholder="e.g. 1 Year License, Family Plan" className="h-8 text-sm" /></div>
+                        <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => removeVariation(i)}>
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="col-span-2"><Label className="text-xs">Name</Label><Input value={v.name} onChange={e => updateVariation(i, 'name', e.target.value)} placeholder="e.g. 1 Month, 1 Year" className="h-8 text-sm" /></div>
+                      <div><Label className="text-xs">Selling Price</Label><Input type="number" value={v.price} onChange={e => updateVariation(i, 'price', e.target.value)} className="h-8 text-sm" /></div>
+                      <div><Label className="text-xs">Full Price</Label><Input type="number" value={v.original_price} onChange={e => updateVariation(i, 'original_price', e.target.value)} className="h-8 text-sm" /></div>
+                      <div className="col-span-2"><Label className="text-xs">Expiry Days (validity after order)</Label><Input type="number" value={v.expiry_days} onChange={e => updateVariation(i, 'expiry_days', e.target.value)} placeholder="e.g. 30, 365" className="h-8 text-sm" /></div>
+                      <div className="col-span-2"><Label className="text-xs">Variation Info</Label><Input value={v.variation_info} onChange={e => updateVariation(i, 'variation_info', e.target.value)} placeholder="e.g. 1 Year License, Family Plan" className="h-8 text-sm" /></div>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              <div className="col-span-2"><Label>Flash Sale Label</Label><Input value={form.flash_sale_label} onChange={e => setForm({...form, flash_sale_label: e.target.value})} /></div>
-              <div><Label>Meta Title</Label><Input value={form.meta_title} onChange={e => setForm({...form, meta_title: e.target.value})} /></div>
-              <div><Label>Meta Description</Label><Input value={form.meta_description} onChange={e => setForm({...form, meta_description: e.target.value})} /></div>
-              <div className="flex items-center gap-4"><Switch checked={form.is_featured} onCheckedChange={v => setForm({...form, is_featured: v})} /><Label>Featured</Label></div>
-              <div className="flex items-center gap-4"><Switch checked={form.is_bestseller} onCheckedChange={v => setForm({...form, is_bestseller: v})} /><Label>Bestseller</Label></div>
-              <div className="flex items-center gap-4"><Switch checked={form.is_flash_sale} onCheckedChange={v => setForm({...form, is_flash_sale: v})} /><Label>Flash Sale</Label></div>
             </div>
-            <Button onClick={() => saveMutation.mutate()} className="w-full mt-4" disabled={!form.name || variations.filter(v => v.name && v.price).length === 0}>
-              {editingId ? 'Update Product' : 'Create Product'}
-            </Button>
-          </ScrollArea>
+
+            <div className="col-span-2"><Label>Flash Sale Label</Label><Input value={form.flash_sale_label} onChange={e => setForm({...form, flash_sale_label: e.target.value})} /></div>
+            <div><Label>Meta Title</Label><Input value={form.meta_title} onChange={e => setForm({...form, meta_title: e.target.value})} /></div>
+            <div><Label>Meta Description</Label><Input value={form.meta_description} onChange={e => setForm({...form, meta_description: e.target.value})} /></div>
+            <div className="flex items-center gap-4"><Switch checked={form.is_featured} onCheckedChange={v => setForm({...form, is_featured: v})} /><Label>Featured</Label></div>
+            <div className="flex items-center gap-4"><Switch checked={form.is_bestseller} onCheckedChange={v => setForm({...form, is_bestseller: v})} /><Label>Bestseller</Label></div>
+            <div className="flex items-center gap-4"><Switch checked={form.is_flash_sale} onCheckedChange={v => setForm({...form, is_flash_sale: v})} /><Label>Flash Sale</Label></div>
+          </div>
+          <Button onClick={() => saveMutation.mutate()} className="w-full mt-4 mb-8" disabled={!form.name || variations.filter(v => v.name && v.price).length === 0}>
+            {editingId ? 'Update Product' : 'Create Product'}
+          </Button>
         </div>
-      )}
+      </ScrollArea>
     </div>
   );
 };
