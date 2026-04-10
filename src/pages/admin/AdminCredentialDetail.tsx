@@ -399,13 +399,9 @@ const AdminCredentialDetail = () => {
                     {c.expiry_date ? (
                       <Input
                         type="date"
-                        defaultValue={c.expiry_date}
+                        value={editedExpiry[c.id] ?? c.expiry_date}
                         className="w-36 h-8 text-xs"
-                        onBlur={(e) => {
-                          if (e.target.value && e.target.value !== c.expiry_date) {
-                            handleUpdateExpiry(c.id, c.assigned_at, e.target.value);
-                          }
-                        }}
+                        onChange={(e) => setEditedExpiry(prev => ({ ...prev, [c.id]: e.target.value }))}
                       />
                     ) : "—"}
                   </TableCell>
@@ -416,7 +412,20 @@ const AdminCredentialDetail = () => {
                       </Badge>
                     ) : "—"}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right flex items-center justify-end gap-1">
+                    {editedExpiry[c.id] && editedExpiry[c.id] !== c.expiry_date && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs"
+                        onClick={() => {
+                          handleUpdateExpiry(c.id, c.assigned_at, editedExpiry[c.id]);
+                          setEditedExpiry(prev => { const n = { ...prev }; delete n[c.id]; return n; });
+                        }}
+                      >
+                        Update
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="icon"
