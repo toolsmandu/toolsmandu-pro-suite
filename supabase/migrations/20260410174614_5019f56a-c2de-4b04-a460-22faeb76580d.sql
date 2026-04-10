@@ -1,0 +1,1 @@
+ALTER TABLE public.product_variations ADD COLUMN stock_status text NOT NULL DEFAULT 'in_stock';

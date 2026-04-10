@@ -96,7 +96,7 @@ const ProductPage = () => {
   });
 
   const activeVariations = ((product as any)?.product_variations as any[] || [])
-    .filter((v: any) => v.is_active)
+    .filter((v: any) => v.is_active && v.stock_status !== 'out_of_stock')
     .sort((a: any, b: any) => a.sort_order - b.sort_order);
 
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
