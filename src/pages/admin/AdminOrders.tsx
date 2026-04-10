@@ -293,7 +293,7 @@ const AdminOrders = () => {
   const openAddOrder = () => {
     setSelectedOrder(null);
     setAddingOrder(true);
-    setNewOrderDate(new Date().toISOString().slice(0, 10));
+    setNewOrderDate(new Date().toISOString().slice(0, 16));
     setCustomerSearch('');
     setCustomerResults([]);
     setSelectedCustomer(null);
