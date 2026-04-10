@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -56,7 +57,8 @@ const emptyForm = () => ({
 
 const AdminProducts = () => {
   const queryClient = useQueryClient();
-  const [panelOpen, setPanelOpen] = useState(false);
+  const location = useLocation();
+  const [view, setView] = useState<'list' | 'form'>('list');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -64,6 +66,12 @@ const AdminProducts = () => {
   const [stockFilter, setStockFilter] = useState('all');
   const [orderModeFilter, setOrderModeFilter] = useState('all');
   const [form, setForm] = useState(emptyForm());
+
+  // Reset to list view when navigating away and back
+  useEffect(() => {
+    setView('list');
+    resetForm();
+  }, [location.pathname]);
 
   const { data: products, isLoading } = useQuery({
     queryKey: ['admin-products'],
@@ -131,14 +139,9 @@ const AdminProducts = () => {
     setEditingId(null);
   };
 
-  const closePanel = () => {
-    setPanelOpen(false);
-    resetForm();
-  };
-
   const openAdd = () => {
     resetForm();
-    setPanelOpen(true);
+    setView('form');
   };
 
   const openEdit = async (product: any) => {
@@ -185,7 +188,7 @@ const AdminProducts = () => {
     );
 
     setEditingId(product.id);
-    setPanelOpen(true);
+    setView('form');
   };
 
   const updateVariation = (index: number, field: keyof Variation, value: string | boolean) => {
@@ -262,7 +265,8 @@ const AdminProducts = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       toast.success(editingId ? 'Product updated!' : 'Product created!');
-      closePanel();
+      setView('list');
+      resetForm();
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -275,17 +279,21 @@ const AdminProducts = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       toast.success('Product deleted');
-      if (editingId) closePanel();
+      if (editingId) {
+        setView('list');
+        resetForm();
+      }
     },
     onError: (error: Error) => toast.error(error.message),
   });
 
-  return (
-    <div className="flex gap-6 h-[calc(100vh-5rem)]">
-      <div className={`${panelOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
+  // LIST VIEW
+  if (view === 'list') {
+    return (
+      <div>
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex items-center justify-between gap-4">
-            <h2 className="text-2xl font-bold text-foreground">Products</h2>
+              <h2 className="text-2xl font-bold text-foreground">Products</h2>
             <Button onClick={openAdd}>
               <Plus className="h-4 w-4 mr-2" />
               Add Product
@@ -345,10 +353,8 @@ const AdminProducts = () => {
               <TableBody>
                 {filteredProducts.map((product: any) => {
                   const categoryName = (product.categories as { name?: string } | null)?.name || '-';
-                  const isSelected = editingId === product.id && panelOpen;
-
                   return (
-                    <TableRow key={product.id} className={`cursor-pointer ${isSelected ? 'bg-muted/50' : ''}`} onClick={() => openEdit(product)}>
+                    <TableRow key={product.id} className="cursor-pointer" onClick={() => openEdit(product)}>
                       <TableCell className="font-medium text-foreground">{product.name}</TableCell>
                       <TableCell className="text-muted-foreground">{categoryName}</TableCell>
                       <TableCell className="text-foreground">NPR {product.price}</TableCell>
@@ -407,18 +413,22 @@ const AdminProducts = () => {
           </div>
         )}
       </div>
+    );
+  }
 
-      {panelOpen && (
-        <div className="w-full lg:w-[640px] lg:min-w-[640px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
-          <div className="flex items-center justify-between p-4 border-b border-border">
-            <h3 className="font-semibold text-foreground">{editingId ? 'Edit Product' : 'Add Product'}</h3>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={closePanel}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+  // FORM VIEW (full area)
+  return (
+    <div className="h-[calc(100vh-5rem)] flex flex-col">
+      <div className="flex items-center gap-3 mb-4">
+        <Button variant="ghost" size="sm" onClick={() => { setView('list'); resetForm(); }}>
+          ← Back
+        </Button>
+        <h2 className="text-2xl font-bold text-foreground">{editingId ? 'Edit Product' : 'Add Product'}</h2>
+      </div>
 
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-4">
+      <ScrollArea className="flex-1">
+        <div className="w-full">
+          <div className="space-y-4">
               <div>
                 <Label>Name</Label>
                 <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
@@ -643,17 +653,16 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <Button
-                onClick={() => saveMutation.mutate()}
-                className="w-full mb-2"
-                disabled={!form.name || variations.filter((variation) => variation.name && variation.price).length === 0}
-              >
-                {editingId ? 'Update Product' : 'Create Product'}
-              </Button>
-            </div>
-          </ScrollArea>
+            <Button
+              onClick={() => saveMutation.mutate()}
+              className="w-full mt-4 mb-8"
+              disabled={!form.name || variations.filter((variation) => variation.name && variation.price).length === 0}
+            >
+              {editingId ? 'Update Product' : 'Create Product'}
+            </Button>
+          </div>
         </div>
-      )}
+      </ScrollArea>
     </div>
   );
 };
