@@ -106,9 +106,7 @@ const OrdersPage = () => {
     const assignedDate = new Date(a.assigned_at);
     const expiryDate = new Date(assignedDate.getTime() + validity * 24 * 60 * 60 * 1000);
     const remainingMs = expiryDate.getTime() - Date.now();
-    if (remainingMs <= 0) return { value: 0, unit: 'hours' as const };
-    const remainingHours = Math.ceil(remainingMs / (60 * 60 * 1000));
-    if (remainingHours <= 24) return { value: remainingHours, unit: 'hours' as const };
+    if (remainingMs <= 0) return { value: 0, unit: 'days' as const };
     return { value: Math.ceil(remainingMs / (24 * 60 * 60 * 1000)), unit: 'days' as const };
   };
 
