@@ -209,6 +209,91 @@ const AdminCredentialDetail = () => {
     fetchData();
   };
 
+  // Manual assignment state
+  const [addingManual, setAddingManual] = useState(false);
+  const [manualOrderNumber, setManualOrderNumber] = useState("");
+  const [manualExpiryDate, setManualExpiryDate] = useState("");
+  const [assigningManual, setAssigningManual] = useState(false);
+
+  const handleManualAssign = async () => {
+    if (!manualOrderNumber.trim() || !credential) return;
+    setAssigningManual(true);
+    try {
+      // Find the order
+      const { data: order, error: orderErr } = await supabase
+        .from("orders")
+        .select("id, user_id, status")
+        .eq("order_number", manualOrderNumber.trim())
+        .single();
+      if (orderErr || !order) throw new Error("Order not found");
+
+      // Check order items match this credential's product
+      const { data: fsp } = await supabase
+        .from("family_sharing_products")
+        .select("product_id")
+        .eq("id", credential.family_product_id)
+        .single();
+      if (!fsp) throw new Error("Family sharing product not found");
+
+      const { data: orderItems } = await supabase
+        .from("order_items")
+        .select("id, product_id, variation_id")
+        .eq("order_id", order.id)
+        .eq("product_id", fsp.product_id);
+      if (!orderItems?.length) throw new Error("This order does not contain the matching product");
+
+      // Check order not already assigned to any credential
+      const { data: existingAssignment } = await supabase
+        .from("credential_assignments")
+        .select("id")
+        .eq("order_id", order.id);
+      if (existingAssignment && existingAssignment.length > 0) throw new Error("This order is already assigned to a credential");
+
+      // Check credential capacity
+      if (credential.assigned_count >= credential.max_limit) throw new Error("Credential has reached max assignment limit");
+
+      // Calculate validity_days
+      let validityDays: number | null = null;
+      if (manualExpiryDate) {
+        const now = new Date();
+        const expiry = new Date(manualExpiryDate);
+        validityDays = Math.max(1, Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+      } else {
+        const varId = orderItems[0]?.variation_id;
+        if (varId) {
+          const { data: variation } = await supabase
+            .from("product_variations")
+            .select("expiry_days")
+            .eq("id", varId)
+            .single();
+          validityDays = variation?.expiry_days || null;
+        }
+      }
+
+      await supabase.from("credential_assignments").insert({
+        credential_id: credential.id,
+        order_id: order.id,
+        user_id: order.user_id,
+        validity_days: validityDays,
+      });
+
+      await supabase
+        .from("family_sharing_credentials")
+        .update({ assigned_count: credential.assigned_count + 1 })
+        .eq("id", credential.id);
+
+      toast.success("Order assigned successfully");
+      setAddingManual(false);
+      setManualOrderNumber("");
+      setManualExpiryDate("");
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setAssigningManual(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-12">
