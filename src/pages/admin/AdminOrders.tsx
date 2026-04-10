@@ -621,6 +621,122 @@ const AdminOrders = () => {
           </ScrollArea>
         </div>
       )}
+
+      {/* Add Order Panel */}
+      {addingOrder && (
+        <div className="w-full lg:w-[480px] lg:min-w-[480px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h3 className="font-semibold text-foreground">Add Order</h3>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setAddingOrder(false)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <ScrollArea className="flex-1 p-4">
+            <div className="space-y-4">
+              {/* Order Date */}
+              <div>
+                <Label>Order Date</Label>
+                <Input type="date" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} className="border-foreground" />
+              </div>
+
+              {/* Customer Search */}
+              <div>
+                <Label>Customer</Label>
+                <Input
+                  placeholder="Search by email or phone..."
+                  value={customerSearch}
+                  onChange={e => handleCustomerSearch(e.target.value)}
+                  className="border-foreground"
+                />
+                {customerSearching && <p className="text-xs text-muted-foreground mt-1">Searching...</p>}
+                {customerError && <p className="text-xs text-destructive mt-1">{customerError}</p>}
+                {customerResults.length > 0 && !selectedCustomer && (
+                  <div className="border border-border rounded-md mt-1 max-h-40 overflow-y-auto">
+                    {customerResults.map(c => (
+                      <button
+                        key={c.user_id}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-muted flex flex-col"
+                        onClick={() => {
+                          setSelectedCustomer(c);
+                          setCustomerSearch(c.email || c.phone || '');
+                          setCustomerResults([]);
+                          setCustomerError('');
+                        }}
+                      >
+                        <span className="text-foreground">{c.name || c.email}</span>
+                        <span className="text-xs text-muted-foreground">{c.email} · {c.phone || 'No phone'}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {selectedCustomer && (
+                  <div className="bg-muted/30 rounded-lg p-2 mt-1 text-sm flex items-center justify-between">
+                    <div>
+                      <p className="text-foreground">{selectedCustomer.name || selectedCustomer.email}</p>
+                      <p className="text-xs text-muted-foreground">{selectedCustomer.email} · {selectedCustomer.phone || 'No phone'}</p>
+                    </div>
+                    <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => { setSelectedCustomer(null); setCustomerSearch(''); }}>
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Product Selection */}
+              <div>
+                <Label>Product</Label>
+                <select
+                  value={newProductId}
+                  onChange={e => { setNewProductId(e.target.value); setNewVariationId(''); }}
+                  className={selectClassName.replace('border-input', 'border-foreground')}
+                >
+                  <option value="">Select a product</option>
+                  {products?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </div>
+
+              {/* Variation Selection */}
+              {newProductVariations.length > 0 && (
+                <div>
+                  <Label>Variation</Label>
+                  <select
+                    value={newVariationId}
+                    onChange={e => setNewVariationId(e.target.value)}
+                    className={selectClassName.replace('border-input', 'border-foreground')}
+                  >
+                    <option value="">Select a variation</option>
+                    {newProductVariations.map((v: any) => (
+                      <option key={v.id} value={v.id}>{v.name} — NPR {v.price}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Amount */}
+              <div>
+                <Label>Amount (NPR)</Label>
+                <Input
+                  type="number"
+                  placeholder="Enter amount"
+                  value={newAmount}
+                  onChange={e => setNewAmount(e.target.value)}
+                  className="border-foreground"
+                />
+              </div>
+
+              {/* Create Button */}
+              <Button
+                className="w-full"
+                onClick={handleCreateOrder}
+                disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
+              >
+                {creatingOrder ? 'Creating...' : 'Create Order'}
+              </Button>
+            </div>
+          </ScrollArea>
+        </div>
+      )}
     </div>
   );
 };
