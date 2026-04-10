@@ -282,37 +282,7 @@ const AdminOrders = () => {
     return (product as any)?.product_variations || [];
   };
 
-  const handleSendNote = async () => {
-    if (!selectedOrder || !orderNote.trim()) {
-      toast.error('Please enter a note');
-      return;
-    }
-    const email = selectedOrder.profiles?.email;
-    if (!email) {
-      toast.error('Customer email not found');
-      return;
-    }
-    setSending(true);
-    try {
-      await supabase.from('order_notes').insert({
-        order_id: selectedOrder.id,
-        note: orderNote,
-        sent_by: user!.id,
-        is_admin_only: isAdminOnly,
-      } as any);
-      if (!isAdminOnly) {
-        // Email sending will be set up later
-      }
-      queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
-      toast.success(isAdminOnly ? 'Admin note saved' : 'Note sent');
-      setOrderNote('');
-      setIsAdminOnly(false);
-    } catch {
-      toast.error('Failed to send note');
-    } finally {
-      setSending(false);
-    }
-  };
+
 
   return (
     <div>
