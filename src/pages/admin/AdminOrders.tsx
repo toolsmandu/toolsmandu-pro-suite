@@ -15,6 +15,7 @@ import { formatDate, formatDateTime, formatRelativeDate } from '@/lib/formatDate
 import { toast } from 'sonner';
 
 const statusColors: Record<string, string> = {
+  pending: 'bg-orange-500/20 text-orange-400',
   processing: 'bg-warning/20 text-warning',
   completed: 'bg-success/20 text-success',
   cancelled: 'bg-destructive/20 text-destructive',
