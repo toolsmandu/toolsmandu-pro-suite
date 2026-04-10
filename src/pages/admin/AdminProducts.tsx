@@ -257,6 +257,7 @@ const AdminProducts = () => {
         expiry_days: variation.expiry_days ? Number.parseInt(variation.expiry_days, 10) : null,
         variation_info: variation.variation_info || null,
         is_active: variation.is_active,
+        stock_status: variation.stock_status || 'in_stock',
         sort_order: index,
       }));
 
