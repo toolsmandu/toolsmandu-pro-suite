@@ -165,8 +165,6 @@ const AdminOrders = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
-      toast.success('Order updated');
-      setSelectedOrder(null);
     },
   });
 
