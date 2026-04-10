@@ -568,8 +568,9 @@ const AdminProducts = () => {
                         </div>
                       </div>
 
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div className="md:col-span-2">
+                      {/* Row 1: Name, Stock Status, Expiry Days */}
+                      <div className="grid gap-3 md:grid-cols-3">
+                        <div>
                           <Label className="text-xs">Name</Label>
                           <Input
                             value={variation.name}
@@ -578,7 +579,31 @@ const AdminProducts = () => {
                             className="h-8 text-sm"
                           />
                         </div>
+                        <div>
+                          <Label className="text-xs">Stock Status</Label>
+                          <select
+                            value={variation.stock_status}
+                            onChange={(event) => updateVariation(index, 'stock_status', event.target.value)}
+                            className={selectClassName + ' h-8 text-sm'}
+                          >
+                            <option value="in_stock">In Stock</option>
+                            <option value="out_of_stock">Out of Stock</option>
+                          </select>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Expiry Days <span className="text-destructive">*</span></Label>
+                          <Input
+                            type="number"
+                            value={variation.expiry_days}
+                            onChange={(event) => updateVariation(index, 'expiry_days', event.target.value)}
+                            placeholder="e.g. 30, 365"
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                      </div>
 
+                      {/* Row 2: Selling Price, Full Price, Variation Info, Update button */}
+                      <div className="grid gap-3 md:grid-cols-4 items-end">
                         <div>
                           <Label className="text-xs">Selling Price <span className="text-destructive">*</span></Label>
                           <Input
@@ -588,7 +613,6 @@ const AdminProducts = () => {
                             className="h-8 text-sm"
                           />
                         </div>
-
                         <div>
                           <Label className="text-xs">Full Price</Label>
                           <Input
@@ -598,24 +622,12 @@ const AdminProducts = () => {
                             className="h-8 text-sm"
                           />
                         </div>
-
-                        <div className="md:col-span-2">
-                          <Label className="text-xs">Expiry Days (validity after order) <span className="text-destructive">*</span></Label>
-                          <Input
-                            type="number"
-                            value={variation.expiry_days}
-                            onChange={(event) => updateVariation(index, 'expiry_days', event.target.value)}
-                            placeholder="e.g. 30, 365"
-                            className="h-8 text-sm"
-                          />
-                        </div>
-
-                        <div className="md:col-span-2">
+                        <div>
                           <Label className="text-xs">Variation Info</Label>
                           <Input
                             value={variation.variation_info}
                             onChange={(event) => updateVariation(index, 'variation_info', event.target.value)}
-                            placeholder="e.g. 1 Year License, Family Plan"
+                            placeholder="e.g. 1 Year License"
                             className="h-8 text-sm"
                           />
                         </div>
