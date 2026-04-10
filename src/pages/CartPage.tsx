@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { Trash2, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 
 const CartPage = () => {
-  const { items, removeItem, updateQuantity, clearCart, total, itemCount } = useCart();
+  const { items, removeItem, clearCart, total, itemCount } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [placing, setPlacing] = useState(false);
@@ -21,32 +21,34 @@ const CartPage = () => {
     }
     setPlacing(true);
     try {
-      for (const item of items) {
-        const itemTotal = item.price * item.quantity;
-        const { data: order, error } = await supabase
-          .from('orders')
-          .insert({ user_id: user.id, total: itemTotal, status: 'processing' as const })
-          .select()
-          .single();
-        if (error || !order) {
-          toast.error(`Failed to place order for ${item.name}`);
-          continue;
-        }
-        await supabase.from('order_items').insert({
-          order_id: order.id,
-          product_id: item.id,
-          price: item.price,
-          quantity: item.quantity,
-          variation_id: item.variantId || null,
-          variation_name: item.variantName || null,
-        });
+      const websiteUrl = window.location.origin;
+      const { data, error } = await supabase.functions.invoke('khalti-initiate', {
+        body: {
+          items: items.map(item => ({
+            id: item.id,
+            price: item.price,
+            quantity: item.quantity,
+            variantId: item.variantId,
+            variantName: item.variantName,
+          })),
+          return_url: `${websiteUrl}/payment/verify`,
+          website_url: websiteUrl,
+        },
+      });
+
+      if (error || !data?.payment_url) {
+        toast.error('Failed to initiate payment. Please try again.');
+        console.error('Khalti initiation error:', error, data);
+        setPlacing(false);
+        return;
       }
+
+      // Clear cart before redirecting
       clearCart();
-      toast.success('Orders placed successfully!');
-      navigate('/dashboard/orders');
+      // Redirect to Khalti payment page
+      window.location.href = data.payment_url;
     } catch {
-      toast.error('Failed to place orders');
-    } finally {
+      toast.error('Failed to initiate payment');
       setPlacing(false);
     }
   };
@@ -87,8 +89,9 @@ const CartPage = () => {
             <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground"><span>Total</span><span>NPR {total.toFixed(2)}</span></div>
           </div>
           <Button className="w-full" size="lg" onClick={handlePlaceOrder} disabled={placing}>
-            {placing ? 'Placing Order...' : 'Place Order'}
+            {placing ? 'Redirecting to Khalti...' : 'Pay with Khalti'}
           </Button>
+          <p className="text-xs text-muted-foreground text-center mt-2">You will be redirected to Khalti to complete payment</p>
         </div>
       </div>
     </div>
