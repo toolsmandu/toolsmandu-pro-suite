@@ -206,7 +206,7 @@ const OrdersPage = () => {
                   </TableRow>
                   {orderCreds.length > 0 && (
                     <TableRow className="hover:bg-transparent border-b border-border border-t-0">
-                      <TableCell colSpan={6} className="p-2">
+                      <TableCell colSpan={7} className="p-2">
                         <div className="space-y-2">
                           {orderCreds.map((a: any) => {
                             const cred = a.family_sharing_credentials;
