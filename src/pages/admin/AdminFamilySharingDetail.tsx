@@ -23,6 +23,7 @@ interface Credential {
   assigned_count: number;
   twofa_link: string | null;
   created_at: string;
+  index_number: number;
   updated_at: string;
 }
 
