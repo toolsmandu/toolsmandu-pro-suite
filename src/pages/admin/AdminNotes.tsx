@@ -8,8 +8,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Pencil, Eye, Trash2, ChevronsUpDown, Check, X, Save, Copy } from 'lucide-react';
+import { Plus, Pencil, Eye, Trash2, ChevronsUpDown, Check, X, Save, Copy, StickyNote } from 'lucide-react';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/formatDate';
@@ -17,21 +18,24 @@ import { formatDate } from '@/lib/formatDate';
 const selectClassName =
   'flex h-10 w-full rounded-md border border-foreground bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
 
+interface GroupedProduct {
+  product_id: string;
+  product_name: string;
+  notes: any[];
+}
+
 const AdminNotes = () => {
   const queryClient = useQueryClient();
   const [productFilter, setProductFilter] = useState('all');
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterSearch, setFilterSearch] = useState('');
 
-  // Right panel state
+  // Right panel state - now tracks a product group
   const [panelMode, setPanelMode] = useState<'view' | 'edit' | null>(null);
-  const [selectedNote, setSelectedNote] = useState<any>(null);
+  const [selectedGroup, setSelectedGroup] = useState<GroupedProduct | null>(null);
+  const [editingNote, setEditingNote] = useState<any>(null);
   const [form, setForm] = useState({ product_id: '', heading: '', description: '' });
-
-  // Add mode (new note)
   const [isAdding, setIsAdding] = useState(false);
-
-  // Delete dialog
   const [deleteNote, setDeleteNote] = useState<any>(null);
 
   const { data: products } = useQuery({
@@ -50,34 +54,54 @@ const AdminNotes = () => {
     },
   });
 
-  const filteredNotes = useMemo(() => {
-    if (productFilter === 'all') return notes || [];
-    return (notes || []).filter((n: any) => n.product_id === productFilter);
+  // Group notes by product
+  const groupedProducts = useMemo(() => {
+    const all = notes || [];
+    const filtered = productFilter === 'all' ? all : all.filter((n: any) => n.product_id === productFilter);
+    const map: Record<string, GroupedProduct> = {};
+    for (const n of filtered) {
+      if (!map[n.product_id]) {
+        map[n.product_id] = { product_id: n.product_id, product_name: n.products?.name || '-', notes: [] };
+      }
+      map[n.product_id].notes.push(n);
+    }
+    return Object.values(map);
   }, [notes, productFilter]);
 
   const closePanel = () => {
     setPanelMode(null);
-    setSelectedNote(null);
+    setSelectedGroup(null);
+    setEditingNote(null);
     setIsAdding(false);
     setForm({ product_id: '', heading: '', description: '' });
   };
 
-  const handleView = (note: any) => {
-    setSelectedNote(note);
+  const handleViewGroup = (group: GroupedProduct) => {
+    setSelectedGroup(group);
+    setEditingNote(null);
     setPanelMode('view');
     setIsAdding(false);
   };
 
-  const handleEdit = (note: any) => {
-    setSelectedNote(note);
+  const handleEditNote = (note: any) => {
+    setEditingNote(note);
     setForm({ product_id: note.product_id, heading: note.heading || '', description: note.description });
     setPanelMode('edit');
     setIsAdding(false);
   };
 
   const handleAdd = () => {
-    setSelectedNote(null);
+    setSelectedGroup(null);
+    setEditingNote(null);
     setForm({ product_id: '', heading: '', description: '' });
+    setPanelMode('edit');
+    setIsAdding(true);
+  };
+
+  const handleAddToProduct = (group: GroupedProduct) => {
+    setSelectedGroup(group);
+    setEditingNote(null);
+    setForm({ product_id: group.product_id, heading: '', description: '' });
     setPanelMode('edit');
     setIsAdding(true);
   };
@@ -89,13 +113,30 @@ const AdminNotes = () => {
         const { error } = await supabase.from('notes').insert(payload);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('notes').update(payload).eq('id', selectedNote.id);
+        const { error } = await supabase.from('notes').update(payload).eq('id', editingNote.id);
         if (error) throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-notes'] });
-      closePanel();
+      // Go back to view mode for the same product
+      if (form.product_id) {
+        const pid = form.product_id;
+        setTimeout(() => {
+          // Re-select the group after data refreshes
+          const group = groupedProducts.find(g => g.product_id === pid);
+          if (group) {
+            setSelectedGroup(group);
+            setPanelMode('view');
+          } else {
+            closePanel();
+          }
+        }, 300);
+      } else {
+        closePanel();
+      }
+      setEditingNote(null);
+      setIsAdding(false);
       toast.success(isAdding ? 'Note added!' : 'Note updated!');
     },
     onError: (e: any) => toast.error(e.message),
@@ -109,7 +150,6 @@ const AdminNotes = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-notes'] });
       setDeleteNote(null);
-      if (selectedNote?.id === deleteNote?.id) closePanel();
       toast.success('Note deleted');
     },
     onError: (e: any) => toast.error(e.message),
@@ -119,7 +159,7 @@ const AdminNotes = () => {
 
   return (
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
-      {/* Notes List */}
+      {/* Notes List - grouped by product */}
       <div className={`${isPanelOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-foreground">Notes</h2>
@@ -173,39 +213,36 @@ const AdminNotes = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Product</TableHead>
-                  <TableHead>Heading</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="w-36">Actions</TableHead>
+                  <TableHead>Notes</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredNotes.map((note: any) => (
+                {groupedProducts.map((group) => (
                   <TableRow
-                    key={note.id}
-                    className={cn("cursor-pointer", selectedNote?.id === note.id && 'bg-muted')}
-                    onClick={() => handleView(note)}
+                    key={group.product_id}
+                    className={cn("cursor-pointer", selectedGroup?.product_id === group.product_id && 'bg-muted')}
+                    onClick={() => handleViewGroup(group)}
                   >
-                    <TableCell className="font-medium text-foreground">{note.products?.name || '-'}</TableCell>
-                    <TableCell className="text-sm text-foreground">{note.heading || '-'}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{formatDate(note.created_at)}</TableCell>
+                    <TableCell className="font-medium text-foreground">{group.product_name}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="gap-1">
+                        <StickyNote className="h-3 w-3" />
+                        {group.notes.length}
+                      </Badge>
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleView(note)} title="View">
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleViewGroup(group)} title="View All">
                           <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEdit(note)} title="Edit">
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => setDeleteNote(note)} title="Delete">
-                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>
                   </TableRow>
                 ))}
-                {filteredNotes.length === 0 && (
+                {groupedProducts.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">No notes found</TableCell>
+                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">No notes found</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -220,23 +257,13 @@ const AdminNotes = () => {
           {/* Panel Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
             <h3 className="font-semibold text-foreground">
-              {isAdding ? 'Add Note' : panelMode === 'view' ? (selectedNote?.products?.name || 'Note') : 'Edit Note'}
+              {isAdding ? 'Add Note' : panelMode === 'edit' ? 'Edit Note' : (selectedGroup?.product_name || 'Notes')}
             </h3>
             <div className="flex gap-2">
-              {panelMode === 'view' && selectedNote && (
-                <>
-                  <Button size="sm" variant="outline" onClick={() => {
-                    const tmp = document.createElement('div');
-                    tmp.innerHTML = selectedNote.description || '';
-                    navigator.clipboard.writeText(tmp.textContent || tmp.innerText || '');
-                    toast.success('Copied to clipboard');
-                  }}>
-                    <Copy className="h-3 w-3 mr-1" /> Copy
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleEdit(selectedNote)}>
-                    <Pencil className="h-3 w-3 mr-1" /> Edit
-                  </Button>
-                </>
+              {panelMode === 'view' && selectedGroup && (
+                <Button size="sm" onClick={() => handleAddToProduct(selectedGroup)}>
+                  <Plus className="h-3 w-3 mr-1" /> Add Note
+                </Button>
               )}
               <Button size="icon" variant="ghost" className="h-8 w-8" onClick={closePanel}>
                 <X className="h-4 w-4" />
@@ -246,23 +273,55 @@ const AdminNotes = () => {
 
           {/* Panel Content */}
           <ScrollArea className="flex-1 p-4">
-            {panelMode === 'view' && selectedNote && (
-              <div>
-                {selectedNote.heading && (
-                  <h4 className="text-lg font-semibold text-foreground mb-3">{selectedNote.heading}</h4>
-                )}
-                <div
-                  className="prose prose-sm prose-invert max-w-none text-foreground"
-                  dangerouslySetInnerHTML={{ __html: selectedNote.description || '<p class="text-muted-foreground">No description</p>' }}
-                />
+            {/* View mode: show all notes for the product */}
+            {panelMode === 'view' && selectedGroup && (
+              <div className="space-y-4">
+                {selectedGroup.notes.map((note: any) => (
+                  <div key={note.id} className="border border-border rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        {note.heading && (
+                          <h4 className="text-base font-semibold text-foreground">{note.heading}</h4>
+                        )}
+                        <span className="text-[11px] text-muted-foreground">{formatDate(note.created_at)}</span>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => {
+                          const tmp = document.createElement('div');
+                          tmp.innerHTML = note.description || '';
+                          navigator.clipboard.writeText(tmp.textContent || tmp.innerText || '');
+                          toast.success('Copied');
+                        }} title="Copy">
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleEditNote(note)} title="Edit">
+                          <Pencil className="h-3 w-3" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => setDeleteNote(note)} title="Delete">
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div
+                      className="prose prose-sm prose-invert max-w-none text-foreground"
+                      dangerouslySetInnerHTML={{ __html: note.description || '<p class="text-muted-foreground">No description</p>' }}
+                    />
+                  </div>
+                ))}
               </div>
             )}
 
+            {/* Edit mode */}
             {panelMode === 'edit' && (
               <div className="space-y-4">
                 <div>
                   <Label>Product</Label>
-                  <select value={form.product_id} onChange={e => setForm(f => ({ ...f, product_id: e.target.value }))} className={selectClassName}>
+                  <select
+                    value={form.product_id}
+                    onChange={e => setForm(f => ({ ...f, product_id: e.target.value }))}
+                    className={selectClassName}
+                    disabled={!isAdding && !!editingNote}
+                  >
                     <option value="">Select a product</option>
                     {products?.map(p => (
                       <option key={p.id} value={p.id}>{p.name}</option>
@@ -283,7 +342,13 @@ const AdminNotes = () => {
                   <RichTextEditor value={form.description} onChange={v => setForm(f => ({ ...f, description: v }))} />
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
-                  <Button variant="outline" onClick={closePanel}>Cancel</Button>
+                  <Button variant="outline" onClick={() => {
+                    if (selectedGroup) {
+                      handleViewGroup(selectedGroup);
+                    } else {
+                      closePanel();
+                    }
+                  }}>Cancel</Button>
                   <Button onClick={() => form.product_id && saveMutation.mutate()} disabled={!form.product_id || saveMutation.isPending}>
                     <Save className="h-4 w-4 mr-2" />
                     {saveMutation.isPending ? 'Saving...' : 'Save'}
@@ -301,7 +366,7 @@ const AdminNotes = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Note</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this note for <strong>{deleteNote?.products?.name}</strong>? This cannot be undone.
+              Are you sure you want to delete this note{deleteNote?.heading ? ` "${deleteNote.heading}"` : ''} for <strong>{deleteNote?.products?.name}</strong>? This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
