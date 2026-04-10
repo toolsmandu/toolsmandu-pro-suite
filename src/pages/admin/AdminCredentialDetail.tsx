@@ -265,33 +265,49 @@ const AdminCredentialDetail = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map(c => (
-              <TableRow key={c.id}>
-                <TableCell>{c.order_number || "—"}</TableCell>
-                <TableCell className="font-medium">{c.user_email || "—"}</TableCell>
-                <TableCell>{c.user_phone || "—"}</TableCell>
-                <TableCell>{c.variation_name || "—"}</TableCell>
-                <TableCell>{formatDate(c.assigned_at)}</TableCell>
-                <TableCell>{c.expiry_date || "—"}</TableCell>
-                <TableCell>
-                  {c.remaining_days !== undefined ? (
-                    <Badge variant={c.remaining_days <= 7 ? "destructive" : "secondary"}>
-                      {c.remaining_days} days
-                    </Badge>
-                  ) : "—"}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-destructive"
-                    onClick={() => handleDeleteAssignment(c.id, credential.id)}
-                  >
-                    🗑
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {customers.map(c => {
+              const productLabel = [c.product_name, c.variation_name].filter(Boolean).join(' - ') || '—';
+              return (
+                <TableRow key={c.id}>
+                  <TableCell>{c.order_number || "—"}</TableCell>
+                  <TableCell className="font-medium">{c.user_email || "—"}</TableCell>
+                  <TableCell>{c.user_phone || "—"}</TableCell>
+                  <TableCell>{productLabel}</TableCell>
+                  <TableCell>{formatDate(c.assigned_at)}</TableCell>
+                  <TableCell>
+                    {c.expiry_date ? (
+                      <Input
+                        type="date"
+                        defaultValue={c.expiry_date}
+                        className="w-36 h-8 text-xs"
+                        onBlur={(e) => {
+                          if (e.target.value && e.target.value !== c.expiry_date) {
+                            handleUpdateExpiry(c.id, c.assigned_at, e.target.value);
+                          }
+                        }}
+                      />
+                    ) : "—"}
+                  </TableCell>
+                  <TableCell>
+                    {c.remaining_days !== undefined ? (
+                      <Badge variant={c.remaining_days <= 7 ? "destructive" : "secondary"}>
+                        {c.remaining_days} days
+                      </Badge>
+                    ) : "—"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive"
+                      onClick={() => handleDeleteAssignment(c.id, credential.id)}
+                    >
+                      🗑
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             {customers.length === 0 && (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
