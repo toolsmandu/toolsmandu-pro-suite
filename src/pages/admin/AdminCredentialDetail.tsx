@@ -32,6 +32,7 @@ interface AssignedCustomer {
   order_number?: string;
   user_email?: string;
   user_phone?: string;
+  product_name?: string;
   variation_name?: string;
   expiry_date?: string;
   remaining_days?: number;
@@ -94,10 +95,10 @@ const AdminCredentialDetail = () => {
         supabase.from("profiles").select("user_id, email, phone").in("user_id", userIds),
       ]);
 
-      // Fetch order items for variation names
+      // Fetch order items for product + variation names
       const { data: orderItems } = await supabase
         .from("order_items")
-        .select("order_id, variation_name")
+        .select("order_id, variation_name, products(name)")
         .in("order_id", orderIds);
 
       const orderMap: Record<string, string> = {};
@@ -106,8 +107,13 @@ const AdminCredentialDetail = () => {
       const profileMap: Record<string, { email: string | null; phone: string | null }> = {};
       profilesRes.data?.forEach(p => { profileMap[p.user_id] = { email: p.email, phone: p.phone }; });
 
-      const itemMap: Record<string, string> = {};
-      orderItems?.forEach(i => { if (i.variation_name) itemMap[i.order_id] = i.variation_name; });
+      const itemMap: Record<string, { product_name?: string; variation_name?: string }> = {};
+      orderItems?.forEach((i: any) => {
+        itemMap[i.order_id] = {
+          product_name: i.products?.name || undefined,
+          variation_name: i.variation_name || undefined,
+        };
+      });
 
       const enriched: AssignedCustomer[] = assignments.map(a => {
         const assignedDate = new Date(a.assigned_at);
@@ -126,7 +132,8 @@ const AdminCredentialDetail = () => {
           order_number: orderMap[a.order_id],
           user_email: profileMap[a.user_id]?.email || undefined,
           user_phone: profileMap[a.user_id]?.phone || undefined,
-          variation_name: itemMap[a.order_id],
+          product_name: itemMap[a.order_id]?.product_name,
+          variation_name: itemMap[a.order_id]?.variation_name,
           expiry_date: expiryDate,
           remaining_days: remainingDays,
         };
@@ -186,6 +193,22 @@ const AdminCredentialDetail = () => {
     fetchData();
   };
 
+  const handleUpdateExpiry = async (assignmentId: string, assignedAt: string, newExpiryDate: string) => {
+    // Calculate new validity_days from assigned_at to new expiry date
+    const assignedMs = new Date(assignedAt).getTime();
+    const expiryMs = new Date(newExpiryDate).getTime();
+    const newValidityDays = Math.max(1, Math.ceil((expiryMs - assignedMs) / (1000 * 60 * 60 * 24)));
+
+    const { error } = await supabase
+      .from("credential_assignments")
+      .update({ validity_days: newValidityDays })
+      .eq("id", assignmentId);
+
+    if (error) { toast.error(error.message); return; }
+    toast.success("Expiry date updated");
+    fetchData();
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-12">
@@ -242,33 +265,49 @@ const AdminCredentialDetail = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map(c => (
-              <TableRow key={c.id}>
-                <TableCell>{c.order_number || "—"}</TableCell>
-                <TableCell className="font-medium">{c.user_email || "—"}</TableCell>
-                <TableCell>{c.user_phone || "—"}</TableCell>
-                <TableCell>{c.variation_name || "—"}</TableCell>
-                <TableCell>{formatDate(c.assigned_at)}</TableCell>
-                <TableCell>{c.expiry_date || "—"}</TableCell>
-                <TableCell>
-                  {c.remaining_days !== undefined ? (
-                    <Badge variant={c.remaining_days <= 7 ? "destructive" : "secondary"}>
-                      {c.remaining_days} days
-                    </Badge>
-                  ) : "—"}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-destructive"
-                    onClick={() => handleDeleteAssignment(c.id, credential.id)}
-                  >
-                    🗑
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {customers.map(c => {
+              const productLabel = [c.product_name, c.variation_name].filter(Boolean).join(' - ') || '—';
+              return (
+                <TableRow key={c.id}>
+                  <TableCell>{c.order_number || "—"}</TableCell>
+                  <TableCell className="font-medium">{c.user_email || "—"}</TableCell>
+                  <TableCell>{c.user_phone || "—"}</TableCell>
+                  <TableCell>{productLabel}</TableCell>
+                  <TableCell>{formatDate(c.assigned_at)}</TableCell>
+                  <TableCell>
+                    {c.expiry_date ? (
+                      <Input
+                        type="date"
+                        defaultValue={c.expiry_date}
+                        className="w-36 h-8 text-xs"
+                        onBlur={(e) => {
+                          if (e.target.value && e.target.value !== c.expiry_date) {
+                            handleUpdateExpiry(c.id, c.assigned_at, e.target.value);
+                          }
+                        }}
+                      />
+                    ) : "—"}
+                  </TableCell>
+                  <TableCell>
+                    {c.remaining_days !== undefined ? (
+                      <Badge variant={c.remaining_days <= 7 ? "destructive" : "secondary"}>
+                        {c.remaining_days} days
+                      </Badge>
+                    ) : "—"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive"
+                      onClick={() => handleDeleteAssignment(c.id, credential.id)}
+                    >
+                      🗑
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             {customers.length === 0 && (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
