@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, CalendarIcon, X, Save } from 'lucide-react';
+import { Plus, Trash2, CalendarIcon, X, Save, Search, Pencil } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -45,6 +45,7 @@ const AdminCoupons = () => {
   const [panelOpen, setPanelOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<CouponForm>(emptyForm());
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { data: coupons, isLoading } = useQuery({
     queryKey: ['admin-coupons'],
@@ -147,7 +148,13 @@ const AdminCoupons = () => {
       <div className={`${panelOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-foreground">Coupons</h2>
-          <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Coupon</Button>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search coupons" className="pl-9 w-56" />
+            </div>
+            <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Coupon</Button>
+          </div>
         </div>
         {isLoading ? <p className="text-muted-foreground">Loading...</p> : (
           <div className="border border-border rounded-lg overflow-auto max-h-[calc(100vh-10rem)]">
@@ -160,7 +167,11 @@ const AdminCoupons = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {coupons?.map(c => (
+                {coupons?.filter(c => {
+                  const term = searchTerm.trim().toLowerCase();
+                  if (!term) return true;
+                  return c.code.toLowerCase().includes(term) || c.customer_email?.toLowerCase().includes(term);
+                }).map(c => (
                   <TableRow key={c.id} className={`cursor-pointer ${editingId === c.id && panelOpen ? 'bg-muted/50' : ''}`} onClick={() => openEdit(c)}>
                     <TableCell className="font-mono font-medium text-foreground">{c.code}</TableCell>
                     <TableCell className="text-muted-foreground capitalize">{c.discount_type}</TableCell>
@@ -180,9 +191,14 @@ const AdminCoupons = () => {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(c.id); }}>
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); openEdit(c); }}>
+                          <Pencil className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(c.id); }}>
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
