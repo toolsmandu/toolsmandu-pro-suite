@@ -54,9 +54,9 @@ const AdminCategories = () => {
           <DialogContent>
             <DialogHeader><DialogTitle>{editingId ? 'Edit' : 'Add'} Category</DialogTitle></DialogHeader>
             <div className="space-y-4">
-              <div><Label>Name</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
-              <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({...form, slug: e.target.value})} placeholder="auto-generated" /></div>
-              <div><Label>Sort Order</Label><Input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: e.target.value})} /></div>
+              <div><Label>Name</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="border-foreground" /></div>
+              <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({...form, slug: e.target.value})} placeholder="auto-generated" className="border-foreground" /></div>
+              <div><Label>Sort Order</Label><Input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: e.target.value})} className="border-foreground" /></div>
               <Button onClick={() => form.name && saveMutation.mutate()} className="w-full" disabled={!form.name}>Save</Button>
             </div>
           </DialogContent>
