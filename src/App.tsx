@@ -88,6 +88,10 @@ const App = () => (
                 <Route path="tickets" element={<AdminTickets />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="settings" element={<AdminSettings />} />
+                <Route path="settings/site" element={<AdminSiteSettings />} />
+                <Route path="settings/order-mode" element={<AdminOrderMode />} />
+                <Route path="settings/top-menu" element={<AdminTopMenu />} />
+                <Route path="settings/footer" element={<AdminFooter />} />
                 <Route path="faqs" element={<AdminFAQs />} />
                 <Route path="family-sharing" element={<AdminFamilySharing />} />
                 <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
