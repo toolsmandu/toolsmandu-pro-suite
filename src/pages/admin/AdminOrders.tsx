@@ -300,7 +300,7 @@ const AdminOrders = () => {
   const openAddOrder = () => {
     setSelectedOrder(null);
     setAddingOrder(true);
-    setNewOrderDate(new Date().toISOString().slice(0, 16));
+    setNewOrderDate(getNepalNow());
     setCustomerSearch('');
     setCustomerResults([]);
     setSelectedCustomer(null);
