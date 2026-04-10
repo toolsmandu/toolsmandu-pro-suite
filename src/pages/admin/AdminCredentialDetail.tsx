@@ -335,7 +335,42 @@ const AdminCredentialDetail = () => {
 
       {/* Customers Table */}
       <div className="border border-border rounded-lg p-6 space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">CUSTOMERS</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-foreground">CUSTOMERS</h3>
+          <Button size="sm" onClick={() => setAddingManual(!addingManual)} variant={addingManual ? "secondary" : "default"}>
+            <Plus className="h-4 w-4 mr-1" /> Assign Order
+          </Button>
+        </div>
+        {addingManual && (
+          <div className="border border-border rounded-lg p-4 space-y-3 bg-muted/30">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <Label>Order Number</Label>
+                <Input
+                  placeholder="e.g. TM25 or 38"
+                  value={manualOrderNumber}
+                  onChange={e => setManualOrderNumber(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Custom Expiry Date (optional)</Label>
+                <Input
+                  type="date"
+                  value={manualExpiryDate}
+                  onChange={e => setManualExpiryDate(e.target.value)}
+                />
+              </div>
+              <div className="flex items-end">
+                <Button onClick={handleManualAssign} disabled={assigningManual || !manualOrderNumber.trim()}>
+                  {assigningManual ? "Assigning..." : "Assign"}
+                </Button>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Only orders with matching product can be assigned. Each order can only be assigned to one credential.
+            </p>
+          </div>
+        )}
         <Table>
           <TableHeader>
             <TableRow>
