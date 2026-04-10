@@ -56,6 +56,19 @@ const AdminOrders = () => {
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
   const [paymentFilter, setPaymentFilter] = useState('all');
 
+  // Add order state
+  const [addingOrder, setAddingOrder] = useState(false);
+  const [newOrderDate, setNewOrderDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [customerResults, setCustomerResults] = useState<any[]>([]);
+  const [customerSearching, setCustomerSearching] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [customerError, setCustomerError] = useState('');
+  const [newProductId, setNewProductId] = useState('');
+  const [newVariationId, setNewVariationId] = useState('');
+  const [newAmount, setNewAmount] = useState('');
+  const [creatingOrder, setCreatingOrder] = useState(false);
+
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
