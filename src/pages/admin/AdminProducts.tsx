@@ -203,7 +203,7 @@ const AdminProducts = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const activeVariations = variations.filter((variation) => variation.name && variation.price);
+      const activeVariations = variations.filter((variation) => variation.name && variation.price && variation.expiry_days);
       const prices = activeVariations.map((variation) => Number.parseFloat(variation.price)).filter((value) => !Number.isNaN(value));
       const originalPrices = activeVariations
         .map((variation) => Number.parseFloat(variation.original_price))
