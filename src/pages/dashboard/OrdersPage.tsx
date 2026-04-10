@@ -16,6 +16,7 @@ const statusColors: Record<string, string> = {
   completed: 'bg-success/20 text-success border-success/30',
   cancelled: 'bg-destructive/20 text-destructive border-destructive/30',
   refunded: 'bg-muted text-muted-foreground border-border',
+  expired: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
