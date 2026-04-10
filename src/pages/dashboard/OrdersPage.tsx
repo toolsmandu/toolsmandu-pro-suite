@@ -189,6 +189,7 @@ const OrdersPage = () => {
                     <TableCell className="text-sm text-center">{getProductLabel(order)}</TableCell>
                     <TableCell className="text-sm text-center">{formatDate(order.created_at)}</TableCell>
                     <TableCell className="font-semibold text-center">NPR {order.total}</TableCell>
+                    <TableCell className="text-sm text-center">{(order as any).payment_pidx ? 'Khalti' : 'Manual'}</TableCell>
                     <TableCell className="text-center"><Badge className={statusColors[displayStatus] || statusColors[order.status]}>{capitalize(displayStatus)}</Badge></TableCell>
                     <TableCell className="text-center">
                       {hasNotes ? (
