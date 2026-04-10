@@ -214,21 +214,27 @@ const AdminCredentialDetail = () => {
   const [addingManual, setAddingManual] = useState(false);
   const [manualOrderNumber, setManualOrderNumber] = useState("");
   const [manualExpiryDate, setManualExpiryDate] = useState("");
+  const [manualRemainingDays, setManualRemainingDays] = useState("");
   const [assigningManual, setAssigningManual] = useState(false);
+  const [lookupResult, setLookupResult] = useState<{
+    orderId: string; userId: string; productName: string; variationName: string; purchaseDate: string; variationExpiryDays: number | null;
+  } | null>(null);
+  const [lookupError, setLookupError] = useState("");
+  const [lookingUp, setLookingUp] = useState(false);
 
-  const handleManualAssign = async () => {
+  const handleLookupOrder = async () => {
     if (!manualOrderNumber.trim() || !credential) return;
-    setAssigningManual(true);
+    setLookingUp(true);
+    setLookupResult(null);
+    setLookupError("");
     try {
-      // Find the order
-      const { data: order, error: orderErr } = await supabase
+      const { data: order } = await supabase
         .from("orders")
-        .select("id, user_id, status")
+        .select("id, user_id, created_at")
         .eq("order_number", manualOrderNumber.trim())
         .single();
-      if (orderErr || !order) throw new Error("Order not found");
+      if (!order) throw new Error("Order not found");
 
-      // Check order items match this credential's product
       const { data: fsp } = await supabase
         .from("family_sharing_products")
         .select("product_id")
@@ -238,43 +244,82 @@ const AdminCredentialDetail = () => {
 
       const { data: orderItems } = await supabase
         .from("order_items")
-        .select("id, product_id, variation_id")
+        .select("product_id, variation_id, variation_name, products(name)")
         .eq("order_id", order.id)
         .eq("product_id", fsp.product_id);
-      if (!orderItems?.length) throw new Error("This order does not contain the matching product");
+      if (!orderItems?.length) throw new Error("Order does not contain the matching product");
 
-      // Check order not already assigned to any credential
-      const { data: existingAssignment } = await supabase
+      const { data: existing } = await supabase
         .from("credential_assignments")
         .select("id")
         .eq("order_id", order.id);
-      if (existingAssignment && existingAssignment.length > 0) throw new Error("This order is already assigned to a credential");
+      if (existing && existing.length > 0) throw new Error("Order already assigned to a credential");
 
-      // Check credential capacity
+      let variationExpiryDays: number | null = null;
+      const varId = orderItems[0]?.variation_id;
+      if (varId) {
+        const { data: variation } = await supabase
+          .from("product_variations")
+          .select("expiry_days")
+          .eq("id", varId)
+          .single();
+        variationExpiryDays = variation?.expiry_days || null;
+      }
+
+      const item: any = orderItems[0];
+      setLookupResult({
+        orderId: order.id,
+        userId: order.user_id,
+        productName: item.products?.name || "Unknown",
+        variationName: item.variation_name || "",
+        purchaseDate: order.created_at,
+        variationExpiryDays,
+      });
+    } catch (e: any) {
+      setLookupError(e.message);
+    } finally {
+      setLookingUp(false);
+    }
+  };
+
+  // When expiry date changes, recalculate remaining days
+  useEffect(() => {
+    if (manualExpiryDate) {
+      const days = Math.max(0, Math.ceil((new Date(manualExpiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+      setManualRemainingDays(String(days));
+    } else {
+      setManualRemainingDays("");
+    }
+  }, [manualExpiryDate]);
+
+  // When remaining days changes manually, recalculate expiry date
+  const handleRemainingDaysChange = (val: string) => {
+    setManualRemainingDays(val);
+    const days = parseInt(val);
+    if (!isNaN(days) && days >= 0) {
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + days);
+      setManualExpiryDate(expiry.toISOString().split("T")[0]);
+    }
+  };
+
+  const handleManualAssign = async () => {
+    if (!lookupResult || !credential) return;
+    setAssigningManual(true);
+    try {
       if (credential.assigned_count >= credential.max_limit) throw new Error("Credential has reached max assignment limit");
 
-      // Calculate validity_days
       let validityDays: number | null = null;
       if (manualExpiryDate) {
-        const now = new Date();
-        const expiry = new Date(manualExpiryDate);
-        validityDays = Math.max(1, Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+        validityDays = Math.max(1, Math.ceil((new Date(manualExpiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
       } else {
-        const varId = orderItems[0]?.variation_id;
-        if (varId) {
-          const { data: variation } = await supabase
-            .from("product_variations")
-            .select("expiry_days")
-            .eq("id", varId)
-            .single();
-          validityDays = variation?.expiry_days || null;
-        }
+        validityDays = lookupResult.variationExpiryDays;
       }
 
       await supabase.from("credential_assignments").insert({
         credential_id: credential.id,
-        order_id: order.id,
-        user_id: order.user_id,
+        order_id: lookupResult.orderId,
+        user_id: lookupResult.userId,
         validity_days: validityDays,
       });
 
@@ -287,6 +332,9 @@ const AdminCredentialDetail = () => {
       setAddingManual(false);
       setManualOrderNumber("");
       setManualExpiryDate("");
+      setManualRemainingDays("");
+      setLookupResult(null);
+      setLookupError("");
       fetchData();
     } catch (e: any) {
       toast.error(e.message);
@@ -344,29 +392,55 @@ const AdminCredentialDetail = () => {
         </div>
         {addingManual && (
           <div className="border border-border rounded-lg p-4 space-y-3 bg-muted/30">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div>
+            <div className="flex items-end gap-3">
+              <div className="flex-1 max-w-xs">
                 <Label>Order Number</Label>
                 <Input
                   placeholder="e.g. TM25 or 38"
                   value={manualOrderNumber}
-                  onChange={e => setManualOrderNumber(e.target.value)}
+                  onChange={e => { setManualOrderNumber(e.target.value); setLookupResult(null); setLookupError(""); }}
                 />
               </div>
-              <div>
-                <Label>Custom Expiry Date (optional)</Label>
-                <Input
-                  type="date"
-                  value={manualExpiryDate}
-                  onChange={e => setManualExpiryDate(e.target.value)}
-                />
-              </div>
-              <div className="flex items-end">
-                <Button onClick={handleManualAssign} disabled={assigningManual || !manualOrderNumber.trim()}>
-                  {assigningManual ? "Assigning..." : "Assign"}
-                </Button>
-              </div>
+              <Button variant="outline" onClick={handleLookupOrder} disabled={lookingUp || !manualOrderNumber.trim()}>
+                {lookingUp ? "Looking up..." : "Lookup"}
+              </Button>
             </div>
+            {lookupError && <p className="text-xs text-destructive">{lookupError}</p>}
+            {lookupResult && (
+              <div className="space-y-3">
+                <div className="bg-background border border-border rounded-md p-3 space-y-1">
+                  <p className="text-sm font-medium text-foreground">
+                    {[lookupResult.productName, lookupResult.variationName].filter(Boolean).join(' - ')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Purchase Date: {formatDate(lookupResult.purchaseDate)}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <Label>Expiry Date (optional)</Label>
+                    <Input
+                      type="date"
+                      value={manualExpiryDate}
+                      onChange={e => setManualExpiryDate(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Remaining Days</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder={lookupResult.variationExpiryDays ? String(lookupResult.variationExpiryDays) : "—"}
+                      value={manualRemainingDays}
+                      onChange={e => handleRemainingDaysChange(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button onClick={handleManualAssign} disabled={assigningManual}>
+                      {assigningManual ? "Assigning..." : "Assign"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">
               Only orders with matching product can be assigned. Each order can only be assigned to one credential.
             </p>
