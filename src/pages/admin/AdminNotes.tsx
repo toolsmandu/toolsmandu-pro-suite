@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
-import { Plus, Pencil, Eye, Trash2, ChevronsUpDown, Check, X, Save } from 'lucide-react';
+import { Plus, Pencil, Eye, Trash2, ChevronsUpDown, Check, X, Save, Copy } from 'lucide-react';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/formatDate';
@@ -222,9 +222,19 @@ const AdminNotes = () => {
             </h3>
             <div className="flex gap-2">
               {panelMode === 'view' && selectedNote && (
-                <Button size="sm" variant="outline" onClick={() => handleEdit(selectedNote)}>
-                  <Pencil className="h-3 w-3 mr-1" /> Edit
-                </Button>
+                <>
+                  <Button size="sm" variant="outline" onClick={() => {
+                    const tmp = document.createElement('div');
+                    tmp.innerHTML = selectedNote.description || '';
+                    navigator.clipboard.writeText(tmp.textContent || tmp.innerText || '');
+                    toast.success('Copied to clipboard');
+                  }}>
+                    <Copy className="h-3 w-3 mr-1" /> Copy
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => handleEdit(selectedNote)}>
+                    <Pencil className="h-3 w-3 mr-1" /> Edit
+                  </Button>
+                </>
               )}
               <Button size="icon" variant="ghost" className="h-8 w-8" onClick={closePanel}>
                 <X className="h-4 w-4" />
