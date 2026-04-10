@@ -48,6 +48,7 @@ import AdminFamilySharingDetail from "./pages/admin/AdminFamilySharingDetail";
 import AdminCredentialDetail from "./pages/admin/AdminCredentialDetail";
 import AdminFlashSaleLabels from "./pages/admin/AdminFlashSaleLabels";
 import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminNotes from "./pages/admin/AdminNotes";
 
 const queryClient = new QueryClient();
 
@@ -90,6 +91,7 @@ const App = () => (
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="customers" element={<AdminCustomers />} />
                 <Route path="media" element={<AdminMedia />} />
+                <Route path="notes" element={<AdminNotes />} />
                 <Route path="hero-slides" element={<AdminHeroSlides />} />
                 <Route path="tickets" element={<AdminTickets />} />
                 <Route path="users" element={<AdminUsers />} />
