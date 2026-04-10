@@ -273,6 +273,78 @@ const AdminOrders = () => {
     return (product as any)?.product_variations || [];
   };
 
+  // Customer search for add order
+  const handleCustomerSearch = async (term: string) => {
+    setCustomerSearch(term);
+    setSelectedCustomer(null);
+    setCustomerError('');
+    if (term.trim().length < 2) { setCustomerResults([]); return; }
+    setCustomerSearching(true);
+    const searchTerm = term.trim().toLowerCase();
+    const { data } = await supabase.from('profiles').select('user_id, name, email, phone');
+    const filtered = (data || []).filter(p =>
+      p.email?.toLowerCase().includes(searchTerm) || p.phone?.toLowerCase().includes(searchTerm)
+    );
+    setCustomerResults(filtered);
+    if (filtered.length === 0) setCustomerError('Not registered yet');
+    setCustomerSearching(false);
+  };
+
+  const openAddOrder = () => {
+    setSelectedOrder(null);
+    setAddingOrder(true);
+    setNewOrderDate(new Date().toISOString().slice(0, 10));
+    setCustomerSearch('');
+    setCustomerResults([]);
+    setSelectedCustomer(null);
+    setCustomerError('');
+    setNewProductId('');
+    setNewVariationId('');
+    setNewAmount('');
+  };
+
+  const handleCreateOrder = async () => {
+    if (!selectedCustomer || !newProductId || !newAmount) return;
+    setCreatingOrder(true);
+    try {
+      const product = products?.find((p: any) => p.id === newProductId);
+      const variation = newVariationId ? (product as any)?.product_variations?.find((v: any) => v.id === newVariationId) : null;
+
+      const { data: order, error: orderError } = await supabase.from('orders').insert({
+        user_id: selectedCustomer.user_id,
+        total: parseFloat(newAmount),
+        status: 'processing' as any,
+        payment_status: 'paid',
+        created_at: new Date(newOrderDate).toISOString(),
+      }).select().single();
+      if (orderError) throw orderError;
+
+      const { error: itemError } = await supabase.from('order_items').insert({
+        order_id: order.id,
+        product_id: newProductId,
+        variation_id: newVariationId || null,
+        variation_name: variation?.name || null,
+        price: parseFloat(newAmount),
+        quantity: 1,
+      });
+      if (itemError) throw itemError;
+
+      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      toast.success('Order created successfully');
+      setAddingOrder(false);
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setCreatingOrder(false);
+    }
+  };
+
+  const newProductVariations = useMemo(() => {
+    if (!newProductId) return [];
+    const product = products?.find((p: any) => p.id === newProductId);
+    return (product as any)?.product_variations || [];
+  }, [newProductId, products]);
+
   const filteredOrders = useMemo(() => {
     return (orders || []).filter((order: any) => {
       const term = searchTerm.trim().toLowerCase();
