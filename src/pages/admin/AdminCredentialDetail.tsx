@@ -140,6 +140,7 @@ const AdminCredentialDetail = () => {
         };
       });
 
+      enriched.sort((a, b) => (a.remaining_days ?? Infinity) - (b.remaining_days ?? Infinity));
       setCustomers(enriched);
     } else {
       setCustomers([]);
