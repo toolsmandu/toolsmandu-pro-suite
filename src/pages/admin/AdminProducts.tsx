@@ -231,7 +231,7 @@ const AdminProducts = () => {
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="max-w-3xl">
+        <div className="w-full">
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2"><Label>Name</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
             <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({...form, slug: e.target.value})} placeholder="auto-generated" /></div>
