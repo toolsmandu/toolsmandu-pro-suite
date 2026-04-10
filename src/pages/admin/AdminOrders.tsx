@@ -435,6 +435,7 @@ const AdminOrders = () => {
                   <TableHead>Products</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Total</TableHead>
+                  <TableHead>Payment</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
