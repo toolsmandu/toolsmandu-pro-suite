@@ -18,12 +18,19 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     if (error) {
       toast.error(error.message);
-    } else {
-      toast.success('Welcome back!');
-      navigate('/dashboard/orders');
+    } else if (signInData.user) {
+      // Check if account is suspended
+      const { data: profile } = await supabase.from('profiles').select('is_suspended').eq('user_id', signInData.user.id).single();
+      if (profile?.is_suspended) {
+        await supabase.auth.signOut();
+        toast.error('Your account is suspended, please contact Support team.');
+      } else {
+        toast.success('Welcome back!');
+        navigate('/dashboard/orders');
+      }
     }
     setLoading(false);
   };
