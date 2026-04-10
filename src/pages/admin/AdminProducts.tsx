@@ -8,11 +8,11 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, X } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Variation {
   id?: string;
@@ -28,7 +28,7 @@ const emptyVariation = (): Variation => ({ name: '', price: '', original_price: 
 
 const AdminProducts = () => {
   const queryClient = useQueryClient();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [form, setForm] = useState({
@@ -68,6 +68,11 @@ const AdminProducts = () => {
     setEditingId(null);
   };
 
+  const openAdd = () => {
+    resetForm();
+    setShowForm(true);
+  };
+
   const openEdit = async (product: any) => {
     setForm({
       name: product.name, slug: product.slug, description: product.description || '',
@@ -81,19 +86,15 @@ const AdminProducts = () => {
       stock_status: product.stock_status || 'in_stock',
       order_mode: product.order_mode || 'cart',
     });
-    // Load variations
     const { data } = await supabase.from('product_variations').select('*').eq('product_id', product.id).order('sort_order');
     setVariations((data || []).map((v: any) => ({
-      id: v.id,
-      name: v.name,
-      price: String(v.price),
+      id: v.id, name: v.name, price: String(v.price),
       original_price: v.original_price ? String(v.original_price) : '',
       expiry_days: v.expiry_days ? String(v.expiry_days) : '',
-      variation_info: v.variation_info || '',
-      is_active: v.is_active,
+      variation_info: v.variation_info || '', is_active: v.is_active,
     })));
     setEditingId(product.id);
-    setDialogOpen(true);
+    setShowForm(true);
   };
 
   const updateVariation = (index: number, field: keyof Variation, value: any) => {
@@ -106,7 +107,6 @@ const AdminProducts = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      // Find the lowest price among active variations for the product price
       const activeVariations = variations.filter(v => v.name && v.price);
       const lowestPrice = activeVariations.length > 0
         ? Math.min(...activeVariations.map(v => parseFloat(v.price)))
@@ -145,7 +145,6 @@ const AdminProducts = () => {
         productId = data.id;
       }
 
-      // Save variations: delete existing, re-insert
       if (productId) {
         await supabase.from('product_variations').delete().eq('product_id', productId);
         const variationPayloads = activeVariations.map((v, i) => ({
@@ -166,7 +165,8 @@ const AdminProducts = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
-      setDialogOpen(false); resetForm();
+      setShowForm(false);
+      resetForm();
       toast.success(editingId ? 'Product updated!' : 'Product created!');
     },
     onError: (e: any) => toast.error(e.message),
@@ -177,14 +177,67 @@ const AdminProducts = () => {
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-products'] }); toast.success('Product deleted'); },
   });
 
+  const closeForm = () => {
+    setShowForm(false);
+    resetForm();
+  };
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Products</h2>
-        <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" /> Add Product</Button></DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader><DialogTitle>{editingId ? 'Edit Product' : 'Add Product'}</DialogTitle></DialogHeader>
+    <div className="flex gap-6 h-[calc(100vh-5rem)]">
+      {/* Products List */}
+      <div className={`${showForm ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-foreground">Products</h2>
+          <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Product</Button>
+        </div>
+
+        {isLoading ? <p className="text-muted-foreground">Loading...</p> : (
+          <div className="border border-border rounded-lg overflow-auto max-h-[calc(100vh-10rem)]">
+            <Table>
+              <TableHeader>
+                <TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Amount</TableHead><TableHead>Status</TableHead><TableHead>Flags</TableHead><TableHead className="w-24">Actions</TableHead></TableRow>
+              </TableHeader>
+              <TableBody>
+                {products?.map(p => (
+                  <TableRow
+                    key={p.id}
+                    className={`cursor-pointer ${editingId === p.id ? 'bg-muted/50' : ''}`}
+                    onClick={() => openEdit(p)}
+                  >
+                    <TableCell className="font-medium text-foreground">{p.name}</TableCell>
+                    <TableCell className="text-muted-foreground">{(p.categories as any)?.name || '-'}</TableCell>
+                    <TableCell className="text-foreground">NPR {p.price}</TableCell>
+                    <TableCell><span className={`text-xs font-medium ${(p as any).stock_status === 'out_of_stock' ? 'text-destructive' : 'text-success'}`}>{(p as any).stock_status === 'out_of_stock' ? 'Out of Stock' : 'In Stock'}</span></TableCell>
+                    <TableCell className="text-xs space-x-1">
+                      {p.is_featured && <span className="text-primary">Featured</span>}
+                      {p.is_bestseller && <span className="text-warning">Best</span>}
+                      {p.is_flash_sale && <span className="text-destructive">Sale</span>}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); openEdit(p); }}><Pencil className="h-3 w-3" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(p.id); }}><Trash2 className="h-3 w-3" /></Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </div>
+
+      {/* Add/Edit Panel */}
+      {showForm && (
+        <div className="w-full lg:w-[520px] lg:min-w-[520px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h3 className="font-semibold text-foreground">{editingId ? 'Edit Product' : 'Add Product'}</h3>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={closeForm}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <ScrollArea className="flex-1 p-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2"><Label>Name</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
               <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({...form, slug: e.target.value})} placeholder="auto-generated" /></div>
@@ -221,7 +274,6 @@ const AdminProducts = () => {
               </div>
               <div className="col-span-2"><ImageUpload value={form.image_url} onChange={v => setForm({...form, image_url: v})} label="Product Image" /></div>
               <div className="col-span-2"><Label>Description</Label><RichTextEditor value={form.description} onChange={v => setForm({...form, description: v})} /></div>
-              
 
               {/* Variations Section */}
               <div className="col-span-2">
@@ -272,38 +324,7 @@ const AdminProducts = () => {
             <Button onClick={() => saveMutation.mutate()} className="w-full mt-4" disabled={!form.name || variations.filter(v => v.name && v.price).length === 0}>
               {editingId ? 'Update Product' : 'Create Product'}
             </Button>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {isLoading ? <p className="text-muted-foreground">Loading...</p> : (
-        <div className="border border-border rounded-lg overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Amount</TableHead><TableHead>Status</TableHead><TableHead>Flags</TableHead><TableHead className="w-24">Actions</TableHead></TableRow>
-            </TableHeader>
-            <TableBody>
-              {products?.map(p => (
-                <TableRow key={p.id}>
-                  <TableCell className="font-medium text-foreground">{p.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{(p.categories as any)?.name || '-'}</TableCell>
-                  <TableCell className="text-foreground">NPR {p.price}</TableCell>
-                  <TableCell><span className={`text-xs font-medium ${(p as any).stock_status === 'out_of_stock' ? 'text-destructive' : 'text-success'}`}>{(p as any).stock_status === 'out_of_stock' ? 'Out of Stock' : 'In Stock'}</span></TableCell>
-                  <TableCell className="text-xs space-x-1">
-                    {p.is_featured && <span className="text-primary">Featured</span>}
-                    {p.is_bestseller && <span className="text-warning">Best</span>}
-                    {p.is_flash_sale && <span className="text-destructive">Sale</span>}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(p)}><Pencil className="h-3 w-3" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(p.id)}><Trash2 className="h-3 w-3" /></Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          </ScrollArea>
         </div>
       )}
     </div>
