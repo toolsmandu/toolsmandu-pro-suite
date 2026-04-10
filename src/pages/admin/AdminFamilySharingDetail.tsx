@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { formatDate } from '@/lib/formatDate';
+import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, ArrowLeft, Trash2, Edit, Link2 } from "lucide-react";
@@ -240,7 +240,7 @@ const AdminFamilySharingDetail = () => {
                 </TableCell>
                 <TableCell>{c.max_limit}</TableCell>
                  <TableCell>{c.assigned_count}</TableCell>
-                 <TableCell className="text-xs text-muted-foreground">{formatDate(c.updated_at)}</TableCell>
+                 <TableCell className="text-xs text-muted-foreground">{formatDateTime(c.updated_at)}</TableCell>
                  <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">
                     <Button variant="ghost" size="icon" className="h-8 w-8" title="Assign Variants" onClick={() => openVariantDialog(c.id)}>
