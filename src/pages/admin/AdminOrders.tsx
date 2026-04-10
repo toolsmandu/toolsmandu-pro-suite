@@ -56,6 +56,19 @@ const AdminOrders = () => {
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
   const [paymentFilter, setPaymentFilter] = useState('all');
 
+  // Add order state
+  const [addingOrder, setAddingOrder] = useState(false);
+  const [newOrderDate, setNewOrderDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [customerResults, setCustomerResults] = useState<any[]>([]);
+  const [customerSearching, setCustomerSearching] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [customerError, setCustomerError] = useState('');
+  const [newProductId, setNewProductId] = useState('');
+  const [newVariationId, setNewVariationId] = useState('');
+  const [newAmount, setNewAmount] = useState('');
+  const [creatingOrder, setCreatingOrder] = useState(false);
+
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
@@ -260,6 +273,78 @@ const AdminOrders = () => {
     return (product as any)?.product_variations || [];
   };
 
+  // Customer search for add order
+  const handleCustomerSearch = async (term: string) => {
+    setCustomerSearch(term);
+    setSelectedCustomer(null);
+    setCustomerError('');
+    if (term.trim().length < 2) { setCustomerResults([]); return; }
+    setCustomerSearching(true);
+    const searchTerm = term.trim().toLowerCase();
+    const { data } = await supabase.from('profiles').select('user_id, name, email, phone');
+    const filtered = (data || []).filter(p =>
+      p.email?.toLowerCase().includes(searchTerm) || p.phone?.toLowerCase().includes(searchTerm)
+    );
+    setCustomerResults(filtered);
+    if (filtered.length === 0) setCustomerError('Not registered yet');
+    setCustomerSearching(false);
+  };
+
+  const openAddOrder = () => {
+    setSelectedOrder(null);
+    setAddingOrder(true);
+    setNewOrderDate(new Date().toISOString().slice(0, 10));
+    setCustomerSearch('');
+    setCustomerResults([]);
+    setSelectedCustomer(null);
+    setCustomerError('');
+    setNewProductId('');
+    setNewVariationId('');
+    setNewAmount('');
+  };
+
+  const handleCreateOrder = async () => {
+    if (!selectedCustomer || !newProductId || !newAmount) return;
+    setCreatingOrder(true);
+    try {
+      const product = products?.find((p: any) => p.id === newProductId);
+      const variation = newVariationId ? (product as any)?.product_variations?.find((v: any) => v.id === newVariationId) : null;
+
+      const { data: order, error: orderError } = await supabase.from('orders').insert({
+        user_id: selectedCustomer.user_id,
+        total: parseFloat(newAmount),
+        status: 'processing' as any,
+        payment_status: 'paid',
+        created_at: new Date(newOrderDate).toISOString(),
+      }).select().single();
+      if (orderError) throw orderError;
+
+      const { error: itemError } = await supabase.from('order_items').insert({
+        order_id: order.id,
+        product_id: newProductId,
+        variation_id: newVariationId || null,
+        variation_name: variation?.name || null,
+        price: parseFloat(newAmount),
+        quantity: 1,
+      });
+      if (itemError) throw itemError;
+
+      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      toast.success('Order created successfully');
+      setAddingOrder(false);
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setCreatingOrder(false);
+    }
+  };
+
+  const newProductVariations = useMemo(() => {
+    if (!newProductId) return [];
+    const product = products?.find((p: any) => p.id === newProductId);
+    return (product as any)?.product_variations || [];
+  }, [newProductId, products]);
+
   const filteredOrders = useMemo(() => {
     return (orders || []).filter((order: any) => {
       const term = searchTerm.trim().toLowerCase();
@@ -289,9 +374,10 @@ const AdminOrders = () => {
   return (
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
       {/* Orders List */}
-      <div className={`${selectedOrder ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
+      <div className={`${(selectedOrder || addingOrder) ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-foreground">Orders</h2>
+          <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5 mb-4">
@@ -531,6 +617,122 @@ const AdminOrders = () => {
                   ))}
                 </div>
               )}
+            </div>
+          </ScrollArea>
+        </div>
+      )}
+
+      {/* Add Order Panel */}
+      {addingOrder && (
+        <div className="w-full lg:w-[480px] lg:min-w-[480px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h3 className="font-semibold text-foreground">Add Order</h3>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setAddingOrder(false)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <ScrollArea className="flex-1 p-4">
+            <div className="space-y-4">
+              {/* Order Date */}
+              <div>
+                <Label>Order Date</Label>
+                <Input type="date" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} className="border-foreground" />
+              </div>
+
+              {/* Customer Search */}
+              <div>
+                <Label>Customer</Label>
+                <Input
+                  placeholder="Search by email or phone..."
+                  value={customerSearch}
+                  onChange={e => handleCustomerSearch(e.target.value)}
+                  className="border-foreground"
+                />
+                {customerSearching && <p className="text-xs text-muted-foreground mt-1">Searching...</p>}
+                {customerError && <p className="text-xs text-destructive mt-1">{customerError}</p>}
+                {customerResults.length > 0 && !selectedCustomer && (
+                  <div className="border border-border rounded-md mt-1 max-h-40 overflow-y-auto">
+                    {customerResults.map(c => (
+                      <button
+                        key={c.user_id}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-muted flex flex-col"
+                        onClick={() => {
+                          setSelectedCustomer(c);
+                          setCustomerSearch(c.email || c.phone || '');
+                          setCustomerResults([]);
+                          setCustomerError('');
+                        }}
+                      >
+                        <span className="text-foreground">{c.name || c.email}</span>
+                        <span className="text-xs text-muted-foreground">{c.email} · {c.phone || 'No phone'}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {selectedCustomer && (
+                  <div className="bg-muted/30 rounded-lg p-2 mt-1 text-sm flex items-center justify-between">
+                    <div>
+                      <p className="text-foreground">{selectedCustomer.name || selectedCustomer.email}</p>
+                      <p className="text-xs text-muted-foreground">{selectedCustomer.email} · {selectedCustomer.phone || 'No phone'}</p>
+                    </div>
+                    <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => { setSelectedCustomer(null); setCustomerSearch(''); }}>
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Product Selection */}
+              <div>
+                <Label>Product</Label>
+                <select
+                  value={newProductId}
+                  onChange={e => { setNewProductId(e.target.value); setNewVariationId(''); }}
+                  className={selectClassName.replace('border-input', 'border-foreground')}
+                >
+                  <option value="">Select a product</option>
+                  {products?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </div>
+
+              {/* Variation Selection */}
+              {newProductVariations.length > 0 && (
+                <div>
+                  <Label>Variation</Label>
+                  <select
+                    value={newVariationId}
+                    onChange={e => setNewVariationId(e.target.value)}
+                    className={selectClassName.replace('border-input', 'border-foreground')}
+                  >
+                    <option value="">Select a variation</option>
+                    {newProductVariations.map((v: any) => (
+                      <option key={v.id} value={v.id}>{v.name} — NPR {v.price}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Amount */}
+              <div>
+                <Label>Amount (NPR)</Label>
+                <Input
+                  type="number"
+                  placeholder="Enter amount"
+                  value={newAmount}
+                  onChange={e => setNewAmount(e.target.value)}
+                  className="border-foreground"
+                />
+              </div>
+
+              {/* Create Button */}
+              <Button
+                className="w-full"
+                onClick={handleCreateOrder}
+                disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
+              >
+                {creatingOrder ? 'Creating...' : 'Create Order'}
+              </Button>
             </div>
           </ScrollArea>
         </div>
