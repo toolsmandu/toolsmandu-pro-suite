@@ -603,7 +603,7 @@ const AdminProducts = () => {
                       </div>
 
                       {/* Row 2: Selling Price, Full Price, Variation Info, Update button */}
-                      <div className="grid gap-3 md:grid-cols-4 items-end">
+                      <div className="grid gap-3 items-end" style={{ gridTemplateColumns: '1fr 1fr 3fr' }}>
                         <div>
                           <Label className="text-xs">Selling Price <span className="text-destructive">*</span></Label>
                           <Input
