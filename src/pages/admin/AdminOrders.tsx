@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -8,11 +8,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, Save, Trash2, Plus, X } from 'lucide-react';
+import { ChevronRight, Save, Trash2, Plus, X, Search } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate } from '@/lib/formatDate';
 import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-orange-500/20 text-orange-400',
@@ -21,6 +26,8 @@ const statusColors: Record<string, string> = {
   cancelled: 'bg-destructive/20 text-destructive',
   refunded: 'bg-muted text-muted-foreground',
 };
+
+const selectClassName = 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
 
 interface EditItem {
   id: string;
@@ -43,6 +50,11 @@ const AdminOrders = () => {
   const [sending, setSending] = useState(false);
   const [isAdminOnly, setIsAdminOnly] = useState(false);
   const [deletedItemIds, setDeletedItemIds] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [productFilter, setProductFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
+  const [paymentFilter, setPaymentFilter] = useState('all');
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
@@ -248,15 +260,79 @@ const AdminOrders = () => {
     return (product as any)?.product_variations || [];
   };
 
+  const filteredOrders = useMemo(() => {
+    return (orders || []).filter((order: any) => {
+      const term = searchTerm.trim().toLowerCase();
+      if (term) {
+        const email = order.profiles?.email?.toLowerCase() || '';
+        const phone = order.profiles?.phone?.toLowerCase() || '';
+        const orderNum = (order.order_number || '').toLowerCase();
+        if (!email.includes(term) && !phone.includes(term) && !orderNum.includes(term)) return false;
+      }
+      if (productFilter !== 'all') {
+        const hasProduct = order.order_items?.some((i: any) => i.product_id === productFilter);
+        if (!hasProduct) return false;
+      }
+      if (statusFilter !== 'all' && order.status !== statusFilter) return false;
+      if (dateFilter) {
+        const orderDate = new Date(order.created_at);
+        if (orderDate.toDateString() !== dateFilter.toDateString()) return false;
+      }
+      if (paymentFilter !== 'all') {
+        const method = order.payment_pidx ? 'khalti' : 'manual';
+        if (paymentFilter !== method) return false;
+      }
+      return true;
+    });
+  }, [orders, searchTerm, productFilter, statusFilter, dateFilter, paymentFilter]);
+
   return (
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
       {/* Orders List */}
       <div className={`${selectedOrder ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
-        <h2 className="text-2xl font-bold text-foreground mb-6">Orders</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-foreground">Orders</h2>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5 mb-4">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search email, phone, order ID" className="pl-9" />
+          </div>
+          <select value={productFilter} onChange={e => setProductFilter(e.target.value)} className={selectClassName}>
+            <option value="all">All Products</option>
+            {products?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={selectClassName}>
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="refunded">Refunded</option>
+          </select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dateFilter && "text-muted-foreground")}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateFilter ? format(dateFilter, 'PP') : 'Filter by date'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar mode="single" selected={dateFilter} onSelect={setDateFilter} initialFocus className={cn("p-3 pointer-events-auto")} />
+            </PopoverContent>
+          </Popover>
+          <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} className={selectClassName}>
+            <option value="all">All Payments</option>
+            <option value="khalti">Khalti</option>
+            <option value="manual">Manual</option>
+          </select>
+        </div>
+
         {isLoading ? (
           <p className="text-muted-foreground">Loading...</p>
         ) : (
-          <div className="border border-border rounded-lg overflow-auto max-h-[calc(100vh-10rem)]">
+          <div className="border border-border rounded-lg overflow-auto max-h-[calc(100vh-14rem)]">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -271,7 +347,7 @@ const AdminOrders = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders?.map((order: any) => (
+                {filteredOrders.map((order: any) => (
                   <TableRow
                     key={order.id}
                     className={`cursor-pointer ${selectedOrder?.id === order.id ? 'bg-muted/50' : ''}`}
