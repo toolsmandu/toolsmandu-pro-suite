@@ -71,7 +71,7 @@ const AdminCustomers = () => {
       }
       return true;
     });
-  }, [users, searchTerm, roleFilter]);
+  }, [users, searchTerm, roleFilter, statusFilter]);
 
   // View handler
   const handleView = async (user: any) => {
@@ -164,6 +164,11 @@ const AdminCustomers = () => {
           <option value="admin">Admin</option>
           <option value="editor">Editor</option>
           <option value="customer">Customer</option>
+        </select>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={selectClassName}>
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="suspended">Suspended</option>
         </select>
       </div>
 
