@@ -16,6 +16,7 @@ const statusColors: Record<string, string> = {
   completed: 'bg-success/20 text-success border-success/30',
   cancelled: 'bg-destructive/20 text-destructive border-destructive/30',
   refunded: 'bg-muted text-muted-foreground border-border',
+  expired: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -52,6 +53,26 @@ const OrdersPage = () => {
     },
     enabled: !!user,
   });
+
+  // Fetch family-sharing linked variant IDs to detect expired orders
+  const { data: fsVariantIds } = useQuery({
+    queryKey: ['fs-variant-ids'],
+    queryFn: async () => {
+      const { data } = await supabase.from('credential_variant_links').select('variant_id');
+      return (data || []).map((d: any) => d.variant_id);
+    },
+  });
+
+  const isOrderExpired = (order: any) => {
+    if (order.status !== 'completed') return false;
+    if (!fsVariantIds?.length) return false;
+    const items = (order.order_items as any[]) || [];
+    const hasFsItem = items.some((i: any) => i.variation_id && fsVariantIds.includes(i.variation_id));
+    if (!hasFsItem) return false;
+    // Has family sharing items but no active assignments
+    const activeCreds = getOrderCredentials(order.id);
+    return activeCreds.length === 0;
+  };
 
   // Fetch all non-admin notes for all user orders to determine which orders have admin messages
   const { data: allNotes } = useQuery({
@@ -158,6 +179,8 @@ const OrdersPage = () => {
             {orders.map(order => {
               const hasNotes = getNotesForOrder(order.id).length > 0;
               const orderCreds = getOrderCredentials(order.id);
+              const expired = isOrderExpired(order);
+              const displayStatus = expired ? 'expired' : order.status;
               return (
                 <React.Fragment key={order.id}>
                   <TableRow className={orderCreds.length > 0 ? "border-b-0" : ""}>
@@ -165,7 +188,7 @@ const OrdersPage = () => {
                     <TableCell className="text-sm text-center">{getProductLabel(order)}</TableCell>
                     <TableCell className="text-sm text-center">{formatDate(order.created_at)}</TableCell>
                     <TableCell className="font-semibold text-center">NPR {order.total}</TableCell>
-                    <TableCell className="text-center"><Badge className={statusColors[order.status]}>{capitalize(order.status)}</Badge></TableCell>
+                    <TableCell className="text-center"><Badge className={statusColors[displayStatus] || statusColors[order.status]}>{capitalize(displayStatus)}</Badge></TableCell>
                     <TableCell className="text-center">
                       {hasNotes ? (
                         <Badge
