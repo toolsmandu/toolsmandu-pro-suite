@@ -41,6 +41,9 @@ const OrdersPage = () => {
   const { data: assignments } = useQuery({
     queryKey: ['my-credential-assignments'],
     queryFn: async () => {
+      // Cleanup expired assignments first (frees credential slots)
+      await supabase.rpc('cleanup_expired_assignments');
+
       const { data } = await supabase
         .from('credential_assignments')
         .select('id, assigned_at, credential_id, order_id, validity_days, family_sharing_credentials(username, password, twofa_link, family_product_id, family_sharing_products(login_link, products(name)))')

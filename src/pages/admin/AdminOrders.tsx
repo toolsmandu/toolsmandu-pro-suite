@@ -133,6 +133,11 @@ const AdminOrders = () => {
         }
       }
 
+      // Cleanup expired assignments first to free credential slots
+      if (status === 'completed' && previousStatus !== 'completed') {
+        await supabase.rpc('cleanup_expired_assignments');
+      }
+
       // Auto-assign credentials when status changes to completed
       if (status === 'completed' && previousStatus !== 'completed') {
         for (const item of items) {
