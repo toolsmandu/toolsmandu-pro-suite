@@ -95,10 +95,10 @@ const AdminCredentialDetail = () => {
         supabase.from("profiles").select("user_id, email, phone").in("user_id", userIds),
       ]);
 
-      // Fetch order items for variation names
+      // Fetch order items for product + variation names
       const { data: orderItems } = await supabase
         .from("order_items")
-        .select("order_id, variation_name")
+        .select("order_id, variation_name, products(name)")
         .in("order_id", orderIds);
 
       const orderMap: Record<string, string> = {};
@@ -107,8 +107,13 @@ const AdminCredentialDetail = () => {
       const profileMap: Record<string, { email: string | null; phone: string | null }> = {};
       profilesRes.data?.forEach(p => { profileMap[p.user_id] = { email: p.email, phone: p.phone }; });
 
-      const itemMap: Record<string, string> = {};
-      orderItems?.forEach(i => { if (i.variation_name) itemMap[i.order_id] = i.variation_name; });
+      const itemMap: Record<string, { product_name?: string; variation_name?: string }> = {};
+      orderItems?.forEach((i: any) => {
+        itemMap[i.order_id] = {
+          product_name: i.products?.name || undefined,
+          variation_name: i.variation_name || undefined,
+        };
+      });
 
       const enriched: AssignedCustomer[] = assignments.map(a => {
         const assignedDate = new Date(a.assigned_at);
