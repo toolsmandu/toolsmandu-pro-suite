@@ -73,7 +73,7 @@ const OrderSearch = ({ navigate }: { navigate: (path: string) => void }) => {
           onKeyDown={e => e.key === "Enter" && handleSearch()}
         />
       </div>
-      <Button variant="outline" onClick={handleSearch} disabled={searching || !orderNumber.trim()}>
+      <Button className="bg-success hover:bg-success/90 text-success-foreground" onClick={handleSearch} disabled={searching || !orderNumber.trim()}>
         <Search className="h-4 w-4 mr-1" /> {searching ? "Searching..." : "Search"}
       </Button>
     </div>
