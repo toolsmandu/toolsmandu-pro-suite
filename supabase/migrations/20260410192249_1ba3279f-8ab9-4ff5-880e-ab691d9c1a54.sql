@@ -1,0 +1,1 @@
+ALTER TABLE public.notes ADD COLUMN heading text NOT NULL DEFAULT '';

@@ -26,7 +26,7 @@ const AdminNotes = () => {
   // Right panel state
   const [panelMode, setPanelMode] = useState<'view' | 'edit' | null>(null);
   const [selectedNote, setSelectedNote] = useState<any>(null);
-  const [form, setForm] = useState({ product_id: '', description: '' });
+  const [form, setForm] = useState({ product_id: '', heading: '', description: '' });
 
   // Add mode (new note)
   const [isAdding, setIsAdding] = useState(false);
@@ -59,7 +59,7 @@ const AdminNotes = () => {
     setPanelMode(null);
     setSelectedNote(null);
     setIsAdding(false);
-    setForm({ product_id: '', description: '' });
+    setForm({ product_id: '', heading: '', description: '' });
   };
 
   const handleView = (note: any) => {
@@ -70,21 +70,21 @@ const AdminNotes = () => {
 
   const handleEdit = (note: any) => {
     setSelectedNote(note);
-    setForm({ product_id: note.product_id, description: note.description });
+    setForm({ product_id: note.product_id, heading: note.heading || '', description: note.description });
     setPanelMode('edit');
     setIsAdding(false);
   };
 
   const handleAdd = () => {
     setSelectedNote(null);
-    setForm({ product_id: '', description: '' });
+    setForm({ product_id: '', heading: '', description: '' });
     setPanelMode('edit');
     setIsAdding(true);
   };
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const payload = { product_id: form.product_id, description: form.description };
+      const payload = { product_id: form.product_id, heading: form.heading, description: form.description };
       if (isAdding) {
         const { error } = await supabase.from('notes').insert(payload);
         if (error) throw error;
@@ -173,6 +173,7 @@ const AdminNotes = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Product</TableHead>
+                  <TableHead>Heading</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead className="w-36">Actions</TableHead>
                 </TableRow>
@@ -185,6 +186,7 @@ const AdminNotes = () => {
                     onClick={() => handleView(note)}
                   >
                     <TableCell className="font-medium text-foreground">{note.products?.name || '-'}</TableCell>
+                    <TableCell className="text-sm text-foreground">{note.heading || '-'}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">{formatDate(note.created_at)}</TableCell>
                     <TableCell>
                       <div className="flex gap-1" onClick={e => e.stopPropagation()}>
@@ -203,7 +205,7 @@ const AdminNotes = () => {
                 ))}
                 {filteredNotes.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">No notes found</TableCell>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">No notes found</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -245,10 +247,15 @@ const AdminNotes = () => {
           {/* Panel Content */}
           <ScrollArea className="flex-1 p-4">
             {panelMode === 'view' && selectedNote && (
-              <div
-                className="prose prose-sm prose-invert max-w-none text-foreground"
-                dangerouslySetInnerHTML={{ __html: selectedNote.description || '<p class="text-muted-foreground">No description</p>' }}
-              />
+              <div>
+                {selectedNote.heading && (
+                  <h4 className="text-lg font-semibold text-foreground mb-3">{selectedNote.heading}</h4>
+                )}
+                <div
+                  className="prose prose-sm prose-invert max-w-none text-foreground"
+                  dangerouslySetInnerHTML={{ __html: selectedNote.description || '<p class="text-muted-foreground">No description</p>' }}
+                />
+              </div>
             )}
 
             {panelMode === 'edit' && (
@@ -261,6 +268,15 @@ const AdminNotes = () => {
                       <option key={p.id} value={p.id}>{p.name}</option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  <Label>Heading</Label>
+                  <Input
+                    value={form.heading}
+                    onChange={e => setForm(f => ({ ...f, heading: e.target.value }))}
+                    placeholder="Note heading"
+                    className="border-foreground"
+                  />
                 </div>
                 <div>
                   <Label>Description</Label>
