@@ -19,6 +19,8 @@ const selectClassName =
 const AdminNotes = () => {
   const queryClient = useQueryClient();
   const [productFilter, setProductFilter] = useState('all');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterSearch, setFilterSearch] = useState('');
 
   // Add/Edit dialog
   const [dialogOpen, setDialogOpen] = useState(false);
