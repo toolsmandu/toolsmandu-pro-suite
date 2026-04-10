@@ -345,6 +345,17 @@ const AdminOrders = () => {
     return (product as any)?.product_variations || [];
   }, [newProductId, products]);
 
+  // Compute each user's first order id
+  const firstOrderMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    if (!orders) return map;
+    const sorted = [...orders].sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    for (const o of sorted) {
+      if (!map[o.user_id]) map[o.user_id] = o.id;
+    }
+    return map;
+  }, [orders]);
+
   const filteredOrders = useMemo(() => {
     return (orders || []).filter((order: any) => {
       const term = searchTerm.trim().toLowerCase();
