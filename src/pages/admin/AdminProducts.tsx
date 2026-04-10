@@ -13,6 +13,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
+const selectClassName =
+  'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
+
 interface Variation {
   id?: string;
   name: string;
@@ -51,9 +54,6 @@ const emptyForm = () => ({
   order_mode: 'cart',
 });
 
-const selectClassName =
-  'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
-
 const AdminProducts = () => {
   const queryClient = useQueryClient();
   const [panelOpen, setPanelOpen] = useState(false);
@@ -91,6 +91,15 @@ const AdminProducts = () => {
     queryKey: ['product-types'],
     queryFn: async () => {
       const { data, error } = await supabase.from('product_types').select('*').order('name');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: flashSaleLabels } = useQuery({
+    queryKey: ['flash-sale-labels'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('flash_sale_labels').select('*').order('sort_order');
       if (error) throw error;
       return data || [];
     },
@@ -591,7 +600,18 @@ const AdminProducts = () => {
 
               <div>
                 <Label>Flash Sale Label</Label>
-                <Input value={form.flash_sale_label} onChange={(event) => setForm({ ...form, flash_sale_label: event.target.value })} />
+                <select
+                  value={form.flash_sale_label}
+                  onChange={(event) => setForm({ ...form, flash_sale_label: event.target.value })}
+                  className={selectClassName}
+                >
+                  <option value="">No Label</option>
+                  {flashSaleLabels?.map((label: any) => (
+                    <option key={label.id} value={label.label}>
+                      {label.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
