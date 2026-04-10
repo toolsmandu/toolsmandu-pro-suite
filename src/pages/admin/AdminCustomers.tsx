@@ -315,19 +315,19 @@ const AdminCustomers = () => {
           <form onSubmit={e => { e.preventDefault(); updateUser.mutate(); }} className="space-y-4">
             <div>
               <Label>Name</Label>
-              <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} />
+              <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="border-foreground" />
             </div>
             <div>
               <Label>Email</Label>
-              <Input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} />
+              <Input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} className="border-foreground" />
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} />
+              <Input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} className="border-foreground" />
             </div>
             <div>
               <Label>Password <span className="text-muted-foreground text-xs">(leave blank to keep current)</span></Label>
-              <Input type="password" value={editForm.password} onChange={e => setEditForm(f => ({ ...f, password: e.target.value }))} placeholder="New password" />
+              <Input type="password" value={editForm.password} onChange={e => setEditForm(f => ({ ...f, password: e.target.value }))} placeholder="New password" className="border-foreground" />
             </div>
 
             <div className="flex items-center space-x-2">
