@@ -461,31 +461,27 @@ const AdminOrders = () => {
                 </Select>
               </div>
             </div>
-            <Button onClick={handleSaveOrder} className="w-full">
-              <Save className="h-4 w-4 mr-2" />
-              Save Changes
-            </Button>
 
-            {/* Send Note */}
+            {/* Customer Note */}
             <div className="border-t border-border pt-4">
-              <Label htmlFor="order-note" className="text-xs text-muted-foreground mb-1 block">Send Note to Customer</Label>
+              <Label htmlFor="order-note" className="text-xs text-muted-foreground mb-1 block">Customer Note (optional)</Label>
               <Textarea
                 id="order-note"
                 value={orderNote}
                 onChange={(e) => setOrderNote(e.target.value)}
-                placeholder="Type a note to send to the customer's email..."
+                placeholder="Type a note to send to the customer..."
                 rows={3}
               />
-              <div className="flex items-center gap-4 mt-2">
-                <div className="flex items-center gap-2">
-                  <Checkbox id="admin-only" checked={isAdminOnly} onCheckedChange={(v) => setIsAdminOnly(!!v)} className="border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
-                  <Label htmlFor="admin-only" className="text-xs text-muted-foreground cursor-pointer">Admin only (not visible to customer)</Label>
-                </div>
-                <Button onClick={handleSendNote} disabled={sending} className="ml-auto" variant="secondary" size="sm">
-                  <Send className="h-4 w-4 mr-2" />
-                  {sending ? 'Saving...' : isAdminOnly ? 'Save Note' : 'Send Note'}
-                </Button>
+              <div className="flex items-center gap-2 mt-2">
+                <Checkbox id="admin-only" checked={isAdminOnly} onCheckedChange={(v) => setIsAdminOnly(!!v)} className="border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+                <Label htmlFor="admin-only" className="text-xs text-muted-foreground cursor-pointer">Admin only (not visible to customer)</Label>
               </div>
+            </div>
+
+            <Button onClick={handleUpdateOrder} disabled={sending} className="w-full">
+              <Save className="h-4 w-4 mr-2" />
+              {sending ? 'Updating...' : 'Update Order'}
+            </Button>
 
               {/* Sent Notes History */}
               {orderNotes && orderNotes.length > 0 && (
