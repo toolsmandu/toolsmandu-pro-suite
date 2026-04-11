@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +15,14 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const { data: settings } = useQuery({
+    queryKey: ['site-settings'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_settings').select('*');
+      return data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string | null>) || {};
+    },
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +48,13 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl"><span className="text-primary">Tools</span>mandu</CardTitle>
+          <CardTitle className="text-2xl">
+            {settings?.logo_url ? (
+              <img src={settings.logo_url} alt="Toolsmandu" className="h-8 mx-auto object-contain" />
+            ) : (
+              <><span className="text-primary">Tools</span>mandu</>
+            )}
+          </CardTitle>
           <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
