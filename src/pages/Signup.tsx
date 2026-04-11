@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -41,9 +40,6 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [otpStep, setOtpStep] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [verifying, setVerifying] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -82,83 +78,10 @@ const Signup = () => {
       await supabase.from('profiles').update({ phone: fullPhone }).eq('user_id', data.user.id);
     }
 
-    toast.success('A 6-digit OTP has been sent to your email.');
-    setOtpStep(true);
+    toast.success('Please check your email to confirm your account.');
+    navigate('/login');
     setLoading(false);
   };
-
-  const handleVerifyOtp = async () => {
-    if (otp.length !== 6) {
-      toast.error('Please enter the 6-digit OTP');
-      return;
-    }
-    setVerifying(true);
-    const { error } = await supabase.auth.verifyOtp({
-      email: email.trim(),
-      token: otp,
-      type: 'signup',
-    });
-
-    if (error) {
-      toast.error(error.message);
-      setVerifying(false);
-      return;
-    }
-
-    toast.success('Email verified! Welcome to Toolsmandu.');
-    navigate('/');
-    setVerifying(false);
-  };
-
-  const handleResendOtp = async () => {
-    setLoading(true);
-    const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email: email.trim(),
-    });
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success('OTP resent to your email.');
-    }
-    setLoading(false);
-  };
-
-  if (otpStep) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4 py-12">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl"><span className="text-primary">Tools</span>mandu</CardTitle>
-            <CardDescription>Enter the 6-digit OTP sent to <strong>{email}</strong></CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex justify-center">
-              <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
-            </div>
-            <Button className="w-full" onClick={handleVerifyOtp} disabled={verifying || otp.length !== 6}>
-              {verifying ? 'Verifying...' : 'Verify Email'}
-            </Button>
-            <p className="text-center text-sm text-muted-foreground">
-              Didn't receive the code?{' '}
-              <button type="button" onClick={handleResendOtp} disabled={loading} className="text-primary hover:underline">
-                {loading ? 'Resending...' : 'Resend OTP'}
-              </button>
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
