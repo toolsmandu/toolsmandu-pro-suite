@@ -74,7 +74,7 @@ const AdminOrders = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from('orders')
-        .select('*, profiles(email, phone), order_items(*, products(name))')
+        .select('*, profiles(name, email, phone), order_items(*, products(name))')
         .order('created_at', { ascending: false });
       return data || [];
     },
@@ -479,7 +479,8 @@ const AdminOrders = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
+                  <TableHead>Full Name</TableHead>
+                  <TableHead>Email</TableHead>
                   <TableHead>Phone</TableHead>
                   <TableHead>Products</TableHead>
                   <TableHead>Date</TableHead>
@@ -499,6 +500,7 @@ const AdminOrders = () => {
                     <TableCell className="font-mono text-xs text-muted-foreground">
                       {order.order_number || order.id.slice(0, 8)}
                     </TableCell>
+                    <TableCell className="text-foreground">{order.profiles?.name || '-'}</TableCell>
                     <TableCell className="text-foreground">{order.profiles?.email || '-'}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{order.profiles?.phone || '-'}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">
