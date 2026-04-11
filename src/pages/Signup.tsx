@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 const countryCodes = [
   { code: '+977', label: '🇳🇵 +977' },
