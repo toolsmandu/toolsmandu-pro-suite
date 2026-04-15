@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Package, Copy, ExternalLink, User, KeyRound, RotateCcwKey, Link2, Clock } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Package, Copy, ExternalLink, User, KeyRound, RotateCcwKey, Link2, Clock, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/formatDate';
 
@@ -165,9 +166,37 @@ const OrdersPage = () => {
 
   const creds = selectedOrder ? getOrderCredentials(selectedOrder.id) : [];
 
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+    return orders.filter(order => {
+      const expired = isOrderExpired(order);
+      const displayStatus = expired ? 'expired' : order.status;
+      return statusFilter.includes(displayStatus);
+    });
+  }, [orders, statusFilter, fsVariantIds, assignments]);
+
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold text-foreground">My Orders</h2>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h2 className="text-xl font-bold text-foreground">My Orders</h2>
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <Select value={statusFilter.join(',')} onValueChange={(val) => setStatusFilter(val === 'all' ? ALL_STATUSES : [val])}>
+            <SelectTrigger className="w-[160px] h-9 text-sm">
+              <SelectValue placeholder="Filter status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              {ALL_STATUSES.map(s => (
+                <SelectItem key={s} value={s} className="capitalize">{capitalize(s === 'on_hold' ? 'On Hold' : s)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {statusFilter.length !== DEFAULT_STATUSES.length || !DEFAULT_STATUSES.every(s => statusFilter.includes(s)) ? (
+            <Button variant="ghost" size="sm" className="text-xs h-8" onClick={() => setStatusFilter(DEFAULT_STATUSES)}>Reset</Button>
+          ) : null}
+        </div>
+      </div>
       <div className="border border-border rounded-lg overflow-hidden">
         <Table>
           <TableHeader>
@@ -182,7 +211,10 @@ const OrdersPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map(order => {
+            {filteredOrders.length === 0 ? (
+              <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No orders match the selected filter.</TableCell></TableRow>
+            ) : null}
+            {filteredOrders.map(order => {
               const hasNotes = getNotesForOrder(order.id).length > 0;
               const orderCreds = getOrderCredentials(order.id);
               const expired = isOrderExpired(order);
