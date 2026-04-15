@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 const ProfilePage = () => {
   const { user, profile, refreshProfile } = useAuth();
-  const [name, setName] = useState(profile?.name || '');
+  
   const [email, setEmail] = useState(profile?.email || user?.email || '');
   const [phone, setPhone] = useState(profile?.phone || '');
   const [newPassword, setNewPassword] = useState('');
@@ -18,7 +18,7 @@ const ProfilePage = () => {
   const handleSaveProfile = async () => {
     if (!user) return;
     setSaving(true);
-    await supabase.from('profiles').update({ name, email, phone }).eq('user_id', user.id);
+    await supabase.from('profiles').update({ email, phone }).eq('user_id', user.id);
     if (newPassword) {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) { toast.error(error.message); setSaving(false); return; }
@@ -33,7 +33,7 @@ const ProfilePage = () => {
     <Card style={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }}>
       <CardHeader><CardTitle>Profile Settings</CardTitle></CardHeader>
       <CardContent className="space-y-4">
-        <div><Label>Name</Label><Input value={name} onChange={e => setName(e.target.value)} placeholder="Your name" className="border-0" /></div>
+        
         <div><Label>Email</Label><Input value={email} onChange={e => setEmail(e.target.value)} className="border-0" /></div>
         <div><Label>WhatsApp Number</Label><Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+977XXXXXXXXXX" className="border-0" /></div>
         <div><Label>New Password (leave blank to keep current)</Label><Input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="••••••••" className="border-0" /></div>

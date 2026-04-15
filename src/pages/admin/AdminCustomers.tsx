@@ -258,7 +258,7 @@ const AdminCustomers = () => {
       <Dialog open={!!viewUser} onOpenChange={() => setViewUser(null)}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{viewUser?.name || viewUser?.email || 'User'} — Activity</DialogTitle>
+            <DialogTitle>{viewUser?.email || 'User'} — Activity</DialogTitle>
             <DialogDescription>Orders and tickets created by this user</DialogDescription>
           </DialogHeader>
 
