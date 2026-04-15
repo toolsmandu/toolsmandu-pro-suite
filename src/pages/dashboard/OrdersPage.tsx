@@ -13,11 +13,15 @@ import { formatDate } from '@/lib/formatDate';
 const statusColors: Record<string, string> = {
   pending: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
   processing: 'bg-warning/20 text-warning border-warning/30',
+  on_hold: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
   completed: 'bg-success/20 text-success border-success/30',
   cancelled: 'bg-destructive/20 text-destructive border-destructive/30',
   refunded: 'bg-muted text-muted-foreground border-border',
   expired: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
+
+const ALL_STATUSES = ['completed', 'expired', 'on_hold', 'refunded', 'pending', 'cancelled'];
+const DEFAULT_STATUSES = ['completed', 'on_hold', 'expired'];
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -29,6 +33,7 @@ const copyToClipboard = (text: string) => {
 const OrdersPage = () => {
   const { user } = useAuth();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [statusFilter, setStatusFilter] = useState<string[]>(DEFAULT_STATUSES);
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['my-orders'],

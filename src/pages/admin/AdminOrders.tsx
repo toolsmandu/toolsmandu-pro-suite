@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500/20 text-yellow-400',
   processing: 'bg-blue-500/20 text-blue-400',
+  on_hold: 'bg-orange-500/20 text-orange-400',
   completed: 'bg-green-500/20 text-green-400',
   cancelled: 'bg-destructive/20 text-destructive',
   refunded: 'bg-red-500/20 text-red-400',
@@ -449,6 +450,7 @@ const AdminOrders = () => {
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="processing">Processing</option>
+            <option value="on_hold">On Hold</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
             <option value="refunded">Refunded</option>
@@ -646,7 +648,7 @@ const AdminOrders = () => {
                   <Select value={editStatus} onValueChange={setEditStatus}>
                     <SelectTrigger id="edit-status"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {['pending', 'processing', 'completed', 'cancelled', 'refunded'].map((s) => (
+                      {['pending', 'processing', 'on_hold', 'completed', 'cancelled', 'refunded'].map((s) => (
                         <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
                       ))}
                     </SelectContent>
