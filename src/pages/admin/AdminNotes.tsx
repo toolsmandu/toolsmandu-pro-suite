@@ -334,7 +334,7 @@ const AdminNotes = () => {
                     value={form.heading}
                     onChange={e => setForm(f => ({ ...f, heading: e.target.value }))}
                     placeholder="Note heading"
-                    className="border-foreground"
+                    className=""
                   />
                 </div>
                 <div>
