@@ -155,6 +155,15 @@ const OrdersPage = () => {
     return item.variation_name ? `${name} - ${item.variation_name}` : name;
   };
 
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+    return orders.filter(order => {
+      const expired = isOrderExpired(order);
+      const displayStatus = expired ? 'expired' : order.status;
+      return statusFilter.includes(displayStatus);
+    });
+  }, [orders, statusFilter, fsVariantIds, assignments]);
+
   if (isLoading) return <div className="text-muted-foreground">Loading orders...</div>;
 
   if (!orders?.length) return (
@@ -165,15 +174,6 @@ const OrdersPage = () => {
   );
 
   const creds = selectedOrder ? getOrderCredentials(selectedOrder.id) : [];
-
-  const filteredOrders = useMemo(() => {
-    if (!orders) return [];
-    return orders.filter(order => {
-      const expired = isOrderExpired(order);
-      const displayStatus = expired ? 'expired' : order.status;
-      return statusFilter.includes(displayStatus);
-    });
-  }, [orders, statusFilter, fsVariantIds, assignments]);
 
   return (
     <div className="space-y-4">
