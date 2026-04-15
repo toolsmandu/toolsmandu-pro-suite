@@ -78,11 +78,12 @@ const Signup = () => {
     setLoading(true);
     const fullPhone = `${countryCode}${phone}`;
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
       options: {
         emailRedirectTo: window.location.origin,
+        data: { phone: fullPhone },
       },
     });
 
@@ -90,10 +91,6 @@ const Signup = () => {
       toast.error(error.message);
       setLoading(false);
       return;
-    }
-
-    if (data.user) {
-      await supabase.from('profiles').update({ phone: fullPhone }).eq('user_id', data.user.id);
     }
 
     setLoading(false);
