@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
       if (email_confirmed) authUpdate.email_confirm = true;
 
       if (Object.keys(authUpdate).length > 0) {
-        const { error: authError } = await supabase.auth.admin.updateUser(user_id, authUpdate);
+        const { error: authError } = await supabase.auth.admin.updateUserById(user_id, authUpdate);
         if (authError) return new Response(JSON.stringify({ error: authError.message }), { status: 400, headers: corsHeaders });
       }
 
