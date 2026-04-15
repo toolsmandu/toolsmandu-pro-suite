@@ -181,7 +181,7 @@ const AdminCustomers = () => {
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
         <div className="relative md:col-span-2">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by name, email, phone" className="pl-9" />
+          <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by email, phone" className="pl-9" />
         </div>
         <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={selectClassName}>
           <option value="all">All Roles</option>
@@ -246,7 +246,7 @@ const AdminCustomers = () => {
               ))}
               {filteredUsers.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">No users found</TableCell>
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">No users found</TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -423,7 +423,7 @@ const AdminCustomers = () => {
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={createUser.isPending || !addForm.name || !addForm.email}>
+              <Button type="submit" disabled={createUser.isPending || !addForm.email}>
                 {createUser.isPending ? 'Creating...' : 'Create'}
               </Button>
             </div>
