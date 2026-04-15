@@ -50,47 +50,47 @@
   }
 
   .admin-light {
-    --background: 220 16% 22%;
+    --background: 213 16% 24%;
     --foreground: 218 27% 92%;
 
-    --card: 220 16% 26%;
+    --card: 213 16% 28%;
     --card-foreground: 218 27% 92%;
 
-    --popover: 220 16% 26%;
+    --popover: 213 16% 28%;
     --popover-foreground: 218 27% 92%;
 
     --primary: 193 43% 67%;
-    --primary-foreground: 220 16% 15%;
+    --primary-foreground: 213 16% 15%;
 
-    --secondary: 220 16% 30%;
+    --secondary: 213 16% 32%;
     --secondary-foreground: 218 27% 92%;
 
-    --muted: 220 16% 30%;
+    --muted: 213 16% 32%;
     --muted-foreground: 218 17% 72%;
 
-    --accent: 220 16% 34%;
+    --accent: 213 16% 36%;
     --accent-foreground: 218 27% 92%;
 
     --destructive: 354 49% 56%;
     --destructive-foreground: 218 27% 92%;
 
-    --border: 220 16% 32%;
-    --input: 220 16% 32%;
+    --border: 213 16% 34%;
+    --input: 213 16% 34%;
     --ring: 193 43% 67%;
 
-    --sidebar-background: 220 16% 20%;
+    --sidebar-background: 213 16% 22%;
     --sidebar-foreground: 218 27% 85%;
     --sidebar-primary: 24 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 16% 28%;
+    --sidebar-accent: 213 16% 30%;
     --sidebar-accent-foreground: 218 27% 85%;
-    --sidebar-border: 220 16% 28%;
+    --sidebar-border: 213 16% 30%;
     --sidebar-ring: 193 43% 67%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
     --warning: 40 81% 73%;
-    --warning-foreground: 220 16% 15%;
+    --warning-foreground: 213 16% 15%;
   }
 }
 
