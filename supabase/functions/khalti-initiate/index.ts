@@ -50,24 +50,64 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Create a single order for all items
-    const { data: order, error: orderError } = await supabaseAdmin
+    // Check for existing pending order for this user
+    const { data: existingOrder } = await supabaseAdmin
       .from("orders")
-      .insert({
-        user_id: user.id,
-        total,
-        status: "pending",
-        payment_status: "pending",
-      })
-      .select()
-      .single();
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("status", "pending")
+      .in("payment_status", ["pending", "failed", "expired"])
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-    if (orderError || !order) {
-      console.error("Order creation error:", orderError);
-      return new Response(JSON.stringify({ error: "Failed to create order" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    let order;
+
+    if (existingOrder) {
+      // Reuse existing order - update total in case cart changed
+      const { data: updatedOrder, error: updateError } = await supabaseAdmin
+        .from("orders")
+        .update({ total, payment_status: "pending", updated_at: new Date().toISOString() })
+        .eq("id", existingOrder.id)
+        .select()
+        .single();
+
+      if (updateError || !updatedOrder) {
+        console.error("Order update error:", updateError);
+        return new Response(JSON.stringify({ error: "Failed to update order" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Replace order items with current cart
+      await supabaseAdmin.from("order_items").delete().eq("order_id", existingOrder.id);
+
+      order = updatedOrder;
+      console.log("Reusing existing order:", order.id);
+    } else {
+      // Create a new order
+      const { data: newOrder, error: orderError } = await supabaseAdmin
+        .from("orders")
+        .insert({
+          user_id: user.id,
+          total,
+          status: "pending",
+          payment_status: "pending",
+        })
+        .select()
+        .single();
+
+      if (orderError || !newOrder) {
+        console.error("Order creation error:", orderError);
+        return new Response(JSON.stringify({ error: "Failed to create order" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      order = newOrder;
+      console.log("Created new order:", order.id);
     }
 
     // Insert order items
