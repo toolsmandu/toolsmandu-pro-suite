@@ -7,11 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Eye, Pencil, Trash2, Plus } from 'lucide-react';
+import { Search, Eye, Pencil, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const selectClassName =
@@ -44,8 +44,6 @@ const AdminCustomers = () => {
   const [editUser, setEditUser] = useState<any>(null);
   const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', password: '', emailConfirmed: false, is_suspended: false });
 
-  // Delete dialog
-  const [deleteUser, setDeleteUser] = useState<any>(null);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-customers'],
@@ -130,21 +128,6 @@ const AdminCustomers = () => {
     onError: (e: any) => toast.error(e.message),
   });
 
-  const deleteUserMutation = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke('admin-manage-user', {
-        body: { action: 'delete', user_id: deleteUser.user_id },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-    },
-    onSuccess: () => {
-      toast.success('User deleted successfully');
-      setDeleteUser(null);
-      queryClient.invalidateQueries({ queryKey: ['admin-customers'] });
-    },
-    onError: (e: any) => toast.error(e.message),
-  });
 
   const createUser = useMutation({
     mutationFn: async () => {
@@ -236,9 +219,6 @@ const AdminCustomers = () => {
                       </Button>
                       <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEdit(u)} title="Edit">
                         <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => setDeleteUser(u)} title="Delete">
-                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -380,23 +360,6 @@ const AdminCustomers = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation */}
-      <AlertDialog open={!!deleteUser} onOpenChange={() => setDeleteUser(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete User</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to permanently delete <strong>{deleteUser?.email}</strong>? Their orders and tickets will be preserved, but the account will be removed. This cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteUserMutation.mutate()} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {deleteUserMutation.isPending ? 'Deleting...' : 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       {/* Add Customer Dialog */}
       <Dialog open={addOpen} onOpenChange={o => { setAddOpen(o); if (!o) setAddForm({ name: '', email: '', phone: '', role: 'customer' }); }}>
