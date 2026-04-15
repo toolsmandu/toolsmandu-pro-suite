@@ -181,6 +181,7 @@ const OrdersPage = () => {
         <h2 className="text-xl font-bold text-foreground">My Orders</h2>
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Filter Orders</span>
           <Select value={statusFilter.join(',')} onValueChange={(val) => setStatusFilter(val === 'all' ? ALL_STATUSES : [val])}>
             <SelectTrigger className="w-[160px] h-9 text-sm">
               <SelectValue placeholder="Filter status" />
