@@ -524,7 +524,7 @@ const AdminOrders = () => {
                     <TableCell>
                       <div className="flex flex-col items-center gap-1">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[order.status] || ''}`}>
-                          {order.status}
+                          {order.status === 'on_hold' ? 'On Hold' : order.status}
                         </span>
                         {firstOrderMap[order.user_id] === order.id ? (
                           <span className="flex items-center gap-1 text-[10px] text-yellow-400">
