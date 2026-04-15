@@ -181,7 +181,7 @@ const AdminCustomers = () => {
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
         <div className="relative md:col-span-2">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by name, email, phone" className="pl-9" />
+          <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by email, phone" className="pl-9" />
         </div>
         <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={selectClassName}>
           <option value="all">All Roles</option>
@@ -203,7 +203,7 @@ const AdminCustomers = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
                 <TableHead>Role</TableHead>
@@ -215,10 +215,9 @@ const AdminCustomers = () => {
               {filteredUsers.map((u: any) => (
                 <TableRow key={u.id}>
                   <TableCell className="font-medium text-foreground">
-                    {u.name || '-'}
+                    {u.email || '-'}
                     {u.is_suspended && <Badge variant="destructive" className="ml-2 text-[10px]">Suspended</Badge>}
                   </TableCell>
-                  <TableCell className="text-foreground">{u.email || '-'}</TableCell>
                   <TableCell className="text-muted-foreground">{u.phone || '-'}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
@@ -247,7 +246,7 @@ const AdminCustomers = () => {
               ))}
               {filteredUsers.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">No users found</TableCell>
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">No users found</TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -259,7 +258,7 @@ const AdminCustomers = () => {
       <Dialog open={!!viewUser} onOpenChange={() => setViewUser(null)}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{viewUser?.name || viewUser?.email || 'User'} — Activity</DialogTitle>
+            <DialogTitle>{viewUser?.email || 'User'} — Activity</DialogTitle>
             <DialogDescription>Orders and tickets created by this user</DialogDescription>
           </DialogHeader>
 
@@ -348,10 +347,6 @@ const AdminCustomers = () => {
           </DialogHeader>
           <form onSubmit={e => { e.preventDefault(); updateUser.mutate(); }} className="space-y-4">
             <div>
-              <Label>Name</Label>
-              <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="border-foreground" />
-            </div>
-            <div>
               <Label>Email</Label>
               <Input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} className="border-foreground" />
             </div>
@@ -412,10 +407,6 @@ const AdminCustomers = () => {
           </DialogHeader>
           <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="space-y-4">
             <div>
-              <Label>Name</Label>
-              <Input value={addForm.name} onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))} required className="border-foreground" />
-            </div>
-            <div>
               <Label>Email</Label>
               <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required className="border-foreground" />
             </div>
@@ -432,7 +423,7 @@ const AdminCustomers = () => {
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={createUser.isPending || !addForm.name || !addForm.email}>
+              <Button type="submit" disabled={createUser.isPending || !addForm.email}>
                 {createUser.isPending ? 'Creating...' : 'Create'}
               </Button>
             </div>
