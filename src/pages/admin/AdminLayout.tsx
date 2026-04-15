@@ -32,6 +32,12 @@ const AdminLayout = () => {
     if (!loading && (!user || (!isAdmin && !isEditor))) navigate('/');
   }, [user, loading, isAdmin, isEditor, navigate]);
 
+  // Apply admin-light class to body so portaled elements (dialogs, popovers) inherit admin theme
+  useEffect(() => {
+    document.body.classList.add('admin-light');
+    return () => { document.body.classList.remove('admin-light'); };
+  }, []);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
   if (!user || (!isAdmin && !isEditor)) return null;
 
