@@ -203,7 +203,7 @@ const AdminCustomers = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
                 <TableHead>Role</TableHead>
@@ -215,10 +215,9 @@ const AdminCustomers = () => {
               {filteredUsers.map((u: any) => (
                 <TableRow key={u.id}>
                   <TableCell className="font-medium text-foreground">
-                    {u.name || '-'}
+                    {u.email || '-'}
                     {u.is_suspended && <Badge variant="destructive" className="ml-2 text-[10px]">Suspended</Badge>}
                   </TableCell>
-                  <TableCell className="text-foreground">{u.email || '-'}</TableCell>
                   <TableCell className="text-muted-foreground">{u.phone || '-'}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
@@ -348,10 +347,6 @@ const AdminCustomers = () => {
           </DialogHeader>
           <form onSubmit={e => { e.preventDefault(); updateUser.mutate(); }} className="space-y-4">
             <div>
-              <Label>Name</Label>
-              <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="border-foreground" />
-            </div>
-            <div>
               <Label>Email</Label>
               <Input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} className="border-foreground" />
             </div>
@@ -411,10 +406,6 @@ const AdminCustomers = () => {
             <DialogDescription>Create a new user account. Password will be set to the email address.</DialogDescription>
           </DialogHeader>
           <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="space-y-4">
-            <div>
-              <Label>Name</Label>
-              <Input value={addForm.name} onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))} required className="border-foreground" />
-            </div>
             <div>
               <Label>Email</Label>
               <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required className="border-foreground" />

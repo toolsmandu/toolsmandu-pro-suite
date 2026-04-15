@@ -40,7 +40,7 @@ const steps = [
 ];
 
 const Signup = () => {
-  const [fullName, setFullName] = useState('');
+  
   const [email, setEmail] = useState('');
   const [countryCode, setCountryCode] = useState('+977');
   const [phone, setPhone] = useState('');
@@ -83,7 +83,6 @@ const Signup = () => {
       password,
       options: {
         emailRedirectTo: window.location.origin,
-        data: { full_name: fullName.trim() },
       },
     });
 
@@ -94,7 +93,7 @@ const Signup = () => {
     }
 
     if (data.user) {
-      await supabase.from('profiles').update({ phone: fullPhone, name: fullName.trim() }).eq('user_id', data.user.id);
+      await supabase.from('profiles').update({ phone: fullPhone }).eq('user_id', data.user.id);
     }
 
     setLoading(false);
@@ -162,10 +161,6 @@ const Signup = () => {
           {currentStep === 0 && (
             <>
               <form onSubmit={handleSignup} className="space-y-4">
-                <div>
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input id="fullName" type="text" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="John Doe" required />
-                </div>
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required />
