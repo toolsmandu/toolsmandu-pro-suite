@@ -713,7 +713,7 @@ const AdminOrders = () => {
               {/* Order Date */}
               <div>
                 <Label>Order Date</Label>
-                <Input type="datetime-local" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} className="border-foreground" />
+                <Input type="datetime-local" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} className="" />
               </div>
 
               {/* Customer Search */}
@@ -723,7 +723,7 @@ const AdminOrders = () => {
                   placeholder="Search by email or phone..."
                   value={customerSearch}
                   onChange={e => handleCustomerSearch(e.target.value)}
-                  className="border-foreground"
+                  className=""
                 />
                 {customerSearching && <p className="text-xs text-muted-foreground mt-1">Searching...</p>}
                 {customerError && <p className="text-xs text-destructive mt-1">{customerError}</p>}
@@ -765,7 +765,7 @@ const AdminOrders = () => {
                 <select
                   value={newProductId}
                   onChange={e => { setNewProductId(e.target.value); setNewVariationId(''); }}
-                  className={selectClassName.replace('border-input', 'border-foreground')}
+                  className={selectClassName.replace('border-input', '')}
                 >
                   <option value="">Select a product</option>
                   {products?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -779,7 +779,7 @@ const AdminOrders = () => {
                   <select
                     value={newVariationId}
                     onChange={e => setNewVariationId(e.target.value)}
-                    className={selectClassName.replace('border-input', 'border-foreground')}
+                    className={selectClassName.replace('border-input', '')}
                   >
                     <option value="">Select a variation</option>
                     {newProductVariations.map((v: any) => (
@@ -797,7 +797,7 @@ const AdminOrders = () => {
                   placeholder="Enter amount"
                   value={newAmount}
                   onChange={e => setNewAmount(e.target.value)}
-                  className="border-foreground"
+                  className=""
                 />
               </div>
 
