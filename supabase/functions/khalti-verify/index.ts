@@ -88,9 +88,10 @@ Deno.serve(async (req) => {
       const failedStatus =
         lookupData.status === "Expired" ? "expired" : "failed";
 
+      // Keep order as pending so customer can retry payment
       await supabaseAdmin
         .from("orders")
-        .update({ payment_status: failedStatus, status: "cancelled" })
+        .update({ payment_status: failedStatus })
         .eq("id", order.id);
 
       return new Response(
