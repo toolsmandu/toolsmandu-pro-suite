@@ -24,7 +24,7 @@ const statusColors: Record<string, string> = {
 const ALL_STATUSES = ['completed', 'expired', 'on_hold', 'refunded', 'pending', 'cancelled'];
 const DEFAULT_STATUSES = ['completed', 'on_hold', 'expired'];
 
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const capitalize = (s: string) => s === 'on_hold' ? 'On Hold' : s.charAt(0).toUpperCase() + s.slice(1);
 
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);
