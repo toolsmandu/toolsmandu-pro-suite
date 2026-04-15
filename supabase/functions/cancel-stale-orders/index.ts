@@ -15,13 +15,13 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
     const { data, error } = await supabase
       .from("orders")
       .update({ status: "cancelled", payment_status: "failed" })
       .eq("status", "pending")
-      .lt("created_at", sixHoursAgo)
+      .lt("created_at", twentyFourHoursAgo)
       .select("id");
 
     if (error) throw error;
