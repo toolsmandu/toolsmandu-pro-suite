@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/formatDate';
 
 const selectClassName =
-  'flex h-10 w-full rounded-md border border-foreground bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
+  'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
 
 interface GroupedProduct {
   product_id: string;
@@ -166,7 +166,7 @@ const AdminNotes = () => {
           <div className="flex gap-2">
             <Popover open={filterOpen} onOpenChange={setFilterOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-56 justify-between border-foreground">
+                <Button variant="outline" className="w-56 justify-between">
                   {productFilter === 'all' ? 'All Products' : products?.find(p => p.id === productFilter)?.name || 'Select product'}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -176,7 +176,7 @@ const AdminNotes = () => {
                   placeholder="Search products..."
                   value={filterSearch}
                   onChange={e => setFilterSearch(e.target.value)}
-                  className="mb-2 border-foreground"
+                  className="mb-2"
                 />
                 <div className="max-h-60 overflow-y-auto space-y-0.5">
                   <button
@@ -334,7 +334,7 @@ const AdminNotes = () => {
                     value={form.heading}
                     onChange={e => setForm(f => ({ ...f, heading: e.target.value }))}
                     placeholder="Note heading"
-                    className="border-foreground"
+                    className=""
                   />
                 </div>
                 <div>

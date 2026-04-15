@@ -327,15 +327,15 @@ const AdminCustomers = () => {
           <form onSubmit={e => { e.preventDefault(); updateUser.mutate(); }} className="space-y-4">
             <div>
               <Label>Email</Label>
-              <Input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} className="border-foreground" />
+              <Input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} className="" />
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} className="border-foreground" />
+              <Input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} className="" />
             </div>
             <div>
               <Label>Password <span className="text-muted-foreground text-xs">(leave blank to keep current)</span></Label>
-              <Input type="password" value={editForm.password} onChange={e => setEditForm(f => ({ ...f, password: e.target.value }))} placeholder="New password" className="border-foreground" />
+              <Input type="password" value={editForm.password} onChange={e => setEditForm(f => ({ ...f, password: e.target.value }))} placeholder="New password" className="" />
             </div>
 
             <div className="flex items-center space-x-2">
@@ -370,15 +370,15 @@ const AdminCustomers = () => {
           <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="space-y-4">
             <div>
               <Label>Email</Label>
-              <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required className="border-foreground" />
+              <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required className="" />
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} className="border-foreground" />
+              <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} className="" />
             </div>
             <div>
               <Label>Role</Label>
-              <select value={addForm.role} onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))} className={selectClassName + ' border-foreground'}>
+              <select value={addForm.role} onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))} className={selectClassName + ''}>
                 <option value="customer">Customer</option>
                 {isAdmin && <option value="editor">Editor</option>}
               </select>
