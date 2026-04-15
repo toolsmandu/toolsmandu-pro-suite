@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useCart } from '@/contexts/CartContext';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const PaymentVerify = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const { clearCart } = useCart();
   const [status, setStatus] = useState<'loading' | 'completed' | 'failed'>('loading');
   const [message, setMessage] = useState('Verifying your payment...');
 
@@ -33,6 +34,7 @@ const PaymentVerify = () => {
         if (data.status === 'completed') {
           setStatus('completed');
           setMessage('Payment successful! Your order has been placed.');
+          clearCart();
         } else {
           setStatus('failed');
           setMessage(`Payment ${data.status || 'failed'}. Please try again or contact support.`);
@@ -44,7 +46,7 @@ const PaymentVerify = () => {
     };
 
     verify();
-  }, [searchParams]);
+  }, [searchParams, clearCart]);
 
   return (
     <div className="container mx-auto px-4 py-20 text-center">
