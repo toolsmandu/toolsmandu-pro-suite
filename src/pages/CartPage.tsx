@@ -155,7 +155,7 @@ const CartPage = () => {
         toast.error('Failed to initiate payment. Please try again.');
         setPlacing(false); return;
       }
-      clearCart();
+      // Don't clear cart here — it will be cleared after successful payment verification
       window.location.href = data.payment_url;
     } catch {
       toast.error('Failed to initiate payment');
