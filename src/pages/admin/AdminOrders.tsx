@@ -649,7 +649,7 @@ const AdminOrders = () => {
                     <SelectTrigger id="edit-status"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {['pending', 'processing', 'on_hold', 'completed', 'cancelled', 'refunded'].map((s) => (
-                        <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
+                        <SelectItem key={s} value={s} className="capitalize">{s === 'on_hold' ? 'On Hold' : s}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
