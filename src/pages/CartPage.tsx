@@ -6,7 +6,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface AppliedCoupon {
   id: string;
@@ -22,6 +22,16 @@ const CartPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [placing, setPlacing] = useState(false);
+
+  // Reset placing state when user navigates back from payment page
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setPlacing(false);
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    setPlacing(false);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
   const [couponCode, setCouponCode] = useState('');
   const [applying, setApplying] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
