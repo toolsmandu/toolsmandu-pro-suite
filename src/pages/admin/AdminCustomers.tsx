@@ -31,7 +31,7 @@ const AdminCustomers = () => {
 
   // Add customer dialog
   const [addOpen, setAddOpen] = useState(false);
-  const [addForm, setAddForm] = useState({ name: '', email: '', phone: '', role: 'customer' });
+  const [addForm, setAddForm] = useState({ name: '', email: '', phone: '', password: '', role: 'customer' });
 
   // View dialog
   const [viewUser, setViewUser] = useState<any>(null);
@@ -41,7 +41,7 @@ const AdminCustomers = () => {
 
   // Edit dialog
   const [editUser, setEditUser] = useState<any>(null);
-  const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', password: '', emailConfirmed: false, is_suspended: false });
+  const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', password: '', emailConfirmed: false, is_suspended: false, role: 'customer' });
 
 
   const { data: users, isLoading } = useQuery({
@@ -99,6 +99,7 @@ const AdminCustomers = () => {
       password: '',
       emailConfirmed: false,
       is_suspended: user.is_suspended || false,
+      role: user.roles?.[0] || 'customer',
     });
   };
 
@@ -114,6 +115,9 @@ const AdminCustomers = () => {
       };
       if (editForm.password) payload.password = editForm.password;
       if (editForm.emailConfirmed) payload.email_confirmed = true;
+      if (isAdmin && editForm.role !== (editUser.roles?.[0] || 'customer')) {
+        payload.role = editForm.role;
+      }
 
       const { data, error } = await supabase.functions.invoke('admin-manage-user', { body: payload });
       if (error) throw error;
@@ -131,7 +135,7 @@ const AdminCustomers = () => {
   const createUser = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.functions.invoke('admin-manage-user', {
-        body: { action: 'create', name: addForm.name, email: addForm.email, phone: addForm.phone, role: addForm.role },
+        body: { action: 'create', name: addForm.name, email: addForm.email, phone: addForm.phone, password: addForm.password, role: addForm.role },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -139,7 +143,7 @@ const AdminCustomers = () => {
     onSuccess: () => {
       toast.success('Customer created successfully');
       setAddOpen(false);
-      setAddForm({ name: '', email: '', phone: '', role: 'customer' });
+      setAddForm({ name: '', email: '', phone: '', password: '', role: 'customer' });
       queryClient.invalidateQueries({ queryKey: ['admin-customers'] });
     },
     onError: (e: any) => toast.error(e.message),
