@@ -1,7 +1,9 @@
 project_id = "iuussfrylzowigmaozwv"
 
-[functions.robots-txt]
-verify_jwt = false
-
-[functions.process-email-queue]
-verify_jwt = true
+[functions]
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.process-email-queue]
+    verify_jwt = true
+  [functions.robots-txt]
+    verify_jwt = false
