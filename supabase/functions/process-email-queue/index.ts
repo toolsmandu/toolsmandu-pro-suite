@@ -1,4 +1,3 @@
-import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const MAX_RETRIES = 5
@@ -7,29 +6,63 @@ const DEFAULT_SEND_DELAY_MS = 200
 const DEFAULT_AUTH_TTL_MINUTES = 15
 const DEFAULT_TRANSACTIONAL_TTL_MINUTES = 60
 
-// Check if an error is a rate-limit (429) response.
-// Uses EmailAPIError.status when available (email-js >=0.x with structured errors),
-// falls back to parsing the error message for older versions.
+const ZEPTOMAIL_API_URL = 'https://api.zeptomail.com/v1.1/email'
+const FROM_EMAIL = 'support@toolsmandu.com'
+const FROM_NAME = 'Toolsmandu'
+
+class ZeptoMailError extends Error {
+  status: number
+  retryAfterSeconds: number | null
+  constructor(status: number, message: string, retryAfterSeconds: number | null = null) {
+    super(message)
+    this.status = status
+    this.retryAfterSeconds = retryAfterSeconds
+  }
+}
+
+async function sendViaZeptoMail(opts: {
+  to: string
+  subject: string
+  html: string
+  text: string
+  token: string
+  retryAfterHeader: string | null
+}): Promise<void> {
+  const res = await fetch(ZEPTOMAIL_API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Zoho-enczapikey ${opts.token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({
+      from: { address: FROM_EMAIL, name: FROM_NAME },
+      to: [{ email_address: { address: opts.to } }],
+      subject: opts.subject,
+      htmlbody: opts.html,
+      textbody: opts.text,
+    }),
+  })
+
+  if (!res.ok) {
+    const body = await res.text()
+    const retryAfter = res.headers.get('Retry-After')
+    const retryAfterSecs = retryAfter ? parseInt(retryAfter, 10) : null
+    throw new ZeptoMailError(res.status, `ZeptoMail ${res.status}: ${body.slice(0, 500)}`, retryAfterSecs)
+  }
+}
+
 function isRateLimited(error: unknown): boolean {
-  if (error && typeof error === 'object' && 'status' in error) {
-    return (error as { status: number }).status === 429
-  }
-  return error instanceof Error && error.message.includes('429')
+  return error instanceof ZeptoMailError && error.status === 429
 }
 
-// Check if an error is a forbidden (403) response, which means emails are
-// disabled for this project. Retrying won't help — move straight to DLQ.
 function isForbidden(error: unknown): boolean {
-  if (error && typeof error === 'object' && 'status' in error) {
-    return (error as { status: number }).status === 403
-  }
-  return error instanceof Error && error.message.includes('403')
+  return error instanceof ZeptoMailError && (error.status === 401 || error.status === 403)
 }
 
-// Extract Retry-After seconds from a structured EmailAPIError, or default to 60s.
 function getRetryAfterSeconds(error: unknown): number {
-  if (error && typeof error === 'object' && 'retryAfterSeconds' in error) {
-    return (error as { retryAfterSeconds: number | null }).retryAfterSeconds ?? 60
+  if (error instanceof ZeptoMailError && error.retryAfterSeconds != null) {
+    return error.retryAfterSeconds
   }
   return 60
 }
