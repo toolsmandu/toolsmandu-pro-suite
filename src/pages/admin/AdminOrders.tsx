@@ -108,6 +108,26 @@ const AdminOrders = () => {
     enabled: !!selectedOrder,
   });
 
+  const { data: auditLog } = useQuery({
+    queryKey: ['order-audit-log', selectedOrder?.id],
+    queryFn: async () => {
+      const { data: logs } = await supabase
+        .from('order_audit_log')
+        .select('*')
+        .eq('order_id', selectedOrder!.id)
+        .order('created_at', { ascending: false });
+      if (!logs?.length) return [];
+      const userIds = [...new Set(logs.map((l: any) => l.changed_by))];
+      const { data: profs } = await supabase
+        .from('profiles')
+        .select('user_id, name, email')
+        .in('user_id', userIds);
+      const profMap = new Map((profs || []).map((p: any) => [p.user_id, p]));
+      return logs.map((l: any) => ({ ...l, profile: profMap.get(l.changed_by) }));
+    },
+    enabled: !!selectedOrder,
+  });
+
   // Product-level notes for the products in this order (for quick-paste into customer note)
   const { data: productNotes } = useQuery({
     queryKey: ['product-notes-for-order', selectedOrder?.id],
