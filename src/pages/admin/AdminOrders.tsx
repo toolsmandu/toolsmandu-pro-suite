@@ -793,6 +793,26 @@ const AdminOrders = () => {
                 {sending ? 'Updating...' : 'Update Order'}
               </Button>
 
+              {/* Change History (audit log) */}
+              {auditLog && auditLog.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground block">Change History</Label>
+                  <div className="space-y-1.5">
+                    {auditLog.map((log: any) => {
+                      const who = log.profile?.name || log.profile?.email || 'Unknown';
+                      return (
+                        <div key={log.id} className="bg-muted/30 rounded-md p-2 text-xs">
+                          <p className="text-foreground">{log.details}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                            by <span className="text-foreground font-medium">{who}</span> · {formatDateTime(log.created_at)}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Sent Notes History */}
               {orderNotes && orderNotes.length > 0 && (
                 <div className="space-y-2">
