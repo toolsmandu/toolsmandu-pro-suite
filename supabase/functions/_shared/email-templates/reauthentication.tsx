@@ -26,9 +26,13 @@ export const ReauthenticationEmail = ({ token, logoUrl }: ReauthenticationEmailP
     <Body style={main}>
       <Container style={container}>
         <Section style={brandBar}>
-          <Text style={brandText}>
-            <span style={brandAccent}>Tools</span>mandu
-          </Text>
+          {logoUrl ? (
+            <Img src={logoUrl} alt="Toolsmandu" style={logo} />
+          ) : (
+            <Text style={brandText}>
+              <span style={brandAccent}>Tools</span>mandu
+            </Text>
+          )}
         </Section>
         <Heading style={h1}>Confirm reauthentication</Heading>
         <Text style={text}>Use the code below to confirm your identity:</Text>
