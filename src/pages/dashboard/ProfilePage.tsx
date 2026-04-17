@@ -18,13 +18,24 @@ const ProfilePage = () => {
   const handleSaveProfile = async () => {
     if (!user) return;
     setSaving(true);
-    await supabase.from('profiles').update({ email, phone }).eq('user_id', user.id);
+
+    // Update email + phone via edge function (uses service role to skip email verification)
+    const { data, error: fnError } = await supabase.functions.invoke('update-own-profile', {
+      body: { email: email.trim(), phone },
+    });
+    if (fnError || (data && (data as any).error)) {
+      toast.error(((data as any)?.error) || fnError?.message || 'Failed to update profile');
+      setSaving(false);
+      return;
+    }
+
     if (newPassword) {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) { toast.error(error.message); setSaving(false); return; }
     }
+
     await refreshProfile();
-    toast.success('Profile updated!');
+    toast.success('Profile updated! Use your new email next time you sign in.');
     setNewPassword('');
     setSaving(false);
   };
