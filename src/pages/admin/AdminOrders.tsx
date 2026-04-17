@@ -57,7 +57,10 @@ const AdminOrders = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [productFilter, setProductFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+  const [productSearch, setProductSearch] = useState('');
+  const [productPopoverOpen, setProductPopoverOpen] = useState(false);
   const [paymentFilter, setPaymentFilter] = useState('all');
 
   // Add order state
@@ -520,9 +523,15 @@ const AdminOrders = () => {
         if (!hasProduct) return false;
       }
       if (statusFilter !== 'all' && order.status !== statusFilter) return false;
-      if (dateFilter) {
+      if (dateFrom) {
         const orderDate = new Date(order.created_at);
-        if (orderDate.toDateString() !== dateFilter.toDateString()) return false;
+        const from = new Date(dateFrom); from.setHours(0, 0, 0, 0);
+        if (orderDate < from) return false;
+      }
+      if (dateTo) {
+        const orderDate = new Date(order.created_at);
+        const to = new Date(dateTo); to.setHours(23, 59, 59, 999);
+        if (orderDate > to) return false;
       }
       if (paymentFilter !== 'all') {
         const method = order.payment_pidx ? 'khalti' : 'manual';
@@ -530,7 +539,7 @@ const AdminOrders = () => {
       }
       return true;
     });
-  }, [orders, searchTerm, productFilter, statusFilter, dateFilter, paymentFilter]);
+  }, [orders, searchTerm, productFilter, statusFilter, dateFrom, dateTo, paymentFilter]);
 
   return (
     <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(selectedOrder || addingOrder) ? 'lg:flex-row-reverse' : ''}`}>
@@ -541,15 +550,61 @@ const AdminOrders = () => {
           <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5 mb-4">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6 mb-4">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search email, phone, order ID" className="pl-9" />
           </div>
-          <select value={productFilter} onChange={e => setProductFilter(e.target.value)} className={selectClassName}>
-            <option value="all">All Products</option>
-            {products?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
+
+          {/* Searchable Product filter */}
+          <Popover open={productPopoverOpen} onOpenChange={setProductPopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full justify-start text-left font-normal">
+                <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+                <span className="truncate">
+                  {productFilter === 'all'
+                    ? 'All Products'
+                    : (products?.find((p: any) => p.id === productFilter)?.name || 'Product')}
+                </span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[280px] p-0" align="start">
+              <div className="p-2 border-b border-border">
+                <Input
+                  autoFocus
+                  placeholder="Search products..."
+                  value={productSearch}
+                  onChange={e => setProductSearch(e.target.value)}
+                  className="h-8"
+                />
+              </div>
+              <div className="max-h-64 overflow-y-auto py-1">
+                <button
+                  type="button"
+                  onClick={() => { setProductFilter('all'); setProductPopoverOpen(false); setProductSearch(''); }}
+                  className={cn('w-full text-left px-3 py-1.5 text-sm hover:bg-muted', productFilter === 'all' && 'bg-muted font-medium')}
+                >
+                  All Products
+                </button>
+                {(products || [])
+                  .filter((p: any) => p.name.toLowerCase().includes(productSearch.toLowerCase()))
+                  .map((p: any) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => { setProductFilter(p.id); setProductPopoverOpen(false); setProductSearch(''); }}
+                      className={cn('w-full text-left px-3 py-1.5 text-sm hover:bg-muted', productFilter === p.id && 'bg-muted font-medium')}
+                    >
+                      {p.name}
+                    </button>
+                  ))}
+                {(products || []).filter((p: any) => p.name.toLowerCase().includes(productSearch.toLowerCase())).length === 0 && (
+                  <p className="px-3 py-2 text-xs text-muted-foreground">No products found</p>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={selectClassName}>
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -559,17 +614,43 @@ const AdminOrders = () => {
             <option value="cancelled">Cancelled</option>
             <option value="refunded">Refunded</option>
           </select>
+
+          {/* From date */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dateFilter && "text-muted-foreground")}>
+              <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dateFrom && "text-muted-foreground")}>
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {dateFilter ? format(dateFilter, 'PP') : 'Filter by date'}
+                {dateFrom ? format(dateFrom, 'PP') : 'From date'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={dateFilter} onSelect={setDateFilter} initialFocus className={cn("p-3 pointer-events-auto")} />
+              <Calendar mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus className={cn("p-3 pointer-events-auto")} />
+              {dateFrom && (
+                <div className="p-2 border-t border-border">
+                  <Button variant="ghost" size="sm" className="w-full" onClick={() => setDateFrom(undefined)}>Clear</Button>
+                </div>
+              )}
             </PopoverContent>
           </Popover>
+
+          {/* To date */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dateTo && "text-muted-foreground")}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateTo ? format(dateTo, 'PP') : 'To date'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar mode="single" selected={dateTo} onSelect={setDateTo} initialFocus className={cn("p-3 pointer-events-auto")} />
+              {dateTo && (
+                <div className="p-2 border-t border-border">
+                  <Button variant="ghost" size="sm" className="w-full" onClick={() => setDateTo(undefined)}>Clear</Button>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
+
           <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} className={selectClassName}>
             <option value="all">All Payments</option>
             <option value="khalti">Khalti</option>
