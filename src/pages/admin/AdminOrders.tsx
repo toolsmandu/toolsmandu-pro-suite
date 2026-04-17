@@ -533,7 +533,7 @@ const AdminOrders = () => {
   }, [orders, searchTerm, productFilter, statusFilter, dateFilter, paymentFilter]);
 
   return (
-    <div className="flex gap-6 h-[calc(100vh-5rem)]">
+    <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(selectedOrder || addingOrder) ? 'lg:flex-row-reverse' : ''}`}>
       {/* Orders List */}
       <div className={`${(selectedOrder || addingOrder) ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center justify-between mb-4">
