@@ -217,6 +217,24 @@ async function handleWebhook(req: Request): Promise<Response> {
     })
   }
 
+  // Init supabase client + fetch logo URL from site_settings
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  )
+
+  let logoUrl: string | undefined
+  try {
+    const { data: logoSetting } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'logo_url')
+      .maybeSingle()
+    if (logoSetting?.value) logoUrl = logoSetting.value
+  } catch (e) {
+    console.error('Failed to fetch logo_url', e)
+  }
+
   const templateProps = {
     siteName: SITE_NAME,
     siteUrl: `https://${ROOT_DOMAIN}`,
@@ -225,16 +243,11 @@ async function handleWebhook(req: Request): Promise<Response> {
     token: payload.data.token,
     email: payload.data.email,
     newEmail: payload.data.new_email,
+    logoUrl,
   }
 
   const html = await renderAsync(React.createElement(EmailTemplate, templateProps))
   const text = await renderAsync(React.createElement(EmailTemplate, templateProps), { plainText: true })
-
-  // Log + send via ZeptoMail
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  )
   const messageId = crypto.randomUUID()
 
   await supabase.from('email_send_log').insert({
