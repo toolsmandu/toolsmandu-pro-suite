@@ -341,7 +341,7 @@ const AdminOrders = () => {
         queryClient.invalidateQueries({ queryKey: ['order-audit-log', selectedOrder.id] });
       }
 
-      toast.success('Order updated');
+      toast.success(`Order ${selectedOrder.order_number} Edited Successfully`);
       setSelectedOrder(null);
     } catch {
       toast.error('Failed to update order');
@@ -480,7 +480,7 @@ const AdminOrders = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
-      toast.success('Order created successfully');
+      toast.success(`Order ${order.order_number} Created Successfully`);
       setAddingOrder(false);
     } catch (e: any) {
       toast.error(e.message);
