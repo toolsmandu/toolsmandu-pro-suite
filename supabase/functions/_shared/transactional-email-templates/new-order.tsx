@@ -62,10 +62,10 @@ const NewOrderEmail = ({
           </Section>
         </Section>
 
-        {/* Amount card */}
+        {/* Order ID card */}
         <Section style={amountCard}>
-          <Text style={amountLabel}>Amount Paid</Text>
-          <Text style={amountValue}>Rs {amount ?? '—'}</Text>
+          <Text style={amountLabel}>Order ID</Text>
+          <Text style={amountValue}>#{orderId ?? '—'}</Text>
         </Section>
 
         {/* Details */}
@@ -73,12 +73,13 @@ const NewOrderEmail = ({
           <Text style={sectionTitle}>Order Details</Text>
           <table style={detailsTable} cellPadding={0} cellSpacing={0}>
             <tbody>
-              <DetailRow label="Product" value={<strong style={{ color: '#0b1220' }}>{productName || '—'}</strong>} />
-              <DetailRow label="Payment Method" value={paymentMethod || '—'} />
               <DetailRow label="Email" value={
                 customerEmail ? <Link href={`mailto:${customerEmail}`} style={link}>{customerEmail}</Link> : '—'
               } />
-              <DetailRow label="Phone" value={customerPhone || '—'} last />
+              <DetailRow label="Phone" value={customerPhone || '—'} />
+              <DetailRow label="Product" value={<strong style={{ color: '#0b1220' }}>{productName || '—'}</strong>} />
+              <DetailRow label="Amount" value={<strong style={{ color: '#0b1220' }}>Rs {amount ?? '—'}</strong>} />
+              <DetailRow label="Payment Method" value={paymentMethod || '—'} last />
             </tbody>
           </table>
         </Section>
