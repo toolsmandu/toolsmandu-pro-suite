@@ -83,9 +83,16 @@ const AdminTickets = () => {
     );
   }
 
+  const openCount = tickets?.filter((t: any) => t.status === 'open').length || 0;
+  const totalCount = tickets?.length || 0;
+
   return (
     <div>
-      <h2 className="text-2xl font-bold text-foreground mb-6">Support Tickets</h2>
+      <div className="flex items-center gap-3 mb-6 flex-wrap">
+        <h2 className="text-2xl font-bold text-foreground">Support Tickets</h2>
+        <Badge className="bg-success/20 text-success border-0">Open: {openCount}</Badge>
+        <Badge variant="secondary">Total: {totalCount}</Badge>
+      </div>
       <div className="space-y-3">
         {tickets?.map((t: any) => (
           <Card key={t.id} className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setSelectedTicket(t.id)}>
