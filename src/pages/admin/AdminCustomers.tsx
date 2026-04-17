@@ -158,19 +158,100 @@ const AdminCustomers = () => {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-foreground">Customers</h2>
-        <Button onClick={() => setAddOpen(o => !o)} variant={addOpen ? 'outline' : 'default'}>
-          {addOpen ? <><X className="h-4 w-4 mr-2" /> Close</> : <><Plus className="h-4 w-4 mr-2" /> Add Customer</>}
-        </Button>
+    <div className="flex gap-6 h-[calc(100vh-5rem)]">
+      {/* Customers List */}
+      <div className={`${addOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-foreground">Customers</h2>
+          <Button onClick={() => setAddOpen(true)} disabled={addOpen}>
+            <Plus className="h-4 w-4 mr-2" /> Add Customer
+          </Button>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
+          <div className="relative md:col-span-2">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by email, phone" className="pl-9" />
+          </div>
+          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={selectClassName}>
+            <option value="all">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="editor">Editor</option>
+            <option value="customer">Customer</option>
+          </select>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={selectClassName}>
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+
+        {isLoading ? (
+          <p className="text-muted-foreground">Loading...</p>
+        ) : (
+          <div className="border border-border rounded-lg overflow-auto flex-1">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.map((u: any) => (
+                  <TableRow key={u.id}>
+                    <TableCell className="font-medium text-foreground">
+                      {u.email || '-'}
+                      {u.is_suspended && <Badge variant="destructive" className="ml-2 text-[10px]">Suspended</Badge>}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{u.phone || '-'}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        {u.roles.map((role: string) => (
+                          <Badge key={role} variant="secondary" className={`text-xs capitalize ${roleBadgeColors[role] || ''}`}>
+                            {role}
+                          </Badge>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{formatDate(u.created_at)}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleView(u)} title="View">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEdit(u)} title="Edit">
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {filteredUsers.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">No users found</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
 
+      {/* Right Panel — Add Customer */}
       {addOpen && (
-        <div className="border border-border rounded-lg p-4 mb-4 bg-card">
-          <h3 className="font-semibold text-foreground mb-3">Add Customer</h3>
-          <p className="text-xs text-muted-foreground mb-4">Create a new user account. If password is blank, the email will be used as the password.</p>
-          <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="grid gap-4 md:grid-cols-2">
+        <div className="flex-1 min-w-0 border border-border rounded-lg bg-background flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h3 className="font-semibold text-foreground">Add Customer</h3>
+            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => { setAddOpen(false); setAddForm({ name: '', email: '', phone: '', password: '', role: 'customer' }); }}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="p-4 space-y-4 overflow-y-auto flex-1">
+            <p className="text-xs text-muted-foreground">Create a new user account. If password is blank, the email will be used as the password.</p>
             <div>
               <Label>Email</Label>
               <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required />
@@ -191,86 +272,13 @@ const AdminCustomers = () => {
                 {isAdmin && <option value="admin">Admin</option>}
               </select>
             </div>
-            <div className="md:col-span-2 flex justify-end gap-2">
+            <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
               <Button type="submit" disabled={createUser.isPending || !addForm.email}>
                 {createUser.isPending ? 'Creating...' : 'Create'}
               </Button>
             </div>
           </form>
-        </div>
-      )}
-
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
-        <div className="relative md:col-span-2">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by email, phone" className="pl-9" />
-        </div>
-        <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={selectClassName}>
-          <option value="all">All Roles</option>
-          <option value="admin">Admin</option>
-          <option value="editor">Editor</option>
-          <option value="customer">Customer</option>
-        </select>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={selectClassName}>
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="suspended">Suspended</option>
-        </select>
-      </div>
-
-      {isLoading ? (
-        <p className="text-muted-foreground">Loading...</p>
-      ) : (
-        <div className="border border-border rounded-lg overflow-auto max-h-[calc(100vh-12rem)]">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.map((u: any) => (
-                <TableRow key={u.id}>
-                  <TableCell className="font-medium text-foreground">
-                    {u.email || '-'}
-                    {u.is_suspended && <Badge variant="destructive" className="ml-2 text-[10px]">Suspended</Badge>}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{u.phone || '-'}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      {u.roles.map((role: string) => (
-                        <Badge key={role} variant="secondary" className={`text-xs capitalize ${roleBadgeColors[role] || ''}`}>
-                          {role}
-                        </Badge>
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{formatDate(u.created_at)}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleView(u)} title="View">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEdit(u)} title="Edit">
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredUsers.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">No users found</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
         </div>
       )}
 
