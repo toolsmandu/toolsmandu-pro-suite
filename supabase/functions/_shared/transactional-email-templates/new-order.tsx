@@ -57,9 +57,6 @@ const NewOrderEmail = ({
           <Text style={heroSub}>
             We've received your order and it's being prepared. A separate email with your product details will follow shortly.
           </Text>
-          <Section style={pillWrap}>
-            <Text style={pill}>Order #{orderId ?? '—'}</Text>
-          </Section>
         </Section>
 
         {/* Order ID card */}
