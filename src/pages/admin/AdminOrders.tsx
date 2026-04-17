@@ -346,6 +346,45 @@ const AdminOrders = () => {
         queryClient.invalidateQueries({ queryKey: ['order-audit-log', selectedOrder.id] });
       }
 
+      // Send "Order Completed" email when admin marks the order as completed.
+      // Only fires for non-manual orders (manual orders skip the customer-facing email).
+      if (
+        editStatus === 'completed' &&
+        selectedOrder.status !== 'completed' &&
+        selectedOrder.payment_method &&
+        selectedOrder.payment_method !== 'manual'
+      ) {
+        try {
+          const [{ data: profile }, { data: logoSetting }] = await Promise.all([
+            supabase.from('profiles').select('email, phone').eq('user_id', selectedOrder.user_id).maybeSingle(),
+            supabase.from('site_settings').select('value').eq('key', 'email_logo_url').maybeSingle(),
+          ]);
+          const productName = (editItems || [])
+            .map(it => `${(products as any)?.find((p: any) => p.id === it.product_id)?.name || 'Item'}${it.variation_name ? ` - ${it.variation_name}` : ''}`)
+            .join(', ');
+          if (profile?.email) {
+            await supabase.functions.invoke('send-transactional-email', {
+              body: {
+                templateName: 'order-completed',
+                recipientEmail: profile.email,
+                idempotencyKey: `order-completed-${selectedOrder.id}-${Date.now()}`,
+                templateData: {
+                  customerEmail: profile.email,
+                  customerPhone: profile.phone || '',
+                  productName,
+                  orderId: selectedOrder.order_number,
+                  amount: String(parseFloat(editTotal) || selectedOrder.total),
+                  adminMessage: !isAdminOnly && stripHtml(orderNote) ? orderNote : '',
+                  logoUrl: logoSetting?.value || '',
+                },
+              },
+            });
+          }
+        } catch (emailErr) {
+          console.error('Failed to send order-completed email:', emailErr);
+        }
+      }
+
       toast.success(`Order ${selectedOrder.order_number} Edited Successfully`);
       setSelectedOrder(null);
     } catch {
