@@ -523,9 +523,15 @@ const AdminOrders = () => {
         if (!hasProduct) return false;
       }
       if (statusFilter !== 'all' && order.status !== statusFilter) return false;
-      if (dateFilter) {
+      if (dateFrom) {
         const orderDate = new Date(order.created_at);
-        if (orderDate.toDateString() !== dateFilter.toDateString()) return false;
+        const from = new Date(dateFrom); from.setHours(0, 0, 0, 0);
+        if (orderDate < from) return false;
+      }
+      if (dateTo) {
+        const orderDate = new Date(order.created_at);
+        const to = new Date(dateTo); to.setHours(23, 59, 59, 999);
+        if (orderDate > to) return false;
       }
       if (paymentFilter !== 'all') {
         const method = order.payment_pidx ? 'khalti' : 'manual';
@@ -533,7 +539,7 @@ const AdminOrders = () => {
       }
       return true;
     });
-  }, [orders, searchTerm, productFilter, statusFilter, dateFilter, paymentFilter]);
+  }, [orders, searchTerm, productFilter, statusFilter, dateFrom, dateTo, paymentFilter]);
 
   return (
     <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(selectedOrder || addingOrder) ? 'lg:flex-row-reverse' : ''}`}>
