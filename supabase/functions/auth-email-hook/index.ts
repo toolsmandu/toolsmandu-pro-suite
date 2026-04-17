@@ -225,14 +225,17 @@ async function handleWebhook(req: Request): Promise<Response> {
 
   let logoUrl: string | undefined
   try {
-    const { data: logoSetting } = await supabase
+    const { data: settings } = await supabase
       .from('site_settings')
-      .select('value')
-      .eq('key', 'logo_url')
-      .maybeSingle()
-    if (logoSetting?.value) logoUrl = logoSetting.value
+      .select('key,value')
+      .in('key', ['email_logo_url', 'logo_url'])
+    const map = (settings || []).reduce((acc: Record<string, string>, s: any) => {
+      if (s?.value) acc[s.key] = s.value
+      return acc
+    }, {})
+    logoUrl = map['email_logo_url'] || map['logo_url']
   } catch (e) {
-    console.error('Failed to fetch logo_url', e)
+    console.error('Failed to fetch logo from site_settings', e)
   }
 
   const templateProps = {
