@@ -39,7 +39,7 @@ const SITE_NAME = 'Toolsmandu'
 const ROOT_DOMAIN = 'web.toolsmandu.com'
 const FROM_EMAIL = 'support@toolsmandu.com'
 const FROM_NAME = 'Toolsmandu'
-const ZEPTOMAIL_API_URL = 'https://api.zeptomail.com/v1.1/email'
+const ZEPTOMAIL_API_URL = Deno.env.get('ZEPTOMAIL_API_URL') || 'https://api.zeptomail.in/v1.1/email'
 
 // Sample data for preview mode ONLY
 const SAMPLE_PROJECT_URL = 'https://toolsmandu-pro-suite.lovable.app'
