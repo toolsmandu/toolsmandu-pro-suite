@@ -74,6 +74,8 @@ const AdminOrders = () => {
   const [newProductId, setNewProductId] = useState('');
   const [newVariationId, setNewVariationId] = useState('');
   const [newAmount, setNewAmount] = useState('');
+  const [newPaymentMethod, setNewPaymentMethod] = useState('manual');
+  const [newRemarks, setNewRemarks] = useState('');
   const [creatingOrder, setCreatingOrder] = useState(false);
 
   const { data: orders, isLoading } = useQuery({
@@ -414,6 +416,8 @@ const AdminOrders = () => {
     setNewProductId('');
     setNewVariationId('');
     setNewAmount('');
+    setNewPaymentMethod('manual');
+    setNewRemarks('');
   };
 
   const handleCreateOrder = async () => {
@@ -428,8 +432,9 @@ const AdminOrders = () => {
         total: parseFloat(newAmount),
         status: 'completed' as any,
         payment_status: 'paid',
+        payment_method: newPaymentMethod,
         created_at: kathmanduToUTC(newOrderDate),
-      }).select().single();
+      } as any).select().single();
       if (orderError) throw orderError;
 
       const { error: itemError } = await supabase.from('order_items').insert({
@@ -441,6 +446,16 @@ const AdminOrders = () => {
         quantity: 1,
       });
       if (itemError) throw itemError;
+
+      // Save remarks as an admin-only order note
+      if (newRemarks.trim() && user) {
+        await supabase.from('order_notes').insert({
+          order_id: order.id,
+          note: newRemarks.trim(),
+          sent_by: user.id,
+          is_admin_only: true,
+        });
+      }
 
       // Cleanup expired assignments and auto-assign family sharing credentials
       if (newVariationId) {
@@ -1017,6 +1032,30 @@ const AdminOrders = () => {
                   value={newAmount}
                   onChange={e => setNewAmount(e.target.value)}
                   className=""
+                />
+              </div>
+
+              {/* Payment Method */}
+              <div>
+                <Label>Payment Method</Label>
+                <select
+                  value={newPaymentMethod}
+                  onChange={e => setNewPaymentMethod(e.target.value)}
+                  className={selectClassName.replace('border-input', '')}
+                >
+                  <option value="manual">Manual</option>
+                  <option value="khalti">Khalti</option>
+                </select>
+              </div>
+
+              {/* Remarks */}
+              <div>
+                <Label>Remarks</Label>
+                <Textarea
+                  placeholder="Optional notes about this order (admin-only)"
+                  value={newRemarks}
+                  onChange={e => setNewRemarks(e.target.value)}
+                  rows={3}
                 />
               </div>
 
