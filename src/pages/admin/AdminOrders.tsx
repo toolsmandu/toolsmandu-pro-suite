@@ -799,7 +799,7 @@ const AdminOrders = () => {
                   <Label className="text-xs text-muted-foreground block">Change History</Label>
                   <div className="space-y-1.5">
                     {auditLog.map((log: any) => {
-                      const who = log.profile?.name || log.profile?.email || 'Unknown';
+                      const who = log.profile?.email || log.profile?.name || 'Unknown';
                       return (
                         <div key={log.id} className="bg-muted/30 rounded-md p-2 text-xs">
                           <p className="text-foreground">{log.details}</p>
