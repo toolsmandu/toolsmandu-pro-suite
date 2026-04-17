@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Search, Eye, Pencil, Plus, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
 import { toast } from 'sonner';
 
 const selectClassName =
@@ -78,6 +78,8 @@ const AdminCustomers = () => {
 
   // View handler
   const handleView = async (user: any) => {
+    setEditUser(null);
+    setAddOpen(false);
     setViewUser(user);
     setViewLoading(true);
     const [ordersRes, ticketsRes] = await Promise.all([
@@ -91,6 +93,8 @@ const AdminCustomers = () => {
 
   // Edit handler
   const handleEdit = (user: any) => {
+    setViewUser(null);
+    setAddOpen(false);
     setEditUser(user);
     setEditForm({
       name: user.name || '',
@@ -163,7 +167,7 @@ const AdminCustomers = () => {
       <div className={`${addOpen ? 'flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-foreground">Customers</h2>
-          <Button onClick={() => setAddOpen(true)} disabled={addOpen}>
+          <Button onClick={() => { setViewUser(null); setEditUser(null); setAddOpen(true); }} disabled={addOpen}>
             <Plus className="h-4 w-4 mr-2" /> Add Customer
           </Button>
         </div>
@@ -282,109 +286,120 @@ const AdminCustomers = () => {
         </div>
       )}
 
-      {/* View Dialog */}
-      <Dialog open={!!viewUser} onOpenChange={() => setViewUser(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{viewUser?.email || 'User'} — Activity</DialogTitle>
-            <DialogDescription>Orders and tickets created by this user</DialogDescription>
-          </DialogHeader>
-
-          {viewLoading ? (
-            <p className="text-muted-foreground py-4">Loading...</p>
-          ) : (
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-semibold text-foreground mb-2">Orders ({viewOrders.length})</h4>
-                {viewOrders.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No orders found</p>
-                ) : (
-                  <div className="border border-border rounded-lg overflow-auto max-h-60">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Order #</TableHead>
-                          <TableHead>Products</TableHead>
-                          <TableHead>Total</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Date</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {viewOrders.map((o: any) => (
-                          <TableRow key={o.id}>
-                            <TableCell className="text-foreground">{o.order_number || o.id.slice(0, 8)}</TableCell>
-                            <TableCell className="text-sm text-muted-foreground">
-                              {o.order_items?.map((i: any) => i.products?.name).filter(Boolean).join(', ') || '-'}
-                            </TableCell>
-                            <TableCell className="text-foreground">Rs. {o.total}</TableCell>
-                            <TableCell>
-                              <Badge variant="secondary" className={`text-xs capitalize ${statusColors[o.status] || ''}`}>{o.status}</Badge>
-                            </TableCell>
-                            <TableCell className="text-xs text-muted-foreground">{formatDate(o.created_at)}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-foreground mb-2">Tickets ({viewTickets.length})</h4>
-                {viewTickets.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No tickets found</p>
-                ) : (
-                  <div className="border border-border rounded-lg overflow-auto max-h-60">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Ticket #</TableHead>
-                          <TableHead>Subject</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Date</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {viewTickets.map((t: any) => (
-                          <TableRow key={t.id}>
-                            <TableCell className="text-foreground">{t.ticket_number}</TableCell>
-                            <TableCell className="text-foreground">{t.subject}</TableCell>
-                            <TableCell>
-                              <Badge variant="secondary" className={`text-xs capitalize ${t.status === 'open' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}`}>{t.status}</Badge>
-                            </TableCell>
-                            <TableCell className="text-xs text-muted-foreground">{formatDate(t.created_at)}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-              </div>
+      {/* View Panel — side-by-side */}
+      {viewUser && (
+        <div className="flex-1 min-w-0 border border-border rounded-lg bg-background flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <div>
+              <h3 className="font-semibold text-foreground">{viewUser.email || 'User'} — Activity</h3>
+              <p className="text-xs text-muted-foreground">Orders and tickets created by this user</p>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewUser(null)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="p-4 overflow-y-auto flex-1">
+            {viewLoading ? (
+              <p className="text-muted-foreground py-4">Loading...</p>
+            ) : (
+              <div className="space-y-6">
+                <div>
+                  <h4 className="font-semibold text-foreground mb-2">Orders ({viewOrders.length})</h4>
+                  {viewOrders.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No orders found</p>
+                  ) : (
+                    <div className="border border-border rounded-lg overflow-auto max-h-72">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Order #</TableHead>
+                            <TableHead>Products</TableHead>
+                            <TableHead>Total</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Date</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {viewOrders.map((o: any) => (
+                            <TableRow key={o.id}>
+                              <TableCell className="text-foreground">{o.order_number || o.id.slice(0, 8)}</TableCell>
+                              <TableCell className="text-sm text-muted-foreground">
+                                {o.order_items?.map((i: any) => i.products?.name).filter(Boolean).join(', ') || '-'}
+                              </TableCell>
+                              <TableCell className="text-foreground">Rs. {o.total}</TableCell>
+                              <TableCell>
+                                <Badge variant="secondary" className={`text-xs capitalize ${statusColors[o.status] || ''}`}>{o.status}</Badge>
+                              </TableCell>
+                              <TableCell className="text-xs text-muted-foreground">{formatDate(o.created_at)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={!!editUser} onOpenChange={() => setEditUser(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Customer</DialogTitle>
-            <DialogDescription>Update customer details</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={e => { e.preventDefault(); updateUser.mutate(); }} className="space-y-4">
+                <div>
+                  <h4 className="font-semibold text-foreground mb-2">Tickets ({viewTickets.length})</h4>
+                  {viewTickets.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No tickets found</p>
+                  ) : (
+                    <div className="border border-border rounded-lg overflow-auto max-h-72">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Ticket #</TableHead>
+                            <TableHead>Subject</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Date</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {viewTickets.map((t: any) => (
+                            <TableRow key={t.id}>
+                              <TableCell className="text-foreground">{t.ticket_number}</TableCell>
+                              <TableCell className="text-foreground">{t.subject}</TableCell>
+                              <TableCell>
+                                <Badge variant="secondary" className={`text-xs capitalize ${t.status === 'open' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}`}>{t.status}</Badge>
+                              </TableCell>
+                              <TableCell className="text-xs text-muted-foreground">{formatDate(t.created_at)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Edit Panel — side-by-side */}
+      {editUser && (
+        <div className="flex-1 min-w-0 border border-border rounded-lg bg-background flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <div>
+              <h3 className="font-semibold text-foreground">Edit Customer</h3>
+              <p className="text-xs text-muted-foreground">Update customer details</p>
+            </div>
+            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditUser(null)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <form onSubmit={e => { e.preventDefault(); updateUser.mutate(); }} className="p-4 space-y-4 overflow-y-auto flex-1">
             <div>
               <Label>Email</Label>
-              <Input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} className="" />
+              <Input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} />
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} className="" />
+              <Input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} />
             </div>
             <div>
               <Label>Password <span className="text-muted-foreground text-xs">(leave blank to keep current)</span></Label>
-              <Input type="password" value={editForm.password} onChange={e => setEditForm(f => ({ ...f, password: e.target.value }))} placeholder="New password" className="" />
+              <Input type="password" value={editForm.password} onChange={e => setEditForm(f => ({ ...f, password: e.target.value }))} placeholder="New password" />
             </div>
 
             <div className="flex items-center space-x-2">
@@ -417,8 +432,8 @@ const AdminCustomers = () => {
               <Button type="submit" disabled={updateUser.isPending}>{updateUser.isPending ? 'Saving...' : 'Save Changes'}</Button>
             </div>
           </form>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
 
     </div>
