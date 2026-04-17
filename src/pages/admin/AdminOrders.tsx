@@ -656,7 +656,7 @@ const AdminOrders = () => {
 
       {/* Edit Panel */}
       {selectedOrder && (
-        <div className="w-full lg:w-[480px] lg:min-w-[480px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
+        <div className="w-full lg:w-[720px] lg:min-w-[720px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
           <div className="flex items-center justify-between p-4 border-b border-border">
             <h3 className="font-semibold text-foreground">Edit Order {selectedOrder?.order_number || selectedOrder?.id?.slice(0, 8)}</h3>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSelectedOrder(null)}>
