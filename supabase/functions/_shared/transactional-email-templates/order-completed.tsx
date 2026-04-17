@@ -70,12 +70,17 @@ const OrderCompletedEmail = ({
         {/* Admin message */}
         {adminMessage && (
           <Section style={messageWrap}>
-            <Text style={sectionTitle}>Message from us</Text>
+            <Text style={sectionTitle}>Admin has sent you the following message</Text>
             <Section style={messageBox}>
               <div style={messageText} dangerouslySetInnerHTML={{ __html: adminMessage }} />
             </Section>
           </Section>
         )}
+
+        {/* Reminder line */}
+        <Section style={reminderWrap}>
+          <Text style={reminderText}>For your reminder, here is your order details:</Text>
+        </Section>
 
         {/* Details */}
         <Section style={detailsWrap}>
@@ -135,7 +140,7 @@ const OrderCompletedEmail = ({
 
 export const template = {
   component: OrderCompletedEmail,
-  subject: 'Your Toolsmandu order is complete!',
+  subject: 'Your Toolsmandu order is now completed!',
   displayName: 'Order Completed',
   previewData: {
     customerEmail: 'uddheshyastudio@gmail.com',
@@ -197,6 +202,8 @@ const messageBox = {
   borderRadius: '12px', padding: '18px 20px',
 }
 const messageText = { fontSize: '14px', color: '#0b1220', lineHeight: '1.7' }
+const reminderWrap = { padding: '12px 32px 0', textAlign: 'center' as const }
+const reminderText = { fontSize: '14px', color: '#5b6473', margin: 0, lineHeight: '1.6' }
 
 const detailsWrap = { padding: '16px 32px 8px' }
 const sectionTitle = {
