@@ -77,6 +77,52 @@ Deno.serve(async (req) => {
         .update({ payment_status: "completed", status: "processing" })
         .eq("id", order.id);
 
+      // Send "Order Received" email (fire-and-forget)
+      try {
+        // Fetch order details for the email
+        const [{ data: items }, { data: profile }, { data: logoSetting }] = await Promise.all([
+          supabaseAdmin
+            .from("order_items")
+            .select("variation_name, products(name)")
+            .eq("order_id", order.id),
+          supabaseAdmin
+            .from("profiles")
+            .select("email, phone")
+            .eq("user_id", order.user_id)
+            .maybeSingle(),
+          supabaseAdmin
+            .from("site_settings")
+            .select("value")
+            .eq("key", "email_logo_url")
+            .maybeSingle(),
+        ]);
+
+        const productName = (items || [])
+          .map((it: any) => `${it.products?.name || 'Item'}${it.variation_name ? ` - ${it.variation_name}` : ''}`)
+          .join(', ');
+
+        if (profile?.email) {
+          await supabaseAdmin.functions.invoke('send-transactional-email', {
+            body: {
+              templateName: 'new-order',
+              recipientEmail: profile.email,
+              idempotencyKey: `new-order-${order.id}`,
+              templateData: {
+                customerEmail: profile.email,
+                customerPhone: profile.phone || '',
+                productName,
+                paymentMethod: 'Khalti',
+                orderId: order.order_number,
+                amount: String(order.total),
+                logoUrl: logoSetting?.value || '',
+              },
+            },
+          });
+        }
+      } catch (emailErr) {
+        console.error("Failed to send new-order email:", emailErr);
+      }
+
       return new Response(
         JSON.stringify({ status: "completed", order_id: order.id }),
         {

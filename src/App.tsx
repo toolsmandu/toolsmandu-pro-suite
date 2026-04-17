@@ -19,6 +19,7 @@ import CartPage from "./pages/CartPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PaymentVerify from "./pages/PaymentVerify";
+import Unsubscribe from "./pages/Unsubscribe";
 
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import ProfilePage from "./pages/dashboard/ProfilePage";
@@ -78,6 +79,7 @@ const App = () => (
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/payment/verify" element={<PaymentVerify />} />
+                <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/blog" element={<BlogList />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/dashboard" element={<DashboardLayout />}>

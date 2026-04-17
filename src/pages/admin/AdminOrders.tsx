@@ -346,6 +346,45 @@ const AdminOrders = () => {
         queryClient.invalidateQueries({ queryKey: ['order-audit-log', selectedOrder.id] });
       }
 
+      // Send "Order Completed" email when admin marks the order as completed.
+      // Only fires for non-manual orders (manual orders skip the customer-facing email).
+      if (
+        editStatus === 'completed' &&
+        selectedOrder.status !== 'completed' &&
+        selectedOrder.payment_method &&
+        selectedOrder.payment_method !== 'manual'
+      ) {
+        try {
+          const [{ data: profile }, { data: logoSetting }] = await Promise.all([
+            supabase.from('profiles').select('email, phone').eq('user_id', selectedOrder.user_id).maybeSingle(),
+            supabase.from('site_settings').select('value').eq('key', 'email_logo_url').maybeSingle(),
+          ]);
+          const productName = (editItems || [])
+            .map(it => `${(products as any)?.find((p: any) => p.id === it.product_id)?.name || 'Item'}${it.variation_name ? ` - ${it.variation_name}` : ''}`)
+            .join(', ');
+          if (profile?.email) {
+            await supabase.functions.invoke('send-transactional-email', {
+              body: {
+                templateName: 'order-completed',
+                recipientEmail: profile.email,
+                idempotencyKey: `order-completed-${selectedOrder.id}-${Date.now()}`,
+                templateData: {
+                  customerEmail: profile.email,
+                  customerPhone: profile.phone || '',
+                  productName,
+                  orderId: selectedOrder.order_number,
+                  amount: String(parseFloat(editTotal) || selectedOrder.total),
+                  adminMessage: !isAdminOnly && stripHtml(orderNote) ? orderNote : '',
+                  logoUrl: logoSetting?.value || '',
+                },
+              },
+            });
+          }
+        } catch (emailErr) {
+          console.error('Failed to send order-completed email:', emailErr);
+        }
+      }
+
       toast.success(`Order ${selectedOrder.order_number} Edited Successfully`);
       setSelectedOrder(null);
     } catch {
@@ -494,6 +533,49 @@ const AdminOrders = () => {
 
             break;
           }
+        }
+      }
+
+      // If payment method is not "manual", treat this as a real customer order:
+      // send the "Order Received" email AND the "Order Completed" email
+      // (manual orders are created already in completed status).
+      if (newPaymentMethod !== 'manual') {
+        try {
+          const [{ data: profile }, { data: logoSetting }] = await Promise.all([
+            supabase.from('profiles').select('email, phone').eq('user_id', selectedCustomer.user_id).maybeSingle(),
+            supabase.from('site_settings').select('value').eq('key', 'email_logo_url').maybeSingle(),
+          ]);
+          const productName = `${product?.name || 'Item'}${variation?.name ? ` - ${variation.name}` : ''}`;
+          const paymentLabel = newPaymentMethod.charAt(0).toUpperCase() + newPaymentMethod.slice(1);
+
+          if (profile?.email) {
+            const baseData = {
+              customerEmail: profile.email,
+              customerPhone: profile.phone || '',
+              productName,
+              orderId: order.order_number,
+              amount: String(parseFloat(newAmount)),
+              logoUrl: logoSetting?.value || '',
+            };
+            await supabase.functions.invoke('send-transactional-email', {
+              body: {
+                templateName: 'new-order',
+                recipientEmail: profile.email,
+                idempotencyKey: `new-order-${order.id}`,
+                templateData: { ...baseData, paymentMethod: paymentLabel },
+              },
+            });
+            await supabase.functions.invoke('send-transactional-email', {
+              body: {
+                templateName: 'order-completed',
+                recipientEmail: profile.email,
+                idempotencyKey: `order-completed-${order.id}`,
+                templateData: { ...baseData, adminMessage: newRemarks.trim() || '' },
+              },
+            });
+          }
+        } catch (emailErr) {
+          console.error('Failed to send order emails:', emailErr);
         }
       }
 
@@ -859,6 +941,11 @@ const AdminOrders = () => {
               {/* Customer Note */}
               <div className="border-t border-border pt-4">
                 <Label className="text-xs text-muted-foreground mb-1 block">Customer Note (optional)</Label>
+                {editStatus === 'completed' && selectedOrder?.status !== 'completed' && selectedOrder?.payment_method && selectedOrder?.payment_method !== 'manual' && (
+                  <p className="text-[11px] text-primary mb-1">
+                    This note will be included in the "Order Completed" email sent to the customer (unless marked admin-only).
+                  </p>
+                )}
                 <RichTextEditor value={orderNote} onChange={setOrderNote} />
                 {productNotes && productNotes.length > 0 && (
                   <div className="mt-2 space-y-1">
