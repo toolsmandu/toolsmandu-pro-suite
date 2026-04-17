@@ -140,7 +140,7 @@ const OrderCompletedEmail = ({
 
 export const template = {
   component: OrderCompletedEmail,
-  subject: 'Your Toolsmandu order is complete!',
+  subject: 'Your Toolsmandu order is now completed!',
   displayName: 'Order Completed',
   previewData: {
     customerEmail: 'uddheshyastudio@gmail.com',
