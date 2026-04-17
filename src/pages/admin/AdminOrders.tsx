@@ -18,6 +18,9 @@ import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import RichTextEditor from '@/components/admin/RichTextEditor';
+
+const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').trim();
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500/20 text-yellow-400',
@@ -245,10 +248,10 @@ const AdminOrders = () => {
         userId: selectedOrder.user_id,
       });
 
-      if (orderNote.trim()) {
+      if (stripHtml(orderNote)) {
         await supabase.from('order_notes').insert({
           order_id: selectedOrder.id,
-          note: orderNote.trim(),
+          note: orderNote,
           sent_by: user!.id,
           is_admin_only: isAdminOnly,
         } as any);
@@ -676,14 +679,8 @@ const AdminOrders = () => {
 
               {/* Customer Note */}
               <div className="border-t border-border pt-4">
-                <Label htmlFor="order-note" className="text-xs text-muted-foreground mb-1 block">Customer Note (optional)</Label>
-                <Textarea
-                  id="order-note"
-                  value={orderNote}
-                  onChange={(e) => setOrderNote(e.target.value)}
-                  placeholder="Type a note to send to the customer..."
-                  rows={3}
-                />
+                <Label className="text-xs text-muted-foreground mb-1 block">Customer Note (optional)</Label>
+                <RichTextEditor value={orderNote} onChange={setOrderNote} />
                 {productNotes && productNotes.length > 0 && (
                   <div className="mt-2 space-y-1">
                     <Label className="text-[10px] text-muted-foreground block uppercase tracking-wide">Product Notes (click to paste)</Label>
@@ -692,7 +689,7 @@ const AdminOrders = () => {
                         <button
                           key={n.id}
                           type="button"
-                          onClick={() => setOrderNote(prev => prev ? `${prev}\n\n${n.description}` : n.description)}
+                          onClick={() => setOrderNote(prev => stripHtml(prev) ? `${prev}${n.description}` : n.description)}
                           className="text-xs px-2 py-1 rounded-md bg-muted hover:bg-primary hover:text-primary-foreground text-foreground transition-colors border border-border"
                           title={`${(n.products as any)?.name || ''} — click to paste`}
                         >
@@ -719,9 +716,9 @@ const AdminOrders = () => {
                   <Label className="text-xs text-muted-foreground block">Sent Notes</Label>
                   {orderNotes.map((n: any) => (
                     <div key={n.id} className="bg-muted/30 rounded-lg p-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <p className="text-foreground whitespace-pre-wrap flex-1">{n.note}</p>
-                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => { navigator.clipboard.writeText(n.note); toast.success('Copied to clipboard'); }}>
+                      <div className="flex items-start gap-2">
+                        <div className="prose prose-sm prose-invert max-w-none text-foreground flex-1 [&_*]:text-foreground" dangerouslySetInnerHTML={{ __html: n.note }} />
+                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => { navigator.clipboard.writeText(stripHtml(n.note)); toast.success('Copied to clipboard'); }}>
                           <Copy className="h-3 w-3" />
                         </Button>
                         {n.is_admin_only && <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded-full font-medium shrink-0">Admin Only</span>}

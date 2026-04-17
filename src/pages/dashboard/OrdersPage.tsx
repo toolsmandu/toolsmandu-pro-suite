@@ -319,7 +319,7 @@ const OrdersPage = () => {
                   <div className="space-y-2">
                     {orderNotes.map((note: any) => (
                       <div key={note.id} className="bg-muted/30 rounded-lg p-3">
-                        <p className="text-sm text-foreground">{note.note}</p>
+                        <div className="prose prose-sm prose-invert max-w-none text-sm text-foreground [&_*]:text-foreground" dangerouslySetInnerHTML={{ __html: note.note }} />
                         <p className="text-[10px] text-muted-foreground mt-1">{formatDate(note.created_at)}</p>
                       </div>
                     ))}
