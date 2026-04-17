@@ -937,7 +937,7 @@ const AdminOrders = () => {
               {/* Customer Note */}
               <div className="border-t border-border pt-4">
                 <Label className="text-xs text-muted-foreground mb-1 block">Customer Note (optional)</Label>
-                {editStatus === 'completed' && selectedOrder?.status !== 'completed' && selectedOrder?.payment_method && selectedOrder?.payment_method !== 'manual' && (
+                {editStatus === 'completed' && selectedOrder?.status !== 'completed' && (
                   <p className="text-[11px] text-primary mb-1">
                     This note will be included in the "Order Completed" email sent to the customer (unless marked admin-only).
                   </p>
