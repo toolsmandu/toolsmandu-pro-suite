@@ -74,8 +74,8 @@ const NewOrderEmail = ({
                 customerEmail ? <Link href={`mailto:${customerEmail}`} style={link}>{customerEmail}</Link> : '—'
               } />
               <DetailRow label="Phone" value={customerPhone || '—'} />
-              <DetailRow label="Product" value={<strong style={{ color: '#0b1220' }}>{productName || '—'}</strong>} />
-              <DetailRow label="Amount" value={<strong style={{ color: '#0b1220' }}>Rs {amount ?? '—'}</strong>} />
+              <DetailRow label="Product" value={productName || '—'} />
+              <DetailRow label="Amount" value={`Rs ${amount ?? '—'}`} />
               <DetailRow label="Payment Method" value={paymentMethod || '—'} last />
             </tbody>
           </table>
@@ -113,8 +113,7 @@ const NewOrderEmail = ({
 
 export const template = {
   component: NewOrderEmail,
-  subject: (data: Record<string, any>) =>
-    data?.orderId ? `Order #${data.orderId} confirmed` : 'Order Confirmed',
+  subject: 'Your Toolsmandu order has been received!',
   displayName: 'New Order',
   previewData: {
     customerEmail: 'prashannapradhan@gmail.com',
