@@ -32,8 +32,8 @@ Deno.serve(async (req) => {
     const { action, user_id } = body;
 
     if (action === "create") {
-      const { name, email, phone, role } = body;
-      // Editors can only create customers; admins can create customer or editor
+      const { name, email, phone, password, role } = body;
+      // Editors can only create customers; admins can create customer/editor/admin
       if (isEditor && role !== "customer") {
         return new Response(JSON.stringify({ error: "Editors can only create customer accounts" }), { status: 403, headers: corsHeaders });
       }
@@ -41,10 +41,10 @@ Deno.serve(async (req) => {
         return new Response(JSON.stringify({ error: "Only admins can create admin accounts" }), { status: 403, headers: corsHeaders });
       }
 
-      // Create auth user with email as password, email confirmed
+      // Create auth user — use provided password, fallback to email
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
         email,
-        password: email,
+        password: password && password.length >= 6 ? password : email,
         email_confirm: true,
       });
       if (createError) return new Response(JSON.stringify({ error: createError.message }), { status: 400, headers: corsHeaders });
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "update") {
-      const { name, email, phone, password, is_suspended, email_confirmed } = body;
+      const { name, email, phone, password, is_suspended, email_confirmed, role } = body;
 
       // Update profile
       const profileUpdate: any = {};
@@ -86,6 +86,19 @@ Deno.serve(async (req) => {
       if (Object.keys(authUpdate).length > 0) {
         const { error: authError } = await supabase.auth.admin.updateUserById(user_id, authUpdate);
         if (authError) return new Response(JSON.stringify({ error: authError.message }), { status: 400, headers: corsHeaders });
+      }
+
+      // Role update — admin only
+      if (role !== undefined) {
+        if (!isAdmin) {
+          return new Response(JSON.stringify({ error: "Only admins can change user roles" }), { status: 403, headers: corsHeaders });
+        }
+        if (!["admin", "editor", "customer"].includes(role)) {
+          return new Response(JSON.stringify({ error: "Invalid role" }), { status: 400, headers: corsHeaders });
+        }
+        await supabase.from("user_roles").delete().eq("user_id", user_id);
+        const { error: roleError } = await supabase.from("user_roles").insert({ user_id, role });
+        if (roleError) return new Response(JSON.stringify({ error: roleError.message }), { status: 400, headers: corsHeaders });
       }
 
       return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
