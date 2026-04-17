@@ -8,6 +8,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Preview,
   Section,
   Text,
@@ -15,9 +16,10 @@ import {
 
 interface ReauthenticationEmailProps {
   token: string
+  logoUrl?: string
 }
 
-export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
+export const ReauthenticationEmail = ({ token, logoUrl }: ReauthenticationEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>Your verification code</Preview>

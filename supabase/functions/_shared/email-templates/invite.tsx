@@ -9,6 +9,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Link,
   Preview,
   Section,
@@ -19,12 +20,14 @@ interface InviteEmailProps {
   siteName: string
   siteUrl: string
   confirmationUrl: string
+  logoUrl?: string
 }
 
 export const InviteEmail = ({
   siteName,
   siteUrl,
   confirmationUrl,
+  logoUrl,
 }: InviteEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />

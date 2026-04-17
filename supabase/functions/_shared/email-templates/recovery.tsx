@@ -8,6 +8,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Preview,
   Section,
   Text,
@@ -16,11 +17,13 @@ import {
 interface RecoveryEmailProps {
   siteName: string
   token: string
+  logoUrl?: string
 }
 
 export const RecoveryEmail = ({
   siteName,
   token,
+  logoUrl,
 }: RecoveryEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />

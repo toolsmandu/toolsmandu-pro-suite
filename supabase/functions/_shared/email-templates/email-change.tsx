@@ -9,6 +9,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Link,
   Preview,
   Section,
@@ -20,6 +21,7 @@ interface EmailChangeEmailProps {
   email: string
   newEmail: string
   confirmationUrl: string
+  logoUrl?: string
 }
 
 export const EmailChangeEmail = ({
@@ -27,6 +29,7 @@ export const EmailChangeEmail = ({
   email,
   newEmail,
   confirmationUrl,
+  logoUrl,
 }: EmailChangeEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />

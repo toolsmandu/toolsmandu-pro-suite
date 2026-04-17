@@ -8,6 +8,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Link,
   Preview,
   Section,
@@ -19,6 +20,7 @@ interface SignupEmailProps {
   siteUrl: string
   recipient: string
   token: string
+  logoUrl?: string
 }
 
 export const SignupEmail = ({
@@ -26,6 +28,7 @@ export const SignupEmail = ({
   siteUrl,
   recipient,
   token,
+  logoUrl,
 }: SignupEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />

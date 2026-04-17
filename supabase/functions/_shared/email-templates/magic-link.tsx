@@ -9,6 +9,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Preview,
   Section,
   Text,
@@ -17,11 +18,13 @@ import {
 interface MagicLinkEmailProps {
   siteName: string
   confirmationUrl: string
+  logoUrl?: string
 }
 
 export const MagicLinkEmail = ({
   siteName,
   confirmationUrl,
+  logoUrl,
 }: MagicLinkEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
