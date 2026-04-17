@@ -1,1 +1,4 @@
 project_id = "iuussfrylzowigmaozwv"
+
+[functions.robots-txt]
+verify_jwt = false
