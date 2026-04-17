@@ -163,9 +163,9 @@ const pill = {
 }
 
 const amountCard = {
-  margin: '0 32px 24px', padding: '22px 24px',
+  margin: '0 0 24px', padding: '22px 24px',
   background: 'linear-gradient(135deg, #0b1220 0%, #1a2540 100%)',
-  borderRadius: '14px', textAlign: 'center' as const,
+  textAlign: 'center' as const,
 }
 const amountLabel = {
   fontSize: '11px', color: 'rgba(255,255,255,0.65)', margin: '0 0 6px',
