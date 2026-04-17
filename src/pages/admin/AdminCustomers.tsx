@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Eye, Pencil, Plus } from 'lucide-react';
+import { Search, Eye, Pencil, Plus, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -157,8 +157,40 @@ const AdminCustomers = () => {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-foreground">Customers</h2>
-        <Button onClick={() => setAddOpen(true)}><Plus className="h-4 w-4 mr-2" /> Add Customer</Button>
+        <Button onClick={() => setAddOpen(o => !o)} variant={addOpen ? 'outline' : 'default'}>
+          {addOpen ? <><X className="h-4 w-4 mr-2" /> Close</> : <><Plus className="h-4 w-4 mr-2" /> Add Customer</>}
+        </Button>
       </div>
+
+      {addOpen && (
+        <div className="border border-border rounded-lg p-4 mb-4 bg-card">
+          <h3 className="font-semibold text-foreground mb-3">Add Customer</h3>
+          <p className="text-xs text-muted-foreground mb-4">Create a new user account. Password will be set to the email address.</p>
+          <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="grid gap-4 md:grid-cols-2">
+            <div>
+              <Label>Email</Label>
+              <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} />
+            </div>
+            <div>
+              <Label>Role</Label>
+              <select value={addForm.role} onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))} className={selectClassName}>
+                <option value="customer">Customer</option>
+                {isAdmin && <option value="editor">Editor</option>}
+              </select>
+            </div>
+            <div className="md:col-span-2 flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
+              <Button type="submit" disabled={createUser.isPending || !addForm.email}>
+                {createUser.isPending ? 'Creating...' : 'Create'}
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
         <div className="relative md:col-span-2">
@@ -360,38 +392,6 @@ const AdminCustomers = () => {
       </Dialog>
 
 
-      {/* Add Customer Dialog */}
-      <Dialog open={addOpen} onOpenChange={o => { setAddOpen(o); if (!o) setAddForm({ name: '', email: '', phone: '', role: 'customer' }); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Customer</DialogTitle>
-            <DialogDescription>Create a new user account. Password will be set to the email address.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="space-y-4">
-            <div>
-              <Label>Email</Label>
-              <Input type="email" value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required className="" />
-            </div>
-            <div>
-              <Label>Phone</Label>
-              <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} className="" />
-            </div>
-            <div>
-              <Label>Role</Label>
-              <select value={addForm.role} onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))} className={selectClassName + ''}>
-                <option value="customer">Customer</option>
-                {isAdmin && <option value="editor">Editor</option>}
-              </select>
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={createUser.isPending || !addForm.email}>
-                {createUser.isPending ? 'Creating...' : 'Create'}
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
