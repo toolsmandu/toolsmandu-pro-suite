@@ -497,6 +497,49 @@ const AdminOrders = () => {
         }
       }
 
+      // If payment method is not "manual", treat this as a real customer order:
+      // send the "Order Received" email AND the "Order Completed" email
+      // (manual orders are created already in completed status).
+      if (newPaymentMethod !== 'manual') {
+        try {
+          const [{ data: profile }, { data: logoSetting }] = await Promise.all([
+            supabase.from('profiles').select('email, phone').eq('user_id', selectedCustomer.user_id).maybeSingle(),
+            supabase.from('site_settings').select('value').eq('key', 'email_logo_url').maybeSingle(),
+          ]);
+          const productName = `${product?.name || 'Item'}${variation?.name ? ` - ${variation.name}` : ''}`;
+          const paymentLabel = newPaymentMethod.charAt(0).toUpperCase() + newPaymentMethod.slice(1);
+
+          if (profile?.email) {
+            const baseData = {
+              customerEmail: profile.email,
+              customerPhone: profile.phone || '',
+              productName,
+              orderId: order.order_number,
+              amount: String(parseFloat(newAmount)),
+              logoUrl: logoSetting?.value || '',
+            };
+            await supabase.functions.invoke('send-transactional-email', {
+              body: {
+                templateName: 'new-order',
+                recipientEmail: profile.email,
+                idempotencyKey: `new-order-${order.id}`,
+                templateData: { ...baseData, paymentMethod: paymentLabel },
+              },
+            });
+            await supabase.functions.invoke('send-transactional-email', {
+              body: {
+                templateName: 'order-completed',
+                recipientEmail: profile.email,
+                idempotencyKey: `order-completed-${order.id}`,
+                templateData: { ...baseData, adminMessage: newRemarks.trim() || '' },
+              },
+            });
+          }
+        } catch (emailErr) {
+          console.error('Failed to send order emails:', emailErr);
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
       toast.success(`Order ${order.order_number} Created Successfully`);
       setAddingOrder(false);
