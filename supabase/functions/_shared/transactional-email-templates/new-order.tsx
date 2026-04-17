@@ -1,14 +1,14 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Html, Img, Link, Preview, Section, Text,
+  Body, Container, Head, Heading, Html, Img, Link, Preview, Section, Text, Hr,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
 const SITE_NAME = 'Toolsmandu.com'
 const SUPPORT_WHATSAPP = '+9779864484274'
 const WHATSAPP_LINK = 'https://wa.me/9779864484274'
-const WHATSAPP_ICON = 'https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg'
+const WHATSAPP_ICON = 'https://cdn-icons-png.flaticon.com/512/3670/3670051.png'
 
 interface NewOrderProps {
   customerEmail?: string
@@ -20,10 +20,10 @@ interface NewOrderProps {
   logoUrl?: string
 }
 
-const Row = ({ label, value, alt }: { label: string; value: React.ReactNode; alt?: boolean }) => (
+const DetailRow = ({ label, value, last }: { label: string; value: React.ReactNode; last?: boolean }) => (
   <tr>
-    <td style={{ ...cellLabel, backgroundColor: alt ? '#fafafa' : '#ffffff' }}>{label}</td>
-    <td style={{ ...cellValue, backgroundColor: alt ? '#fafafa' : '#ffffff' }}>{value}</td>
+    <td style={{ ...detailLabel, borderBottom: last ? 'none' : '1px solid #eef0f3' }}>{label}</td>
+    <td style={{ ...detailValue, borderBottom: last ? 'none' : '1px solid #eef0f3' }}>{value}</td>
   </tr>
 )
 
@@ -38,10 +38,11 @@ const NewOrderEmail = ({
 }: NewOrderProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Order Received - {SITE_NAME}</Preview>
+    <Preview>Order #{orderId ?? ''} confirmed — thank you for choosing {SITE_NAME}</Preview>
     <Body style={main}>
-      <Container style={outer}>
-        <Section style={header}>
+      <Container style={shell}>
+        {/* Brand header */}
+        <Section style={brandBar}>
           {logoUrl ? (
             <Img src={logoUrl} alt={SITE_NAME} style={logoImg} />
           ) : (
@@ -49,47 +50,57 @@ const NewOrderEmail = ({
           )}
         </Section>
 
-        <Container style={inner}>
-          <Heading style={h1}>Order Received</Heading>
-          <div style={accentBar} />
-
-          <Text style={text}>
-            Thank you for choosing <strong>{SITE_NAME}</strong>! We're excited to confirm your recent order with us.
+        {/* Hero */}
+        <Section style={hero}>
+          <Text style={eyebrow}>ORDER CONFIRMATION</Text>
+          <Heading style={h1}>Thank you for your order</Heading>
+          <Text style={heroSub}>
+            We've received your order and it's being prepared. A separate email with your product details will follow shortly.
           </Text>
-          <Text style={text}>Here are the details:</Text>
+          <Section style={pillWrap}>
+            <Text style={pill}>Order #{orderId ?? '—'}</Text>
+          </Section>
+        </Section>
 
-          <table style={table} cellPadding={0} cellSpacing={0}>
+        {/* Amount card */}
+        <Section style={amountCard}>
+          <Text style={amountLabel}>Amount Paid</Text>
+          <Text style={amountValue}>Rs {amount ?? '—'}</Text>
+        </Section>
+
+        {/* Details */}
+        <Section style={detailsWrap}>
+          <Text style={sectionTitle}>Order Details</Text>
+          <table style={detailsTable} cellPadding={0} cellSpacing={0}>
             <tbody>
-              <Row label="Order ID" value={orderId ?? '—'} />
-              <Row label="Product Name" value={productName || '—'} alt />
-              <Row label="Customer Email" value={
+              <DetailRow label="Product" value={<strong style={{ color: '#0b1220' }}>{productName || '—'}</strong>} />
+              <DetailRow label="Payment Method" value={paymentMethod || '—'} />
+              <DetailRow label="Email" value={
                 customerEmail ? <Link href={`mailto:${customerEmail}`} style={link}>{customerEmail}</Link> : '—'
               } />
-              <Row label="Customer Phone" value={customerPhone || '—'} alt />
-              <Row label="Payment Method" value={paymentMethod || '—'} />
-              <Row label="Amount" value={`Rs ${amount ?? '—'}`} alt />
+              <DetailRow label="Phone" value={customerPhone || '—'} last />
             </tbody>
           </table>
+        </Section>
 
-          <Text style={text}>
-            The order will be delivered shortly, and you'll receive a separate email with the product information.
+        <Hr style={divider} />
+
+        {/* Support */}
+        <Section style={supportSection}>
+          <Link href={WHATSAPP_LINK} style={waCircle}>
+            <Img src={WHATSAPP_ICON} alt="WhatsApp" width="40" height="40" style={{ display: 'block', margin: '0 auto' }} />
+          </Link>
+          <Text style={supportTitle}>Need help with your order?</Text>
+          <Text style={supportText}>
+            Our team is one tap away on WhatsApp.
           </Text>
+          <Link href={WHATSAPP_LINK} style={supportNumber}>{SUPPORT_WHATSAPP}</Link>
+        </Section>
 
-          <Text style={text}>
-            If you have any questions, contact our support team on WhatsApp:{' '}
-            <Link href={WHATSAPP_LINK} style={link}>{SUPPORT_WHATSAPP}</Link>.
-          </Text>
-
-          <Section style={waWrap}>
-            <Link href={WHATSAPP_LINK} style={waLink}>
-              <Img src={WHATSAPP_ICON} alt="WhatsApp" width="56" height="56" style={waIcon} />
-            </Link>
-            <Text style={waCaption}>Chat with us on WhatsApp</Text>
-          </Section>
-        </Container>
-
+        {/* Footer */}
         <Section style={footer}>
-          <Text style={footerText}>© {SITE_NAME}. All Rights Reserved</Text>
+          <Text style={footerBrand}>{SITE_NAME}</Text>
+          <Text style={footerText}>© {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</Text>
         </Section>
       </Container>
     </Body>
@@ -98,7 +109,8 @@ const NewOrderEmail = ({
 
 export const template = {
   component: NewOrderEmail,
-  subject: 'Order Received',
+  subject: (data: Record<string, any>) =>
+    data?.orderId ? `Order #${data.orderId} confirmed` : 'Order Confirmed',
   displayName: 'New Order',
   previewData: {
     customerEmail: 'prashannapradhan@gmail.com',
@@ -110,22 +122,99 @@ export const template = {
   },
 } satisfies TemplateEntry
 
-const main = { backgroundColor: '#f6f6f4', fontFamily: 'Inter, Arial, sans-serif', margin: 0, padding: '24px 0' }
-const outer = { maxWidth: '640px', backgroundColor: '#ffffff', borderRadius: '10px', overflow: 'hidden' as const, padding: 0, border: '1px solid #ececec' }
-const header = { backgroundColor: '#ffffff', padding: '28px 24px 12px', textAlign: 'center' as const, borderBottom: '1px solid #f0f0f0' }
-const logoImg = { maxHeight: '52px', width: 'auto', display: 'inline-block', margin: '0 auto' }
-const brandText = { color: '#1f2937', fontSize: '22px', fontWeight: 'bold' as const, margin: 0, letterSpacing: '-0.01em' }
-const inner = { padding: '32px 32px 24px', backgroundColor: '#ffffff' }
-const h1 = { fontSize: '26px', fontWeight: 'bold' as const, color: '#111827', margin: '0 0 12px', textAlign: 'center' as const, letterSpacing: '-0.01em' }
-const accentBar = { width: '56px', height: '3px', backgroundColor: '#111827', margin: '0 auto 24px', borderRadius: '2px' }
-const text = { fontSize: '15px', color: '#374151', lineHeight: '1.65', margin: '0 0 16px' }
-const link = { color: '#111827', textDecoration: 'underline', fontWeight: 500 as const }
-const table = { width: '100%', borderCollapse: 'collapse' as const, margin: '20px 0 24px', border: '1px solid #ececec', borderRadius: '8px', overflow: 'hidden' as const }
-const cellLabel = { padding: '13px 16px', fontSize: '14px', fontWeight: 600 as const, color: '#111827', borderBottom: '1px solid #f0f0f0', width: '38%' }
-const cellValue = { padding: '13px 16px', fontSize: '14px', color: '#374151', borderBottom: '1px solid #f0f0f0' }
-const waWrap = { textAlign: 'center' as const, margin: '28px 0 8px' }
-const waLink = { display: 'inline-block', textDecoration: 'none' }
-const waIcon = { display: 'inline-block', margin: '0 auto' }
-const waCaption = { fontSize: '13px', color: '#6b7280', margin: '10px 0 0', textAlign: 'center' as const }
-const footer = { backgroundColor: '#fafafa', padding: '18px', textAlign: 'center' as const, borderTop: '1px solid #f0f0f0' }
-const footerText = { color: '#6b7280', fontSize: '12px', margin: 0 }
+/* ---------- styles ---------- */
+const main = {
+  backgroundColor: '#f4f5f7',
+  fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+  margin: 0,
+  padding: '32px 0',
+  WebkitFontSmoothing: 'antialiased' as const,
+}
+const shell = {
+  maxWidth: '600px',
+  backgroundColor: '#ffffff',
+  borderRadius: '16px',
+  overflow: 'hidden' as const,
+  boxShadow: '0 1px 2px rgba(16,24,40,0.04), 0 8px 24px rgba(16,24,40,0.06)',
+}
+const brandBar = { padding: '28px 32px 8px', textAlign: 'center' as const, backgroundColor: '#ffffff' }
+const logoImg = { maxHeight: '44px', width: 'auto', display: 'inline-block', margin: '0 auto' }
+const brandText = { color: '#0b1220', fontSize: '20px', fontWeight: 700 as const, margin: 0, letterSpacing: '-0.02em' }
+
+const hero = { padding: '8px 40px 28px', textAlign: 'center' as const, backgroundColor: '#ffffff' }
+const eyebrow = {
+  fontSize: '11px', fontWeight: 700 as const, letterSpacing: '0.18em',
+  color: '#6b7280', margin: '0 0 12px', textTransform: 'uppercase' as const,
+}
+const h1 = {
+  fontSize: '28px', fontWeight: 700 as const, color: '#0b1220',
+  margin: '0 0 12px', letterSpacing: '-0.02em', lineHeight: '1.2',
+}
+const heroSub = { fontSize: '15px', color: '#5b6473', lineHeight: '1.6', margin: '0 0 20px' }
+const pillWrap = { textAlign: 'center' as const, margin: 0 }
+const pill = {
+  display: 'inline-block', padding: '7px 14px', backgroundColor: '#f0f2f5',
+  color: '#0b1220', fontSize: '13px', fontWeight: 600 as const, borderRadius: '999px',
+  letterSpacing: '0.02em', margin: 0,
+}
+
+const amountCard = {
+  margin: '0 32px 24px', padding: '22px 24px',
+  background: 'linear-gradient(135deg, #0b1220 0%, #1a2540 100%)',
+  borderRadius: '14px', textAlign: 'center' as const,
+}
+const amountLabel = {
+  fontSize: '11px', color: 'rgba(255,255,255,0.65)', margin: '0 0 6px',
+  fontWeight: 600 as const, letterSpacing: '0.16em', textTransform: 'uppercase' as const,
+}
+const amountValue = {
+  fontSize: '32px', color: '#ffffff', fontWeight: 700 as const, margin: 0,
+  letterSpacing: '-0.02em',
+}
+
+const detailsWrap = { padding: '0 32px 8px' }
+const sectionTitle = {
+  fontSize: '12px', fontWeight: 700 as const, color: '#6b7280',
+  letterSpacing: '0.14em', textTransform: 'uppercase' as const, margin: '0 0 12px',
+}
+const detailsTable = {
+  width: '100%', borderCollapse: 'collapse' as const,
+  border: '1px solid #eef0f3', borderRadius: '12px', overflow: 'hidden' as const,
+  backgroundColor: '#fbfbfc',
+}
+const detailLabel = {
+  padding: '14px 16px', fontSize: '13px', fontWeight: 500 as const,
+  color: '#6b7280', width: '40%', verticalAlign: 'top' as const,
+}
+const detailValue = {
+  padding: '14px 16px', fontSize: '14px', color: '#0b1220',
+  fontWeight: 500 as const, verticalAlign: 'top' as const,
+}
+const link = { color: '#0b1220', textDecoration: 'underline', fontWeight: 500 as const }
+
+const divider = { borderColor: '#eef0f3', margin: '24px 32px' }
+
+const supportSection = { padding: '4px 32px 28px', textAlign: 'center' as const }
+const waCircle = {
+  display: 'inline-block', width: '64px', height: '64px',
+  backgroundColor: '#25D366', borderRadius: '50%', padding: '12px',
+  textDecoration: 'none', boxShadow: '0 6px 16px rgba(37,211,102,0.35)',
+  margin: '0 auto',
+}
+const supportTitle = {
+  fontSize: '16px', fontWeight: 600 as const, color: '#0b1220',
+  margin: '16px 0 4px',
+}
+const supportText = { fontSize: '14px', color: '#6b7280', margin: '0 0 8px', lineHeight: '1.5' }
+const supportNumber = {
+  display: 'inline-block', fontSize: '15px', fontWeight: 600 as const,
+  color: '#0b1220', textDecoration: 'none', padding: '6px 14px',
+  border: '1px solid #e5e7eb', borderRadius: '999px', marginTop: '4px',
+}
+
+const footer = {
+  padding: '20px 32px 28px', textAlign: 'center' as const,
+  backgroundColor: '#fafbfc', borderTop: '1px solid #eef0f3',
+}
+const footerBrand = { fontSize: '13px', fontWeight: 700 as const, color: '#0b1220', margin: '0 0 4px', letterSpacing: '-0.01em' }
+const footerText = { fontSize: '12px', color: '#9ca3af', margin: 0 }
