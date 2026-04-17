@@ -1,14 +1,17 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# *
 User-agent: *
 Allow: /
+
+# *
+User-agent: *
+Disallow: /item/canva
+
+# *
+User-agent: *
+Disallow: /login
+
+# Host
+Host: https://toolsmandu.com
+
+# Sitemaps
+Sitemap: https://toolsmandu.com/sitemap.xml
