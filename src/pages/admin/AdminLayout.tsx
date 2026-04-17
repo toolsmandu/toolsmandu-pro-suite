@@ -67,7 +67,6 @@ const AdminLayout = () => {
     { to: '/admin/faqs', icon: HelpCircle, label: 'FAQs' },
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
     { to: '/admin/tickets', icon: MessageCircle, label: 'Tickets' },
-    ...(isAdmin ? [{ to: '/admin/users', icon: Users, label: 'Users' }] : []),
   ];
 
   return (
