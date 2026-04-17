@@ -39,7 +39,7 @@ const SITE_NAME = 'Toolsmandu'
 const ROOT_DOMAIN = 'web.toolsmandu.com'
 const FROM_EMAIL = 'support@toolsmandu.com'
 const FROM_NAME = 'Toolsmandu'
-const ZEPTOMAIL_API_URL = 'https://api.zeptomail.com/v1.1/email'
+const ZEPTOMAIL_API_URL = Deno.env.get('ZEPTOMAIL_API_URL') || 'https://api.zeptomail.in/v1.1/email'
 
 // Sample data for preview mode ONLY
 const SAMPLE_PROJECT_URL = 'https://toolsmandu-pro-suite.lovable.app'
@@ -60,10 +60,12 @@ async function sendViaZeptoMail(opts: {
   html: string
   text: string
 }): Promise<{ ok: boolean; status: number; body: string }> {
-  const token = Deno.env.get('ZEPTOMAIL_TOKEN')
+  let token = Deno.env.get('ZEPTOMAIL_TOKEN')
   if (!token) {
     throw new Error('ZEPTOMAIL_TOKEN not configured')
   }
+  // Strip prefix if user pasted full Authorization value
+  token = token.trim().replace(/^Zoho-enczapikey\s+/i, '')
 
   const res = await fetch(ZEPTOMAIL_API_URL, {
     method: 'POST',
@@ -82,6 +84,17 @@ async function sendViaZeptoMail(opts: {
   })
 
   const body = await res.text()
+  if (!res.ok) {
+    const headerObj: Record<string, string> = {}
+    res.headers.forEach((v, k) => { headerObj[k] = v })
+    console.error('ZeptoMail raw response', {
+      url: ZEPTOMAIL_API_URL,
+      status: res.status,
+      bodyLen: body.length,
+      bodyPreview: body.slice(0, 300),
+      headers: headerObj,
+    })
+  }
   return { ok: res.ok, status: res.status, body }
 }
 
