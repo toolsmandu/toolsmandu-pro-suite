@@ -1,13 +1,14 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Html, Img, Link, Preview, Section, Text, Button,
+  Body, Container, Head, Heading, Html, Img, Link, Preview, Section, Text, Hr, Button,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
 const SITE_NAME = 'Toolsmandu.com'
-const SITE_URL = 'https://toolsmandu.com'
+const SUPPORT_WHATSAPP = '+9779864484274'
 const WHATSAPP_LINK = 'https://wa.me/9779864484274'
+const WHATSAPP_ICON = 'https://cdn-icons-png.flaticon.com/512/3670/3670051.png'
 const GOOGLE_REVIEW_URL = 'https://g.page/r/toolsmandu/review'
 const TRUSTPILOT_URL = 'https://www.trustpilot.com/review/toolsmandu.com'
 
@@ -21,10 +22,10 @@ interface OrderCompletedProps {
   logoUrl?: string
 }
 
-const Row = ({ label, value, alt }: { label: string; value: React.ReactNode; alt?: boolean }) => (
+const DetailRow = ({ label, value, last }: { label: string; value: React.ReactNode; last?: boolean }) => (
   <tr>
-    <td style={{ ...cellLabel, backgroundColor: alt ? '#f7f7f7' : '#ffffff' }}>{label}</td>
-    <td style={{ ...cellValue, backgroundColor: alt ? '#f7f7f7' : '#ffffff' }}>{value}</td>
+    <td style={{ ...detailLabel, borderBottom: last ? 'none' : '1px solid #eef0f3' }}>{label}</td>
+    <td style={{ ...detailValue, borderBottom: last ? 'none' : '1px solid #eef0f3' }}>{value}</td>
   </tr>
 )
 
@@ -39,67 +40,93 @@ const OrderCompletedEmail = ({
 }: OrderCompletedProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Your order is complete - {SITE_NAME}</Preview>
+    <Preview>Order #{orderId ?? ''} completed — thank you for choosing {SITE_NAME}</Preview>
     <Body style={main}>
-      <Container style={outer}>
-        <Section style={header}>
+      <Container style={shell}>
+        {/* Brand header */}
+        <Section style={brandBar}>
           {logoUrl ? (
             <Img src={logoUrl} alt={SITE_NAME} style={logoImg} />
           ) : (
-            <Text style={brandText}>ToolsMandu</Text>
+            <Text style={brandText}>{SITE_NAME}</Text>
           )}
         </Section>
 
-        <Container style={inner}>
-          <Heading style={h1}>
-            <span style={{ color: '#5b73c8' }}>Order </span>
-            <span style={completedHighlight}>Completed</span>
-          </Heading>
-
-          <Text style={textCenter}>
+        {/* Hero */}
+        <Section style={hero}>
+          <Text style={eyebrow}>ORDER COMPLETED</Text>
+          <Heading style={h1}>Your order is complete</Heading>
+          <Text style={heroSub}>
             Thank you for your recent order with {SITE_NAME}! We're delighted to inform you that your product is now ready for access.
           </Text>
+        </Section>
 
-          {adminMessage && (
-            <>
-              <Text style={subHeading}>Admin has sent you the following message:</Text>
-              <Section style={messageBox}>
-                <div style={messageText} dangerouslySetInnerHTML={{ __html: adminMessage }} />
-              </Section>
-            </>
-          )}
+        {/* Order ID card */}
+        <Section style={amountCard}>
+          <Text style={amountLabel}>Order ID</Text>
+          <Text style={amountValue}>#{orderId ?? '—'}</Text>
+        </Section>
 
-          <Text style={subHeading}>For your reminder, here is your order details:</Text>
+        {/* Admin message */}
+        {adminMessage && (
+          <Section style={messageWrap}>
+            <Text style={sectionTitle}>Message from us</Text>
+            <Section style={messageBox}>
+              <div style={messageText} dangerouslySetInnerHTML={{ __html: adminMessage }} />
+            </Section>
+          </Section>
+        )}
 
-          <table style={table} cellPadding={0} cellSpacing={0}>
+        {/* Details */}
+        <Section style={detailsWrap}>
+          <Text style={sectionTitle}>Order Details</Text>
+          <table style={detailsTable} cellPadding={0} cellSpacing={0}>
             <tbody>
-              <Row label="Customer Email" value={
+              <DetailRow label="Email" value={
                 customerEmail ? <Link href={`mailto:${customerEmail}`} style={link}>{customerEmail}</Link> : '—'
               } />
-              <Row label="Customer Phone" value={customerPhone || '—'} alt />
-              <Row label="Product Name" value={productName || '—'} />
-              <Row label="Order ID" value={orderId ?? '—'} alt />
-              <Row label="Amount" value={`Rs ${amount ?? '—'}`} />
+              <DetailRow label="Phone" value={customerPhone || '—'} />
+              <DetailRow label="Product" value={productName || '—'} />
+              <DetailRow label="Amount" value={`Rs ${amount ?? '—'}`} last />
             </tbody>
           </table>
+        </Section>
 
-          <Text style={textCenter}>
-            If you loved our service, please don't forget to review us.
-          </Text>
-
+        {/* Review CTA */}
+        <Section style={reviewWrap}>
+          <Text style={reviewTitle}>Loved our service?</Text>
+          <Text style={reviewText}>Please take a moment to leave us a review.</Text>
           <Section style={btnRow}>
-            <Button href={GOOGLE_REVIEW_URL} style={btnRed}>Review us on Google</Button>
+            <Button href={GOOGLE_REVIEW_URL} style={btnGoogle}>Review on Google</Button>
             {' '}
-            <Button href={TRUSTPILOT_URL} style={btnGreenDark}>Review us on Trustpilot</Button>
+            <Button href={TRUSTPILOT_URL} style={btnTrustpilot}>Review on Trustpilot</Button>
           </Section>
+        </Section>
 
-          <Section style={btnWrap}>
-            <Button href={WHATSAPP_LINK} style={btnGreen}>Contact us on WhatsApp</Button>
-          </Section>
-        </Container>
+        <Hr style={divider} />
 
+        {/* Support */}
+        <Section style={supportSection}>
+          <Text style={supportTitle}>Need help with your order?</Text>
+          <Text style={supportText}>
+            Our team is one tap away on WhatsApp.
+          </Text>
+          <Link href={WHATSAPP_LINK} style={supportNumber}>
+            <Img
+              src={WHATSAPP_ICON}
+              alt="WhatsApp"
+              width="18"
+              height="18"
+              style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '8px' }}
+            />
+            <span style={{ verticalAlign: 'middle' }}>{SUPPORT_WHATSAPP}</span>
+          </Link>
+        </Section>
+
+        {/* Footer */}
         <Section style={footer}>
-          <Text style={footerText}>© {SITE_NAME}. All Rights Reserved</Text>
+          <Text style={footerBrand}>{SITE_NAME}</Text>
+          <Text style={footerText}>© {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</Text>
         </Section>
       </Container>
     </Body>
@@ -108,7 +135,7 @@ const OrderCompletedEmail = ({
 
 export const template = {
   component: OrderCompletedEmail,
-  subject: 'Order Completed',
+  subject: 'Your Toolsmandu order is complete!',
   displayName: 'Order Completed',
   previewData: {
     customerEmail: 'uddheshyastudio@gmail.com',
@@ -120,26 +147,110 @@ export const template = {
   },
 } satisfies TemplateEntry
 
-const main = { backgroundColor: '#f4f5f7', fontFamily: 'Inter, Arial, sans-serif', margin: 0, padding: '20px 0' }
-const outer = { maxWidth: '640px', backgroundColor: '#ffffff', borderRadius: '4px', overflow: 'hidden' as const, padding: 0 }
-const header = { backgroundColor: '#5b73c8', padding: '24px', textAlign: 'center' as const }
-const logoImg = { maxHeight: '48px', width: 'auto', display: 'inline-block', margin: '0 auto' }
-const brandText = { color: '#ffffff', fontSize: '24px', fontWeight: 'bold' as const, margin: 0 }
-const inner = { padding: '32px 28px', backgroundColor: '#ffffff' }
-const h1 = { fontSize: '26px', fontWeight: 'bold' as const, margin: '0 0 20px', textAlign: 'center' as const }
-const completedHighlight = { backgroundColor: '#fde68a', color: '#1f2937', padding: '2px 10px', borderRadius: '3px' }
-const textCenter = { fontSize: '14px', color: '#374151', lineHeight: '1.6', margin: '0 0 16px', textAlign: 'center' as const }
-const subHeading = { fontSize: '15px', fontWeight: 'bold' as const, color: '#1f2937', margin: '20px 0 12px', textAlign: 'center' as const }
-const messageBox = { backgroundColor: '#eeeeee', padding: '20px 24px', borderRadius: '4px', margin: '0 0 8px' }
-const messageText = { fontSize: '14px', color: '#374151', lineHeight: '1.7', textAlign: 'center' as const }
-const link = { color: '#1e40af', textDecoration: 'underline' }
-const table = { width: '100%', borderCollapse: 'collapse' as const, margin: '12px 0 24px', border: '1px solid #e5e7eb' }
-const cellLabel = { padding: '12px 14px', fontSize: '14px', fontWeight: 'bold' as const, color: '#1f2937', border: '1px solid #e5e7eb', width: '35%' }
-const cellValue = { padding: '12px 14px', fontSize: '14px', color: '#374151', border: '1px solid #e5e7eb' }
-const btnRow = { textAlign: 'center' as const, margin: '20px 0 12px' }
-const btnWrap = { textAlign: 'center' as const, margin: '8px 0 12px' }
-const btnRed = { backgroundColor: '#d9534f', color: '#ffffff', padding: '12px 22px', borderRadius: '4px', fontSize: '14px', fontWeight: 'bold' as const, textDecoration: 'none', display: 'inline-block', marginRight: '8px' }
-const btnGreenDark = { backgroundColor: '#5cb85c', color: '#ffffff', padding: '12px 22px', borderRadius: '4px', fontSize: '14px', fontWeight: 'bold' as const, textDecoration: 'none', display: 'inline-block' }
-const btnGreen = { backgroundColor: '#5cb85c', color: '#ffffff', padding: '12px 24px', borderRadius: '4px', fontSize: '14px', fontWeight: 'bold' as const, textDecoration: 'none', display: 'inline-block' }
-const footer = { backgroundColor: '#5b73c8', padding: '20px', textAlign: 'center' as const }
-const footerText = { color: '#ffffff', fontSize: '13px', margin: 0 }
+/* ---------- styles ---------- */
+const main = {
+  backgroundColor: '#f4f5f7',
+  fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+  margin: 0,
+  padding: '32px 0',
+  WebkitFontSmoothing: 'antialiased' as const,
+}
+const shell = {
+  maxWidth: '600px',
+  backgroundColor: '#ffffff',
+  borderRadius: '16px',
+  overflow: 'hidden' as const,
+  boxShadow: '0 1px 2px rgba(16,24,40,0.04), 0 8px 24px rgba(16,24,40,0.06)',
+}
+const brandBar = { padding: '28px 32px 8px', textAlign: 'center' as const, backgroundColor: '#ffffff' }
+const logoImg = { maxHeight: '44px', width: 'auto', display: 'inline-block', margin: '0 auto' }
+const brandText = { color: '#0b1220', fontSize: '20px', fontWeight: 700 as const, margin: 0, letterSpacing: '-0.02em' }
+
+const hero = { padding: '8px 40px 28px', textAlign: 'center' as const, backgroundColor: '#ffffff' }
+const eyebrow = {
+  fontSize: '11px', fontWeight: 700 as const, letterSpacing: '0.18em',
+  color: '#6b7280', margin: '0 0 12px', textTransform: 'uppercase' as const,
+}
+const h1 = {
+  fontSize: '28px', fontWeight: 700 as const, color: '#0b1220',
+  margin: '0 0 12px', letterSpacing: '-0.02em', lineHeight: '1.2',
+}
+const heroSub = { fontSize: '15px', color: '#5b6473', lineHeight: '1.6', margin: '0 0 20px' }
+
+const amountCard = {
+  margin: '0 0 24px', padding: '22px 24px',
+  background: 'linear-gradient(135deg, #0b1220 0%, #1a2540 100%)',
+  textAlign: 'center' as const,
+}
+const amountLabel = {
+  fontSize: '11px', color: 'rgba(255,255,255,0.65)', margin: '0 0 6px',
+  fontWeight: 600 as const, letterSpacing: '0.16em', textTransform: 'uppercase' as const,
+}
+const amountValue = {
+  fontSize: '32px', color: '#ffffff', fontWeight: 700 as const, margin: 0,
+  letterSpacing: '-0.02em',
+}
+
+const messageWrap = { padding: '0 32px 8px' }
+const messageBox = {
+  backgroundColor: '#fbfbfc', border: '1px solid #eef0f3',
+  borderRadius: '12px', padding: '18px 20px',
+}
+const messageText = { fontSize: '14px', color: '#0b1220', lineHeight: '1.7' }
+
+const detailsWrap = { padding: '16px 32px 8px' }
+const sectionTitle = {
+  fontSize: '12px', fontWeight: 700 as const, color: '#6b7280',
+  letterSpacing: '0.14em', textTransform: 'uppercase' as const, margin: '0 0 12px',
+}
+const detailsTable = {
+  width: '100%', borderCollapse: 'collapse' as const,
+  border: '1px solid #eef0f3', borderRadius: '12px', overflow: 'hidden' as const,
+  backgroundColor: '#fbfbfc',
+}
+const detailLabel = {
+  padding: '14px 16px', fontSize: '13px', fontWeight: 500 as const,
+  color: '#6b7280', width: '40%', verticalAlign: 'top' as const,
+}
+const detailValue = {
+  padding: '14px 16px', fontSize: '14px', color: '#0b1220',
+  verticalAlign: 'top' as const,
+}
+const link = { color: '#0b1220', textDecoration: 'underline', fontWeight: 500 as const }
+
+const reviewWrap = { padding: '20px 32px 8px', textAlign: 'center' as const }
+const reviewTitle = { fontSize: '16px', fontWeight: 600 as const, color: '#0b1220', margin: '0 0 4px' }
+const reviewText = { fontSize: '14px', color: '#6b7280', margin: '0 0 14px' }
+const btnRow = { textAlign: 'center' as const, margin: 0 }
+const btnGoogle = {
+  backgroundColor: '#4285F4', color: '#ffffff', padding: '10px 18px',
+  borderRadius: '999px', fontSize: '14px', fontWeight: 600 as const,
+  textDecoration: 'none', display: 'inline-block', marginRight: '8px',
+}
+const btnTrustpilot = {
+  backgroundColor: '#00b67a', color: '#ffffff', padding: '10px 18px',
+  borderRadius: '999px', fontSize: '14px', fontWeight: 600 as const,
+  textDecoration: 'none', display: 'inline-block',
+}
+
+const divider = { borderColor: '#eef0f3', margin: '24px 32px' }
+
+const supportSection = { padding: '4px 32px 28px', textAlign: 'center' as const }
+const supportTitle = {
+  fontSize: '16px', fontWeight: 600 as const, color: '#0b1220',
+  margin: '16px 0 4px',
+}
+const supportText = { fontSize: '14px', color: '#6b7280', margin: '0 0 8px', lineHeight: '1.5' }
+const supportNumber = {
+  display: 'inline-block', fontSize: '15px', fontWeight: 600 as const,
+  color: '#ffffff', textDecoration: 'none', padding: '10px 18px',
+  backgroundColor: '#25D366', borderRadius: '999px', marginTop: '4px',
+  boxShadow: '0 6px 16px rgba(37,211,102,0.35)',
+}
+
+const footer = {
+  padding: '20px 32px 28px', textAlign: 'center' as const,
+  backgroundColor: '#fafbfc', borderTop: '1px solid #eef0f3',
+}
+const footerBrand = { fontSize: '13px', fontWeight: 700 as const, color: '#0b1220', margin: '0 0 4px', letterSpacing: '-0.01em' }
+const footerText = { fontSize: '12px', color: '#9ca3af', margin: 0 }
