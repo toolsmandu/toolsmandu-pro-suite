@@ -212,8 +212,9 @@ const supportTitle = {
 const supportText = { fontSize: '14px', color: '#6b7280', margin: '0 0 8px', lineHeight: '1.5' }
 const supportNumber = {
   display: 'inline-block', fontSize: '15px', fontWeight: 600 as const,
-  color: '#0b1220', textDecoration: 'none', padding: '6px 14px',
-  border: '1px solid #e5e7eb', borderRadius: '999px', marginTop: '4px',
+  color: '#ffffff', textDecoration: 'none', padding: '10px 18px',
+  backgroundColor: '#25D366', borderRadius: '999px', marginTop: '4px',
+  boxShadow: '0 6px 16px rgba(37,211,102,0.35)',
 }
 
 const footer = {
