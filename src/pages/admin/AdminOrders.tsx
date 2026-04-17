@@ -105,6 +105,24 @@ const AdminOrders = () => {
     enabled: !!selectedOrder,
   });
 
+  // Product-level notes for the products in this order (for quick-paste into customer note)
+  const { data: productNotes } = useQuery({
+    queryKey: ['product-notes-for-order', selectedOrder?.id],
+    queryFn: async () => {
+      const productIds = (selectedOrder?.order_items || [])
+        .map((i: any) => i.product_id)
+        .filter(Boolean);
+      if (!productIds.length) return [];
+      const { data } = await supabase
+        .from('notes')
+        .select('id, heading, description, product_id, products(name)')
+        .in('product_id', productIds)
+        .order('created_at', { ascending: false });
+      return data || [];
+    },
+    enabled: !!selectedOrder,
+  });
+
   const updateOrder = useMutation({
     mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string }) => {
       await supabase.from('orders').update({ total, status: status as any }).eq('id', id);
@@ -666,6 +684,24 @@ const AdminOrders = () => {
                   placeholder="Type a note to send to the customer..."
                   rows={3}
                 />
+                {productNotes && productNotes.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    <Label className="text-[10px] text-muted-foreground block uppercase tracking-wide">Product Notes (click to paste)</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {productNotes.map((n: any) => (
+                        <button
+                          key={n.id}
+                          type="button"
+                          onClick={() => setOrderNote(prev => prev ? `${prev}\n\n${n.description}` : n.description)}
+                          className="text-xs px-2 py-1 rounded-md bg-muted hover:bg-primary hover:text-primary-foreground text-foreground transition-colors border border-border"
+                          title={`${(n.products as any)?.name || ''} — click to paste`}
+                        >
+                          {n.heading || 'Untitled note'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 mt-2">
                   <Checkbox id="admin-only" checked={isAdminOnly} onCheckedChange={(v) => setIsAdminOnly(!!v)} className="border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
                   <Label htmlFor="admin-only" className="text-xs text-muted-foreground cursor-pointer">Admin only (not visible to customer)</Label>
