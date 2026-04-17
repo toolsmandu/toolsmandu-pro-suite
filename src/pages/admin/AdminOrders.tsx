@@ -347,12 +347,9 @@ const AdminOrders = () => {
       }
 
       // Send "Order Completed" email when admin marks the order as completed.
-      // Only fires for non-manual orders (manual orders skip the customer-facing email).
       if (
         editStatus === 'completed' &&
-        selectedOrder.status !== 'completed' &&
-        selectedOrder.payment_method &&
-        selectedOrder.payment_method !== 'manual'
+        selectedOrder.status !== 'completed'
       ) {
         try {
           const [{ data: profile }, { data: logoSetting }] = await Promise.all([
