@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Search, Eye, Pencil, Plus, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
 import { toast } from 'sonner';
 
 const selectClassName =
@@ -78,6 +78,8 @@ const AdminCustomers = () => {
 
   // View handler
   const handleView = async (user: any) => {
+    setEditUser(null);
+    setAddOpen(false);
     setViewUser(user);
     setViewLoading(true);
     const [ordersRes, ticketsRes] = await Promise.all([
@@ -91,6 +93,8 @@ const AdminCustomers = () => {
 
   // Edit handler
   const handleEdit = (user: any) => {
+    setViewUser(null);
+    setAddOpen(false);
     setEditUser(user);
     setEditForm({
       name: user.name || '',
