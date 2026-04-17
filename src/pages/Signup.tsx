@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Check, Mail, UserPlus, LogIn } from 'lucide-react';
+import { Eye, EyeOff, Check, Mail, UserPlus, LogIn, Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
 const countryCodes = [
@@ -39,8 +40,9 @@ const steps = [
   { label: 'Ready to Login', icon: LogIn },
 ];
 
+const RESEND_COOLDOWN = 30;
+
 const Signup = () => {
-  
   const [email, setEmail] = useState('');
   const [countryCode, setCountryCode] = useState('+977');
   const [phone, setPhone] = useState('');
@@ -48,8 +50,13 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [resendIn, setResendIn] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
+  const resendTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { data: settings } = useQuery({
     queryKey: ['site-settings'],
@@ -58,6 +65,26 @@ const Signup = () => {
       return data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string | null>) || {};
     },
   });
+
+  useEffect(() => {
+    return () => {
+      if (resendTimer.current) clearInterval(resendTimer.current);
+    };
+  }, []);
+
+  const startResendCooldown = () => {
+    setResendIn(RESEND_COOLDOWN);
+    if (resendTimer.current) clearInterval(resendTimer.current);
+    resendTimer.current = setInterval(() => {
+      setResendIn((s) => {
+        if (s <= 1) {
+          if (resendTimer.current) clearInterval(resendTimer.current);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+  };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,6 +122,46 @@ const Signup = () => {
 
     setLoading(false);
     setCurrentStep(1);
+    setOtp('');
+    startResendCooldown();
+    toast.success('OTP sent to your email');
+  };
+
+  const handleVerify = async (code: string) => {
+    if (code.length !== 6) return;
+    setVerifying(true);
+    const { error } = await supabase.auth.verifyOtp({
+      email: email.trim(),
+      token: code,
+      type: 'signup',
+    });
+    if (error) {
+      toast.error(error.message || 'Invalid or expired code');
+      setOtp('');
+      setVerifying(false);
+      return;
+    }
+    setVerifying(false);
+    setCurrentStep(2);
+    toast.success('Email verified! Logging you in...');
+    setTimeout(() => navigate('/'), 1200);
+  };
+
+  const handleResend = async () => {
+    if (resendIn > 0) return;
+    setResending(true);
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email.trim(),
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setResending(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success('A new OTP has been sent');
+    startResendCooldown();
   };
 
   return (
@@ -110,8 +177,8 @@ const Signup = () => {
           </CardTitle>
           <CardDescription>
             {currentStep === 0 && 'Create your account'}
-            {currentStep === 1 && 'You are 1 step ahead activating Account'}
-            {currentStep === 2 && 'Your account is ready!'}
+            {currentStep === 1 && 'Enter the 6-digit code sent to your email'}
+            {currentStep === 2 && 'Your account is verified!'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -202,22 +269,85 @@ const Signup = () => {
             </>
           )}
 
-          {/* Step 1: Verify Email */}
+          {/* Step 1: Verify OTP */}
           {currentStep === 1 && (
-            <div className="text-center space-y-4 py-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <Mail className="h-8 w-8 text-primary" />
+            <div className="space-y-5 py-2">
+              <div className="text-center">
+                <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                  <Mail className="h-7 w-7 text-primary" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  We sent a 6-digit code to<br />
+                  <span className="font-medium text-foreground">{email}</span>
+                </p>
               </div>
-              <h3 className="text-lg font-semibold">Check your email</h3>
-              <p className="text-sm text-muted-foreground">
-                We've sent a confirmation link to <span className="font-medium text-foreground">{email}</span>. Click the link in your email to verify your account.
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Didn't receive the email? Check your spam folder.
-              </p>
-              <Button variant="outline" className="w-full" onClick={() => navigate('/login')}>
-                Go to Sign In
+
+              <div className="flex justify-center">
+                <InputOTP
+                  maxLength={6}
+                  value={otp}
+                  onChange={(val) => {
+                    setOtp(val);
+                    if (val.length === 6) handleVerify(val);
+                  }}
+                  disabled={verifying}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+
+              {verifying && (
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Verifying...
+                </div>
+              )}
+
+              <Button
+                type="button"
+                className="w-full"
+                disabled={verifying || otp.length !== 6}
+                onClick={() => handleVerify(otp)}
+              >
+                Verify & Continue
               </Button>
+
+              <div className="text-center text-sm">
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendIn > 0 || resending}
+                  className="text-primary hover:underline disabled:text-muted-foreground disabled:no-underline disabled:cursor-not-allowed"
+                >
+                  {resending
+                    ? 'Sending...'
+                    : resendIn > 0
+                    ? `Resend OTP in ${resendIn}s`
+                    : 'Resend OTP'}
+                </button>
+              </div>
+
+              <p className="text-center text-xs text-muted-foreground">
+                Didn't receive it? Check your spam folder.
+              </p>
+            </div>
+          )}
+
+          {/* Step 2: Done */}
+          {currentStep === 2 && (
+            <div className="text-center space-y-4 py-6">
+              <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <Check className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold">Account verified!</h3>
+              <p className="text-sm text-muted-foreground">Redirecting you...</p>
             </div>
           )}
         </CardContent>
