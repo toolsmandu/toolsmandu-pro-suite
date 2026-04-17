@@ -31,7 +31,7 @@ const AdminCustomers = () => {
 
   // Add customer dialog
   const [addOpen, setAddOpen] = useState(false);
-  const [addForm, setAddForm] = useState({ name: '', email: '', phone: '', role: 'customer' });
+  const [addForm, setAddForm] = useState({ name: '', email: '', phone: '', password: '', role: 'customer' });
 
   // View dialog
   const [viewUser, setViewUser] = useState<any>(null);
@@ -41,7 +41,7 @@ const AdminCustomers = () => {
 
   // Edit dialog
   const [editUser, setEditUser] = useState<any>(null);
-  const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', password: '', emailConfirmed: false, is_suspended: false });
+  const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', password: '', emailConfirmed: false, is_suspended: false, role: 'customer' });
 
 
   const { data: users, isLoading } = useQuery({
@@ -99,6 +99,7 @@ const AdminCustomers = () => {
       password: '',
       emailConfirmed: false,
       is_suspended: user.is_suspended || false,
+      role: user.roles?.[0] || 'customer',
     });
   };
 
@@ -114,6 +115,9 @@ const AdminCustomers = () => {
       };
       if (editForm.password) payload.password = editForm.password;
       if (editForm.emailConfirmed) payload.email_confirmed = true;
+      if (isAdmin && editForm.role !== (editUser.roles?.[0] || 'customer')) {
+        payload.role = editForm.role;
+      }
 
       const { data, error } = await supabase.functions.invoke('admin-manage-user', { body: payload });
       if (error) throw error;
@@ -131,7 +135,7 @@ const AdminCustomers = () => {
   const createUser = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.functions.invoke('admin-manage-user', {
-        body: { action: 'create', name: addForm.name, email: addForm.email, phone: addForm.phone, role: addForm.role },
+        body: { action: 'create', name: addForm.name, email: addForm.email, phone: addForm.phone, password: addForm.password, role: addForm.role },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -139,7 +143,7 @@ const AdminCustomers = () => {
     onSuccess: () => {
       toast.success('Customer created successfully');
       setAddOpen(false);
-      setAddForm({ name: '', email: '', phone: '', role: 'customer' });
+      setAddForm({ name: '', email: '', phone: '', password: '', role: 'customer' });
       queryClient.invalidateQueries({ queryKey: ['admin-customers'] });
     },
     onError: (e: any) => toast.error(e.message),
@@ -165,7 +169,7 @@ const AdminCustomers = () => {
       {addOpen && (
         <div className="border border-border rounded-lg p-4 mb-4 bg-card">
           <h3 className="font-semibold text-foreground mb-3">Add Customer</h3>
-          <p className="text-xs text-muted-foreground mb-4">Create a new user account. Password will be set to the email address.</p>
+          <p className="text-xs text-muted-foreground mb-4">Create a new user account. If password is blank, the email will be used as the password.</p>
           <form onSubmit={e => { e.preventDefault(); createUser.mutate(); }} className="grid gap-4 md:grid-cols-2">
             <div>
               <Label>Email</Label>
@@ -176,10 +180,15 @@ const AdminCustomers = () => {
               <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} />
             </div>
             <div>
+              <Label>Password <span className="text-muted-foreground text-xs">(min 6 chars, optional)</span></Label>
+              <Input type="text" value={addForm.password} onChange={e => setAddForm(f => ({ ...f, password: e.target.value }))} placeholder="Login password" />
+            </div>
+            <div>
               <Label>Role</Label>
               <select value={addForm.role} onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))} className={selectClassName}>
                 <option value="customer">Customer</option>
                 {isAdmin && <option value="editor">Editor</option>}
+                {isAdmin && <option value="admin">Admin</option>}
               </select>
             </div>
             <div className="md:col-span-2 flex justify-end gap-2">
@@ -381,6 +390,18 @@ const AdminCustomers = () => {
             </div>
             {editForm.is_suspended && (
               <p className="text-xs text-destructive">User will be unable to log in and will see: "Your account is suspended, please contact Support team."</p>
+            )}
+
+            {isAdmin && (
+              <div>
+                <Label>Role</Label>
+                <select value={editForm.role} onChange={e => setEditForm(f => ({ ...f, role: e.target.value }))} className={selectClassName}>
+                  <option value="customer">Customer</option>
+                  <option value="editor">Editor</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <p className="text-xs text-muted-foreground mt-1">Change this user's permission level.</p>
+              </div>
             )}
 
             <div className="flex justify-end gap-2 pt-2">
