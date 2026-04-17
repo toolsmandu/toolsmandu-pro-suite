@@ -258,6 +258,52 @@ const AdminOrders = () => {
     if (!selectedOrder) return;
     setSending(true);
     try {
+      // Build a list of audit entries describing what changed
+      const auditEntries: { action: string; details: string }[] = [];
+
+      // Status change
+      if (editStatus !== selectedOrder.status) {
+        auditEntries.push({
+          action: 'status_changed',
+          details: `Status: ${selectedOrder.status} → ${editStatus}`,
+        });
+      }
+
+      // Item changes (added / removed / variation or product changed)
+      const originalItems: any[] = selectedOrder.order_items || [];
+      const productNameById = new Map((products || []).map((p: any) => [p.id, p.name]));
+
+      for (const orig of originalItems) {
+        if (deletedItemIds.includes(orig.id)) {
+          auditEntries.push({
+            action: 'item_removed',
+            details: `Removed: ${orig.products?.name || 'Item'}${orig.variation_name ? ` (${orig.variation_name})` : ''}`,
+          });
+          continue;
+        }
+        const updated = editItems.find(i => !i.isNew && i.id === orig.id);
+        if (!updated) continue;
+        if (updated.product_id !== (orig.product_id || '')) {
+          auditEntries.push({
+            action: 'product_changed',
+            details: `Product: ${orig.products?.name || '—'} → ${productNameById.get(updated.product_id) || '—'}`,
+          });
+        }
+        if (updated.variation_id !== (orig.variation_id || '') || updated.variation_name !== (orig.variation_name || '')) {
+          auditEntries.push({
+            action: 'variation_changed',
+            details: `Variation: ${orig.variation_name || '—'} → ${updated.variation_name || '—'}`,
+          });
+        }
+      }
+
+      for (const newItem of editItems.filter(i => i.isNew)) {
+        auditEntries.push({
+          action: 'item_added',
+          details: `Added: ${productNameById.get(newItem.product_id) || 'Item'}${newItem.variation_name ? ` (${newItem.variation_name})` : ''}`,
+        });
+      }
+
       await updateOrder.mutateAsync({
         id: selectedOrder.id,
         total: parseFloat(editTotal) || selectedOrder.total,
@@ -275,7 +321,24 @@ const AdminOrders = () => {
           sent_by: user!.id,
           is_admin_only: isAdminOnly,
         } as any);
+        auditEntries.push({
+          action: 'note_sent',
+          details: `Sent ${isAdminOnly ? 'admin-only ' : ''}note`,
+        });
         queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
+      }
+
+      // Persist audit entries
+      if (auditEntries.length > 0 && user) {
+        await supabase.from('order_audit_log').insert(
+          auditEntries.map(e => ({
+            order_id: selectedOrder.id,
+            changed_by: user.id,
+            action: e.action,
+            details: e.details,
+          }))
+        );
+        queryClient.invalidateQueries({ queryKey: ['order-audit-log', selectedOrder.id] });
       }
 
       toast.success('Order updated');
