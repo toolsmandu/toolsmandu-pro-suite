@@ -9,6 +9,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Link,
   Preview,
   Section,
@@ -19,12 +20,14 @@ interface InviteEmailProps {
   siteName: string
   siteUrl: string
   confirmationUrl: string
+  logoUrl?: string
 }
 
 export const InviteEmail = ({
   siteName,
   siteUrl,
   confirmationUrl,
+  logoUrl,
 }: InviteEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
@@ -32,9 +35,13 @@ export const InviteEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={brandBar}>
-          <Text style={brandText}>
-            <span style={brandAccent}>Tools</span>mandu
-          </Text>
+          {logoUrl ? (
+            <Img src={logoUrl} alt={siteName} style={logo} />
+          ) : (
+            <Text style={brandText}>
+              <span style={brandAccent}>Tools</span>mandu
+            </Text>
+          )}
         </Section>
         <Heading style={h1}>You've been invited</Heading>
         <Text style={text}>
@@ -66,6 +73,7 @@ const container = { padding: '20px 25px', maxWidth: '560px' }
 const brandBar = { padding: '0 0 24px', borderBottom: '1px solid #e2e8f0', marginBottom: '24px' }
 const brandText = { fontSize: '20px', fontWeight: 'bold' as const, color: '#0f172a', margin: 0 }
 const brandAccent = { color: '#1e40af' }
+const logo = { maxHeight: '48px', width: 'auto', display: 'block' }
 const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#0f172a', margin: '0 0 20px' }
 const text = { fontSize: '14px', color: '#475569', lineHeight: '1.5', margin: '0 0 20px' }
 const link = { color: '#1e40af', textDecoration: 'underline' }

@@ -8,6 +8,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Preview,
   Section,
   Text,
@@ -15,18 +16,23 @@ import {
 
 interface ReauthenticationEmailProps {
   token: string
+  logoUrl?: string
 }
 
-export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
+export const ReauthenticationEmail = ({ token, logoUrl }: ReauthenticationEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>Your verification code</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={brandBar}>
-          <Text style={brandText}>
-            <span style={brandAccent}>Tools</span>mandu
-          </Text>
+          {logoUrl ? (
+            <Img src={logoUrl} alt="Toolsmandu" style={logo} />
+          ) : (
+            <Text style={brandText}>
+              <span style={brandAccent}>Tools</span>mandu
+            </Text>
+          )}
         </Section>
         <Heading style={h1}>Confirm reauthentication</Heading>
         <Text style={text}>Use the code below to confirm your identity:</Text>
@@ -47,6 +53,7 @@ const container = { padding: '20px 25px', maxWidth: '560px' }
 const brandBar = { padding: '0 0 24px', borderBottom: '1px solid #e2e8f0', marginBottom: '24px' }
 const brandText = { fontSize: '20px', fontWeight: 'bold' as const, color: '#0f172a', margin: 0 }
 const brandAccent = { color: '#1e40af' }
+const logo = { maxHeight: '48px', width: 'auto', display: 'block' }
 const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#0f172a', margin: '0 0 20px' }
 const text = { fontSize: '14px', color: '#475569', lineHeight: '1.5', margin: '0 0 20px' }
 const codeStyle = {
