@@ -70,12 +70,17 @@ const OrderCompletedEmail = ({
         {/* Admin message */}
         {adminMessage && (
           <Section style={messageWrap}>
-            <Text style={sectionTitle}>Message from us</Text>
+            <Text style={sectionTitle}>Admin has sent you the following message</Text>
             <Section style={messageBox}>
               <div style={messageText} dangerouslySetInnerHTML={{ __html: adminMessage }} />
             </Section>
           </Section>
         )}
+
+        {/* Reminder line */}
+        <Section style={reminderWrap}>
+          <Text style={reminderText}>For your reminder, here is your order details:</Text>
+        </Section>
 
         {/* Details */}
         <Section style={detailsWrap}>
