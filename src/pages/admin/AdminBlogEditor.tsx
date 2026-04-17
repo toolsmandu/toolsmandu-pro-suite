@@ -140,10 +140,7 @@ const AdminBlogEditor = () => {
             </div>
             <div>
               <Label htmlFor="slug">Slug (URL) *</Label>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground shrink-0">/blog/</span>
-                <Input id="slug" value={form.slug} onChange={e => { setSlugTouched(true); setForm(f => ({ ...f, slug: e.target.value })); }} placeholder="my-blog-post" />
-              </div>
+              <Input id="slug" value={form.slug} onChange={e => { setSlugTouched(true); setForm(f => ({ ...f, slug: e.target.value })); }} placeholder="my-blog-post" />
             </div>
             <div>
               <Label htmlFor="excerpt">Excerpt</Label>
