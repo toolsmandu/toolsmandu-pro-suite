@@ -6,7 +6,7 @@ const DEFAULT_SEND_DELAY_MS = 200
 const DEFAULT_AUTH_TTL_MINUTES = 15
 const DEFAULT_TRANSACTIONAL_TTL_MINUTES = 60
 
-const ZEPTOMAIL_API_URL = 'https://api.zeptomail.com/v1.1/email'
+const ZEPTOMAIL_API_URL = Deno.env.get('ZEPTOMAIL_API_URL') || 'https://api.zeptomail.in/v1.1/email'
 const FROM_EMAIL = 'support@toolsmandu.com'
 const FROM_NAME = 'Toolsmandu'
 
