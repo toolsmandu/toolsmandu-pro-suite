@@ -167,7 +167,7 @@ const AdminCustomers = () => {
       <div className={`${addOpen ? 'flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-foreground">Customers</h2>
-          <Button onClick={() => setAddOpen(true)} disabled={addOpen}>
+          <Button onClick={() => { setViewUser(null); setEditUser(null); setAddOpen(true); }} disabled={addOpen}>
             <Plus className="h-4 w-4 mr-2" /> Add Customer
           </Button>
         </div>
