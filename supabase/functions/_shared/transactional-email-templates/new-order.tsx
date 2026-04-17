@@ -85,14 +85,20 @@ const NewOrderEmail = ({
 
         {/* Support */}
         <Section style={supportSection}>
-          <Link href={WHATSAPP_LINK} style={waCircle}>
-            <Img src={WHATSAPP_ICON} alt="WhatsApp" width="40" height="40" style={{ display: 'block', margin: '0 auto' }} />
-          </Link>
           <Text style={supportTitle}>Need help with your order?</Text>
           <Text style={supportText}>
             Our team is one tap away on WhatsApp.
           </Text>
-          <Link href={WHATSAPP_LINK} style={supportNumber}>{SUPPORT_WHATSAPP}</Link>
+          <Link href={WHATSAPP_LINK} style={supportNumber}>
+            <Img
+              src={WHATSAPP_ICON}
+              alt="WhatsApp"
+              width="18"
+              height="18"
+              style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '8px' }}
+            />
+            <span style={{ verticalAlign: 'middle' }}>{SUPPORT_WHATSAPP}</span>
+          </Link>
         </Section>
 
         {/* Footer */}
