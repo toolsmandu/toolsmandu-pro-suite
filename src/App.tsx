@@ -50,6 +50,10 @@ import AdminCredentialDetail from "./pages/admin/AdminCredentialDetail";
 import AdminFlashSaleLabels from "./pages/admin/AdminFlashSaleLabels";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminNotes from "./pages/admin/AdminNotes";
+import AdminBlogs from "./pages/admin/AdminBlogs";
+import AdminBlogEditor from "./pages/admin/AdminBlogEditor";
+import BlogList from "./pages/BlogList";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +78,8 @@ const App = () => (
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/payment/verify" element={<PaymentVerify />} />
+                <Route path="/blog" element={<BlogList />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
@@ -93,6 +99,8 @@ const App = () => (
                 <Route path="customers" element={<AdminCustomers />} />
                 <Route path="media" element={<AdminMedia />} />
                 <Route path="notes" element={<AdminNotes />} />
+                <Route path="blogs" element={<AdminBlogs />} />
+                <Route path="blogs/:id" element={<AdminBlogEditor />} />
                 <Route path="hero-slides" element={<AdminHeroSlides />} />
                 <Route path="tickets" element={<AdminTickets />} />
                 <Route path="users" element={<AdminUsers />} />
