@@ -17,10 +17,10 @@ const corsHeaders = {
 }
 
 const EMAIL_SUBJECTS: Record<string, string> = {
-  signup: 'Confirm your email',
+  signup: 'Your verification code',
   invite: "You've been invited",
   magiclink: 'Your login link',
-  recovery: 'Reset your password',
+  recovery: 'Your password reset code',
   email_change: 'Confirm your new email',
   reauthentication: 'Your verification code',
 }
@@ -45,9 +45,9 @@ const ZEPTOMAIL_API_URL = Deno.env.get('ZEPTOMAIL_API_URL') || 'https://api.zept
 const SAMPLE_PROJECT_URL = 'https://toolsmandu-pro-suite.lovable.app'
 const SAMPLE_EMAIL = 'user@example.test'
 const SAMPLE_DATA: Record<string, object> = {
-  signup: { siteName: SITE_NAME, siteUrl: SAMPLE_PROJECT_URL, recipient: SAMPLE_EMAIL, confirmationUrl: SAMPLE_PROJECT_URL },
-  magiclink: { siteName: SITE_NAME, confirmationUrl: SAMPLE_PROJECT_URL },
-  recovery: { siteName: SITE_NAME, confirmationUrl: SAMPLE_PROJECT_URL },
+  signup: { siteName: SITE_NAME, siteUrl: SAMPLE_PROJECT_URL, recipient: SAMPLE_EMAIL, token: '123456' },
+  magiclink: { siteName: SITE_NAME, confirmationUrl: SAMPLE_PROJECT_URL, token: '123456' },
+  recovery: { siteName: SITE_NAME, token: '123456' },
   invite: { siteName: SITE_NAME, siteUrl: SAMPLE_PROJECT_URL, confirmationUrl: SAMPLE_PROJECT_URL },
   email_change: { siteName: SITE_NAME, email: SAMPLE_EMAIL, newEmail: SAMPLE_EMAIL, confirmationUrl: SAMPLE_PROJECT_URL },
   reauthentication: { token: '123456' },

@@ -4,7 +4,6 @@ import * as React from 'npm:react@18.3.1'
 
 import {
   Body,
-  Button,
   Container,
   Head,
   Heading,
@@ -19,18 +18,18 @@ interface SignupEmailProps {
   siteName: string
   siteUrl: string
   recipient: string
-  confirmationUrl: string
+  token: string
 }
 
 export const SignupEmail = ({
   siteName,
   siteUrl,
   recipient,
-  confirmationUrl,
+  token,
 }: SignupEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Confirm your email for {siteName}</Preview>
+    <Preview>Your {siteName} verification code is {token}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={brandBar}>
@@ -38,26 +37,22 @@ export const SignupEmail = ({
             <span style={brandAccent}>Tools</span>mandu
           </Text>
         </Section>
-        <Heading style={h1}>Confirm your email</Heading>
+        <Heading style={h1}>Verify your email</Heading>
         <Text style={text}>
           Welcome to{' '}
           <Link href={siteUrl} style={link}>
             <strong>{siteName}</strong>
           </Link>
-          ! We're excited to have you on board.
+          ! Use the verification code below to activate your account
+          ({recipient}).
         </Text>
-        <Text style={text}>
-          Please confirm your email address (
-          <Link href={`mailto:${recipient}`} style={link}>
-            {recipient}
-          </Link>
-          ) by clicking the button below to activate your account.
-        </Text>
-        <Section style={buttonWrap}>
-          <Button style={button} href={confirmationUrl}>
-            Verify Email
-          </Button>
+        <Section style={otpWrap}>
+          <Text style={otpCode}>{token}</Text>
+          <Text style={otpLabel}>This code expires in 15 minutes</Text>
         </Section>
+        <Text style={text}>
+          Enter this 6-digit code on the verification screen to complete signup.
+        </Text>
         <Text style={footer}>
           If you didn't create an account, you can safely ignore this email.
         </Text>
@@ -76,14 +71,20 @@ const brandAccent = { color: '#1e40af' }
 const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#0f172a', margin: '0 0 20px' }
 const text = { fontSize: '14px', color: '#475569', lineHeight: '1.5', margin: '0 0 20px' }
 const link = { color: '#1e40af', textDecoration: 'underline' }
-const buttonWrap = { margin: '28px 0' }
-const button = {
-  backgroundColor: '#1e40af',
-  color: '#ffffff',
-  fontSize: '14px',
-  fontWeight: 'bold' as const,
+const otpWrap = {
+  margin: '28px 0',
+  padding: '24px',
+  backgroundColor: '#f1f5f9',
   borderRadius: '8px',
-  padding: '12px 24px',
-  textDecoration: 'none',
+  textAlign: 'center' as const,
 }
+const otpCode = {
+  fontSize: '36px',
+  fontWeight: 'bold' as const,
+  color: '#1e40af',
+  letterSpacing: '8px',
+  margin: '0 0 8px',
+  fontFamily: 'monospace',
+}
+const otpLabel = { fontSize: '12px', color: '#64748b', margin: 0 }
 const footer = { fontSize: '12px', color: '#94a3b8', margin: '30px 0 0' }

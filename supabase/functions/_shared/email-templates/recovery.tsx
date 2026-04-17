@@ -4,7 +4,6 @@ import * as React from 'npm:react@18.3.1'
 
 import {
   Body,
-  Button,
   Container,
   Head,
   Heading,
@@ -16,16 +15,16 @@ import {
 
 interface RecoveryEmailProps {
   siteName: string
-  confirmationUrl: string
+  token: string
 }
 
 export const RecoveryEmail = ({
   siteName,
-  confirmationUrl,
+  token,
 }: RecoveryEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Reset your password for {siteName}</Preview>
+    <Preview>Your {siteName} password reset code is {token}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={brandBar}>
@@ -35,14 +34,17 @@ export const RecoveryEmail = ({
         </Section>
         <Heading style={h1}>Reset your password</Heading>
         <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
-          the button below to choose a new password.
+          We received a request to reset your password for {siteName}. Use the
+          verification code below to continue.
         </Text>
-        <Section style={buttonWrap}>
-          <Button style={button} href={confirmationUrl}>
-            Reset Password
-          </Button>
+        <Section style={otpWrap}>
+          <Text style={otpCode}>{token}</Text>
+          <Text style={otpLabel}>This code expires in 15 minutes</Text>
         </Section>
+        <Text style={text}>
+          Enter this 6-digit code on the password reset screen to choose a new
+          password.
+        </Text>
         <Text style={footer}>
           If you didn't request a password reset, you can safely ignore this
           email. Your password will not be changed.
@@ -61,14 +63,20 @@ const brandText = { fontSize: '20px', fontWeight: 'bold' as const, color: '#0f17
 const brandAccent = { color: '#1e40af' }
 const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#0f172a', margin: '0 0 20px' }
 const text = { fontSize: '14px', color: '#475569', lineHeight: '1.5', margin: '0 0 20px' }
-const buttonWrap = { margin: '28px 0' }
-const button = {
-  backgroundColor: '#1e40af',
-  color: '#ffffff',
-  fontSize: '14px',
-  fontWeight: 'bold' as const,
+const otpWrap = {
+  margin: '28px 0',
+  padding: '24px',
+  backgroundColor: '#f1f5f9',
   borderRadius: '8px',
-  padding: '12px 24px',
-  textDecoration: 'none',
+  textAlign: 'center' as const,
 }
+const otpCode = {
+  fontSize: '36px',
+  fontWeight: 'bold' as const,
+  color: '#1e40af',
+  letterSpacing: '8px',
+  margin: '0 0 8px',
+  fontFamily: 'monospace',
+}
+const otpLabel = { fontSize: '12px', color: '#64748b', margin: 0 }
 const footer = { fontSize: '12px', color: '#94a3b8', margin: '30px 0 0' }
