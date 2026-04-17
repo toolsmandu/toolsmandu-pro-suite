@@ -533,10 +533,9 @@ const AdminOrders = () => {
         }
       }
 
-      // If payment method is not "manual", treat this as a real customer order:
-      // send the "Order Received" email AND the "Order Completed" email
-      // (manual orders are created already in completed status).
-      if (newPaymentMethod !== 'manual') {
+      // Send "Order Received" + "Order Completed" emails for the manually-created order.
+      {
+
         try {
           const [{ data: profile }, { data: logoSetting }] = await Promise.all([
             supabase.from('profiles').select('email, phone').eq('user_id', selectedCustomer.user_id).maybeSingle(),
