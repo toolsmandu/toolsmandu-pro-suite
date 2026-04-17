@@ -108,6 +108,26 @@ const AdminOrders = () => {
     enabled: !!selectedOrder,
   });
 
+  const { data: auditLog } = useQuery({
+    queryKey: ['order-audit-log', selectedOrder?.id],
+    queryFn: async () => {
+      const { data: logs } = await supabase
+        .from('order_audit_log')
+        .select('*')
+        .eq('order_id', selectedOrder!.id)
+        .order('created_at', { ascending: false });
+      if (!logs?.length) return [];
+      const userIds = [...new Set(logs.map((l: any) => l.changed_by))];
+      const { data: profs } = await supabase
+        .from('profiles')
+        .select('user_id, name, email')
+        .in('user_id', userIds);
+      const profMap = new Map((profs || []).map((p: any) => [p.user_id, p]));
+      return logs.map((l: any) => ({ ...l, profile: profMap.get(l.changed_by) }));
+    },
+    enabled: !!selectedOrder,
+  });
+
   // Product-level notes for the products in this order (for quick-paste into customer note)
   const { data: productNotes } = useQuery({
     queryKey: ['product-notes-for-order', selectedOrder?.id],
@@ -238,6 +258,52 @@ const AdminOrders = () => {
     if (!selectedOrder) return;
     setSending(true);
     try {
+      // Build a list of audit entries describing what changed
+      const auditEntries: { action: string; details: string }[] = [];
+
+      // Status change
+      if (editStatus !== selectedOrder.status) {
+        auditEntries.push({
+          action: 'status_changed',
+          details: `Status: ${selectedOrder.status} → ${editStatus}`,
+        });
+      }
+
+      // Item changes (added / removed / variation or product changed)
+      const originalItems: any[] = selectedOrder.order_items || [];
+      const productNameById = new Map((products || []).map((p: any) => [p.id, p.name]));
+
+      for (const orig of originalItems) {
+        if (deletedItemIds.includes(orig.id)) {
+          auditEntries.push({
+            action: 'item_removed',
+            details: `Removed: ${orig.products?.name || 'Item'}${orig.variation_name ? ` (${orig.variation_name})` : ''}`,
+          });
+          continue;
+        }
+        const updated = editItems.find(i => !i.isNew && i.id === orig.id);
+        if (!updated) continue;
+        if (updated.product_id !== (orig.product_id || '')) {
+          auditEntries.push({
+            action: 'product_changed',
+            details: `Product: ${orig.products?.name || '—'} → ${productNameById.get(updated.product_id) || '—'}`,
+          });
+        }
+        if (updated.variation_id !== (orig.variation_id || '') || updated.variation_name !== (orig.variation_name || '')) {
+          auditEntries.push({
+            action: 'variation_changed',
+            details: `Variation: ${orig.variation_name || '—'} → ${updated.variation_name || '—'}`,
+          });
+        }
+      }
+
+      for (const newItem of editItems.filter(i => i.isNew)) {
+        auditEntries.push({
+          action: 'item_added',
+          details: `Added: ${productNameById.get(newItem.product_id) || 'Item'}${newItem.variation_name ? ` (${newItem.variation_name})` : ''}`,
+        });
+      }
+
       await updateOrder.mutateAsync({
         id: selectedOrder.id,
         total: parseFloat(editTotal) || selectedOrder.total,
@@ -255,7 +321,24 @@ const AdminOrders = () => {
           sent_by: user!.id,
           is_admin_only: isAdminOnly,
         } as any);
+        auditEntries.push({
+          action: 'note_sent',
+          details: `Sent ${isAdminOnly ? 'admin-only ' : ''}note`,
+        });
         queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
+      }
+
+      // Persist audit entries
+      if (auditEntries.length > 0 && user) {
+        await supabase.from('order_audit_log').insert(
+          auditEntries.map(e => ({
+            order_id: selectedOrder.id,
+            changed_by: user.id,
+            action: e.action,
+            details: e.details,
+          }))
+        );
+        queryClient.invalidateQueries({ queryKey: ['order-audit-log', selectedOrder.id] });
       }
 
       toast.success('Order updated');
@@ -709,6 +792,26 @@ const AdminOrders = () => {
                 <Save className="h-4 w-4 mr-2" />
                 {sending ? 'Updating...' : 'Update Order'}
               </Button>
+
+              {/* Change History (audit log) */}
+              {auditLog && auditLog.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground block">Change History</Label>
+                  <div className="space-y-1.5">
+                    {auditLog.map((log: any) => {
+                      const who = log.profile?.name || log.profile?.email || 'Unknown';
+                      return (
+                        <div key={log.id} className="bg-muted/30 rounded-md p-2 text-xs">
+                          <p className="text-foreground">{log.details}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                            by <span className="text-foreground font-medium">{who}</span> · {formatDateTime(log.created_at)}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Sent Notes History */}
               {orderNotes && orderNotes.length > 0 && (
