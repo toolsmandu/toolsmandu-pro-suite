@@ -202,6 +202,8 @@ const messageBox = {
   borderRadius: '12px', padding: '18px 20px',
 }
 const messageText = { fontSize: '14px', color: '#0b1220', lineHeight: '1.7' }
+const reminderWrap = { padding: '12px 32px 0', textAlign: 'center' as const }
+const reminderText = { fontSize: '14px', color: '#5b6473', margin: 0, lineHeight: '1.6' }
 
 const detailsWrap = { padding: '16px 32px 8px' }
 const sectionTitle = {
