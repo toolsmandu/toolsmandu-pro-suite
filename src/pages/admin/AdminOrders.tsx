@@ -171,7 +171,35 @@ const AdminOrders = () => {
       });
 
       const isFamilySharing = (fsByVariant?.length ?? 0) > 0 || (fsByProduct?.length ?? 0) > 0;
-      return { isFamilySharing, templates: Array.from(templates) };
+      const templateList = Array.from(templates);
+
+      // Fetch actual sent static-note rows for this order matching the templates,
+      // along with the sender (admin/editor) email.
+      let sentNotes: { note: string; created_at: string; senderEmail: string | null }[] = [];
+      if (templateList.length > 0 && selectedOrder?.id) {
+        const { data: notes } = await supabase
+          .from('order_notes')
+          .select('note, created_at, sent_by')
+          .eq('order_id', selectedOrder.id)
+          .in('note', templateList)
+          .order('created_at', { ascending: false });
+        const senderIds = [...new Set((notes || []).map((n: any) => n.sent_by).filter(Boolean))];
+        let profMap = new Map<string, string>();
+        if (senderIds.length) {
+          const { data: profs } = await supabase
+            .from('profiles')
+            .select('user_id, email')
+            .in('user_id', senderIds);
+          profMap = new Map((profs || []).map((p: any) => [p.user_id, p.email]));
+        }
+        sentNotes = (notes || []).map((n: any) => ({
+          note: n.note,
+          created_at: n.created_at,
+          senderEmail: profMap.get(n.sent_by) || null,
+        }));
+      }
+
+      return { isFamilySharing, templates: templateList, sentNotes };
     },
     enabled: !!selectedOrder,
   });
