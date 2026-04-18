@@ -1091,6 +1091,42 @@ const AdminOrders = () => {
                 </div>
               </div>
 
+              {/* Customer Submitted Information */}
+              {(() => {
+                const items = (selectedOrder?.order_items || []) as any[];
+                const itemsWithResponses = items.filter((it) => Array.isArray(it.input_field_responses) && it.input_field_responses.length > 0);
+                if (itemsWithResponses.length === 0) return null;
+                return (
+                  <div>
+                    <Label className="text-xs text-muted-foreground mb-1 block">Customer Submitted Information</Label>
+                    <div className="bg-muted/30 rounded-lg p-3 space-y-3">
+                      {itemsWithResponses.map((it: any) => {
+                        const productName = it.products?.name || 'Product';
+                        const label = it.variation_name ? `${productName} — ${it.variation_name}` : productName;
+                        const responses = it.input_field_responses as any[];
+                        return (
+                          <div key={it.id} className="space-y-2">
+                            <p className="text-xs font-semibold text-foreground">{label}</p>
+                            <div className="space-y-1.5 pl-2 border-l-2 border-primary/40">
+                              {responses.map((r: any, idx: number) => {
+                                const heading = r.question || r.label || r.field_name || 'Field';
+                                const val = Array.isArray(r.value) ? (r.value.length ? r.value.join(', ') : '—') : (r.value === '' || r.value == null ? '—' : String(r.value));
+                                return (
+                                  <div key={idx} className="text-sm pl-2">
+                                    <p className="text-xs text-muted-foreground">{heading}</p>
+                                    <p className="text-foreground break-words whitespace-pre-wrap">{val}</p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <Label className="text-xs text-muted-foreground">Products</Label>
