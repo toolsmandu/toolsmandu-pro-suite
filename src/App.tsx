@@ -35,6 +35,7 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminProductTypes from "./pages/admin/AdminProductTypes";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminOrders from "./pages/admin/AdminOrders";
+import AdminExpiredOrders from "./pages/admin/AdminExpiredOrders";
 import AdminHeroSlides from "./pages/admin/AdminHeroSlides";
 
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -99,6 +100,7 @@ const App = () => (
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="flash-sale-labels" element={<AdminFlashSaleLabels />} />
                 <Route path="orders" element={<AdminOrders />} />
+                <Route path="expired-orders" element={<AdminExpiredOrders />} />
                 <Route path="customers" element={<AdminCustomers />} />
                 <Route path="media" element={<AdminMedia />} />
                 <Route path="notes" element={<AdminNotes />} />
