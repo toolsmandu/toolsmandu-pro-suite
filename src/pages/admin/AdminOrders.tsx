@@ -76,7 +76,7 @@ const AdminOrders = () => {
   const [newVariationId, setNewVariationId] = useState('');
   const [newAmount, setNewAmount] = useState('');
   const [newPaymentMethod, setNewPaymentMethod] = useState('manual');
-  const [setStatusProcessing, setSetStatusProcessing] = useState(false);
+  
   const [newRemarks, setNewRemarks] = useState('');
   const [creatingOrder, setCreatingOrder] = useState(false);
 
@@ -518,7 +518,6 @@ const AdminOrders = () => {
     setNewVariationId('');
     setNewAmount('');
     setNewPaymentMethod('manual');
-    setSetStatusProcessing(false);
     setNewRemarks('');
   };
 
@@ -552,11 +551,9 @@ const AdminOrders = () => {
       const isFamilySharing = !!familyProductId;
 
       // Final status:
-      //  - admin checked "Set status to processing" → processing (skip emails)
-      //  - else family-sharing variant → completed
-      //  - else regular variant → processing + send only new-order email
-      const finalStatus: 'processing' | 'completed' =
-        setStatusProcessing ? 'processing' : (isFamilySharing ? 'completed' : 'processing');
+      //  - family-sharing variant → completed
+      //  - regular variant → processing + send only new-order email
+      const finalStatus: 'processing' | 'completed' = isFamilySharing ? 'completed' : 'processing';
 
       const { data: order, error: orderError } = await supabase.from('orders').insert({
         user_id: selectedCustomer.user_id,
@@ -637,19 +634,9 @@ const AdminOrders = () => {
       }
 
       // Email logic:
-      //  - setStatusProcessing checkbox → suppress all customer emails (existing behavior)
       //  - family-sharing variant → new-order + order-completed (with template as adminMessage)
       //  - regular variant → new-order only; suppress later order-completed when admin completes the order
-      if (setStatusProcessing) {
-        if (user) {
-          await supabase.from('order_audit_log').insert({
-            order_id: order.id,
-            changed_by: user.id,
-            action: 'manual_no_customer_emails',
-            details: 'Order created in processing mode — customer emails suppressed',
-          });
-        }
-      } else {
+      {
         try {
           const [{ data: profile }, { data: logoSetting }] = await Promise.all([
             supabase.from('profiles').select('email, phone').eq('user_id', selectedCustomer.user_id).maybeSingle(),
@@ -1237,17 +1224,6 @@ const AdminOrders = () => {
                   <option value="manual">Manual</option>
                   <option value="khalti">Khalti</option>
                 </select>
-                <div className="flex items-center gap-2 mt-2">
-                  <Checkbox
-                    id="set-status-processing"
-                    checked={setStatusProcessing}
-                    onCheckedChange={(v) => setSetStatusProcessing(!!v)}
-                    className="border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  <Label htmlFor="set-status-processing" className="text-xs text-muted-foreground cursor-pointer">
-                    Set Order Status: Processing
-                  </Label>
-                </div>
               </div>
 
               {/* Remarks */}
