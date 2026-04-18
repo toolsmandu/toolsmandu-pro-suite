@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ShoppingCart, Check, Heart } from 'lucide-react';
+import { ShoppingCart, Check } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
@@ -321,18 +321,6 @@ const ProductPage = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <h1 className="text-3xl font-bold text-foreground flex-1">{product.name}</h1>
-                      <button
-                        onClick={() => user ? toggleWishlist.mutate() : toast.error('Please login to add to wishlist')}
-                        className={cn(
-                          "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-300",
-                          isWishlisted
-                            ? "border-[#16a249]/30 text-[#16a249]"
-                            : "bg-muted/30 border-border text-muted-foreground hover:border-[#16a249]/30 hover:text-[#16a249] hover:bg-[#16a249]/10"
-                        )}
-                      >
-                        <Heart className={cn("h-4 w-4", isWishlisted && "fill-current")} />
-                        {isWishlisted ? 'Wishlisted' : 'Wishlist'}
-                      </button>
                     </div>
                     <div className="border-t mt-1 mb-3" style={{ borderColor: 'white' }}></div>
                     <div className="flex items-center gap-8">
