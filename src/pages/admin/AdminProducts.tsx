@@ -133,6 +133,8 @@ const AdminProducts = () => {
       return data || [];
     },
   });
+
+  const filteredProducts = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
     return (products || []).filter((product: any) => {
