@@ -25,7 +25,7 @@ import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import ProfilePage from "./pages/dashboard/ProfilePage";
 import OrdersPage from "./pages/dashboard/OrdersPage";
 import TicketsPage from "./pages/dashboard/TicketsPage";
-import WishlistPage from "./pages/dashboard/WishlistPage";
+
 
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -86,7 +86,6 @@ const App = () => (
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
                   <Route path="tickets" element={<TicketsPage />} />
-                  <Route path="wishlist" element={<WishlistPage />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Route>

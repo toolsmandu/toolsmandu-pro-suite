@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 const trustpilotImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494880317-8uue9fe7kpp.webp';
 const googleReviewsImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494878578-cse3wn6nvgm.webp';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, Menu, X, Heart, icons } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, icons } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
@@ -132,11 +132,6 @@ const Navbar = () => {
 
             {/* Desktop actions */}
             <div className="hidden md:flex items-center gap-3">
-              {user && (
-                <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard/wishlist')} aria-label="Wishlist">
-                  <Heart className="h-5 w-5" />
-                </Button>
-              )}
               <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')} aria-label="Cart">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (

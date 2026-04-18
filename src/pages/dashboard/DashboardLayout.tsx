@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
-import { User, Package, MessageCircle, Heart } from 'lucide-react';
+import { User, Package, MessageCircle } from 'lucide-react';
 
 const DashboardLayout = () => {
   const { user, loading } = useAuth();
@@ -18,7 +18,6 @@ const DashboardLayout = () => {
     { to: '/dashboard', icon: User, label: 'Profile', end: true },
     { to: '/dashboard/orders', icon: Package, label: 'Orders' },
     { to: '/dashboard/tickets', icon: MessageCircle, label: 'Tickets' },
-    { to: '/dashboard/wishlist', icon: Heart, label: 'Wishlist' },
   ];
 
   return (
