@@ -35,6 +35,7 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminProductTypes from "./pages/admin/AdminProductTypes";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminOrders from "./pages/admin/AdminOrders";
+import AdminExpiredOrders from "./pages/admin/AdminExpiredOrders";
 import AdminHeroSlides from "./pages/admin/AdminHeroSlides";
 
 import AdminUsers from "./pages/admin/AdminUsers";
