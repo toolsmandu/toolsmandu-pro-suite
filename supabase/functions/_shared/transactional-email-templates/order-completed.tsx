@@ -22,8 +22,6 @@ interface OrderCompletedProps {
   texts?: {
     eyebrow?: string
     heading?: string
-    sub_message?: string
-    admin_message_header?: string
     reminder_text?: string
     support_title?: string
     support_text?: string
@@ -33,8 +31,6 @@ interface OrderCompletedProps {
 const DEFAULT_TEXTS = {
   eyebrow: 'ORDER COMPLETED',
   heading: 'Your order is complete',
-  sub_message: `Thank you for your recent order with ${SITE_NAME}! We're delighted to inform you that your product is now ready for access.`,
-  admin_message_header: 'Admin has sent you the following message',
   reminder_text: 'For your reminder, here is your order details:',
   support_title: 'Need help with your order?',
   support_text: 'Our team is one tap away on WhatsApp.',
@@ -105,12 +101,10 @@ const OrderCompletedEmail = ({
 
         <div style={hero}>
           <Text style={eyebrow}>{t.eyebrow}</Text>
-          <Text style={heroSub}>{t.sub_message}</Text>
         </div>
 
         {cleanAdminMessage && (
           <div style={messageWrap}>
-            <Text style={sectionTitle}>{t.admin_message_header}</Text>
             <div style={messageBox}>
               <div style={messageText} dangerouslySetInnerHTML={{ __html: cleanAdminMessage }} />
             </div>
@@ -122,7 +116,6 @@ const OrderCompletedEmail = ({
         </div>
 
         <div style={detailsWrap}>
-          <Text style={sectionTitle}>Order Details</Text>
           <table style={detailsTable} cellPadding={0} cellSpacing={0}>
             <tbody>
               <DetailRow label="Email" value={customerEmail || '—'} />
