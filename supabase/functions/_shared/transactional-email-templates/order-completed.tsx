@@ -113,8 +113,9 @@ const OrderCompletedEmail = ({
           </div>
         )}
 
-        <div style={orderIdWrap}>
-          <Text style={orderIdText}>Order ID: <strong>#{orderId ?? '—'}</strong></Text>
+        <div style={orderIdCard}>
+          <Text style={orderIdLabel}>Order ID</Text>
+          <Text style={orderIdValue}>#{orderId ?? '—'}</Text>
         </div>
 
         <div style={reminderWrap}>
