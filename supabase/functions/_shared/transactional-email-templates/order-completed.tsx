@@ -100,7 +100,6 @@ const OrderCompletedEmail = ({
 
         <div style={hero}>
           <Text style={eyebrow}>{t.eyebrow}</Text>
-          <Heading style={h1}>{t.heading}</Heading>
           <Text style={heroSub}>{t.sub_message}</Text>
         </div>
 
