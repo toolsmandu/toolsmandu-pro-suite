@@ -4,7 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Button } from '@/components/ui/button';
+import { Search, Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/formatDate';
 
 type Filter = 'expired_today' | 'all';
@@ -12,6 +16,8 @@ type Filter = 'expired_today' | 'all';
 const AdminExpiredOrders = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<Filter>('expired_today');
+  const [productFilter, setProductFilter] = useState<string>('all');
+  const [productPopoverOpen, setProductPopoverOpen] = useState(false);
 
   const { data: rows, isLoading } = useQuery({
     queryKey: ['expired-orders'],
@@ -63,9 +69,16 @@ const AdminExpiredOrders = () => {
     },
   });
 
+  const productOptions = useMemo(() => {
+    const set = new Set<string>();
+    (rows || []).forEach((r: any) => set.add(r.product));
+    return Array.from(set).sort();
+  }, [rows]);
+
   const filtered = useMemo(() => {
     let list = rows || [];
     if (filter === 'expired_today') list = list.filter(r => r.remaining === -1);
+    if (productFilter !== 'all') list = list.filter(r => r.product === productFilter);
     const term = search.trim().toLowerCase();
     if (term) {
       list = list.filter(r =>
@@ -76,7 +89,7 @@ const AdminExpiredOrders = () => {
       );
     }
     return list.sort((a, b) => a.remaining - b.remaining);
-  }, [rows, filter, search]);
+  }, [rows, filter, search, productFilter]);
 
   return (
     <div className="space-y-4">
@@ -97,6 +110,43 @@ const AdminExpiredOrders = () => {
             className="pl-9"
           />
         </div>
+        <Popover open={productPopoverOpen} onOpenChange={setProductPopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" role="combobox" className="w-full sm:w-[240px] justify-between">
+              <span className="truncate">
+                {productFilter === 'all' ? 'All products' : productFilter}
+              </span>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[280px] p-0" align="end">
+            <Command>
+              <CommandInput placeholder="Search product..." />
+              <CommandList>
+                <CommandEmpty>No product found.</CommandEmpty>
+                <CommandGroup>
+                  <CommandItem
+                    value="all"
+                    onSelect={() => { setProductFilter('all'); setProductPopoverOpen(false); }}
+                  >
+                    <Check className={cn('mr-2 h-4 w-4', productFilter === 'all' ? 'opacity-100' : 'opacity-0')} />
+                    All products
+                  </CommandItem>
+                  {productOptions.map((p) => (
+                    <CommandItem
+                      key={p}
+                      value={p}
+                      onSelect={() => { setProductFilter(p); setProductPopoverOpen(false); }}
+                    >
+                      <Check className={cn('mr-2 h-4 w-4', productFilter === p ? 'opacity-100' : 'opacity-0')} />
+                      <span className="truncate">{p}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
         <Select value={filter} onValueChange={(v) => setFilter(v as Filter)}>
           <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue />
