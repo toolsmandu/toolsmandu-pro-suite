@@ -36,24 +36,79 @@ const DEFAULT_TEXTS = {
   support_text: 'Our team is one tap away on WhatsApp.',
 }
 
-// Sanitize admin-message HTML: keep a small whitelist of tags, strip all
-// attributes except href on <a>. This keeps the rendered email lean and
-// avoids bloat from rich-text editor inline styles.
-const ALLOWED_TAGS = new Set(['p', 'strong', 'b', 'em', 'i', 'u', 'a', 'br', 'ul', 'ol', 'li', 'span'])
+// Sanitize admin-message HTML: keep a richer whitelist of tags so formatting
+// from the rich-text editor (alignment, headings, lists, images, links) is
+// preserved. We allow a small set of safe attributes including `style` so
+// text-align coming from TipTap survives.
+const ALLOWED_TAGS = new Set([
+  'p', 'div', 'span', 'br', 'hr',
+  'strong', 'b', 'em', 'i', 'u', 's', 'strike',
+  'a', 'img',
+  'ul', 'ol', 'li',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'blockquote', 'pre', 'code',
+  'table', 'thead', 'tbody', 'tr', 'td', 'th',
+])
+const ALLOWED_ATTRS_BY_TAG: Record<string, Set<string>> = {
+  a: new Set(['href', 'title', 'target', 'rel', 'style']),
+  img: new Set(['src', 'alt', 'title', 'width', 'height', 'style']),
+}
+const DEFAULT_ALLOWED_ATTRS = new Set(['style', 'class'])
+
+function sanitizeStyle(style: string): string {
+  const safeProps = new Set([
+    'text-align', 'font-weight', 'font-style', 'text-decoration',
+    'color', 'background-color', 'margin', 'margin-left', 'margin-right',
+    'margin-top', 'margin-bottom', 'padding', 'padding-left', 'padding-right',
+    'padding-top', 'padding-bottom', 'width', 'height', 'max-width', 'display',
+  ])
+  return style
+    .split(';')
+    .map((d) => d.trim())
+    .filter(Boolean)
+    .filter((d) => {
+      const idx = d.indexOf(':')
+      if (idx === -1) return false
+      const prop = d.slice(0, idx).trim().toLowerCase()
+      const val = d.slice(idx + 1).trim().toLowerCase()
+      if (!safeProps.has(prop)) return false
+      if (val.includes('url(') || val.includes('expression(') || val.includes('javascript:')) return false
+      return true
+    })
+    .join('; ')
+}
+
 function sanitizeAdminHtml(html: string): string {
-  // Remove script/style blocks entirely
   let out = html.replace(/<(script|style)[\s\S]*?<\/\1>/gi, '')
-  // Strip all attributes except href on <a>
+  out = out.replace(/\son[a-z]+\s*=\s*"[^"]*"/gi, '')
+  out = out.replace(/\son[a-z]+\s*=\s*'[^']*'/gi, '')
+
   out = out.replace(/<([a-zA-Z0-9]+)([^>]*)>/g, (_m, tag: string, attrs: string) => {
     const lower = tag.toLowerCase()
     if (!ALLOWED_TAGS.has(lower)) return ''
-    if (lower === 'a') {
-      const href = attrs.match(/\shref\s*=\s*"([^"]*)"/i) || attrs.match(/\shref\s*=\s*'([^']*)'/i)
-      return href ? `<a href="${href[1]}">` : '<a>'
+    const allowed = ALLOWED_ATTRS_BY_TAG[lower] || DEFAULT_ALLOWED_ATTRS
+    const kept: string[] = []
+    const attrRegex = /\s([a-zA-Z\-:]+)\s*=\s*"([^"]*)"|\s([a-zA-Z\-:]+)\s*=\s*'([^']*)'/g
+    let m: RegExpExecArray | null
+    while ((m = attrRegex.exec(attrs)) !== null) {
+      const name = (m[1] || m[3] || '').toLowerCase()
+      let value = m[2] ?? m[4] ?? ''
+      if (!allowed.has(name)) continue
+      if (name === 'href' || name === 'src') {
+        const v = value.trim().toLowerCase()
+        if (v.startsWith('javascript:') || (v.startsWith('data:') && !v.startsWith('data:image/'))) continue
+      }
+      if (name === 'style') {
+        value = sanitizeStyle(value)
+        if (!value) continue
+      }
+      const safeVal = value.replace(/"/g, '&quot;')
+      kept.push(`${name}="${safeVal}"`)
     }
-    return `<${lower}>`
+    if (lower === 'a' && !kept.some((k) => k.startsWith('target='))) kept.push('target="_blank"')
+    if (lower === 'a' && !kept.some((k) => k.startsWith('rel='))) kept.push('rel="noopener noreferrer"')
+    return kept.length ? `<${lower} ${kept.join(' ')}>` : `<${lower}>`
   })
-  // Strip closing tags not in whitelist
   out = out.replace(/<\/([a-zA-Z0-9]+)>/g, (_m, tag: string) => {
     const lower = tag.toLowerCase()
     return ALLOWED_TAGS.has(lower) ? `</${lower}>` : ''
