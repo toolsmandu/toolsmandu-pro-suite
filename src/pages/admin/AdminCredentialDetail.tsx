@@ -43,6 +43,7 @@ interface AssignedCustomer {
 const AdminCredentialDetail = () => {
   const { credentialId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [credential, setCredential] = useState<CredentialData | null>(null);
   const [customers, setCustomers] = useState<AssignedCustomer[]>([]);
   const [editedExpiry, setEditedExpiry] = useState<Record<string, string>>({});
