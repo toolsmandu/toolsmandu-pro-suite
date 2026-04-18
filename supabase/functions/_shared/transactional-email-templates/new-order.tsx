@@ -153,7 +153,7 @@ const eyebrow = {
   color: '#6b7280', margin: '0 0 12px', textTransform: 'uppercase' as const,
 }
 const h1 = {
-  fontSize: '28px', fontWeight: 700 as const, color: '#0b1220',
+  fontSize: '16px', fontWeight: 700 as const, color: '#0b1220',
   margin: '0 0 12px', lineHeight: '1.2',
 }
 const heroSub = { fontSize: '15px', color: '#5b6473', lineHeight: '1.6', margin: '0 0 20px' }
