@@ -49,6 +49,9 @@ const AdminFamilySharingDetail = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [variantDialogOpen, setVariantDialogOpen] = useState(false);
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [orderNoteTemplate, setOrderNoteTemplate] = useState("");
+  const [savingTemplate, setSavingTemplate] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedCredentialId, setSelectedCredentialId] = useState<string | null>(null);
   const [selectedVariantMap, setSelectedVariantMap] = useState<Record<string, string>>({});
