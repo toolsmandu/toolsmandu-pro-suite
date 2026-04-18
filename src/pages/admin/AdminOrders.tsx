@@ -1237,17 +1237,6 @@ const AdminOrders = () => {
                   <option value="manual">Manual</option>
                   <option value="khalti">Khalti</option>
                 </select>
-                <div className="flex items-center gap-2 mt-2">
-                  <Checkbox
-                    id="set-status-processing"
-                    checked={setStatusProcessing}
-                    onCheckedChange={(v) => setSetStatusProcessing(!!v)}
-                    className="border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  <Label htmlFor="set-status-processing" className="text-xs text-muted-foreground cursor-pointer">
-                    Set Order Status: Processing
-                  </Label>
-                </div>
               </div>
 
               {/* Remarks */}
