@@ -125,6 +125,23 @@ Deno.serve(async (req) => {
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+  // Fetch admin-editable text overrides from email_templates table
+  let dbTexts: Record<string, string> = {}
+  try {
+    const { data: tmplRow } = await supabase
+      .from('email_templates')
+      .select('fields')
+      .eq('template_key', templateName)
+      .maybeSingle()
+    if (tmplRow?.fields && typeof tmplRow.fields === 'object') {
+      dbTexts = tmplRow.fields as Record<string, string>
+    }
+  } catch (e) {
+    console.error('Failed to fetch email_templates row', { templateName, error: e })
+  }
+  // Inject DB-stored texts into templateData under `texts` key (caller can still override)
+  templateData = { ...templateData, texts: { ...dbTexts, ...(templateData.texts || {}) } }
+
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
   const { data: suppressed, error: suppressionError } = await supabase
     .from('suppressed_emails')

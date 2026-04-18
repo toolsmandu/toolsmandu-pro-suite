@@ -17,34 +17,45 @@ import {
 interface ReauthenticationEmailProps {
   token: string
   logoUrl?: string
+  texts?: {
+    heading?: string
+    body?: string
+    footer_note?: string
+  }
 }
 
-export const ReauthenticationEmail = ({ token, logoUrl }: ReauthenticationEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Your verification code</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={brandBar}>
-          {logoUrl ? (
-            <Img src={logoUrl} alt="Toolsmandu" style={logo} />
-          ) : (
-            <Text style={brandText}>
-              <span style={brandAccent}>Tools</span>mandu
-            </Text>
-          )}
-        </Section>
-        <Heading style={h1}>Confirm reauthentication</Heading>
-        <Text style={text}>Use the code below to confirm your identity:</Text>
-        <Text style={codeStyle}>{token}</Text>
-        <Text style={footer}>
-          This code will expire shortly. If you didn't request this, you can
-          safely ignore this email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+const DEFAULTS = {
+  heading: 'Confirm reauthentication',
+  body: "Use the code below to confirm your identity:",
+  footer_note: "This code will expire shortly. If you didn't request this, you can safely ignore this email.",
+}
+
+export const ReauthenticationEmail = ({ token, logoUrl, texts }: ReauthenticationEmailProps) => {
+  const t = { ...DEFAULTS, ...(texts || {}) }
+  return (
+    <Html lang="en" dir="ltr">
+      <Head />
+      <Preview>Your verification code</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={brandBar}>
+            {logoUrl ? (
+              <Img src={logoUrl} alt="Toolsmandu" style={logo} />
+            ) : (
+              <Text style={brandText}>
+                <span style={brandAccent}>Tools</span>mandu
+              </Text>
+            )}
+          </Section>
+          <Heading style={h1}>{t.heading}</Heading>
+          <div style={text} dangerouslySetInnerHTML={{ __html: t.body }} />
+          <Text style={codeStyle}>{token}</Text>
+          <div style={footer} dangerouslySetInnerHTML={{ __html: t.footer_note }} />
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export default ReauthenticationEmail
 

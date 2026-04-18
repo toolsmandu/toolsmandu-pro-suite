@@ -18,6 +18,21 @@ interface NewOrderProps {
   orderId?: string | number
   amount?: string | number
   logoUrl?: string
+  texts?: {
+    eyebrow?: string
+    heading?: string
+    sub_message?: string
+    support_title?: string
+    support_text?: string
+  }
+}
+
+const DEFAULT_TEXTS = {
+  eyebrow: 'ORDER CONFIRMATION',
+  heading: 'Thank you for your order',
+  sub_message: "We've received your order and it's being prepared. A separate email with your product details will follow shortly.",
+  support_title: 'Need help with your order?',
+  support_text: 'Our team is one tap away on WhatsApp.',
 }
 
 const DetailRow = ({ label, value, last }: { label: string; value: React.ReactNode; last?: boolean }) => (
@@ -35,7 +50,10 @@ const NewOrderEmail = ({
   orderId,
   amount,
   logoUrl,
-}: NewOrderProps) => (
+  texts,
+}: NewOrderProps) => {
+  const t = { ...DEFAULT_TEXTS, ...(texts || {}) }
+  return (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>Order #{orderId ?? ''} confirmed — thank you for choosing {SITE_NAME}</Preview>
@@ -52,11 +70,9 @@ const NewOrderEmail = ({
 
         {/* Hero */}
         <Section style={hero}>
-          <Text style={eyebrow}>ORDER CONFIRMATION</Text>
-          <Heading style={h1}>Thank you for your order</Heading>
-          <Text style={heroSub}>
-            We've received your order and it's being prepared. A separate email with your product details will follow shortly.
-          </Text>
+          <Text style={eyebrow}>{t.eyebrow}</Text>
+          <Heading style={h1}>{t.heading}</Heading>
+          <Text style={heroSub}>{t.sub_message}</Text>
         </Section>
 
         {/* Order ID card */}
@@ -85,10 +101,8 @@ const NewOrderEmail = ({
 
         {/* Support */}
         <Section style={supportSection}>
-          <Text style={supportTitle}>Need help with your order?</Text>
-          <Text style={supportText}>
-            Our team is one tap away on WhatsApp.
-          </Text>
+          <Text style={supportTitle}>{t.support_title}</Text>
+          <Text style={supportText}>{t.support_text}</Text>
           <Link href={WHATSAPP_LINK} style={supportNumber}>
             <Img
               src={WHATSAPP_ICON}
@@ -109,11 +123,12 @@ const NewOrderEmail = ({
       </Container>
     </Body>
   </Html>
-)
+  )
+}
 
 export const template = {
   component: NewOrderEmail,
-  subject: 'Your Toolsmandu order has been received!',
+  subject: (data: Record<string, any>) => data?.texts?.subject || 'Your Toolsmandu order has been received!',
   displayName: 'New Order',
   previewData: {
     customerEmail: 'prashannapradhan@gmail.com',
