@@ -147,7 +147,10 @@ const OrderCompletedEmail = ({
 
 export const template = {
   component: OrderCompletedEmail,
-  subject: (data: Record<string, any>) => data?.texts?.subject || 'Your Toolsmandu order is now completed!',
+  subject: (data: Record<string, any>) => {
+    const base = data?.texts?.subject || 'Your Toolsmandu order is now completed!'
+    return data?.orderId ? `${base} (#${data.orderId})` : base
+  },
   displayName: 'Order Completed',
   previewData: {
     customerEmail: 'uddheshyastudio@gmail.com',
