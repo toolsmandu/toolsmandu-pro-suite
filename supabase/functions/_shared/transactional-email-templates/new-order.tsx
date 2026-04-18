@@ -66,14 +66,14 @@ const NewOrderEmail = ({
           )}
         </div>
 
-        <div style={hero}>
-          <Text style={eyebrow}>{t.eyebrow}</Text>
-          <Text style={heroSub}>{t.sub_message}</Text>
-        </div>
-
         <div style={amountCard}>
           <Text style={amountLabel}>Order ID</Text>
           <Text style={amountValue}>#{orderId ?? '—'}</Text>
+        </div>
+
+        <div style={hero}>
+          <Text style={eyebrow}>{t.eyebrow}</Text>
+          <Text style={heroSub}>{t.sub_message}</Text>
         </div>
 
         <div style={detailsWrap}>
