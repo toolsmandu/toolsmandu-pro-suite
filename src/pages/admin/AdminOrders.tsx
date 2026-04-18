@@ -978,10 +978,27 @@ const AdminOrders = () => {
                 <Label className="text-xs text-muted-foreground mb-1 block">Customer Information</Label>
                 <div className="bg-muted/30 rounded-lg p-3 space-y-1 text-sm">
                   <p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{formatDateTime(selectedOrder.created_at)}</span></p>
+                  <p><span className="text-muted-foreground">Ordered By:</span> <span className="text-foreground">{selectedOrder?.profiles?.name || selectedOrder?.profiles?.email || '-'}</span></p>
                   <p><span className="text-muted-foreground">Customer:</span> <span className="text-foreground">{selectedOrder?.profiles?.email || '-'}</span></p>
                   <p><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{selectedOrder?.profiles?.phone || '-'}</span></p>
                 </div>
               </div>
+
+              {/* Family Sharing — Static Note Sent */}
+              {familySharingInfo?.isFamilySharing && familySharingInfo.templates.length > 0 && (
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Static Note Sent (Family Sharing)</Label>
+                  <div className="bg-muted/30 rounded-lg p-3 space-y-2 text-sm">
+                    {familySharingInfo.templates.map((t, i) => (
+                      <div
+                        key={i}
+                        className="prose prose-sm prose-invert max-w-none text-foreground [&_*]:text-foreground"
+                        dangerouslySetInnerHTML={{ __html: t }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Payment Information */}
               <div>
