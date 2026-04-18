@@ -22,6 +22,7 @@ interface OrderCompletedProps {
   texts?: {
     eyebrow?: string
     heading?: string
+    sub_message?: string
     reminder_text?: string
     support_title?: string
     support_text?: string
@@ -31,6 +32,7 @@ interface OrderCompletedProps {
 const DEFAULT_TEXTS = {
   eyebrow: 'ORDER COMPLETED',
   heading: 'Your order is complete',
+  sub_message: '',
   reminder_text: 'For your reminder, here is your order details:',
   support_title: 'Need help with your order?',
   support_text: 'Our team is one tap away on WhatsApp.',
@@ -101,6 +103,7 @@ const OrderCompletedEmail = ({
 
         <div style={hero}>
           <Text style={eyebrow}>{t.eyebrow}</Text>
+          {t.sub_message && <Text style={heroSub}>{t.sub_message}</Text>}
         </div>
 
         {cleanAdminMessage && (
