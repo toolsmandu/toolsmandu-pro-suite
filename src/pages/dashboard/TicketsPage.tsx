@@ -153,7 +153,7 @@ const TicketsPage = () => {
                 </SelectTrigger>
                 <SelectContent className="border-0">
                   {orders?.map(order => (
-                    <SelectItem key={order.id} value={order.id}>{order.order_number}</SelectItem>
+                    <SelectItem key={order.id} value={order.id}>{order.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
