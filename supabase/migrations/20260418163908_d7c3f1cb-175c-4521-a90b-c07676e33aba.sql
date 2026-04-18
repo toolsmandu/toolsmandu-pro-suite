@@ -1,0 +1,1 @@
+ALTER TABLE public.family_sharing_products ADD COLUMN IF NOT EXISTS order_note_template text;

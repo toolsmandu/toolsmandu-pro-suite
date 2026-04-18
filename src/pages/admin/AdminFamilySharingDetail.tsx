@@ -11,6 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { FileText } from "lucide-react";
 import { toast } from "sonner";
 
 interface Credential {
@@ -47,6 +49,9 @@ const AdminFamilySharingDetail = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [variantDialogOpen, setVariantDialogOpen] = useState(false);
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [orderNoteTemplate, setOrderNoteTemplate] = useState("");
+  const [savingTemplate, setSavingTemplate] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedCredentialId, setSelectedCredentialId] = useState<string | null>(null);
   const [selectedVariantMap, setSelectedVariantMap] = useState<Record<string, string>>({});
@@ -55,12 +60,13 @@ const AdminFamilySharingDetail = () => {
   const fetchData = async () => {
     const { data: fp } = await supabase
       .from("family_sharing_products")
-      .select("id, product_id, products(name)")
+      .select("id, product_id, order_note_template, products(name)")
       .eq("id", id)
       .single();
     if (fp) {
       setProductName((fp as any).products?.name || "Unknown");
       setProductId(fp.product_id);
+      setOrderNoteTemplate((fp as any).order_note_template || "");
 
       const { data: vars } = await supabase
         .from("product_variations")
@@ -152,6 +158,18 @@ const AdminFamilySharingDetail = () => {
     fetchData();
   };
 
+  const handleSaveTemplate = async () => {
+    setSavingTemplate(true);
+    const { error } = await supabase
+      .from("family_sharing_products")
+      .update({ order_note_template: orderNoteTemplate || null })
+      .eq("id", id!);
+    setSavingTemplate(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Template saved");
+    setTemplateDialogOpen(false);
+  };
+
   const handleSaveVariantLinks = async () => {
     if (!selectedCredentialId) return;
     // Remove existing links for this credential
@@ -206,9 +224,14 @@ const AdminFamilySharingDetail = () => {
         <h2 className="text-xl font-bold text-foreground">{productName} — Credentials</h2>
       </div>
 
-      <Button onClick={openAdd} className="gap-2">
-        <Plus className="h-4 w-4" /> Add Credential
-      </Button>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button onClick={openAdd} className="gap-2">
+          <Plus className="h-4 w-4" /> Add Credential
+        </Button>
+        <Button variant="outline" onClick={() => setTemplateDialogOpen(true)} className="gap-2">
+          <FileText className="h-4 w-4" /> Edit Template
+        </Button>
+      </div>
 
       <Table>
         <TableHeader>
@@ -326,6 +349,29 @@ const AdminFamilySharingDetail = () => {
               </div>
             )}
             <Button onClick={handleSaveVariantLinks} className="w-full">Save Assignments</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Order Note Template Dialog */}
+      <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Order Note Template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-xs text-muted-foreground">
+              This note will be sent to the customer as an order note when they order any variation of this product assigned to family sharing.
+            </p>
+            <Textarea
+              value={orderNoteTemplate}
+              onChange={(e) => setOrderNoteTemplate(e.target.value)}
+              placeholder="Write the order note here..."
+              className="min-h-[200px]"
+            />
+            <Button onClick={handleSaveTemplate} disabled={savingTemplate} className="w-full">
+              {savingTemplate ? "Saving..." : "Save Template"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
