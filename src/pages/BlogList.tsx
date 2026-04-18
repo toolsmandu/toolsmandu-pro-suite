@@ -83,7 +83,7 @@ const BlogList = () => {
                   ) : (
                     <div className="w-full aspect-[16/9] bg-muted" />
                   )}
-                  <div className="p-4 flex-1 flex flex-col">
+                  <div className="p-4 flex-1 flex flex-col bg-[#0c2d5a]">
                     <h2 className="font-semibold text-foreground line-clamp-2 group-hover:text-white transition-colors">{b.title}</h2>
                     {b.excerpt && <p className="text-sm text-muted-foreground line-clamp-2 mt-2 flex-1">{b.excerpt}</p>}
                     {b.published_at && (
