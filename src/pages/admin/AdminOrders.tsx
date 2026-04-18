@@ -135,6 +135,47 @@ const AdminOrders = () => {
     enabled: !!selectedOrder,
   });
 
+  // Family-sharing template note for the products/variations in this order
+  const { data: familySharingInfo } = useQuery({
+    queryKey: ['family-sharing-info-for-order', selectedOrder?.id],
+    queryFn: async () => {
+      const items = (selectedOrder?.order_items || []) as any[];
+      const variantIds = items.map((i) => i.variation_id).filter(Boolean);
+      const productIds = items.map((i) => i.product_id).filter(Boolean);
+      if (!variantIds.length && !productIds.length) return null;
+
+      // Find family_sharing_products linked via variants OR product directly
+      const [{ data: fsByVariant }, { data: fsByProduct }] = await Promise.all([
+        variantIds.length
+          ? supabase
+              .from('family_sharing_product_variants')
+              .select('family_product_id, variant_id, family_sharing_products(order_note_template, product_id)')
+              .in('variant_id', variantIds)
+          : Promise.resolve({ data: [] as any[] }),
+        productIds.length
+          ? supabase
+              .from('family_sharing_products')
+              .select('id, order_note_template, product_id')
+              .in('product_id', productIds)
+          : Promise.resolve({ data: [] as any[] }),
+      ]);
+
+      const templates = new Set<string>();
+      (fsByVariant || []).forEach((r: any) => {
+        const t = r.family_sharing_products?.order_note_template?.trim();
+        if (t) templates.add(t);
+      });
+      (fsByProduct || []).forEach((r: any) => {
+        const t = r.order_note_template?.trim();
+        if (t) templates.add(t);
+      });
+
+      const isFamilySharing = (fsByVariant?.length ?? 0) > 0 || (fsByProduct?.length ?? 0) > 0;
+      return { isFamilySharing, templates: Array.from(templates) };
+    },
+    enabled: !!selectedOrder,
+  });
+
   // Product-level notes for the products in this order (for quick-paste into customer note)
   const { data: productNotes } = useQuery({
     queryKey: ['product-notes-for-order', selectedOrder?.id],
@@ -937,10 +978,27 @@ const AdminOrders = () => {
                 <Label className="text-xs text-muted-foreground mb-1 block">Customer Information</Label>
                 <div className="bg-muted/30 rounded-lg p-3 space-y-1 text-sm">
                   <p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{formatDateTime(selectedOrder.created_at)}</span></p>
+                  <p><span className="text-muted-foreground">Ordered By:</span> <span className="text-foreground">{selectedOrder?.profiles?.name || selectedOrder?.profiles?.email || '-'}</span></p>
                   <p><span className="text-muted-foreground">Customer:</span> <span className="text-foreground">{selectedOrder?.profiles?.email || '-'}</span></p>
                   <p><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{selectedOrder?.profiles?.phone || '-'}</span></p>
                 </div>
               </div>
+
+              {/* Family Sharing — Static Note Sent */}
+              {familySharingInfo?.isFamilySharing && familySharingInfo.templates.length > 0 && (
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Static Note Sent (Family Sharing)</Label>
+                  <div className="bg-muted/30 rounded-lg p-3 space-y-2 text-sm">
+                    {familySharingInfo.templates.map((t, i) => (
+                      <div
+                        key={i}
+                        className="prose prose-sm prose-invert max-w-none text-foreground [&_*]:text-foreground"
+                        dangerouslySetInnerHTML={{ __html: t }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Payment Information */}
               <div>
