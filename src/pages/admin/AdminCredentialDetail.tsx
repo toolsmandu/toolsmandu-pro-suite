@@ -332,6 +332,14 @@ const AdminCredentialDetail = () => {
         .update({ assigned_count: credential.assigned_count + 1 })
         .eq("id", credential.id);
 
+      if (user) {
+        await sendFamilySharingOrderNote({
+          credentialId: credential.id,
+          orderId: lookupResult.orderId,
+          adminUserId: user.id,
+        });
+      }
+
       toast.success("Order assigned successfully");
       setAddingManual(false);
       setManualOrderNumber("");
