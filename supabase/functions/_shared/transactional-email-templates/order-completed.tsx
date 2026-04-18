@@ -98,6 +98,11 @@ const OrderCompletedEmail = ({
           )}
         </div>
 
+        <div style={orderIdCard}>
+          <Text style={orderIdLabel}>Order ID</Text>
+          <Text style={orderIdValue}>#{orderId ?? '—'}</Text>
+        </div>
+
         <div style={hero}>
           <Text style={eyebrow}>{t.eyebrow}</Text>
           <Text style={heroSub}>{t.sub_message}</Text>
@@ -111,11 +116,6 @@ const OrderCompletedEmail = ({
             </div>
           </div>
         )}
-
-        <div style={orderIdCard}>
-          <Text style={orderIdLabel}>Order ID</Text>
-          <Text style={orderIdValue}>#{orderId ?? '—'}</Text>
-        </div>
 
         <div style={reminderWrap}>
           <Text style={reminderText}>{t.reminder_text}</Text>
