@@ -238,6 +238,25 @@ async function handleWebhook(req: Request): Promise<Response> {
     console.error('Failed to fetch logo from site_settings', e)
   }
 
+  // Fetch admin-editable text overrides + subject for this auth email type
+  let dbTexts: Record<string, string> = {}
+  let dbSubject: string | undefined
+  try {
+    const { data: tmplRow } = await supabase
+      .from('email_templates')
+      .select('fields')
+      .eq('template_key', emailType)
+      .maybeSingle()
+    if (tmplRow?.fields && typeof tmplRow.fields === 'object') {
+      const f = tmplRow.fields as Record<string, string>
+      dbSubject = f.subject
+      const { subject: _omit, ...rest } = f
+      dbTexts = rest
+    }
+  } catch (e) {
+    console.error('Failed to fetch email_templates row', { emailType, error: e })
+  }
+
   const templateProps = {
     siteName: SITE_NAME,
     siteUrl: `https://${ROOT_DOMAIN}`,
@@ -247,10 +266,12 @@ async function handleWebhook(req: Request): Promise<Response> {
     email: payload.data.email,
     newEmail: payload.data.new_email,
     logoUrl,
+    texts: dbTexts,
   }
 
   const html = await renderAsync(React.createElement(EmailTemplate, templateProps))
   const text = await renderAsync(React.createElement(EmailTemplate, templateProps), { plainText: true })
+
   const messageId = crypto.randomUUID()
 
   await supabase.from('email_send_log').insert({
