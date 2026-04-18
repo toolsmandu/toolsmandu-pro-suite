@@ -280,6 +280,35 @@ const ProductPage = () => {
                 </div>
               )}
 
+              {selectedVariant && activeFields.length > 0 && (
+                <div
+                  className="mb-4 rounded-xl p-4"
+                  style={{
+                    border: '1.5px dashed rgba(34, 139, 230, 0.6)',
+                    background: 'linear-gradient(135deg, rgba(34,139,230,0.08), rgba(21,170,191,0.08))',
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <ClipboardList className="h-4 w-4 text-[#15aabf]" />
+                    <h4 className="text-sm font-bold text-foreground">Provide Required Information:</h4>
+                  </div>
+                  <div className="space-y-3">
+                    {activeFields.map((f) => (
+                      <InputFieldRenderer
+                        key={f.id}
+                        field={f}
+                        value={fieldValues[f.id]}
+                        error={fieldErrors[f.id]}
+                        onChange={(v) => {
+                          setFieldValues((prev) => ({ ...prev, [f.id]: v }));
+                          setFieldErrors((prev) => { const n = { ...prev }; delete n[f.id]; return n; });
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {isOutOfStock ? (
                 <Button size="lg" className="w-full" disabled>
                   Out of Stock
