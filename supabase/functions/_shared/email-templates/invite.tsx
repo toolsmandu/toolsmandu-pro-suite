@@ -10,7 +10,6 @@ import {
   Heading,
   Html,
   Img,
-  Link,
   Preview,
   Section,
   Text,
@@ -21,50 +20,56 @@ interface InviteEmailProps {
   siteUrl: string
   confirmationUrl: string
   logoUrl?: string
+  texts?: {
+    heading?: string
+    body?: string
+    cta_label?: string
+    footer_note?: string
+  }
+}
+
+const DEFAULTS = {
+  heading: "You've been invited",
+  body: 'You have been invited to join. Click below to accept the invitation and create your account.',
+  cta_label: 'Accept Invitation',
+  footer_note: "If you weren't expecting this invitation, you can safely ignore this email.",
 }
 
 export const InviteEmail = ({
   siteName,
-  siteUrl,
   confirmationUrl,
   logoUrl,
-}: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>You've been invited to join {siteName}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={brandBar}>
-          {logoUrl ? (
-            <Img src={logoUrl} alt={siteName} style={logo} />
-          ) : (
-            <Text style={brandText}>
-              <span style={brandAccent}>Tools</span>mandu
-            </Text>
-          )}
-        </Section>
-        <Heading style={h1}>You've been invited</Heading>
-        <Text style={text}>
-          You've been invited to join{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          . Click the button below to accept the invitation and create your
-          account.
-        </Text>
-        <Section style={buttonWrap}>
-          <Button style={button} href={confirmationUrl}>
-            Accept Invitation
-          </Button>
-        </Section>
-        <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+  texts,
+}: InviteEmailProps) => {
+  const t = { ...DEFAULTS, ...(texts || {}) }
+  return (
+    <Html lang="en" dir="ltr">
+      <Head />
+      <Preview>You've been invited to join {siteName}</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={brandBar}>
+            {logoUrl ? (
+              <Img src={logoUrl} alt={siteName} style={logo} />
+            ) : (
+              <Text style={brandText}>
+                <span style={brandAccent}>Tools</span>mandu
+              </Text>
+            )}
+          </Section>
+          <Heading style={h1}>{t.heading}</Heading>
+          <div style={text} dangerouslySetInnerHTML={{ __html: t.body }} />
+          <Section style={buttonWrap}>
+            <Button style={button} href={confirmationUrl}>
+              {t.cta_label}
+            </Button>
+          </Section>
+          <div style={footer} dangerouslySetInnerHTML={{ __html: t.footer_note }} />
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export default InviteEmail
 
@@ -76,7 +81,6 @@ const brandAccent = { color: '#1e40af' }
 const logo = { maxHeight: '56px', width: 'auto', display: 'inline-block', margin: '0 auto' }
 const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#0f172a', margin: '0 0 20px' }
 const text = { fontSize: '14px', color: '#475569', lineHeight: '1.5', margin: '0 0 20px' }
-const link = { color: '#1e40af', textDecoration: 'underline' }
 const buttonWrap = { margin: '28px 0' }
 const button = {
   backgroundColor: '#1e40af',

@@ -18,48 +18,53 @@ interface RecoveryEmailProps {
   siteName: string
   token: string
   logoUrl?: string
+  texts?: {
+    heading?: string
+    body?: string
+    footer_note?: string
+  }
+}
+
+const DEFAULTS = {
+  heading: 'Reset your password',
+  body: 'Use the verification code below to reset your password.',
+  footer_note: "If you didn't request a password reset, you can safely ignore this email. Your password will not be changed.",
 }
 
 export const RecoveryEmail = ({
   siteName,
   token,
   logoUrl,
-}: RecoveryEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Your {siteName} password reset code is {token}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={brandBar}>
-          {logoUrl ? (
-            <Img src={logoUrl} alt={siteName} style={logo} />
-          ) : (
-            <Text style={brandText}>
-              <span style={brandAccent}>Tools</span>mandu
-            </Text>
-          )}
-        </Section>
-        <Heading style={h1}>Reset your password</Heading>
-        <Text style={text}>
-          We received a request to reset your password for {siteName}. Use the
-          verification code below to continue.
-        </Text>
-        <Section style={otpWrap}>
-          <Text style={otpCode}>{token}</Text>
-          <Text style={otpLabel}>This code expires in 15 minutes</Text>
-        </Section>
-        <Text style={text}>
-          Enter this 6-digit code on the password reset screen to choose a new
-          password.
-        </Text>
-        <Text style={footer}>
-          If you didn't request a password reset, you can safely ignore this
-          email. Your password will not be changed.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+  texts,
+}: RecoveryEmailProps) => {
+  const t = { ...DEFAULTS, ...(texts || {}) }
+  return (
+    <Html lang="en" dir="ltr">
+      <Head />
+      <Preview>Your {siteName} password reset code is {token}</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={brandBar}>
+            {logoUrl ? (
+              <Img src={logoUrl} alt={siteName} style={logo} />
+            ) : (
+              <Text style={brandText}>
+                <span style={brandAccent}>Tools</span>mandu
+              </Text>
+            )}
+          </Section>
+          <Heading style={h1}>{t.heading}</Heading>
+          <div style={text} dangerouslySetInnerHTML={{ __html: t.body }} />
+          <Section style={otpWrap}>
+            <Text style={otpCode}>{token}</Text>
+            <Text style={otpLabel}>This code expires in 15 minutes</Text>
+          </Section>
+          <div style={footer} dangerouslySetInnerHTML={{ __html: t.footer_note }} />
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export default RecoveryEmail
 

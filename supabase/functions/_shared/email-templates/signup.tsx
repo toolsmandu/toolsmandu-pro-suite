@@ -9,7 +9,6 @@ import {
   Heading,
   Html,
   Img,
-  Link,
   Preview,
   Section,
   Text,
@@ -21,52 +20,53 @@ interface SignupEmailProps {
   recipient: string
   token: string
   logoUrl?: string
+  texts?: {
+    heading?: string
+    body?: string
+    footer_note?: string
+  }
+}
+
+const DEFAULTS = {
+  heading: 'Verify your email',
+  body: 'Use the verification code below to activate your account.',
+  footer_note: "If you didn't create an account, you can safely ignore this email.",
 }
 
 export const SignupEmail = ({
   siteName,
-  siteUrl,
-  recipient,
   token,
   logoUrl,
-}: SignupEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Your {siteName} verification code is {token}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={brandBar}>
-          {logoUrl ? (
-            <Img src={logoUrl} alt={siteName} style={logo} />
-          ) : (
-            <Text style={brandText}>
-              <span style={brandAccent}>Tools</span>mandu
-            </Text>
-          )}
-        </Section>
-        <Heading style={h1}>Verify your email</Heading>
-        <Text style={text}>
-          Welcome to{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          ! Use the verification code below to activate your account
-          ({recipient}).
-        </Text>
-        <Section style={otpWrap}>
-          <Text style={otpCode}>{token}</Text>
-          <Text style={otpLabel}>This code expires in 15 minutes</Text>
-        </Section>
-        <Text style={text}>
-          Enter this 6-digit code on the verification screen to complete signup.
-        </Text>
-        <Text style={footer}>
-          If you didn't create an account, you can safely ignore this email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+  texts,
+}: SignupEmailProps) => {
+  const t = { ...DEFAULTS, ...(texts || {}) }
+  return (
+    <Html lang="en" dir="ltr">
+      <Head />
+      <Preview>Your {siteName} verification code is {token}</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={brandBar}>
+            {logoUrl ? (
+              <Img src={logoUrl} alt={siteName} style={logo} />
+            ) : (
+              <Text style={brandText}>
+                <span style={brandAccent}>Tools</span>mandu
+              </Text>
+            )}
+          </Section>
+          <Heading style={h1}>{t.heading}</Heading>
+          <div style={text} dangerouslySetInnerHTML={{ __html: t.body }} />
+          <Section style={otpWrap}>
+            <Text style={otpCode}>{token}</Text>
+            <Text style={otpLabel}>This code expires in 15 minutes</Text>
+          </Section>
+          <div style={footer} dangerouslySetInnerHTML={{ __html: t.footer_note }} />
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export default SignupEmail
 
@@ -78,7 +78,6 @@ const brandAccent = { color: '#1e40af' }
 const logo = { maxHeight: '56px', width: 'auto', display: 'inline-block', margin: '0 auto' }
 const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#0f172a', margin: '0 0 20px' }
 const text = { fontSize: '14px', color: '#475569', lineHeight: '1.5', margin: '0 0 20px' }
-const link = { color: '#1e40af', textDecoration: 'underline' }
 const otpWrap = {
   margin: '28px 0',
   padding: '24px',

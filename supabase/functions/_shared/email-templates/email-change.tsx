@@ -22,6 +22,19 @@ interface EmailChangeEmailProps {
   newEmail: string
   confirmationUrl: string
   logoUrl?: string
+  texts?: {
+    heading?: string
+    body?: string
+    cta_label?: string
+    footer_note?: string
+  }
+}
+
+const DEFAULTS = {
+  heading: 'Confirm your email change',
+  body: 'Click the button below to confirm your new email address.',
+  cta_label: 'Confirm Email Change',
+  footer_note: "If you didn't request this change, please secure your account immediately.",
 }
 
 export const EmailChangeEmail = ({
@@ -30,47 +43,43 @@ export const EmailChangeEmail = ({
   newEmail,
   confirmationUrl,
   logoUrl,
-}: EmailChangeEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Confirm your email change for {siteName}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={brandBar}>
-          {logoUrl ? (
-            <Img src={logoUrl} alt={siteName} style={logo} />
-          ) : (
-            <Text style={brandText}>
-              <span style={brandAccent}>Tools</span>mandu
-            </Text>
-          )}
-        </Section>
-        <Heading style={h1}>Confirm your email change</Heading>
-        <Text style={text}>
-          You requested to change your email address for {siteName} from{' '}
-          <Link href={`mailto:${email}`} style={link}>
-            {email}
-          </Link>{' '}
-          to{' '}
-          <Link href={`mailto:${newEmail}`} style={link}>
-            {newEmail}
-          </Link>
-          .
-        </Text>
-        <Text style={text}>Click the button below to confirm this change:</Text>
-        <Section style={buttonWrap}>
-          <Button style={button} href={confirmationUrl}>
-            Confirm Email Change
-          </Button>
-        </Section>
-        <Text style={footer}>
-          If you didn't request this change, please secure your account
-          immediately.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+  texts,
+}: EmailChangeEmailProps) => {
+  const t = { ...DEFAULTS, ...(texts || {}) }
+  return (
+    <Html lang="en" dir="ltr">
+      <Head />
+      <Preview>Confirm your email change for {siteName}</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={brandBar}>
+            {logoUrl ? (
+              <Img src={logoUrl} alt={siteName} style={logo} />
+            ) : (
+              <Text style={brandText}>
+                <span style={brandAccent}>Tools</span>mandu
+              </Text>
+            )}
+          </Section>
+          <Heading style={h1}>{t.heading}</Heading>
+          <Text style={text}>
+            Changing email from{' '}
+            <Link href={`mailto:${email}`} style={link}>{email}</Link>{' '}
+            to{' '}
+            <Link href={`mailto:${newEmail}`} style={link}>{newEmail}</Link>.
+          </Text>
+          <div style={text} dangerouslySetInnerHTML={{ __html: t.body }} />
+          <Section style={buttonWrap}>
+            <Button style={button} href={confirmationUrl}>
+              {t.cta_label}
+            </Button>
+          </Section>
+          <div style={footer} dangerouslySetInnerHTML={{ __html: t.footer_note }} />
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export default EmailChangeEmail
 

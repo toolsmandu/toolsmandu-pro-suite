@@ -19,44 +19,56 @@ interface MagicLinkEmailProps {
   siteName: string
   confirmationUrl: string
   logoUrl?: string
+  texts?: {
+    heading?: string
+    body?: string
+    cta_label?: string
+    footer_note?: string
+  }
+}
+
+const DEFAULTS = {
+  heading: 'Your login link',
+  body: 'Click the button below to sign in. This link will expire shortly.',
+  cta_label: 'Log In',
+  footer_note: "If you didn't request this link, you can safely ignore this email.",
 }
 
 export const MagicLinkEmail = ({
   siteName,
   confirmationUrl,
   logoUrl,
-}: MagicLinkEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Your login link for {siteName}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={brandBar}>
-          {logoUrl ? (
-            <Img src={logoUrl} alt={siteName} style={logo} />
-          ) : (
-            <Text style={brandText}>
-              <span style={brandAccent}>Tools</span>mandu
-            </Text>
-          )}
-        </Section>
-        <Heading style={h1}>Your login link</Heading>
-        <Text style={text}>
-          Click the button below to log in to {siteName}. This link will expire
-          shortly.
-        </Text>
-        <Section style={buttonWrap}>
-          <Button style={button} href={confirmationUrl}>
-            Log In
-          </Button>
-        </Section>
-        <Text style={footer}>
-          If you didn't request this link, you can safely ignore this email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+  texts,
+}: MagicLinkEmailProps) => {
+  const t = { ...DEFAULTS, ...(texts || {}) }
+  return (
+    <Html lang="en" dir="ltr">
+      <Head />
+      <Preview>Your login link for {siteName}</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={brandBar}>
+            {logoUrl ? (
+              <Img src={logoUrl} alt={siteName} style={logo} />
+            ) : (
+              <Text style={brandText}>
+                <span style={brandAccent}>Tools</span>mandu
+              </Text>
+            )}
+          </Section>
+          <Heading style={h1}>{t.heading}</Heading>
+          <div style={text} dangerouslySetInnerHTML={{ __html: t.body }} />
+          <Section style={buttonWrap}>
+            <Button style={button} href={confirmationUrl}>
+              {t.cta_label}
+            </Button>
+          </Section>
+          <div style={footer} dangerouslySetInnerHTML={{ __html: t.footer_note }} />
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export default MagicLinkEmail
 
