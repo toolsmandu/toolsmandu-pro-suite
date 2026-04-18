@@ -352,6 +352,29 @@ const AdminFamilySharingDetail = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Order Note Template Dialog */}
+      <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Order Note Template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-xs text-muted-foreground">
+              This note will be sent to the customer as an order note when they order any variation of this product assigned to family sharing.
+            </p>
+            <Textarea
+              value={orderNoteTemplate}
+              onChange={(e) => setOrderNoteTemplate(e.target.value)}
+              placeholder="Write the order note here..."
+              className="min-h-[200px]"
+            />
+            <Button onClick={handleSaveTemplate} disabled={savingTemplate} className="w-full">
+              {savingTemplate ? "Saving..." : "Save Template"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
