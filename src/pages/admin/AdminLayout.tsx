@@ -15,8 +15,8 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels');
-  const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides') || location.pathname.startsWith('/admin/faqs');
+  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs');
+  const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
   const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
 
@@ -135,6 +135,14 @@ const AdminLayout = () => {
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/faqs" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <HelpCircle className="mr-2 h-3 w-3" />
+                                <span>FAQs</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>
@@ -209,14 +217,6 @@ const AdminLayout = () => {
                                 <NavLink to="/admin/hero-slides" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                   <Image className="mr-2 h-3 w-3" />
                                   <span>Slider Setting</span>
-                                </NavLink>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                            <SidebarMenuSubItem>
-                              <SidebarMenuSubButton asChild>
-                                <NavLink to="/admin/faqs" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
-                                  <HelpCircle className="mr-2 h-3 w-3" />
-                                  <span>FAQs</span>
                                 </NavLink>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
