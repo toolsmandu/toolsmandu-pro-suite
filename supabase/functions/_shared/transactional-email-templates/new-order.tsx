@@ -115,10 +115,26 @@ const NewOrderEmail = ({
   )
 }
 
+// Encode order ID into invisible zero-width characters so each email's
+// subject is unique to Gmail (prevents threading/clipping) without
+// showing the order ID visually.
+function invisibleMarker(value: string | number | undefined): string {
+  if (value === undefined || value === null) return ''
+  const s = String(value)
+  let out = ''
+  for (const ch of s) {
+    const bits = ch.charCodeAt(0).toString(2).padStart(8, '0')
+    for (const b of bits) out += b === '1' ? '\u200B' : '\u200C'
+  }
+  return out
+}
+
 export const template = {
   component: NewOrderEmail,
-  subject: (data: Record<string, any>) =>
-    data?.texts?.subject || 'Your Toolsmandu order has been received!',
+  subject: (data: Record<string, any>) => {
+    const base = data?.texts?.subject || 'Your Toolsmandu order has been received!'
+    return base + invisibleMarker(data?.orderId)
+  },
   displayName: 'New Order',
   previewData: {
     customerEmail: 'prashannapradhan@gmail.com',
