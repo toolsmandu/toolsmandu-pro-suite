@@ -110,6 +110,43 @@ const AdminExpiredOrders = () => {
             className="pl-9"
           />
         </div>
+        <Popover open={productPopoverOpen} onOpenChange={setProductPopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" role="combobox" className="w-full sm:w-[240px] justify-between">
+              <span className="truncate">
+                {productFilter === 'all' ? 'All products' : productFilter}
+              </span>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[280px] p-0" align="end">
+            <Command>
+              <CommandInput placeholder="Search product..." />
+              <CommandList>
+                <CommandEmpty>No product found.</CommandEmpty>
+                <CommandGroup>
+                  <CommandItem
+                    value="all"
+                    onSelect={() => { setProductFilter('all'); setProductPopoverOpen(false); }}
+                  >
+                    <Check className={cn('mr-2 h-4 w-4', productFilter === 'all' ? 'opacity-100' : 'opacity-0')} />
+                    All products
+                  </CommandItem>
+                  {productOptions.map((p) => (
+                    <CommandItem
+                      key={p}
+                      value={p}
+                      onSelect={() => { setProductFilter(p); setProductPopoverOpen(false); }}
+                    >
+                      <Check className={cn('mr-2 h-4 w-4', productFilter === p ? 'opacity-100' : 'opacity-0')} />
+                      <span className="truncate">{p}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
         <Select value={filter} onValueChange={(v) => setFilter(v as Filter)}>
           <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue />
