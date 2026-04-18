@@ -216,6 +216,10 @@ const h1 = {
 const heroSub = { fontSize: '15px', color: '#5b6473', lineHeight: '1.6', margin: 0 }
 
 const messageWrap = { padding: '0 32px 8px' }
+const messageTitle = {
+  fontSize: '14px', fontWeight: 700 as const, color: '#0b1220',
+  margin: '0 0 8px',
+}
 const messageBox = {
   backgroundColor: '#fbfbfc', border: '1px solid #eef0f3',
   borderRadius: '12px', padding: '18px 20px',
