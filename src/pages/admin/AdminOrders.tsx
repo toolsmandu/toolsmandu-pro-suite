@@ -319,7 +319,8 @@ const AdminOrders = () => {
         userId: selectedOrder.user_id,
       });
 
-      if (stripHtml(orderNote)) {
+      const noteSent = !!stripHtml(orderNote);
+      if (noteSent) {
         await supabase.from('order_notes').insert({
           order_id: selectedOrder.id,
           note: orderNote,
@@ -382,6 +383,46 @@ const AdminOrders = () => {
           }
         } catch (emailErr) {
           console.error('Failed to send order-completed email:', emailErr);
+        }
+      }
+
+      // Send "Order Note" email when admin adds a customer-visible note WITHOUT changing the order status.
+      if (
+        noteSent &&
+        !isAdminOnly &&
+        editStatus === selectedOrder.status
+      ) {
+        try {
+          const [{ data: profile }, { data: logoSetting }] = await Promise.all([
+            supabase.from('profiles').select('email, phone').eq('user_id', selectedOrder.user_id).maybeSingle(),
+            supabase.from('site_settings').select('value').eq('key', 'email_logo_url').maybeSingle(),
+          ]);
+          const productName = (editItems || [])
+            .map(it => `${(products as any)?.find((p: any) => p.id === it.product_id)?.name || 'Item'}${it.variation_name ? ` - ${it.variation_name}` : ''}`)
+            .join(', ');
+          if (profile?.email) {
+            await supabase.functions.invoke('send-transactional-email', {
+              body: {
+                templateName: 'order-note',
+                recipientEmail: profile.email,
+                idempotencyKey: `order-note-${selectedOrder.id}-${Date.now()}`,
+                templateData: {
+                  customerEmail: profile.email,
+                  customerPhone: profile.phone || '',
+                  productName,
+                  orderId: selectedOrder.order_number,
+                  amount: String(parseFloat(editTotal) || selectedOrder.total),
+                  paymentMethod: (selectedOrder as any).payment_method
+                    ? (selectedOrder as any).payment_method.charAt(0).toUpperCase() + (selectedOrder as any).payment_method.slice(1)
+                    : '',
+                  adminMessage: orderNote,
+                  logoUrl: logoSetting?.value || '',
+                },
+              },
+            });
+          }
+        } catch (emailErr) {
+          console.error('Failed to send order-note email:', emailErr);
         }
       }
 
