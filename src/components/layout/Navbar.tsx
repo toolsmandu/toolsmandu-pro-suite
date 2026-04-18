@@ -193,7 +193,6 @@ const Navbar = () => {
                   <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuItem onClick={() => navigate('/dashboard')}>Dashboard</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/dashboard/orders')}>My Orders</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/dashboard/tickets')}>Support</DropdownMenuItem>
                     {(isAdmin || isEditor) && (
                       <>
                         <DropdownMenuSeparator />

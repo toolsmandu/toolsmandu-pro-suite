@@ -24,7 +24,7 @@ import Unsubscribe from "./pages/Unsubscribe";
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import ProfilePage from "./pages/dashboard/ProfilePage";
 import OrdersPage from "./pages/dashboard/OrdersPage";
-import TicketsPage from "./pages/dashboard/TicketsPage";
+
 
 
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -35,7 +35,7 @@ import AdminProductTypes from "./pages/admin/AdminProductTypes";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminHeroSlides from "./pages/admin/AdminHeroSlides";
-import AdminTickets from "./pages/admin/AdminTickets";
+
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminSiteSettings from "./pages/admin/settings/AdminSiteSettings";
@@ -86,7 +86,6 @@ const App = () => (
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
-                  <Route path="tickets" element={<TicketsPage />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Route>
@@ -104,7 +103,6 @@ const App = () => (
                 <Route path="blogs" element={<AdminBlogs />} />
                 <Route path="blogs/:id" element={<AdminBlogEditor />} />
                 <Route path="hero-slides" element={<AdminHeroSlides />} />
-                <Route path="tickets" element={<AdminTickets />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="settings/site" element={<AdminSiteSettings />} />
