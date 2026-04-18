@@ -10,7 +10,7 @@ const SUPPORT_WHATSAPP = '+9779864484274'
 const WHATSAPP_LINK = 'https://wa.me/9779864484274'
 const WHATSAPP_ICON = 'https://cdn-icons-png.flaticon.com/512/3670/3670051.png'
 
-interface OrderCompletedProps {
+interface OrderNoteProps {
   customerEmail?: string
   customerPhone?: string
   productName?: string
@@ -31,9 +31,9 @@ interface OrderCompletedProps {
 }
 
 const DEFAULT_TEXTS = {
-  eyebrow: 'ORDER COMPLETED',
-  heading: 'Your order is complete',
-  sub_message: `Thank you for your recent order with ${SITE_NAME}! We're delighted to inform you that your product is now ready for access.`,
+  eyebrow: 'ORDER NOTE',
+  heading: 'A note about your order',
+  sub_message: `You have a new note from ${SITE_NAME} regarding your recent order.`,
   admin_message_header: 'Admin has sent you the following message',
   reminder_text: 'For your reminder, here is your order details:',
   support_title: 'Need help with your order?',
@@ -72,7 +72,7 @@ const DetailRow = ({ label, value, last }: { label: string; value: React.ReactNo
   </tr>
 )
 
-const OrderCompletedEmail = ({
+const OrderNoteEmail = ({
   customerEmail,
   customerPhone,
   productName,
@@ -82,7 +82,7 @@ const OrderCompletedEmail = ({
   adminMessage,
   logoUrl,
   texts,
-}: OrderCompletedProps) => {
+}: OrderNoteProps) => {
   const t = { ...DEFAULT_TEXTS, ...(texts || {}) }
   const cleanAdminMessage = adminMessage ? sanitizeAdminHtml(adminMessage) : ''
   return (
@@ -156,11 +156,11 @@ const OrderCompletedEmail = ({
 }
 
 export const template = {
-  component: OrderCompletedEmail,
+  component: OrderNoteEmail,
   subject: (data: Record<string, any>) => {
-    return data?.texts?.subject || 'Your Toolsmandu order is now completed!'
+    return data?.texts?.subject || 'You have a new note on your Toolsmandu order'
   },
-  displayName: 'Order Completed',
+  displayName: 'Order Note',
   previewData: {
     customerEmail: 'uddheshyastudio@gmail.com',
     customerPhone: '+9779803356474',
@@ -168,7 +168,7 @@ export const template = {
     orderId: '19525',
     amount: '1200',
     paymentMethod: 'Khalti',
-    adminMessage: '<p><em>Congratulations! Your order is complete now.</em></p><p><strong>How to find login details of purchased services?</strong></p><p>✅ Login into <a href="https://toolsmandu.com">toolsmandu.com</a></p><p>✅ Then, Go to <strong>Profile &gt; Orders</strong> to find login details of purchased services.</p>',
+    adminMessage: '<p>Hi, just a quick update regarding your order. Please check the details below and reach out if you have any questions.</p>',
   },
 } satisfies TemplateEntry
 
