@@ -118,7 +118,7 @@ const HomepageBlogs = () => {
         >
           {extendedBlogs.map((b, idx) => (
             <div key={`${b.id}-${idx}`} className="px-2" style={{ width: `${100 / extendedBlogs.length}%` }}>
-              <Link to={`/blog/${b.slug}`} className="group block h-full">
+              <Link to={`/${b.slug}`} className="group block h-full">
                 <article className="bg-card rounded-lg overflow-hidden border border-border/50 hover:border-primary/50 transition-all hover:shadow-lg h-full flex flex-col">
                   {b.cover_image_url ? (
                     <div className="overflow-hidden">

@@ -30,7 +30,7 @@ const BlogList = () => {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogs.map(b => (
-            <Link key={b.id} to={`/blog/${b.slug}`} className="group">
+            <Link key={b.id} to={`/${b.slug}`} className="group">
               <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
                 {b.cover_image_url ? (
                   <img src={b.cover_image_url} alt={b.title} className="w-full aspect-[16/9] object-cover group-hover:scale-105 transition-transform" />
