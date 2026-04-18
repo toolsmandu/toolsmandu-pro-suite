@@ -529,11 +529,40 @@ const AdminOrders = () => {
       const product = products?.find((p: any) => p.id === newProductId);
       const variation = newVariationId ? (product as any)?.product_variations?.find((v: any) => v.id === newVariationId) : null;
 
+      // Detect if variation is linked to a family-sharing product.
+      // Family-sharing variants auto-complete; others stay in processing.
+      let familyProductId: string | null = null;
+      let familyOrderNoteTemplate = '';
+      if (newVariationId) {
+        const { data: fpv } = await supabase
+          .from('family_sharing_product_variants')
+          .select('family_product_id')
+          .eq('variant_id', newVariationId)
+          .maybeSingle();
+        if (fpv?.family_product_id) {
+          familyProductId = fpv.family_product_id;
+          const { data: fp } = await supabase
+            .from('family_sharing_products')
+            .select('order_note_template')
+            .eq('id', familyProductId)
+            .maybeSingle();
+          familyOrderNoteTemplate = (fp as any)?.order_note_template?.trim() || '';
+        }
+      }
+      const isFamilySharing = !!familyProductId;
+
+      // Final status:
+      //  - admin checked "Set status to processing" → processing (skip emails)
+      //  - else family-sharing variant → completed
+      //  - else regular variant → processing + send only new-order email
+      const finalStatus: 'processing' | 'completed' =
+        setStatusProcessing ? 'processing' : (isFamilySharing ? 'completed' : 'processing');
+
       const { data: order, error: orderError } = await supabase.from('orders').insert({
         user_id: selectedCustomer.user_id,
         total: parseFloat(newAmount),
-        status: (setStatusProcessing ? 'processing' : 'completed') as any,
-        payment_status: setStatusProcessing ? 'pending' : 'paid',
+        status: finalStatus as any,
+        payment_status: finalStatus === 'completed' ? 'paid' : 'pending',
         payment_method: newPaymentMethod,
         created_at: kathmanduToUTC(newOrderDate),
       } as any).select().single();
@@ -607,10 +636,11 @@ const AdminOrders = () => {
         }
       }
 
-      // Send "Order Received" + "Order Completed" emails for the manually-created order.
-      // Skip ALL customer emails when the order is created in processing mode.
+      // Email logic:
+      //  - setStatusProcessing checkbox → suppress all customer emails (existing behavior)
+      //  - family-sharing variant → new-order + order-completed (with template as adminMessage)
+      //  - regular variant → new-order only; suppress later order-completed when admin completes the order
       if (setStatusProcessing) {
-        // Record an audit marker so a later status change to "completed" also skips the email.
         if (user) {
           await supabase.from('order_audit_log').insert({
             order_id: order.id,
@@ -645,14 +675,26 @@ const AdminOrders = () => {
                 templateData: { ...baseData, paymentMethod: paymentLabel },
               },
             });
-            await supabase.functions.invoke('send-transactional-email', {
-              body: {
-                templateName: 'order-completed',
-                recipientEmail: profile.email,
-                idempotencyKey: `order-completed-${order.id}`,
-                templateData: { ...baseData, paymentMethod: paymentLabel, adminMessage: newRemarks.trim() || '' },
-              },
-            });
+            if (isFamilySharing) {
+              const adminMessage = newRemarks.trim() || familyOrderNoteTemplate || '';
+              await supabase.functions.invoke('send-transactional-email', {
+                body: {
+                  templateName: 'order-completed',
+                  recipientEmail: profile.email,
+                  idempotencyKey: `order-completed-${order.id}`,
+                  templateData: { ...baseData, paymentMethod: paymentLabel, adminMessage },
+                },
+              });
+            } else if (user) {
+              // Non-family-sharing manual order stays in processing; suppress
+              // automatic order-completed email when admin later flips status.
+              await supabase.from('order_audit_log').insert({
+                order_id: order.id,
+                changed_by: user.id,
+                action: 'manual_no_customer_emails',
+                details: 'Manual order (non-family-sharing) — order-completed email suppressed on later status change',
+              });
+            }
           }
         } catch (emailErr) {
           console.error('Failed to send order emails:', emailErr);
