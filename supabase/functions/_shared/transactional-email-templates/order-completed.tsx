@@ -111,6 +111,7 @@ const OrderCompletedEmail = ({
 
         {cleanAdminMessage && (
           <div style={messageWrap}>
+            <Text style={messageTitle}>Message from Admin:</Text>
             <div style={messageBox}>
               <div style={messageText} dangerouslySetInnerHTML={{ __html: cleanAdminMessage }} />
             </div>
