@@ -100,6 +100,7 @@ const App = () => (
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="flash-sale-labels" element={<AdminFlashSaleLabels />} />
                 <Route path="orders" element={<AdminOrders />} />
+                <Route path="expired-orders" element={<AdminExpiredOrders />} />
                 <Route path="customers" element={<AdminCustomers />} />
                 <Route path="media" element={<AdminMedia />} />
                 <Route path="notes" element={<AdminNotes />} />
