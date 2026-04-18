@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/formatDate";
+import { useAuth } from "@/contexts/AuthContext";
+import { sendFamilySharingOrderNote } from "@/lib/familySharingNote";
 
 interface CredentialData {
   id: string;
