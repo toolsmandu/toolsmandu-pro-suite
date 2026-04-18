@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/formatDate";
+import { useAuth } from "@/contexts/AuthContext";
+import { sendFamilySharingOrderNote } from "@/lib/familySharingNote";
 
 interface CredentialData {
   id: string;
@@ -41,6 +43,7 @@ interface AssignedCustomer {
 const AdminCredentialDetail = () => {
   const { credentialId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [credential, setCredential] = useState<CredentialData | null>(null);
   const [customers, setCustomers] = useState<AssignedCustomer[]>([]);
   const [editedExpiry, setEditedExpiry] = useState<Record<string, string>>({});
@@ -328,6 +331,14 @@ const AdminCredentialDetail = () => {
         .from("family_sharing_credentials")
         .update({ assigned_count: credential.assigned_count + 1 })
         .eq("id", credential.id);
+
+      if (user) {
+        await sendFamilySharingOrderNote({
+          credentialId: credential.id,
+          orderId: lookupResult.orderId,
+          adminUserId: user.id,
+        });
+      }
 
       toast.success("Order assigned successfully");
       setAddingManual(false);
