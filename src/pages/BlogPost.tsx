@@ -75,10 +75,6 @@ const BlogPost = () => {
 
   return (
     <article className="container mx-auto px-4 py-8 max-w-3xl">
-      <Button asChild variant="ghost" size="sm" className="mb-4">
-        <Link to="/blog"><ArrowLeft className="h-4 w-4 mr-2" /> All Posts</Link>
-      </Button>
-
       <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{blog.title}</h1>
 
       <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
