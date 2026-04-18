@@ -197,9 +197,6 @@ const ProductPage = () => {
 
                         <div className="flex-1 min-w-0 space-y-1">
                           <div className="font-semibold text-foreground text-sm">{v.name}</div>
-                          {v.variation_info && (
-                            <div className="text-xs text-muted-foreground">{v.variation_info}</div>
-                          )}
                           <div className="font-semibold text-sm" style={{ color: '#16a249' }}>NPR {v.price}</div>
                         </div>
 
