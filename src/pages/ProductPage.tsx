@@ -99,6 +99,43 @@ const ProductPage = () => {
 
   // No variation selected by default — user must pick one
 
+  const { data: productFieldsData } = useQuery({
+    queryKey: ['product-input-fields', product?.id],
+    enabled: !!product?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('product_input_fields')
+        .select('input_field_id, sort_order, input_fields(*)')
+        .eq('product_id', product!.id)
+        .order('sort_order');
+      return (data || []).map((r: any) => r.input_fields).filter(Boolean);
+    },
+  });
+
+  const { data: variantFieldsData } = useQuery({
+    queryKey: ['variation-input-fields', selectedVariant?.id],
+    enabled: !!selectedVariant?.id && !!selectedVariant?.has_special_input_fields,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('variation_input_fields')
+        .select('input_field_id, sort_order, input_fields(*)')
+        .eq('variation_id', selectedVariant.id)
+        .order('sort_order');
+      return (data || []).map((r: any) => r.input_fields).filter(Boolean);
+    },
+  });
+
+  const activeFields: InputFieldDef[] =
+    selectedVariant?.has_special_input_fields
+      ? (variantFieldsData as any[]) || []
+      : (productFieldsData as any[]) || [];
+
+  // Reset field values when variant changes
+  useEffect(() => {
+    setFieldValues({});
+    setFieldErrors({});
+  }, [selectedVariant?.id]);
+
   const { data: related } = useQuery({
     queryKey: ['related-products', product?.category_id],
     queryFn: async () => {
@@ -126,6 +163,28 @@ const ProductPage = () => {
       navigate('/cart');
       return;
     }
+
+    // Validate input fields
+    const errs: Record<string, string> = {};
+    activeFields.forEach((f) => {
+      const err = validateField(f, fieldValues[f.id]);
+      if (err) errs[f.id] = err;
+    });
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      toast.error('Please fill all required fields');
+      return;
+    }
+
+    const responses = activeFields.map((f) => ({
+      field_id: f.id,
+      field_name: f.name,
+      field_type: f.field_type,
+      label: f.label,
+      question: f.question,
+      value: fieldValues[f.id] ?? (f.field_type === 'checkbox' && f.checkbox_mode === 'multi' ? [] : ''),
+    }));
+
     if (selectedVariant) {
       addItem({
         id: product.id,
@@ -135,6 +194,7 @@ const ProductPage = () => {
         duration: product.duration,
         variantId: selectedVariant.id,
         variantName: selectedVariant.name,
+        inputFieldResponses: responses,
       });
     } else {
       addItem({
@@ -143,6 +203,7 @@ const ProductPage = () => {
         price: product.price,
         image_url: product.image_url,
         duration: product.duration,
+        inputFieldResponses: responses,
       });
     }
   };
