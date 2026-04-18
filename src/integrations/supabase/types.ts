@@ -636,6 +636,48 @@ export type Database = {
         }
         Relationships: []
       }
+      input_fields: {
+        Row: {
+          checkbox_mode: string | null
+          created_at: string
+          field_type: string
+          id: string
+          is_required: boolean
+          label: string
+          name: string
+          options: Json | null
+          placeholder: string | null
+          question: string | null
+          updated_at: string
+        }
+        Insert: {
+          checkbox_mode?: string | null
+          created_at?: string
+          field_type: string
+          id?: string
+          is_required?: boolean
+          label: string
+          name: string
+          options?: Json | null
+          placeholder?: string | null
+          question?: string | null
+          updated_at?: string
+        }
+        Update: {
+          checkbox_mode?: string | null
+          created_at?: string
+          field_type?: string
+          id?: string
+          is_required?: boolean
+          label?: string
+          name?: string
+          options?: Json | null
+          placeholder?: string | null
+          question?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       media: {
         Row: {
           created_at: string
@@ -762,6 +804,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          input_field_responses: Json | null
           order_id: string
           price: number
           product_id: string | null
@@ -772,6 +815,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          input_field_responses?: Json | null
           order_id: string
           price: number
           product_id?: string | null
@@ -782,6 +826,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          input_field_responses?: Json | null
           order_id?: string
           price?: number
           product_id?: string | null
@@ -890,6 +935,45 @@ export type Database = {
           },
         ]
       }
+      product_input_fields: {
+        Row: {
+          created_at: string
+          id: string
+          input_field_id: string
+          product_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          input_field_id: string
+          product_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          input_field_id?: string
+          product_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_input_fields_input_field_id_fkey"
+            columns: ["input_field_id"]
+            isOneToOne: false
+            referencedRelation: "input_fields"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_input_fields_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_types: {
         Row: {
           created_at: string
@@ -912,6 +996,7 @@ export type Database = {
         Row: {
           created_at: string
           expiry_days: number | null
+          has_special_input_fields: boolean
           id: string
           is_active: boolean
           name: string
@@ -925,6 +1010,7 @@ export type Database = {
         Insert: {
           created_at?: string
           expiry_days?: number | null
+          has_special_input_fields?: boolean
           id?: string
           is_active?: boolean
           name: string
@@ -938,6 +1024,7 @@ export type Database = {
         Update: {
           created_at?: string
           expiry_days?: number | null
+          has_special_input_fields?: boolean
           id?: string
           is_active?: boolean
           name?: string
@@ -1222,6 +1309,45 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      variation_input_fields: {
+        Row: {
+          created_at: string
+          id: string
+          input_field_id: string
+          sort_order: number
+          variation_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          input_field_id: string
+          sort_order?: number
+          variation_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          input_field_id?: string
+          sort_order?: number
+          variation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "variation_input_fields_input_field_id_fkey"
+            columns: ["input_field_id"]
+            isOneToOne: false
+            referencedRelation: "input_fields"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "variation_input_fields_variation_id_fkey"
+            columns: ["variation_id"]
+            isOneToOne: false
+            referencedRelation: "product_variations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
