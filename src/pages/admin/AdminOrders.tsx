@@ -648,6 +648,16 @@ const AdminOrders = () => {
         });
       }
 
+      // Audit: record manual order creation by admin/editor
+      if (user) {
+        await supabase.from('order_audit_log').insert({
+          order_id: order.id,
+          changed_by: user.id,
+          action: 'order_created',
+          details: 'Order created manually',
+        });
+      }
+
       // Cleanup expired assignments and auto-assign family sharing credentials
       if (newVariationId) {
         await supabase.rpc('cleanup_expired_assignments');
