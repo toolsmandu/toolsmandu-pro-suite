@@ -7,11 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Search } from 'lucide-react';
 import { formatDate } from '@/lib/formatDate';
 
-type Filter = 'expired' | 'expiring_soon' | 'all';
+type Filter = 'expired_today' | 'all';
 
 const AdminExpiredOrders = () => {
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<Filter>('expired');
+  const [filter, setFilter] = useState<Filter>('expired_today');
 
   const { data: rows, isLoading } = useQuery({
     queryKey: ['expired-orders'],
@@ -65,8 +65,7 @@ const AdminExpiredOrders = () => {
 
   const filtered = useMemo(() => {
     let list = rows || [];
-    if (filter === 'expired') list = list.filter(r => r.remaining <= 0);
-    else if (filter === 'expiring_soon') list = list.filter(r => r.remaining > 0 && r.remaining <= 7);
+    if (filter === 'expired_today') list = list.filter(r => r.remaining === -1);
     const term = search.trim().toLowerCase();
     if (term) {
       list = list.filter(r =>
@@ -103,9 +102,8 @@ const AdminExpiredOrders = () => {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="expired">Expired only</SelectItem>
-            <SelectItem value="expiring_soon">Expiring in 7 days</SelectItem>
-            <SelectItem value="all">All completed</SelectItem>
+            <SelectItem value="expired_today">Expired Today</SelectItem>
+            <SelectItem value="all">All Orders</SelectItem>
           </SelectContent>
         </Select>
       </div>
