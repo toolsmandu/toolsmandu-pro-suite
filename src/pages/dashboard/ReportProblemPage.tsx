@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const WHATSAPP_NUMBER = '+9779864484274';
-const WHATSAPP_LINK = `https://api.whatsapp.com/send?phone=9779864484274&text=${encodeURIComponent('I want to Report a Problem. Please help me to solve this.')}`;
+const WHATSAPP_LINK = 'https://api.whatsapp.com/send?phone=9779864484274&text=I+want+to+Report+a+Problem.%2C+Please+help+me+to+solve+this.&_fb_noscript=1';
 
 const ReportProblemPage = () => {
   return (
