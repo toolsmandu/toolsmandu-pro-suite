@@ -113,6 +113,10 @@ const OrderCompletedEmail = ({
           </div>
         )}
 
+        <div style={orderIdWrap}>
+          <Text style={orderIdText}>Order ID: <strong>#{orderId ?? '—'}</strong></Text>
+        </div>
+
         <div style={reminderWrap}>
           <Text style={reminderText}>{t.reminder_text}</Text>
         </div>
@@ -204,8 +208,10 @@ const messageBox = {
   borderRadius: '12px', padding: '18px 20px',
 }
 const messageText = { fontSize: '14px', color: '#0b1220', lineHeight: '1.7' }
+const orderIdWrap = { padding: '12px 32px 0', textAlign: 'center' as const }
+const orderIdText = { fontSize: '14px', color: '#0b1220', margin: 0 }
 const reminderWrap = { padding: '12px 32px 0', textAlign: 'center' as const }
-const reminderText = { fontSize: '14px', color: '#5b6473', margin: 0 }
+const reminderText = { fontSize: '14px', color: '#0b1220', margin: 0, fontWeight: 700 as const }
 
 const detailsWrap = { padding: '16px 32px 8px' }
 const sectionTitle = {
