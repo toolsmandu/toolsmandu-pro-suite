@@ -24,6 +24,7 @@ import Unsubscribe from "./pages/Unsubscribe";
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import ProfilePage from "./pages/dashboard/ProfilePage";
 import OrdersPage from "./pages/dashboard/OrdersPage";
+import ReportProblemPage from "./pages/dashboard/ReportProblemPage";
 
 
 
@@ -86,6 +87,7 @@ const App = () => (
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
+                  <Route path="report-problem" element={<ReportProblemPage />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Route>
