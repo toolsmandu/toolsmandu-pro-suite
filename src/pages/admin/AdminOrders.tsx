@@ -789,8 +789,15 @@ const AdminOrders = () => {
         if (!email.includes(term) && !phone.includes(term) && !orderNum.includes(term)) return false;
       }
       if (productFilter !== 'all') {
-        const hasProduct = order.order_items?.some((i: any) => i.product_id === productFilter);
-        if (!hasProduct) return false;
+        if (productFilter.startsWith('variation:')) {
+          const vid = productFilter.slice('variation:'.length);
+          const hasVariation = order.order_items?.some((i: any) => i.variation_id === vid);
+          if (!hasVariation) return false;
+        } else {
+          const pid = productFilter.startsWith('product:') ? productFilter.slice('product:'.length) : productFilter;
+          const hasProduct = order.order_items?.some((i: any) => i.product_id === pid);
+          if (!hasProduct) return false;
+        }
       }
       if (statusFilter !== 'all' && order.status !== statusFilter) return false;
       if (dateFrom) {
@@ -832,9 +839,19 @@ const AdminOrders = () => {
               <Button variant="outline" className="w-full justify-start text-left font-normal">
                 <Search className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span className="truncate">
-                  {productFilter === 'all'
-                    ? 'All Products'
-                    : (products?.find((p: any) => p.id === productFilter)?.name || 'Product')}
+                  {(() => {
+                    if (productFilter === 'all') return 'All Products';
+                    if (productFilter.startsWith('variation:')) {
+                      const vid = productFilter.slice('variation:'.length);
+                      for (const p of (products || []) as any[]) {
+                        const v = (p.product_variations || []).find((x: any) => x.id === vid);
+                        if (v) return `${p.name} - ${v.name}`;
+                      }
+                      return 'Variation';
+                    }
+                    const pid = productFilter.startsWith('product:') ? productFilter.slice('product:'.length) : productFilter;
+                    return (products?.find((p: any) => p.id === pid)?.name || 'Product');
+                  })()}
                 </span>
               </Button>
             </PopoverTrigger>
@@ -856,21 +873,46 @@ const AdminOrders = () => {
                 >
                   All Products
                 </button>
-                {(products || [])
-                  .filter((p: any) => p.name.toLowerCase().includes(productSearch.toLowerCase()))
-                  .map((p: any) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => { setProductFilter(p.id); setProductPopoverOpen(false); setProductSearch(''); }}
-                      className={cn('w-full text-left px-3 py-1.5 text-sm hover:bg-muted', productFilter === p.id && 'bg-muted font-medium')}
-                    >
-                      {p.name}
-                    </button>
-                  ))}
-                {(products || []).filter((p: any) => p.name.toLowerCase().includes(productSearch.toLowerCase())).length === 0 && (
-                  <p className="px-3 py-2 text-xs text-muted-foreground">No products found</p>
-                )}
+                {(() => {
+                  const term = productSearch.toLowerCase();
+                  const filteredProducts = (products || []).filter((p: any) => {
+                    if (p.name.toLowerCase().includes(term)) return true;
+                    return (p.product_variations || []).some((v: any) => v.name.toLowerCase().includes(term));
+                  });
+                  if (filteredProducts.length === 0) {
+                    return <p className="px-3 py-2 text-xs text-muted-foreground">No products found</p>;
+                  }
+                  return filteredProducts.map((p: any) => {
+                    const productKey = `product:${p.id}`;
+                    const variations = (p.product_variations || []).filter((v: any) =>
+                      !term || p.name.toLowerCase().includes(term) || v.name.toLowerCase().includes(term)
+                    );
+                    return (
+                      <div key={p.id}>
+                        <button
+                          type="button"
+                          onClick={() => { setProductFilter(productKey); setProductPopoverOpen(false); setProductSearch(''); }}
+                          className={cn('w-full text-left px-3 py-1.5 text-sm font-medium hover:bg-muted', productFilter === productKey && 'bg-muted')}
+                        >
+                          {p.name}
+                        </button>
+                        {variations.map((v: any) => {
+                          const vKey = `variation:${v.id}`;
+                          return (
+                            <button
+                              key={v.id}
+                              type="button"
+                              onClick={() => { setProductFilter(vKey); setProductPopoverOpen(false); setProductSearch(''); }}
+                              className={cn('w-full text-left pl-6 pr-3 py-1 text-xs text-muted-foreground hover:bg-muted', productFilter === vKey && 'bg-muted text-foreground font-medium')}
+                            >
+                              ↳ {v.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             </PopoverContent>
           </Popover>
