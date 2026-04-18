@@ -284,7 +284,7 @@ async function handleWebhook(req: Request): Promise<Response> {
   try {
     const result = await sendViaZeptoMail({
       to: payload.data.email,
-      subject: EMAIL_SUBJECTS[emailType] || 'Notification',
+      subject: dbSubject || EMAIL_SUBJECTS[emailType] || 'Notification',
       html,
       text,
     })
