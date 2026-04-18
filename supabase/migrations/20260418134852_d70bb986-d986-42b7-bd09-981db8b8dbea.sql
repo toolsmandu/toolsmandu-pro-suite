@@ -1,0 +1,1 @@
+DELETE FROM public.email_templates WHERE template_key IN ('magiclink','invite','email_change','reauthentication');
