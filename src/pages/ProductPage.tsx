@@ -94,11 +94,7 @@ const ProductPage = () => {
     },
   });
 
-  useEffect(() => {
-    if (activeVariations.length > 0 && !selectedVariant) {
-      setSelectedVariant(activeVariations[0]);
-    }
-  }, [activeVariations, selectedVariant]);
+  // No variation selected by default — user must pick one
 
   const { data: related } = useQuery({
     queryKey: ['related-products', product?.category_id],
