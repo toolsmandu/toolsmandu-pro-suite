@@ -210,7 +210,7 @@ const messageBox = {
 }
 const messageText = { fontSize: '14px', color: '#0b1220', lineHeight: '1.7' }
 const orderIdCard = {
-  margin: '12px 32px 16px', padding: '22px 24px',
+  margin: '12px 0 16px', padding: '22px 24px',
   background: '#0b1220',
   textAlign: 'center' as const,
 }
