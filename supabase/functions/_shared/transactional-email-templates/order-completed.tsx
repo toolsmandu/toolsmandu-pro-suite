@@ -130,7 +130,6 @@ const OrderCompletedEmail = ({
               <DetailRow label="Phone" value={customerPhone || '—'} />
               <DetailRow label="Product" value={productName || '—'} />
               <DetailRow label="Amount" value={`Rs ${amount ?? '—'}`} />
-              <DetailRow label="Order ID" value={`#${orderId ?? '—'}`} />
               <DetailRow label="Payment Method" value={paymentMethod || '—'} last />
             </tbody>
           </table>
