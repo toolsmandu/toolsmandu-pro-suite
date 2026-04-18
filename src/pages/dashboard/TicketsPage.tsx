@@ -33,8 +33,19 @@ const TicketsPage = () => {
   const { data: orders } = useQuery({
     queryKey: ['my-orders-for-ticket'],
     queryFn: async () => {
-      const { data } = await supabase.from('orders').select('id, order_number').eq('user_id', user!.id).order('created_at', { ascending: false });
-      return data || [];
+      const { data } = await supabase
+        .from('orders')
+        .select('id, order_number, order_items(variation_name, products(name))')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false });
+      return (data || []).map((o: any) => {
+        const parts = (o.order_items || []).map((it: any) => {
+          const productName = it.products?.name || 'Product';
+          return it.variation_name ? `${productName} - ${it.variation_name}` : productName;
+        });
+        const itemsLabel = parts.join(', ') || 'No items';
+        return { id: o.id, order_number: o.order_number, label: `Order ID #${o.order_number} - ${itemsLabel}` };
+      });
     },
     enabled: !!user,
   });
@@ -142,7 +153,7 @@ const TicketsPage = () => {
                 </SelectTrigger>
                 <SelectContent className="border-0">
                   {orders?.map(order => (
-                    <SelectItem key={order.id} value={order.id}>{order.order_number}</SelectItem>
+                    <SelectItem key={order.id} value={order.id}>{order.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
