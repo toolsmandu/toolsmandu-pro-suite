@@ -48,13 +48,11 @@ const AdminLayout = () => {
   const bottomLinks = [
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/admin/expired-orders', icon: ShoppingCart, label: 'Expired Orders' },
+    { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },
     { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
     { to: '/admin/blogs', icon: Newspaper, label: 'Blogs' },
     { to: '/admin/media', icon: Film, label: 'Media' },
-    { to: '/admin/hero-slides', icon: Image, label: 'Hero Slider' },
-    { to: '/admin/faqs', icon: HelpCircle, label: 'FAQs' },
-    { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
   ];
 
   return (
@@ -203,6 +201,22 @@ const AdminLayout = () => {
                                 <NavLink to="/admin/settings/robots-txt" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                   <FileText className="mr-2 h-3 w-3" />
                                   <span>Robots.txt</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to="/admin/hero-slides" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <Image className="mr-2 h-3 w-3" />
+                                  <span>Slider Setting</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to="/admin/faqs" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <HelpCircle className="mr-2 h-3 w-3" />
+                                  <span>FAQs</span>
                                 </NavLink>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
