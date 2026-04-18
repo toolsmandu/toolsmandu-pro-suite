@@ -110,8 +110,7 @@ Deno.serve(async (req) => {
       await supabase.from("user_roles").delete().eq("user_id", user_id);
       // Delete profile
       await supabase.from("profiles").delete().eq("user_id", user_id);
-      // Delete wishlist
-      await supabase.from("wishlist").delete().eq("user_id", user_id);
+      
       // Delete auth user
       const { error } = await supabase.auth.admin.deleteUser(user_id);
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: corsHeaders });
