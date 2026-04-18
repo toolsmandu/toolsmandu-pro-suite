@@ -231,6 +231,14 @@ const AdminOrders = () => {
               .update({ assigned_count: (cred.assigned_count || 0) + 1 })
               .eq('id', link.credential_id);
 
+            if (user) {
+              await sendFamilySharingOrderNote({
+                credentialId: link.credential_id,
+                orderId: id,
+                adminUserId: user.id,
+              });
+            }
+
             break;
           }
         }
