@@ -83,12 +83,12 @@ const App = () => (
                 <Route path="/payment/verify" element={<PaymentVerify />} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/blog" element={<BlogList />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
                   <Route path="report-problem" element={<ReportProblemPage />} />
               </Route>
+              <Route path="/:slug" element={<BlogPost />} />
               <Route path="*" element={<NotFound />} />
             </Route>
               <Route path="/admin" element={<AdminLayout />}>

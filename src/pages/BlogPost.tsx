@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Calendar, User, ArrowLeft } from 'lucide-react';
+import { Loader2, Calendar, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const BlogPost = () => {
@@ -40,7 +40,7 @@ const BlogPost = () => {
       canonical.setAttribute('rel', 'canonical');
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', `${window.location.origin}/blog/${blog.slug}`);
+    canonical.setAttribute('href', `${window.location.origin}/${blog.slug}`);
 
     // JSON-LD
     const existing = document.getElementById('blog-jsonld');

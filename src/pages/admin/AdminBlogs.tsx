@@ -92,7 +92,7 @@ const AdminBlogs = () => {
               <div className="flex gap-1 shrink-0">
                 {blog.is_published && (
                   <Button variant="ghost" size="icon" asChild>
-                    <Link to={`/blog/${blog.slug}`} target="_blank"><Eye className="h-4 w-4" /></Link>
+                    <Link to={`/${blog.slug}`} target="_blank"><Eye className="h-4 w-4" /></Link>
                   </Button>
                 )}
                 <Button variant="ghost" size="icon" asChild>
