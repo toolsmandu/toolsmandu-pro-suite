@@ -220,7 +220,7 @@ const AdminProducts = () => {
     setView('form');
   };
 
-  const updateVariation = (index: number, field: keyof Variation, value: string | boolean) => {
+  const updateVariation = (index: number, field: keyof Variation, value: string | boolean | string[]) => {
     setVariations((previous) => previous.map((variation, currentIndex) => (
       currentIndex === index ? { ...variation, [field]: value } : variation
     )));
@@ -285,11 +285,36 @@ const AdminProducts = () => {
         is_active: variation.is_active,
         stock_status: variation.stock_status || 'in_stock',
         sort_order: index,
+        has_special_input_fields: variation.has_special_input_fields,
       }));
 
+      let insertedVariations: any[] = [];
       if (variationPayloads.length > 0) {
-        const { error } = await supabase.from('product_variations').insert(variationPayloads);
+        const { data: vData, error } = await supabase.from('product_variations').insert(variationPayloads).select('id');
         if (error) throw error;
+        insertedVariations = vData || [];
+      }
+
+      // Save product-level input fields
+      await supabase.from('product_input_fields').delete().eq('product_id', productId);
+      if (productInputFieldIds.length > 0) {
+        const pifPayload = productInputFieldIds.map((fid, idx) => ({
+          product_id: productId, input_field_id: fid, sort_order: idx,
+        }));
+        await supabase.from('product_input_fields').insert(pifPayload);
+      }
+
+      // Save variation-level input fields (only when has_special_input_fields)
+      const vifPayload: any[] = [];
+      activeVariations.forEach((v, idx) => {
+        const vid = insertedVariations[idx]?.id;
+        if (!vid || !v.has_special_input_fields) return;
+        v.input_field_ids.forEach((fid, fidx) => {
+          vifPayload.push({ variation_id: vid, input_field_id: fid, sort_order: fidx });
+        });
+      });
+      if (vifPayload.length > 0) {
+        await supabase.from('variation_input_fields').insert(vifPayload);
       }
     },
     onSuccess: () => {
