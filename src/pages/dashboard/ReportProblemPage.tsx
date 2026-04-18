@@ -9,7 +9,7 @@ const ReportProblemPage = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <Card className="p-6 md:p-8 space-y-6">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center text-center gap-3">
           <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center">
             <AlertCircle className="h-6 w-6 text-primary" />
           </div>
@@ -31,7 +31,7 @@ const ReportProblemPage = () => {
           </ol>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-2 flex justify-center">
           <Button
             asChild
             size="lg"
