@@ -36,7 +36,6 @@ const AdminCustomers = () => {
   // View dialog
   const [viewUser, setViewUser] = useState<any>(null);
   const [viewOrders, setViewOrders] = useState<any[]>([]);
-  const [viewTickets, setViewTickets] = useState<any[]>([]);
   const [viewLoading, setViewLoading] = useState(false);
 
   // Edit dialog
@@ -82,12 +81,8 @@ const AdminCustomers = () => {
     setAddOpen(false);
     setViewUser(user);
     setViewLoading(true);
-    const [ordersRes, ticketsRes] = await Promise.all([
-      supabase.from('orders').select('*, order_items(*, products(name))').eq('user_id', user.user_id).order('created_at', { ascending: false }),
-      supabase.from('tickets').select('*').eq('user_id', user.user_id).order('created_at', { ascending: false }),
-    ]);
+    const ordersRes = await supabase.from('orders').select('*, order_items(*, products(name))').eq('user_id', user.user_id).order('created_at', { ascending: false });
     setViewOrders(ordersRes.data || []);
-    setViewTickets(ticketsRes.data || []);
     setViewLoading(false);
   };
 
@@ -292,7 +287,7 @@ const AdminCustomers = () => {
           <div className="flex items-center justify-between p-4 border-b border-border">
             <div>
               <h3 className="font-semibold text-foreground">{viewUser.email || 'User'} — Activity</h3>
-              <p className="text-xs text-muted-foreground">Orders and tickets created by this user</p>
+              <p className="text-xs text-muted-foreground">Orders created by this user</p>
             </div>
             <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewUser(null)}>
               <X className="h-4 w-4" />
@@ -339,37 +334,6 @@ const AdminCustomers = () => {
                   )}
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-foreground mb-2">Tickets ({viewTickets.length})</h4>
-                  {viewTickets.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No tickets found</p>
-                  ) : (
-                    <div className="border border-border rounded-lg overflow-auto max-h-72">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Ticket #</TableHead>
-                            <TableHead>Subject</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Date</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {viewTickets.map((t: any) => (
-                            <TableRow key={t.id}>
-                              <TableCell className="text-foreground">{t.ticket_number}</TableCell>
-                              <TableCell className="text-foreground">{t.subject}</TableCell>
-                              <TableCell>
-                                <Badge variant="secondary" className={`text-xs capitalize ${t.status === 'open' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}`}>{t.status}</Badge>
-                              </TableCell>
-                              <TableCell className="text-xs text-muted-foreground">{formatDate(t.created_at)}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  )}
-                </div>
               </div>
             )}
           </div>

@@ -1,8 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { NavLink } from '@/components/NavLink';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -10,22 +8,12 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, MessageCircle, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, FileText, Newspaper, Mail } from 'lucide-react';
+  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, FileText, Newspaper, Mail } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { data: openTicketsCount = 0 } = useQuery({
-    queryKey: ['admin-open-tickets-count'],
-    queryFn: async () => {
-      const { count } = await supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'open');
-      return count || 0;
-    },
-    enabled: !!user && (isAdmin || isEditor),
-    refetchInterval: 30000,
-  });
 
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/flash-sale-labels');
   const isSettingsSection = location.pathname.startsWith('/admin/settings');
@@ -66,7 +54,6 @@ const AdminLayout = () => {
     { to: '/admin/hero-slides', icon: Image, label: 'Hero Slider' },
     { to: '/admin/faqs', icon: HelpCircle, label: 'FAQs' },
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
-    { to: '/admin/tickets', icon: MessageCircle, label: 'Tickets' },
   ];
 
   return (
@@ -152,11 +139,6 @@ const AdminLayout = () => {
                         <NavLink to={to} className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
                           <Icon className="mr-2 h-4 w-4" />
                           <span className="flex-1">{label}</span>
-                          {to === '/admin/tickets' && openTicketsCount > 0 && (
-                            <span className="ml-auto inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-semibold">
-                              {openTicketsCount}
-                            </span>
-                          )}
                         </NavLink>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

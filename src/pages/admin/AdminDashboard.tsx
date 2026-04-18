@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, ShoppingCart, MessageCircle, Users } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Package, ShoppingCart } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { data: orderCounts } = useQuery({
@@ -22,19 +22,10 @@ const AdminDashboard = () => {
     },
   });
 
-  const { data: ticketCount } = useQuery({
-    queryKey: ['admin-ticket-count'],
-    queryFn: async () => {
-      const { count } = await supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'open');
-      return count || 0;
-    },
-  });
-
   const stats = [
     { label: 'Total Products', value: productCount || 0, icon: Package, color: 'text-primary' },
     { label: 'Total Orders', value: orderCounts?.total || 0, icon: ShoppingCart, color: 'text-success' },
     { label: 'Processing', value: orderCounts?.processing || 0, icon: ShoppingCart, color: 'text-warning' },
-    { label: 'Open Tickets', value: ticketCount || 0, icon: MessageCircle, color: 'text-destructive' },
   ];
 
   return (
