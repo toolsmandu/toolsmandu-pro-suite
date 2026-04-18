@@ -1049,7 +1049,23 @@ const AdminOrders = () => {
                 </div>
               </div>
 
-              {/* Editable Products */}
+              {/* Order Information — manual orders only */}
+              {((selectedOrder as any)?.payment_method === 'manual' || (!selectedOrder?.payment_pidx && (selectedOrder as any)?.payment_method !== 'khalti')) && (() => {
+                const creationLog = (auditLog || []).find((l: any) => l.action === 'order_created')
+                  || (auditLog && auditLog.length > 0 ? auditLog[auditLog.length - 1] : null);
+                const creatorEmail = creationLog?.profile?.email || creationLog?.profile?.name || '—';
+                return (
+                  <div>
+                    <Label className="text-xs text-muted-foreground mb-1 block">Order Information</Label>
+                    <div className="bg-muted/30 rounded-lg p-3 space-y-1 text-sm">
+                      <p>
+                        <span className="text-muted-foreground">Created By:</span>{' '}
+                        <span className="text-foreground font-medium">{creatorEmail}</span>
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <Label className="text-xs text-muted-foreground">Products</Label>
