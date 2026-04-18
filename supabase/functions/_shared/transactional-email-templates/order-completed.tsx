@@ -113,8 +113,9 @@ const OrderCompletedEmail = ({
           </div>
         )}
 
-        <div style={orderIdWrap}>
-          <Text style={orderIdText}>Order ID: <strong>#{orderId ?? '—'}</strong></Text>
+        <div style={orderIdCard}>
+          <Text style={orderIdLabel}>Order ID</Text>
+          <Text style={orderIdValue}>#{orderId ?? '—'}</Text>
         </div>
 
         <div style={reminderWrap}>
@@ -208,8 +209,16 @@ const messageBox = {
   borderRadius: '12px', padding: '18px 20px',
 }
 const messageText = { fontSize: '14px', color: '#0b1220', lineHeight: '1.7' }
-const orderIdWrap = { padding: '12px 32px 0', textAlign: 'center' as const }
-const orderIdText = { fontSize: '14px', color: '#0b1220', margin: 0 }
+const orderIdCard = {
+  margin: '12px 32px 16px', padding: '22px 24px',
+  background: '#0b1220',
+  textAlign: 'center' as const,
+}
+const orderIdLabel = {
+  fontSize: '11px', color: '#a8b0bd', margin: '0 0 6px',
+  fontWeight: 600 as const, letterSpacing: '0.16em', textTransform: 'uppercase' as const,
+}
+const orderIdValue = { fontSize: '32px', color: '#ffffff', fontWeight: 700 as const, margin: 0 }
 const reminderWrap = { padding: '12px 32px 0', textAlign: 'center' as const }
 const reminderText = { fontSize: '14px', color: '#0b1220', margin: 0, fontWeight: 700 as const }
 
