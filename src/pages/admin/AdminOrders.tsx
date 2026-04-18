@@ -579,8 +579,18 @@ const AdminOrders = () => {
       }
 
       // Send "Order Received" + "Order Completed" emails for the manually-created order.
-      {
-
+      // Skip ALL customer emails when the order is created in processing mode.
+      if (setStatusProcessing) {
+        // Record an audit marker so a later status change to "completed" also skips the email.
+        if (user) {
+          await supabase.from('order_audit_log').insert({
+            order_id: order.id,
+            changed_by: user.id,
+            action: 'manual_no_customer_emails',
+            details: 'Order created in processing mode — customer emails suppressed',
+          });
+        }
+      } else {
         try {
           const [{ data: profile }, { data: logoSetting }] = await Promise.all([
             supabase.from('profiles').select('email, phone').eq('user_id', selectedCustomer.user_id).maybeSingle(),
