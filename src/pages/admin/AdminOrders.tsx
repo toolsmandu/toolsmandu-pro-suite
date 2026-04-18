@@ -1012,21 +1012,7 @@ const AdminOrders = () => {
                 </div>
               </div>
 
-              {/* Family Sharing — Static Note Sent */}
-              {familySharingInfo?.isFamilySharing && familySharingInfo.templates.length > 0 && (
-                <div>
-                  <Label className="text-xs text-muted-foreground mb-1 block">Static Note Sent (Family Sharing)</Label>
-                  <div className="bg-muted/30 rounded-lg p-3 space-y-2 text-sm">
-                    {familySharingInfo.templates.map((t, i) => (
-                      <div
-                        key={i}
-                        className="prose prose-sm prose-invert max-w-none text-foreground [&_*]:text-foreground"
-                        dangerouslySetInnerHTML={{ __html: t }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Family Sharing — Static Note Sent moved below Update Order button */}
 
               {/* Payment Information */}
               <div>
