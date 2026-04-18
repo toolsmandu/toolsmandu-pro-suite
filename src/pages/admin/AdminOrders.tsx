@@ -75,6 +75,7 @@ const AdminOrders = () => {
   const [newVariationId, setNewVariationId] = useState('');
   const [newAmount, setNewAmount] = useState('');
   const [newPaymentMethod, setNewPaymentMethod] = useState('manual');
+  const [setStatusProcessing, setSetStatusProcessing] = useState(true);
   const [newRemarks, setNewRemarks] = useState('');
   const [creatingOrder, setCreatingOrder] = useState(false);
 
@@ -496,6 +497,7 @@ const AdminOrders = () => {
     setNewVariationId('');
     setNewAmount('');
     setNewPaymentMethod('manual');
+    setSetStatusProcessing(true);
     setNewRemarks('');
   };
 
@@ -509,8 +511,8 @@ const AdminOrders = () => {
       const { data: order, error: orderError } = await supabase.from('orders').insert({
         user_id: selectedCustomer.user_id,
         total: parseFloat(newAmount),
-        status: 'completed' as any,
-        payment_status: 'paid',
+        status: (setStatusProcessing ? 'processing' : 'completed') as any,
+        payment_status: setStatusProcessing ? 'pending' : 'paid',
         payment_method: newPaymentMethod,
         created_at: kathmanduToUTC(newOrderDate),
       } as any).select().single();
@@ -1154,6 +1156,17 @@ const AdminOrders = () => {
                   <option value="manual">Manual</option>
                   <option value="khalti">Khalti</option>
                 </select>
+                <div className="flex items-center gap-2 mt-2">
+                  <Checkbox
+                    id="set-status-processing"
+                    checked={setStatusProcessing}
+                    onCheckedChange={(v) => setSetStatusProcessing(!!v)}
+                    className="border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <Label htmlFor="set-status-processing" className="text-xs text-muted-foreground cursor-pointer">
+                    Set Order Status: Processing
+                  </Label>
+                </div>
               </div>
 
               {/* Remarks */}
