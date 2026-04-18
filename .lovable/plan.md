@@ -1,31 +1,49 @@
 
-User wants their site logo to appear in the auth email templates (signup, recovery, magic-link, invite, email-change, reauthentication). Currently all 6 templates render a text wordmark: "Toolsmandu" with blue "Tools" accent.
+## Why the email shows "view expanded content" in Gmail
 
-Logo source: `site_settings.logo_url` is stored in the DB and already used in Footer. But edge functions can't easily query DB on every render and even if they did, the logo URL needs to be a publicly accessible absolute URL (which Supabase Storage URLs are).
+Gmail (and a few other inbox clients) collapses long emails behind a **"[Message clipped] View entire message"** link when:
 
-Two approaches:
-1. Hardcode the logo URL into templates (simple, fast, but requires re-edit if logo changes)
-2. Fetch logo URL from `site_settings` in the auth-email-hook and pass as prop to templates (dynamic, always in sync)
+1. The rendered HTML source is **larger than ~102 KB**, OR
+2. The email contains **identical content to a previous email** in the thread (Gmail clips quoted content), OR
+3. The message has **trailing whitespace / repeated structure** that Gmail thinks is a quoted reply.
 
-Approach 2 is better since user already manages logo in admin panel. The hook already has Supabase client access.
+Looking at our two order templates, the most likely cause is **#1 — HTML size**. React Email renders inline styles on every element, and our templates use:
 
-## Plan
+- `@react-email/components` `<Section>`, `<Container>`, `<Hr>`, `<Button>` → each expands into nested `<table><tr><td>` with full inline style attributes (often 3–6 levels deep per Section).
+- We have **8+ Sections** per email (brandBar, hero, amountCard, messageWrap, reminderWrap, detailsWrap, supportSection, footer).
+- Long inline gradient + box-shadow strings repeated multiple times.
+- The system-appended unsubscribe footer adds more HTML on top.
+- Order Completed adds `dangerouslySetInnerHTML` admin message which can include `<p>`, `<strong>`, `<a>` tags — pushing closer to the limit.
 
-**1. Update `auth-email-hook/index.ts`**
-- Before rendering templates, query `site_settings` for `logo_url` key
-- Pass `logoUrl` as a prop to all 6 templates (alongside existing props)
-- Cache result for the request lifetime
+The combined output likely crosses Gmail's 102 KB threshold, triggering the clipping.
 
-**2. Update all 6 email templates** in `supabase/functions/_shared/email-templates/`:
-- `signup.tsx`, `recovery.tsx`, `magic-link.tsx`, `invite.tsx`, `email-change.tsx`, `reauthentication.tsx`
-- Add optional `logoUrl?: string` prop
-- In the brand bar section, render `<Img>` (from @react-email/components) when `logoUrl` is provided, otherwise fall back to the existing "Toolsmandu" text wordmark
-- Logo styling: max height ~40px, auto width, centered/left-aligned matching current brand bar
+## Fix Plan
 
-**3. Redeploy** `auth-email-hook` so changes take effect.
+Slim down the rendered HTML by reducing React Email's table nesting and consolidating styles. Concrete changes to **both** `new-order.tsx` and `order-completed.tsx`:
 
-**4. Test** by triggering a signup OTP and verifying the email shows the logo.
+1. **Replace `<Section>` with plain `<div>` where possible.** `<Section>` always renders a full `<table><tbody><tr><td>`. A simple `<div style={...}>` cuts ~150 bytes per section. With 8 sections × 2 templates, this alone saves several KB.
 
-The logo URL stored in `site_settings.logo_url` is already a public Supabase Storage URL, which works fine in emails (no auth needed, hot-linkable from Gmail/Outlook).
+2. **Remove unused styles** in `order-completed.tsx`: `amountCard`, `amountLabel`, `amountValue`, `pillWrap`, `pill`, `reviewWrap`, `reviewTitle`, `reviewText`, `btnRow`, `btnGoogle`, `btnTrustpilot`, `waCircle` are defined but never used. Dead code that still ships in the bundle (minor) — but more importantly, signals to clean up.
 
-No DB migrations needed. No new secrets needed. No frontend changes needed.
+3. **Drop `<Hr>` in favor of a `<div>` with `borderTop`.** `<Hr>` renders a styled table row.
+
+4. **Shorten the `boxShadow` and `gradient` strings** — long CSS values repeat in the output.
+
+5. **Strip the Preview component if not essential** — it injects a hidden span with the preview text padded by zero-width spaces (~600 bytes of `&zwnj;&nbsp;` repeated).
+
+6. **For `order-completed.tsx`: sanitize the admin message HTML** — strip `style=`, `class=`, and any unnecessary attributes from the rich-text editor output before injecting via `dangerouslySetInnerHTML`. Keep only `<p>`, `<strong>`, `<em>`, `<a href>`, `<br>`, `<ul>`, `<li>`. This both reduces size and prevents weird inline styles from the editor bloating the email.
+
+7. **Redeploy** `send-transactional-email` and `preview-transactional-email`.
+
+## Files to change
+
+- `supabase/functions/_shared/transactional-email-templates/new-order.tsx`
+- `supabase/functions/_shared/transactional-email-templates/order-completed.tsx`
+
+## Verification
+
+After deploying, place a real test order and check Gmail web — the "View entire message" link should be gone. As a secondary check, view the raw email source (Gmail → ⋮ → Show original) and confirm the HTML body is well under 102 KB.
+
+## Note
+
+If it turns out the size is already under 102 KB, the cause is likely **#2 — duplicate content in thread** (Gmail clips when the same order email is sent twice to the same recipient and threaded together). In that case the fix is to ensure each email subject/body has a unique element (e.g., always include the order ID in the subject — which we already do for some, will verify both).
