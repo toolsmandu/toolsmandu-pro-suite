@@ -20,6 +20,29 @@ interface OrderCompletedProps {
   amount?: string | number
   adminMessage?: string
   logoUrl?: string
+  texts?: {
+    eyebrow?: string
+    heading?: string
+    sub_message?: string
+    admin_message_header?: string
+    reminder_text?: string
+    support_title?: string
+    support_text?: string
+    review_title?: string
+    review_text?: string
+  }
+}
+
+const DEFAULT_TEXTS = {
+  eyebrow: 'ORDER COMPLETED',
+  heading: 'Your order is complete',
+  sub_message: `Thank you for your recent order with ${SITE_NAME}! We're delighted to inform you that your product is now ready for access.`,
+  admin_message_header: 'Admin has sent you the following message',
+  reminder_text: 'For your reminder, here is your order details:',
+  support_title: 'Need help with your order?',
+  support_text: 'Our team is one tap away on WhatsApp.',
+  review_title: 'Loved our service?',
+  review_text: 'Please take a moment to leave us a review.',
 }
 
 const DetailRow = ({ label, value, last }: { label: string; value: React.ReactNode; last?: boolean }) => (
@@ -37,7 +60,10 @@ const OrderCompletedEmail = ({
   amount,
   adminMessage,
   logoUrl,
-}: OrderCompletedProps) => (
+  texts,
+}: OrderCompletedProps) => {
+  const t = { ...DEFAULT_TEXTS, ...(texts || {}) }
+  return (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>Order #{orderId ?? ''} completed — thank you for choosing {SITE_NAME}</Preview>
@@ -54,11 +80,9 @@ const OrderCompletedEmail = ({
 
         {/* Hero */}
         <Section style={hero}>
-          <Text style={eyebrow}>ORDER COMPLETED</Text>
-          <Heading style={h1}>Your order is complete</Heading>
-          <Text style={heroSub}>
-            Thank you for your recent order with {SITE_NAME}! We're delighted to inform you that your product is now ready for access.
-          </Text>
+          <Text style={eyebrow}>{t.eyebrow}</Text>
+          <Heading style={h1}>{t.heading}</Heading>
+          <Text style={heroSub}>{t.sub_message}</Text>
         </Section>
 
         {/* Order ID card */}
@@ -70,7 +94,7 @@ const OrderCompletedEmail = ({
         {/* Admin message */}
         {adminMessage && (
           <Section style={messageWrap}>
-            <Text style={sectionTitle}>Admin has sent you the following message</Text>
+            <Text style={sectionTitle}>{t.admin_message_header}</Text>
             <Section style={messageBox}>
               <div style={messageText} dangerouslySetInnerHTML={{ __html: adminMessage }} />
             </Section>
@@ -79,7 +103,7 @@ const OrderCompletedEmail = ({
 
         {/* Reminder line */}
         <Section style={reminderWrap}>
-          <Text style={reminderText}>For your reminder, here is your order details:</Text>
+          <Text style={reminderText}>{t.reminder_text}</Text>
         </Section>
 
         {/* Details */}
@@ -99,8 +123,8 @@ const OrderCompletedEmail = ({
 
         {/* Review CTA */}
         <Section style={reviewWrap}>
-          <Text style={reviewTitle}>Loved our service?</Text>
-          <Text style={reviewText}>Please take a moment to leave us a review.</Text>
+          <Text style={reviewTitle}>{t.review_title}</Text>
+          <Text style={reviewText}>{t.review_text}</Text>
           <Section style={btnRow}>
             <Button href={GOOGLE_REVIEW_URL} style={btnGoogle}>Review on Google</Button>
             {' '}
@@ -112,10 +136,8 @@ const OrderCompletedEmail = ({
 
         {/* Support */}
         <Section style={supportSection}>
-          <Text style={supportTitle}>Need help with your order?</Text>
-          <Text style={supportText}>
-            Our team is one tap away on WhatsApp.
-          </Text>
+          <Text style={supportTitle}>{t.support_title}</Text>
+          <Text style={supportText}>{t.support_text}</Text>
           <Link href={WHATSAPP_LINK} style={supportNumber}>
             <Img
               src={WHATSAPP_ICON}
@@ -136,11 +158,12 @@ const OrderCompletedEmail = ({
       </Container>
     </Body>
   </Html>
-)
+  )
+}
 
 export const template = {
   component: OrderCompletedEmail,
-  subject: 'Your Toolsmandu order is now completed!',
+  subject: (data: Record<string, any>) => data?.texts?.subject || 'Your Toolsmandu order is now completed!',
   displayName: 'Order Completed',
   previewData: {
     customerEmail: 'uddheshyastudio@gmail.com',
