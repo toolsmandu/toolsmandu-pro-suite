@@ -261,6 +261,25 @@ const ProductPage = () => {
                   {isVariantInCart ? 'Proceed to Payment' : selectedVariant ? `Add to Cart · NPR ${selectedVariant.price}` : 'Add to Cart'}
                 </Button>
               )}
+
+              {selectedVariant?.variation_info && (
+                <div
+                  className="mt-4 rounded-xl p-4"
+                  style={{
+                    border: '1.5px dashed rgba(34, 139, 230, 0.6)',
+                    background: 'linear-gradient(135deg, rgba(34,139,230,0.08), rgba(21,170,191,0.08))',
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-5 w-1 rounded-full" style={{ background: 'linear-gradient(180deg, #228be6, #15aabf)' }} />
+                    <h4 className="text-sm font-bold text-foreground">Info About Selected Plan:</h4>
+                  </div>
+                  <div
+                    className="text-sm text-white/90 leading-relaxed prose prose-sm prose-invert max-w-none [&_a]:underline [&_a]:text-[#15aabf] [&_img]:rounded-md [&_img]:max-w-full [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+                    dangerouslySetInnerHTML={{ __html: selectedVariant.variation_info }}
+                  />
+                </div>
+              )}
             </Card>
           );
 
