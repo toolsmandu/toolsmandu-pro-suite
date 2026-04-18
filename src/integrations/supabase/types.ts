@@ -504,18 +504,21 @@ export type Database = {
           created_at: string
           id: string
           login_link: string | null
+          order_note_template: string | null
           product_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           login_link?: string | null
+          order_note_template?: string | null
           product_id: string
         }
         Update: {
           created_at?: string
           id?: string
           login_link?: string | null
+          order_note_template?: string | null
           product_id?: string
         }
         Relationships: [
