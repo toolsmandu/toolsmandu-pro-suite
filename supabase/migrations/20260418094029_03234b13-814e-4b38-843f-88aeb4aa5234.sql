@@ -1,1 +1,0 @@
-UPDATE public.email_templates SET fields = fields - 'eyebrow' WHERE template_key IN ('new-order','order-completed');

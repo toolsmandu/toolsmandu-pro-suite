@@ -67,6 +67,7 @@ const NewOrderEmail = ({
         </div>
 
         <div style={hero}>
+          <Text style={eyebrow}>{t.eyebrow}</Text>
           <Text style={heroSub}>{t.sub_message}</Text>
         </div>
 
