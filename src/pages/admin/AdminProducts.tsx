@@ -70,6 +70,8 @@ const AdminProducts = () => {
   const [stockFilter, setStockFilter] = useState('all');
   const [orderModeFilter, setOrderModeFilter] = useState('all');
   const [form, setForm] = useState(emptyForm());
+  const [infoEditorIndex, setInfoEditorIndex] = useState<number | null>(null);
+  const [infoEditorValue, setInfoEditorValue] = useState('');
 
   // Reset to list view when navigating away and back
   useEffect(() => {
