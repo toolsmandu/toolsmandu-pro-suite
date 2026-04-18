@@ -47,6 +47,7 @@ const AdminLayout = () => {
 
   const bottomLinks = [
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
+    { to: '/admin/expired-orders', icon: ShoppingCart, label: 'Expired Orders' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },
     { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
     { to: '/admin/blogs', icon: Newspaper, label: 'Blogs' },
