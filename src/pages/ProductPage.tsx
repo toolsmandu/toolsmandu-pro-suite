@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check, ClipboardList } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
+import InputFieldRenderer, { validateField, type InputFieldDef } from '@/components/InputFieldRenderer';
 import { toast } from 'sonner';
 
 const ProductFAQs = ({ productName }: { productName: string }) => {
@@ -80,6 +81,8 @@ const ProductPage = () => {
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [bannerImage, setBannerImage] = useState('');
+  const [fieldValues, setFieldValues] = useState<Record<string, string | string[]>>({});
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useQuery({
     queryKey: ['order-mode-settings'],
