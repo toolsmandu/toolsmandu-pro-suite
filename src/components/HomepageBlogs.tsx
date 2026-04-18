@@ -128,7 +128,7 @@ const HomepageBlogs = () => {
                     <div className="w-full aspect-[16/9] bg-muted" />
                   )}
                   <div className="p-4 flex-1 flex flex-col bg-[#0c2c5a] border-0 border-transparent">
-                    <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">{b.title}</h3>
+                    <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-white transition-colors">{b.title}</h3>
                     {b.excerpt && <p className="text-sm text-muted-foreground line-clamp-2 mt-2 flex-1">{b.excerpt}</p>}
                     {b.published_at && (
                       <span className="flex items-center gap-1 text-xs text-muted-foreground mt-3">
