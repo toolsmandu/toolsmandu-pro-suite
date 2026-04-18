@@ -256,7 +256,7 @@ const ProductPage = () => {
                 <Button
                   size="lg"
                   className="w-full hover:opacity-90"
-                  style={{ backgroundColor: '#f97015' }}
+                  style={{ backgroundColor: '#338fe1' }}
                   onClick={handleAddToCart}
                   disabled={activeVariations.length > 0 && !selectedVariant}
                 >
