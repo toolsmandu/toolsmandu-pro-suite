@@ -348,38 +348,50 @@ const AdminOrders = () => {
       }
 
       // Send "Order Completed" email when admin marks the order as completed.
+      // Skip if the order was originally created in processing mode with email suppression.
       if (
         editStatus === 'completed' &&
         selectedOrder.status !== 'completed'
       ) {
         try {
-          const [{ data: profile }, { data: logoSetting }] = await Promise.all([
-            supabase.from('profiles').select('email, phone').eq('user_id', selectedOrder.user_id).maybeSingle(),
-            supabase.from('site_settings').select('value').eq('key', 'email_logo_url').maybeSingle(),
-          ]);
-          const productName = (editItems || [])
-            .map(it => `${(products as any)?.find((p: any) => p.id === it.product_id)?.name || 'Item'}${it.variation_name ? ` - ${it.variation_name}` : ''}`)
-            .join(', ');
-          if (profile?.email) {
-            await supabase.functions.invoke('send-transactional-email', {
-              body: {
-                templateName: 'order-completed',
-                recipientEmail: profile.email,
-                idempotencyKey: `order-completed-${selectedOrder.id}-${Date.now()}`,
-                templateData: {
-                  customerEmail: profile.email,
-                  customerPhone: profile.phone || '',
-                  productName,
-                  orderId: selectedOrder.order_number,
-                  amount: String(parseFloat(editTotal) || selectedOrder.total),
-                  paymentMethod: (selectedOrder as any).payment_method
-                    ? (selectedOrder as any).payment_method.charAt(0).toUpperCase() + (selectedOrder as any).payment_method.slice(1)
-                    : '',
-                  adminMessage: !isAdminOnly && stripHtml(orderNote) ? orderNote : '',
-                  logoUrl: logoSetting?.value || '',
+          const { data: suppressMarker } = await supabase
+            .from('order_audit_log')
+            .select('id')
+            .eq('order_id', selectedOrder.id)
+            .eq('action', 'manual_no_customer_emails')
+            .maybeSingle();
+
+          if (suppressMarker) {
+            console.log('Skipping order-completed email — order created with email suppression');
+          } else {
+            const [{ data: profile }, { data: logoSetting }] = await Promise.all([
+              supabase.from('profiles').select('email, phone').eq('user_id', selectedOrder.user_id).maybeSingle(),
+              supabase.from('site_settings').select('value').eq('key', 'email_logo_url').maybeSingle(),
+            ]);
+            const productName = (editItems || [])
+              .map(it => `${(products as any)?.find((p: any) => p.id === it.product_id)?.name || 'Item'}${it.variation_name ? ` - ${it.variation_name}` : ''}`)
+              .join(', ');
+            if (profile?.email) {
+              await supabase.functions.invoke('send-transactional-email', {
+                body: {
+                  templateName: 'order-completed',
+                  recipientEmail: profile.email,
+                  idempotencyKey: `order-completed-${selectedOrder.id}-${Date.now()}`,
+                  templateData: {
+                    customerEmail: profile.email,
+                    customerPhone: profile.phone || '',
+                    productName,
+                    orderId: selectedOrder.order_number,
+                    amount: String(parseFloat(editTotal) || selectedOrder.total),
+                    paymentMethod: (selectedOrder as any).payment_method
+                      ? (selectedOrder as any).payment_method.charAt(0).toUpperCase() + (selectedOrder as any).payment_method.slice(1)
+                      : '',
+                    adminMessage: !isAdminOnly && stripHtml(orderNote) ? orderNote : '',
+                    logoUrl: logoSetting?.value || '',
+                  },
                 },
-              },
-            });
+              });
+            }
           }
         } catch (emailErr) {
           console.error('Failed to send order-completed email:', emailErr);
@@ -579,8 +591,18 @@ const AdminOrders = () => {
       }
 
       // Send "Order Received" + "Order Completed" emails for the manually-created order.
-      {
-
+      // Skip ALL customer emails when the order is created in processing mode.
+      if (setStatusProcessing) {
+        // Record an audit marker so a later status change to "completed" also skips the email.
+        if (user) {
+          await supabase.from('order_audit_log').insert({
+            order_id: order.id,
+            changed_by: user.id,
+            action: 'manual_no_customer_emails',
+            details: 'Order created in processing mode — customer emails suppressed',
+          });
+        }
+      } else {
         try {
           const [{ data: profile }, { data: logoSetting }] = await Promise.all([
             supabase.from('profiles').select('email, phone').eq('user_id', selectedCustomer.user_id).maybeSingle(),
