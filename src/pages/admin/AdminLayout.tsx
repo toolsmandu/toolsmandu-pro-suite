@@ -17,16 +17,6 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data: openTicketsCount = 0 } = useQuery({
-    queryKey: ['admin-open-tickets-count'],
-    queryFn: async () => {
-      const { count } = await supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'open');
-      return count || 0;
-    },
-    enabled: !!user && (isAdmin || isEditor),
-    refetchInterval: 30000,
-  });
-
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/flash-sale-labels');
   const isSettingsSection = location.pathname.startsWith('/admin/settings');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
