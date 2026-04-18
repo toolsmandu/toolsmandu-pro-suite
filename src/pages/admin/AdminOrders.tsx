@@ -371,6 +371,9 @@ const AdminOrders = () => {
                   productName,
                   orderId: selectedOrder.order_number,
                   amount: String(parseFloat(editTotal) || selectedOrder.total),
+                  paymentMethod: (selectedOrder as any).payment_method
+                    ? (selectedOrder as any).payment_method.charAt(0).toUpperCase() + (selectedOrder as any).payment_method.slice(1)
+                    : '',
                   adminMessage: !isAdminOnly && stripHtml(orderNote) ? orderNote : '',
                   logoUrl: logoSetting?.value || '',
                 },
@@ -566,7 +569,7 @@ const AdminOrders = () => {
                 templateName: 'order-completed',
                 recipientEmail: profile.email,
                 idempotencyKey: `order-completed-${order.id}`,
-                templateData: { ...baseData, adminMessage: newRemarks.trim() || '' },
+                templateData: { ...baseData, paymentMethod: paymentLabel, adminMessage: newRemarks.trim() || '' },
               },
             });
           }
