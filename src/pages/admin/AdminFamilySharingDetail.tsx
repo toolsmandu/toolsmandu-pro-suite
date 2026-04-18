@@ -60,12 +60,13 @@ const AdminFamilySharingDetail = () => {
   const fetchData = async () => {
     const { data: fp } = await supabase
       .from("family_sharing_products")
-      .select("id, product_id, products(name)")
+      .select("id, product_id, order_note_template, products(name)")
       .eq("id", id)
       .single();
     if (fp) {
       setProductName((fp as any).products?.name || "Unknown");
       setProductId(fp.product_id);
+      setOrderNoteTemplate((fp as any).order_note_template || "");
 
       const { data: vars } = await supabase
         .from("product_variations")
