@@ -16,6 +16,7 @@ interface OrderCompletedProps {
   productName?: string
   orderId?: string | number
   amount?: string | number
+  paymentMethod?: string
   adminMessage?: string
   logoUrl?: string
   texts?: {
@@ -72,9 +73,12 @@ const DetailRow = ({ label, value, last }: { label: string; value: React.ReactNo
 )
 
 const OrderCompletedEmail = ({
+  customerEmail,
+  customerPhone,
   productName,
   orderId,
   amount,
+  paymentMethod,
   adminMessage,
   logoUrl,
   texts,
@@ -117,9 +121,12 @@ const OrderCompletedEmail = ({
           <Text style={sectionTitle}>Order Details</Text>
           <table style={detailsTable} cellPadding={0} cellSpacing={0}>
             <tbody>
-              <DetailRow label="Order ID" value={`#${orderId ?? '—'}`} />
+              <DetailRow label="Email" value={customerEmail || '—'} />
+              <DetailRow label="Phone" value={customerPhone || '—'} />
               <DetailRow label="Product" value={productName || '—'} />
-              <DetailRow label="Amount" value={`Rs ${amount ?? '—'}`} last />
+              <DetailRow label="Amount" value={`Rs ${amount ?? '—'}`} />
+              <DetailRow label="Order ID" value={`#${orderId ?? '—'}`} />
+              <DetailRow label="Payment Method" value={paymentMethod || '—'} last />
             </tbody>
           </table>
         </div>
@@ -158,6 +165,7 @@ export const template = {
     productName: 'En-vato Elements - 1 Month Shared',
     orderId: '19525',
     amount: '1200',
+    paymentMethod: 'Khalti',
     adminMessage: '<p><em>Congratulations! Your order is complete now.</em></p><p><strong>How to find login details of purchased services?</strong></p><p>✅ Login into <a href="https://toolsmandu.com">toolsmandu.com</a></p><p>✅ Then, Go to <strong>Profile &gt; Orders</strong> to find login details of purchased services.</p>',
   },
 } satisfies TemplateEntry
