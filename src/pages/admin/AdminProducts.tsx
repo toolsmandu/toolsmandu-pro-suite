@@ -780,6 +780,54 @@ const AdminProducts = () => {
                 </DialogContent>
               </Dialog>
 
+              {/* Field picker dialog */}
+              <Dialog open={fieldPickerIndex !== null} onOpenChange={(open) => { if (!open) setFieldPickerIndex(null); }}>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Choose Input Fields</DialogTitle>
+                  </DialogHeader>
+                  <div className="max-h-[60vh] overflow-y-auto space-y-2">
+                    {(allInputFields || []).length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-6">
+                        No input fields available. Create them in <strong>Products → Input Fields</strong>.
+                      </p>
+                    ) : (
+                      (allInputFields || []).map((f: any) => {
+                        const selectedIds =
+                          fieldPickerIndex === 'product'
+                            ? productInputFieldIds
+                            : (variations[fieldPickerIndex as number]?.input_field_ids || []);
+                        const checked = selectedIds.includes(f.id);
+                        return (
+                          <label key={f.id} className="flex items-center gap-3 p-2 border border-border rounded-md cursor-pointer hover:bg-muted/50">
+                            <Checkbox
+                              checked={checked}
+                              onCheckedChange={(c) => {
+                                const next = c ? [...selectedIds, f.id] : selectedIds.filter((x) => x !== f.id);
+                                if (fieldPickerIndex === 'product') {
+                                  setProductInputFieldIds(next);
+                                } else {
+                                  updateVariation(fieldPickerIndex as number, 'input_field_ids', next);
+                                }
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm">{f.name}</div>
+                              <div className="text-xs text-muted-foreground capitalize">
+                                {f.field_type}{f.is_required ? ' • Required' : ''}
+                              </div>
+                            </div>
+                          </label>
+                        );
+                      })
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <Button onClick={() => setFieldPickerIndex(null)}>Done</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
             <Button
               onClick={() => saveMutation.mutate()}
               className="w-full mt-4 mb-8"
