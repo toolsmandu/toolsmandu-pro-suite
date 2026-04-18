@@ -1,4 +1,4 @@
-import { AlertCircle, MessageCircle, Clock } from 'lucide-react';
+import { TriangleAlert, MessageCircle, Clock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -9,10 +9,8 @@ const ReportProblemPage = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <Card className="p-6 md:p-8 space-y-6">
-        <div className="flex flex-col items-center text-center gap-3">
-          <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center">
-            <AlertCircle className="h-6 w-6 text-primary" />
-          </div>
+        <div className="flex items-center justify-center gap-3">
+          <TriangleAlert className="h-7 w-7 text-primary" />
           <h1 className="text-2xl md:text-3xl font-bold">Report a Problem</h1>
         </div>
 
