@@ -163,7 +163,8 @@ const OrderNoteEmail = ({
 export const template = {
   component: OrderNoteEmail,
   subject: (data: Record<string, any>) => {
-    return data?.texts?.subject || 'You have a new note on your Toolsmandu order'
+    const base = data?.texts?.subject || 'You have a new note on your Toolsmandu order'
+    return data?.orderId ? `${base} (#${data.orderId})` : base
   },
   displayName: 'Order Note',
   previewData: {
