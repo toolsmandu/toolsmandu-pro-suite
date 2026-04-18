@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Search } from 'lucide-react';
 import { toast } from 'sonner';
 
 const selectClassName =
@@ -42,6 +42,8 @@ const AdminInputFields = () => {
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm());
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { data: fields, isLoading } = useQuery({
     queryKey: ['input-fields'],
@@ -119,14 +121,43 @@ const AdminInputFields = () => {
 
   const isCheckbox = form.field_type === 'checkbox';
 
+  const filteredFields = (fields || []).filter((f: any) =>
+    !searchTerm.trim() || (f.label || '').toLowerCase().includes(searchTerm.trim().toLowerCase())
+  );
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
         <h2 className="text-2xl font-bold text-foreground">Input Fields</h2>
-        <Button onClick={openAdd}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Input Field
-        </Button>
+        <div className="flex items-center gap-2">
+          {searchOpen ? (
+            <div className="relative">
+              <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                autoFocus
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by label..."
+                className="pl-8 pr-8 h-9 w-64"
+              />
+              <button
+                type="button"
+                onClick={() => { setSearchOpen(false); setSearchTerm(''); }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <Button variant="outline" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search input fields">
+              <Search className="h-4 w-4" />
+            </Button>
+          )}
+          <Button onClick={openAdd}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Input Field
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -145,7 +176,7 @@ const AdminInputFields = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(fields || []).map((f: any) => (
+              {filteredFields.map((f: any) => (
                 <TableRow key={f.id} className="cursor-pointer" onClick={() => openEdit(f)}>
                   <TableCell className="font-medium text-foreground">{f.name}</TableCell>
                   <TableCell className="text-muted-foreground capitalize">{f.field_type}</TableCell>
@@ -170,10 +201,10 @@ const AdminInputFields = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {(fields || []).length === 0 && (
+              {filteredFields.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
-                    No input fields yet.
+                    {searchTerm ? 'No fields match your search.' : 'No input fields yet.'}
                   </TableCell>
                 </TableRow>
               )}
