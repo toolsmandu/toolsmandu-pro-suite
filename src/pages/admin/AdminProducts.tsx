@@ -567,6 +567,33 @@ const AdminProducts = () => {
                 </div>
               </div>
 
+              {/* Product-level Input Fields */}
+              <div className="border border-border rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm font-semibold">Custom Input Fields (Product-level)</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setFieldPickerIndex('product')}>
+                    <Plus className="h-3 w-3 mr-1" /> Choose Fields
+                  </Button>
+                </div>
+                {productInputFieldIds.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">No fields attached. These show on the product page above Add to Cart unless a selected variation has its own special fields.</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {productInputFieldIds.map((fid) => {
+                      const f = (allInputFields || []).find((x: any) => x.id === fid);
+                      return (
+                        <span key={fid} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs">
+                          {f?.name || 'Unknown'}
+                          <button type="button" className="text-destructive" onClick={() => setProductInputFieldIds(productInputFieldIds.filter((x) => x !== fid))}>
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {/* Product Image */}
               <div>
                 <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
@@ -688,6 +715,40 @@ const AdminProducts = () => {
                             className="h-8 text-sm"
                           />
                         </div>
+                      </div>
+
+                      {/* Special Input Fields toggle */}
+                      <div className="border-t border-border pt-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Checkbox
+                              checked={variation.has_special_input_fields}
+                              onCheckedChange={(c) => updateVariation(index, 'has_special_input_fields', !!c)}
+                              id={`special-${index}`}
+                            />
+                            <Label htmlFor={`special-${index}`} className="text-xs cursor-pointer">Add Special Input Field</Label>
+                          </div>
+                          {variation.has_special_input_fields && (
+                            <Button type="button" variant="outline" size="sm" className="h-7 px-2 text-xs" onClick={() => setFieldPickerIndex(index)}>
+                              <Plus className="h-3 w-3 mr-1" /> Choose Fields
+                            </Button>
+                          )}
+                        </div>
+                        {variation.has_special_input_fields && variation.input_field_ids.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {variation.input_field_ids.map((fid) => {
+                              const f = (allInputFields || []).find((x: any) => x.id === fid);
+                              return (
+                                <span key={fid} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs">
+                                  {f?.name || 'Unknown'}
+                                  <button type="button" className="text-destructive" onClick={() => updateVariation(index, 'input_field_ids', variation.input_field_ids.filter((x) => x !== fid))}>
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
