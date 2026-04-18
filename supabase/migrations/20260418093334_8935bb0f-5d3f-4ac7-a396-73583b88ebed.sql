@@ -1,0 +1,1 @@
+UPDATE public.email_templates SET fields = fields - 'heading' WHERE template_key IN ('new-order','order-completed');
