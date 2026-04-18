@@ -560,6 +560,19 @@ const AdminProducts = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-foreground">Variation {index + 1}</span>
                         <div className="flex items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            onClick={() => {
+                              setInfoEditorValue(variation.variation_info || '');
+                              setInfoEditorIndex(index);
+                            }}
+                          >
+                            <Info className="h-3 w-3 mr-1" />
+                            {variation.variation_info ? 'Edit Info' : 'Add Info'}
+                          </Button>
                           <div className="flex items-center gap-2">
                             <Switch checked={variation.is_active} onCheckedChange={(value) => updateVariation(index, 'is_active', value)} />
                             <span className={`text-xs ${variation.is_active ? 'text-success' : 'text-muted-foreground'}`}>
@@ -606,8 +619,8 @@ const AdminProducts = () => {
                         </div>
                       </div>
 
-                      {/* Row 2: Selling Price, Full Price, Variation Info, Update button */}
-                      <div className="grid gap-3 items-end" style={{ gridTemplateColumns: '1fr 1fr 3fr' }}>
+                      {/* Row 2: Selling Price, Full Price */}
+                      <div className="grid gap-3 md:grid-cols-2">
                         <div>
                           <Label className="text-xs">Selling Price <span className="text-destructive">*</span></Label>
                           <Input
@@ -626,20 +639,35 @@ const AdminProducts = () => {
                             className="h-8 text-sm"
                           />
                         </div>
-                        <div>
-                          <Label className="text-xs">Variation Info</Label>
-                          <Input
-                            value={variation.variation_info}
-                            onChange={(event) => updateVariation(index, 'variation_info', event.target.value)}
-                            placeholder="e.g. 1 Year License"
-                            className="h-8 text-sm"
-                          />
-                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
+
+              <Dialog open={infoEditorIndex !== null} onOpenChange={(open) => { if (!open) setInfoEditorIndex(null); }}>
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader>
+                    <DialogTitle>Variation Info</DialogTitle>
+                  </DialogHeader>
+                  <div className="max-h-[60vh] overflow-y-auto">
+                    <RichTextEditor value={infoEditorValue} onChange={setInfoEditorValue} />
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setInfoEditorIndex(null)}>Cancel</Button>
+                    <Button
+                      onClick={() => {
+                        if (infoEditorIndex !== null) {
+                          updateVariation(infoEditorIndex, 'variation_info', infoEditorValue);
+                        }
+                        setInfoEditorIndex(null);
+                      }}
+                    >
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
             <Button
               onClick={() => saveMutation.mutate()}
