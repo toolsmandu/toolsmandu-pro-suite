@@ -329,9 +329,8 @@ const AdminOrders = () => {
         } as any);
         auditEntries.push({
           action: 'note_sent',
-          details: `Sent ${isAdminOnly ? 'admin-only ' : ''}note`,
+          details: `Sent ${isAdminOnly ? 'admin-only ' : ''}note: ${stripHtml(orderNote)}`,
         });
-        queryClient.invalidateQueries({ queryKey: ['order-notes', selectedOrder.id] });
       }
 
       // Persist audit entries
@@ -1036,24 +1035,6 @@ const AdminOrders = () => {
                 </div>
               )}
 
-              {/* Sent Notes History */}
-              {orderNotes && orderNotes.length > 0 && (
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground block">Sent Notes</Label>
-                  {orderNotes.map((n: any) => (
-                    <div key={n.id} className="bg-muted/30 rounded-lg p-3 text-sm">
-                      <div className="flex items-start gap-2">
-                        <div className="prose prose-sm prose-invert max-w-none text-foreground flex-1 [&_*]:text-foreground" dangerouslySetInnerHTML={{ __html: n.note }} />
-                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => { navigator.clipboard.writeText(stripHtml(n.note)); toast.success('Copied to clipboard'); }}>
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                        {n.is_admin_only && <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded-full font-medium shrink-0">Admin Only</span>}
-                      </div>
-                      <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(n.created_at)}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </ScrollArea>
         </div>
