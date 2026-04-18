@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check, ClipboardList } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
+import InputFieldRenderer, { validateField, type InputFieldDef } from '@/components/InputFieldRenderer';
 import { toast } from 'sonner';
 
 const ProductFAQs = ({ productName }: { productName: string }) => {
@@ -80,6 +81,8 @@ const ProductPage = () => {
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [bannerImage, setBannerImage] = useState('');
+  const [fieldValues, setFieldValues] = useState<Record<string, string | string[]>>({});
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useQuery({
     queryKey: ['order-mode-settings'],
@@ -95,6 +98,43 @@ const ProductPage = () => {
   });
 
   // No variation selected by default — user must pick one
+
+  const { data: productFieldsData } = useQuery({
+    queryKey: ['product-input-fields', product?.id],
+    enabled: !!product?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('product_input_fields')
+        .select('input_field_id, sort_order, input_fields(*)')
+        .eq('product_id', product!.id)
+        .order('sort_order');
+      return (data || []).map((r: any) => r.input_fields).filter(Boolean);
+    },
+  });
+
+  const { data: variantFieldsData } = useQuery({
+    queryKey: ['variation-input-fields', selectedVariant?.id],
+    enabled: !!selectedVariant?.id && !!selectedVariant?.has_special_input_fields,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('variation_input_fields')
+        .select('input_field_id, sort_order, input_fields(*)')
+        .eq('variation_id', selectedVariant.id)
+        .order('sort_order');
+      return (data || []).map((r: any) => r.input_fields).filter(Boolean);
+    },
+  });
+
+  const activeFields: InputFieldDef[] =
+    selectedVariant?.has_special_input_fields
+      ? (variantFieldsData as any[]) || []
+      : (productFieldsData as any[]) || [];
+
+  // Reset field values when variant changes
+  useEffect(() => {
+    setFieldValues({});
+    setFieldErrors({});
+  }, [selectedVariant?.id]);
 
   const { data: related } = useQuery({
     queryKey: ['related-products', product?.category_id],
@@ -123,6 +163,28 @@ const ProductPage = () => {
       navigate('/cart');
       return;
     }
+
+    // Validate input fields
+    const errs: Record<string, string> = {};
+    activeFields.forEach((f) => {
+      const err = validateField(f, fieldValues[f.id]);
+      if (err) errs[f.id] = err;
+    });
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      toast.error('Please fill all required fields');
+      return;
+    }
+
+    const responses = activeFields.map((f) => ({
+      field_id: f.id,
+      field_name: f.name,
+      field_type: f.field_type,
+      label: f.label,
+      question: f.question,
+      value: fieldValues[f.id] ?? (f.field_type === 'checkbox' && f.checkbox_mode === 'multi' ? [] : ''),
+    }));
+
     if (selectedVariant) {
       addItem({
         id: product.id,
@@ -132,6 +194,7 @@ const ProductPage = () => {
         duration: product.duration,
         variantId: selectedVariant.id,
         variantName: selectedVariant.name,
+        inputFieldResponses: responses,
       });
     } else {
       addItem({
@@ -140,6 +203,7 @@ const ProductPage = () => {
         price: product.price,
         image_url: product.image_url,
         duration: product.duration,
+        inputFieldResponses: responses,
       });
     }
   };
@@ -213,6 +277,35 @@ const ProductPage = () => {
               ) : (
                 <div className="text-center py-4 text-muted-foreground text-sm mb-4">
                   No plans available for this product.
+                </div>
+              )}
+
+              {selectedVariant && activeFields.length > 0 && (
+                <div
+                  className="mb-4 rounded-xl p-4"
+                  style={{
+                    border: '1.5px dashed rgba(34, 139, 230, 0.6)',
+                    background: 'linear-gradient(135deg, rgba(34,139,230,0.08), rgba(21,170,191,0.08))',
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <ClipboardList className="h-4 w-4 text-[#15aabf]" />
+                    <h4 className="text-sm font-bold text-foreground">Provide Required Information:</h4>
+                  </div>
+                  <div className="space-y-3">
+                    {activeFields.map((f) => (
+                      <InputFieldRenderer
+                        key={f.id}
+                        field={f}
+                        value={fieldValues[f.id]}
+                        error={fieldErrors[f.id]}
+                        onChange={(v) => {
+                          setFieldValues((prev) => ({ ...prev, [f.id]: v }));
+                          setFieldErrors((prev) => { const n = { ...prev }; delete n[f.id]; return n; });
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
 

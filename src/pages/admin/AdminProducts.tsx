@@ -8,6 +8,7 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUpload from '@/components/admin/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, Search, X } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -28,6 +29,8 @@ interface Variation {
   variation_info: string;
   is_active: boolean;
   stock_status: string;
+  has_special_input_fields: boolean;
+  input_field_ids: string[];
 }
 
 const emptyVariation = (): Variation => ({
@@ -38,6 +41,8 @@ const emptyVariation = (): Variation => ({
   variation_info: '',
   is_active: true,
   stock_status: 'in_stock',
+  has_special_input_fields: false,
+  input_field_ids: [],
 });
 
 const emptyForm = () => ({
@@ -70,8 +75,10 @@ const AdminProducts = () => {
   const [stockFilter, setStockFilter] = useState('all');
   const [orderModeFilter, setOrderModeFilter] = useState('all');
   const [form, setForm] = useState(emptyForm());
+  const [productInputFieldIds, setProductInputFieldIds] = useState<string[]>([]);
   const [infoEditorIndex, setInfoEditorIndex] = useState<number | null>(null);
   const [infoEditorValue, setInfoEditorValue] = useState('');
+  const [fieldPickerIndex, setFieldPickerIndex] = useState<number | 'product' | null>(null);
 
   // Reset to list view when navigating away and back
   useEffect(() => {
@@ -119,6 +126,15 @@ const AdminProducts = () => {
     },
   });
 
+  const { data: allInputFields } = useQuery({
+    queryKey: ['input-fields-all'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('input_fields').select('*').order('name');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const filteredProducts = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
@@ -143,6 +159,7 @@ const AdminProducts = () => {
     setForm(emptyForm());
     setVariations([]);
     setEditingId(null);
+    setProductInputFieldIds([]);
   };
 
   const openAdd = () => {
@@ -172,7 +189,7 @@ const AdminProducts = () => {
 
     const { data, error } = await supabase
       .from('product_variations')
-      .select('*')
+      .select('*, variation_input_fields(input_field_id)')
       .eq('product_id', product.id)
       .order('sort_order');
 
@@ -191,14 +208,22 @@ const AdminProducts = () => {
         variation_info: variation.variation_info || '',
         is_active: variation.is_active,
         stock_status: variation.stock_status || 'in_stock',
+        has_special_input_fields: variation.has_special_input_fields || false,
+        input_field_ids: (variation.variation_input_fields || []).map((v: any) => v.input_field_id),
       })),
     );
+
+    const { data: pifs } = await supabase
+      .from('product_input_fields')
+      .select('input_field_id')
+      .eq('product_id', product.id);
+    setProductInputFieldIds((pifs || []).map((p: any) => p.input_field_id));
 
     setEditingId(product.id);
     setView('form');
   };
 
-  const updateVariation = (index: number, field: keyof Variation, value: string | boolean) => {
+  const updateVariation = (index: number, field: keyof Variation, value: string | boolean | string[]) => {
     setVariations((previous) => previous.map((variation, currentIndex) => (
       currentIndex === index ? { ...variation, [field]: value } : variation
     )));
@@ -263,11 +288,36 @@ const AdminProducts = () => {
         is_active: variation.is_active,
         stock_status: variation.stock_status || 'in_stock',
         sort_order: index,
+        has_special_input_fields: variation.has_special_input_fields,
       }));
 
+      let insertedVariations: any[] = [];
       if (variationPayloads.length > 0) {
-        const { error } = await supabase.from('product_variations').insert(variationPayloads);
+        const { data: vData, error } = await supabase.from('product_variations').insert(variationPayloads).select('id');
         if (error) throw error;
+        insertedVariations = vData || [];
+      }
+
+      // Save product-level input fields
+      await supabase.from('product_input_fields').delete().eq('product_id', productId);
+      if (productInputFieldIds.length > 0) {
+        const pifPayload = productInputFieldIds.map((fid, idx) => ({
+          product_id: productId, input_field_id: fid, sort_order: idx,
+        }));
+        await supabase.from('product_input_fields').insert(pifPayload);
+      }
+
+      // Save variation-level input fields (only when has_special_input_fields)
+      const vifPayload: any[] = [];
+      activeVariations.forEach((v, idx) => {
+        const vid = insertedVariations[idx]?.id;
+        if (!vid || !v.has_special_input_fields) return;
+        v.input_field_ids.forEach((fid, fidx) => {
+          vifPayload.push({ variation_id: vid, input_field_id: fid, sort_order: fidx });
+        });
+      });
+      if (vifPayload.length > 0) {
+        await supabase.from('variation_input_fields').insert(vifPayload);
       }
     },
     onSuccess: () => {
@@ -518,6 +568,33 @@ const AdminProducts = () => {
                 </div>
               </div>
 
+              {/* Product-level Input Fields */}
+              <div className="border border-border rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm font-semibold">Custom Input Fields (Product-level)</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setFieldPickerIndex('product')}>
+                    <Plus className="h-3 w-3 mr-1" /> Choose Fields
+                  </Button>
+                </div>
+                {productInputFieldIds.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">No fields attached. These show on the product page above Add to Cart unless a selected variation has its own special fields.</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {productInputFieldIds.map((fid) => {
+                      const f = (allInputFields || []).find((x: any) => x.id === fid);
+                      return (
+                        <span key={fid} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs">
+                          {f?.name || 'Unknown'}
+                          <button type="button" className="text-destructive" onClick={() => setProductInputFieldIds(productInputFieldIds.filter((x) => x !== fid))}>
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {/* Product Image */}
               <div>
                 <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
@@ -640,6 +717,40 @@ const AdminProducts = () => {
                           />
                         </div>
                       </div>
+
+                      {/* Special Input Fields toggle */}
+                      <div className="border-t border-border pt-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Checkbox
+                              checked={variation.has_special_input_fields}
+                              onCheckedChange={(c) => updateVariation(index, 'has_special_input_fields', !!c)}
+                              id={`special-${index}`}
+                            />
+                            <Label htmlFor={`special-${index}`} className="text-xs cursor-pointer">Add Special Input Field</Label>
+                          </div>
+                          {variation.has_special_input_fields && (
+                            <Button type="button" variant="outline" size="sm" className="h-7 px-2 text-xs" onClick={() => setFieldPickerIndex(index)}>
+                              <Plus className="h-3 w-3 mr-1" /> Choose Fields
+                            </Button>
+                          )}
+                        </div>
+                        {variation.has_special_input_fields && variation.input_field_ids.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {variation.input_field_ids.map((fid) => {
+                              const f = (allInputFields || []).find((x: any) => x.id === fid);
+                              return (
+                                <span key={fid} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs">
+                                  {f?.name || 'Unknown'}
+                                  <button type="button" className="text-destructive" onClick={() => updateVariation(index, 'input_field_ids', variation.input_field_ids.filter((x) => x !== fid))}>
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -665,6 +776,54 @@ const AdminProducts = () => {
                     >
                       Save
                     </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              {/* Field picker dialog */}
+              <Dialog open={fieldPickerIndex !== null} onOpenChange={(open) => { if (!open) setFieldPickerIndex(null); }}>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Choose Input Fields</DialogTitle>
+                  </DialogHeader>
+                  <div className="max-h-[60vh] overflow-y-auto space-y-2">
+                    {(allInputFields || []).length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-6">
+                        No input fields available. Create them in <strong>Products → Input Fields</strong>.
+                      </p>
+                    ) : (
+                      (allInputFields || []).map((f: any) => {
+                        const selectedIds =
+                          fieldPickerIndex === 'product'
+                            ? productInputFieldIds
+                            : (variations[fieldPickerIndex as number]?.input_field_ids || []);
+                        const checked = selectedIds.includes(f.id);
+                        return (
+                          <label key={f.id} className="flex items-center gap-3 p-2 border border-border rounded-md cursor-pointer hover:bg-muted/50">
+                            <Checkbox
+                              checked={checked}
+                              onCheckedChange={(c) => {
+                                const next = c ? [...selectedIds, f.id] : selectedIds.filter((x) => x !== f.id);
+                                if (fieldPickerIndex === 'product') {
+                                  setProductInputFieldIds(next);
+                                } else {
+                                  updateVariation(fieldPickerIndex as number, 'input_field_ids', next);
+                                }
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm">{f.name}</div>
+                              <div className="text-xs text-muted-foreground capitalize">
+                                {f.field_type}{f.is_required ? ' • Required' : ''}
+                              </div>
+                            </div>
+                          </label>
+                        );
+                      })
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <Button onClick={() => setFieldPickerIndex(null)}>Done</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>

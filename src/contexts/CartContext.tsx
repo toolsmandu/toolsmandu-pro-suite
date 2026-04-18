@@ -10,6 +10,7 @@ export interface CartItem {
   quantity: number;
   variantId?: string;
   variantName?: string;
+  inputFieldResponses?: any[];
 }
 
 interface CartContextType {

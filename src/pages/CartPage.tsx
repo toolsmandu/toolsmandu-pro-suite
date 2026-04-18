@@ -153,6 +153,7 @@ const CartPage = () => {
           items: items.map(item => ({
             id: item.id, price: item.price, quantity: item.quantity,
             variantId: item.variantId, variantName: item.variantName,
+            inputFieldResponses: item.inputFieldResponses || [],
           })),
           coupon_id: appliedCoupon?.id || null,
           discount_amount: appliedCoupon?.discountAmount || 0,

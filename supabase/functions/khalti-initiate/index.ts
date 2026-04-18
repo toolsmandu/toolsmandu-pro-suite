@@ -118,6 +118,7 @@ Deno.serve(async (req) => {
         quantity: number;
         variantId?: string;
         variantName?: string;
+        inputFieldResponses?: any[];
       }) => ({
         order_id: order.id,
         product_id: item.id,
@@ -125,6 +126,7 @@ Deno.serve(async (req) => {
         quantity: item.quantity,
         variation_id: item.variantId || null,
         variation_name: item.variantName || null,
+        input_field_responses: item.inputFieldResponses || [],
       })
     );
 
