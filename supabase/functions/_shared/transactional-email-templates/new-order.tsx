@@ -146,7 +146,7 @@ const brandBar = { padding: '28px 32px 8px', textAlign: 'center' as const }
 const logoImg = { maxHeight: '44px', width: 'auto', display: 'inline-block', margin: '0 auto' }
 const brandText = { color: '#0b1220', fontSize: '20px', fontWeight: 700 as const, margin: 0 }
 
-const hero = { padding: '8px 32px 28px', textAlign: 'center' as const }
+const hero = { padding: '8px 40px 28px', textAlign: 'center' as const }
 const eyebrow = {
   fontSize: '11px', fontWeight: 700 as const, letterSpacing: '0.18em',
   color: '#6b7280', margin: '0 0 12px', textTransform: 'uppercase' as const,
@@ -155,7 +155,7 @@ const h1 = {
   fontSize: '16px', fontWeight: 700 as const, color: '#0b1220',
   margin: '0 0 12px', lineHeight: '1.2',
 }
-const heroSub = { fontSize: '15px', color: '#5b6473', lineHeight: '1.6', margin: '0 0 20px', textAlign: 'left' as const }
+const heroSub = { fontSize: '15px', color: '#5b6473', lineHeight: '1.6', margin: '0 0 20px' }
 
 const amountCard = {
   margin: '0 0 24px', padding: '22px 24px',
