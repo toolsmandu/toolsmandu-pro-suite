@@ -75,7 +75,7 @@ const AdminOrders = () => {
   const [newVariationId, setNewVariationId] = useState('');
   const [newAmount, setNewAmount] = useState('');
   const [newPaymentMethod, setNewPaymentMethod] = useState('manual');
-  const [setStatusProcessing, setSetStatusProcessing] = useState(true);
+  const [setStatusProcessing, setSetStatusProcessing] = useState(false);
   const [newRemarks, setNewRemarks] = useState('');
   const [creatingOrder, setCreatingOrder] = useState(false);
 
@@ -497,7 +497,7 @@ const AdminOrders = () => {
     setNewVariationId('');
     setNewAmount('');
     setNewPaymentMethod('manual');
-    setSetStatusProcessing(true);
+    setSetStatusProcessing(false);
     setNewRemarks('');
   };
 
