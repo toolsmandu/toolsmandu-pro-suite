@@ -16,7 +16,7 @@ const AdminLayout = () => {
   const location = useLocation();
 
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels');
-  const isSettingsSection = location.pathname.startsWith('/admin/settings');
+  const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides') || location.pathname.startsWith('/admin/faqs');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
   const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
 
