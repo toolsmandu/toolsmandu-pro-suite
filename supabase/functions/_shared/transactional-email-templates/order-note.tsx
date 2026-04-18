@@ -83,7 +83,12 @@ const OrderNoteEmail = ({
   logoUrl,
   texts,
 }: OrderNoteProps) => {
-  const t = { ...DEFAULT_TEXTS, ...(texts || {}) }
+  // Merge defaults with overrides, but ignore empty/missing override values
+  // so admin-saved blank fields don't render as empty strings.
+  const overrides = Object.fromEntries(
+    Object.entries(texts || {}).filter(([, v]) => typeof v === 'string' && v.trim() !== '')
+  )
+  const t = { ...DEFAULT_TEXTS, ...overrides }
   const cleanAdminMessage = adminMessage ? sanitizeAdminHtml(adminMessage) : ''
   return (
   <Html lang="en" dir="ltr">
