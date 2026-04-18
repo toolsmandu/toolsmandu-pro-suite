@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import { FileText } from "lucide-react";
 import { toast } from "sonner";
 
@@ -355,19 +355,17 @@ const AdminFamilySharingDetail = () => {
 
       {/* Order Note Template Dialog */}
       <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Edit Order Note Template</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-xs text-muted-foreground">
-              This note will be sent to the customer as an order note when they order any variation of this product assigned to family sharing.
+              This note will be sent to the customer as an order note when they order any variation of this product assigned to family sharing. Formatting (bold, alignment, lists, links, images) is preserved in the email.
             </p>
-            <Textarea
+            <RichTextEditor
               value={orderNoteTemplate}
-              onChange={(e) => setOrderNoteTemplate(e.target.value)}
-              placeholder="Write the order note here..."
-              className="min-h-[200px]"
+              onChange={setOrderNoteTemplate}
             />
             <Button onClick={handleSaveTemplate} disabled={savingTemplate} className="w-full">
               {savingTemplate ? "Saving..." : "Save Template"}
