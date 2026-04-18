@@ -52,7 +52,10 @@ const NewOrderEmail = ({
   logoUrl,
   texts,
 }: NewOrderProps) => {
-  const t = { ...DEFAULT_TEXTS, ...(texts || {}) }
+  const overrides = Object.fromEntries(
+    Object.entries(texts || {}).filter(([, v]) => typeof v === 'string' && v.trim() !== '')
+  )
+  const t = { ...DEFAULT_TEXTS, ...overrides }
   return (
   <Html lang="en" dir="ltr">
     <Head />

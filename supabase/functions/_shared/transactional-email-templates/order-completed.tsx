@@ -81,7 +81,10 @@ const OrderCompletedEmail = ({
   logoUrl,
   texts,
 }: OrderCompletedProps) => {
-  const t = { ...DEFAULT_TEXTS, ...(texts || {}) }
+  const overrides = Object.fromEntries(
+    Object.entries(texts || {}).filter(([, v]) => typeof v === 'string' && v.trim() !== '')
+  )
+  const t = { ...DEFAULT_TEXTS, ...overrides }
   const cleanAdminMessage = adminMessage ? sanitizeAdminHtml(adminMessage) : ''
   return (
   <Html lang="en" dir="ltr">
