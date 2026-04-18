@@ -130,7 +130,6 @@ const OrderCompletedEmail = ({
               <DetailRow label="Phone" value={customerPhone || '—'} />
               <DetailRow label="Product" value={productName || '—'} />
               <DetailRow label="Amount" value={`Rs ${amount ?? '—'}`} />
-              <DetailRow label="Order ID" value={`#${orderId ?? '—'}`} />
               <DetailRow label="Payment Method" value={paymentMethod || '—'} last />
             </tbody>
           </table>
@@ -192,7 +191,7 @@ const brandBar = { padding: '28px 32px 8px', textAlign: 'center' as const }
 const logoImg = { maxHeight: '44px', width: 'auto', display: 'inline-block', margin: '0 auto' }
 const brandText = { color: '#0b1220', fontSize: '20px', fontWeight: 700 as const, margin: 0 }
 
-const hero = { padding: '8px 40px 28px', textAlign: 'center' as const }
+const hero = { padding: '8px 40px 21px', textAlign: 'center' as const }
 const eyebrow = {
   fontSize: '11px', fontWeight: 700 as const, letterSpacing: '0.18em',
   color: '#6b7280', margin: '0 0 12px', textTransform: 'uppercase' as const,
