@@ -151,7 +151,9 @@ const OrderCompletedEmail = ({
 export const template = {
   component: OrderCompletedEmail,
   subject: (data: Record<string, any>) => {
-    return data?.texts?.subject || 'Your Toolsmandu order is now completed!'
+    const base = data?.texts?.subject || 'Your Toolsmandu order is now completed!'
+    const id = data?.orderId
+    return id ? `${base} (#${id})` : base
   },
   displayName: 'Order Completed',
   previewData: {

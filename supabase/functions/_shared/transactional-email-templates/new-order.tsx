@@ -115,7 +115,9 @@ const NewOrderEmail = ({
 export const template = {
   component: NewOrderEmail,
   subject: (data: Record<string, any>) => {
-    return data?.texts?.subject || 'Your Toolsmandu order has been received!'
+    const base = data?.texts?.subject || 'Your Toolsmandu order has been received!'
+    const id = data?.orderId
+    return id ? `${base} (#${id})` : base
   },
   displayName: 'New Order',
   previewData: {
