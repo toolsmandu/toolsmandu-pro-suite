@@ -4,11 +4,7 @@ import { parseEmailWebhookPayload } from 'npm:@lovable.dev/email-js'
 import { WebhookError, verifyWebhookRequest } from 'npm:@lovable.dev/webhooks-js'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { SignupEmail } from '../_shared/email-templates/signup.tsx'
-import { InviteEmail } from '../_shared/email-templates/invite.tsx'
-import { MagicLinkEmail } from '../_shared/email-templates/magic-link.tsx'
 import { RecoveryEmail } from '../_shared/email-templates/recovery.tsx'
-import { EmailChangeEmail } from '../_shared/email-templates/email-change.tsx'
-import { ReauthenticationEmail } from '../_shared/email-templates/reauthentication.tsx'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,20 +14,12 @@ const corsHeaders = {
 
 const EMAIL_SUBJECTS: Record<string, string> = {
   signup: 'Your verification code',
-  invite: "You've been invited",
-  magiclink: 'Your login link',
   recovery: 'Your password reset code',
-  email_change: 'Confirm your new email',
-  reauthentication: 'Your verification code',
 }
 
 const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
   signup: SignupEmail,
-  invite: InviteEmail,
-  magiclink: MagicLinkEmail,
   recovery: RecoveryEmail,
-  email_change: EmailChangeEmail,
-  reauthentication: ReauthenticationEmail,
 }
 
 // Configuration
@@ -46,11 +34,7 @@ const SAMPLE_PROJECT_URL = 'https://toolsmandu-pro-suite.lovable.app'
 const SAMPLE_EMAIL = 'user@example.test'
 const SAMPLE_DATA: Record<string, object> = {
   signup: { siteName: SITE_NAME, siteUrl: SAMPLE_PROJECT_URL, recipient: SAMPLE_EMAIL, token: '123456' },
-  magiclink: { siteName: SITE_NAME, confirmationUrl: SAMPLE_PROJECT_URL, token: '123456' },
   recovery: { siteName: SITE_NAME, token: '123456' },
-  invite: { siteName: SITE_NAME, siteUrl: SAMPLE_PROJECT_URL, confirmationUrl: SAMPLE_PROJECT_URL },
-  email_change: { siteName: SITE_NAME, email: SAMPLE_EMAIL, newEmail: SAMPLE_EMAIL, confirmationUrl: SAMPLE_PROJECT_URL },
-  reauthentication: { token: '123456' },
 }
 
 // Send via ZeptoMail API
