@@ -1012,21 +1012,7 @@ const AdminOrders = () => {
                 </div>
               </div>
 
-              {/* Family Sharing — Static Note Sent */}
-              {familySharingInfo?.isFamilySharing && familySharingInfo.templates.length > 0 && (
-                <div>
-                  <Label className="text-xs text-muted-foreground mb-1 block">Static Note Sent (Family Sharing)</Label>
-                  <div className="bg-muted/30 rounded-lg p-3 space-y-2 text-sm">
-                    {familySharingInfo.templates.map((t, i) => (
-                      <div
-                        key={i}
-                        className="prose prose-sm prose-invert max-w-none text-foreground [&_*]:text-foreground"
-                        dangerouslySetInnerHTML={{ __html: t }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Family Sharing — Static Note Sent moved below Update Order button */}
 
               {/* Payment Information */}
               <div>
@@ -1149,6 +1135,32 @@ const AdminOrders = () => {
                 <Save className="h-4 w-4 mr-2" />
                 {sending ? 'Updating...' : 'Update Order'}
               </Button>
+
+              {/* Family Sharing — Static Note Sent History */}
+              {familySharingInfo?.isFamilySharing && familySharingInfo.templates.length > 0 && (
+                <div>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mb-1">
+                    <Label className="text-xs text-muted-foreground">Static Note Sent (Family Sharing)</Label>
+                    {familySharingInfo.sentNotes && familySharingInfo.sentNotes.length > 0 && familySharingInfo.sentNotes[0].senderEmail && (
+                      <span className="text-xs text-muted-foreground">
+                        | Created by: <span className="text-foreground font-medium">{familySharingInfo.sentNotes[0].senderEmail}</span>
+                      </span>
+                    )}
+                  </div>
+                  <div className="bg-muted/30 rounded-lg p-3 space-y-3 text-sm">
+                    {(familySharingInfo.sentNotes && familySharingInfo.sentNotes.length > 0
+                      ? familySharingInfo.sentNotes.map(n => n.note)
+                      : familySharingInfo.templates
+                    ).map((t, i) => (
+                      <div
+                        key={i}
+                        className="prose prose-sm prose-invert max-w-none text-foreground [&_*]:text-foreground"
+                        dangerouslySetInnerHTML={{ __html: t }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Change History (audit log) */}
               {auditLog && auditLog.length > 0 && (
