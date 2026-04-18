@@ -158,6 +158,18 @@ const AdminFamilySharingDetail = () => {
     fetchData();
   };
 
+  const handleSaveTemplate = async () => {
+    setSavingTemplate(true);
+    const { error } = await supabase
+      .from("family_sharing_products")
+      .update({ order_note_template: orderNoteTemplate || null })
+      .eq("id", id!);
+    setSavingTemplate(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Template saved");
+    setTemplateDialogOpen(false);
+  };
+
   const handleSaveVariantLinks = async () => {
     if (!selectedCredentialId) return;
     // Remove existing links for this credential
