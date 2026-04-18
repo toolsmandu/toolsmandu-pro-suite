@@ -28,6 +28,8 @@ interface Variation {
   variation_info: string;
   is_active: boolean;
   stock_status: string;
+  has_special_input_fields: boolean;
+  input_field_ids: string[];
 }
 
 const emptyVariation = (): Variation => ({
@@ -38,6 +40,8 @@ const emptyVariation = (): Variation => ({
   variation_info: '',
   is_active: true,
   stock_status: 'in_stock',
+  has_special_input_fields: false,
+  input_field_ids: [],
 });
 
 const emptyForm = () => ({
@@ -70,8 +74,10 @@ const AdminProducts = () => {
   const [stockFilter, setStockFilter] = useState('all');
   const [orderModeFilter, setOrderModeFilter] = useState('all');
   const [form, setForm] = useState(emptyForm());
+  const [productInputFieldIds, setProductInputFieldIds] = useState<string[]>([]);
   const [infoEditorIndex, setInfoEditorIndex] = useState<number | null>(null);
   const [infoEditorValue, setInfoEditorValue] = useState('');
+  const [fieldPickerIndex, setFieldPickerIndex] = useState<number | 'product' | null>(null);
 
   // Reset to list view when navigating away and back
   useEffect(() => {
@@ -119,7 +125,14 @@ const AdminProducts = () => {
     },
   });
 
-  const filteredProducts = useMemo(() => {
+  const { data: allInputFields } = useQuery({
+    queryKey: ['input-fields-all'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('input_fields').select('*').order('name');
+      if (error) throw error;
+      return data || [];
+    },
+  });
     const term = searchTerm.trim().toLowerCase();
 
     return (products || []).filter((product: any) => {
@@ -143,6 +156,7 @@ const AdminProducts = () => {
     setForm(emptyForm());
     setVariations([]);
     setEditingId(null);
+    setProductInputFieldIds([]);
   };
 
   const openAdd = () => {
@@ -172,7 +186,7 @@ const AdminProducts = () => {
 
     const { data, error } = await supabase
       .from('product_variations')
-      .select('*')
+      .select('*, variation_input_fields(input_field_id)')
       .eq('product_id', product.id)
       .order('sort_order');
 
@@ -191,8 +205,16 @@ const AdminProducts = () => {
         variation_info: variation.variation_info || '',
         is_active: variation.is_active,
         stock_status: variation.stock_status || 'in_stock',
+        has_special_input_fields: variation.has_special_input_fields || false,
+        input_field_ids: (variation.variation_input_fields || []).map((v: any) => v.input_field_id),
       })),
     );
+
+    const { data: pifs } = await supabase
+      .from('product_input_fields')
+      .select('input_field_id')
+      .eq('product_id', product.id);
+    setProductInputFieldIds((pifs || []).map((p: any) => p.input_field_id));
 
     setEditingId(product.id);
     setView('form');
