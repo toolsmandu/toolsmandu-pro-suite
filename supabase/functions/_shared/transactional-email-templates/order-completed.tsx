@@ -85,12 +85,6 @@ const OrderCompletedEmail = ({
           <Text style={heroSub}>{t.sub_message}</Text>
         </Section>
 
-        {/* Order ID card */}
-        <Section style={amountCard}>
-          <Text style={amountLabel}>Order ID</Text>
-          <Text style={amountValue}>#{orderId ?? '—'}</Text>
-        </Section>
-
         {/* Admin message */}
         {adminMessage && (
           <Section style={messageWrap}>
@@ -111,25 +105,11 @@ const OrderCompletedEmail = ({
           <Text style={sectionTitle}>Order Details</Text>
           <table style={detailsTable} cellPadding={0} cellSpacing={0}>
             <tbody>
-              <DetailRow label="Email" value={
-                customerEmail ? <Link href={`mailto:${customerEmail}`} style={link}>{customerEmail}</Link> : '—'
-              } />
-              <DetailRow label="Phone" value={customerPhone || '—'} />
+              <DetailRow label="Order ID" value={`#${orderId ?? '—'}`} />
               <DetailRow label="Product" value={productName || '—'} />
               <DetailRow label="Amount" value={`Rs ${amount ?? '—'}`} last />
             </tbody>
           </table>
-        </Section>
-
-        {/* Review CTA */}
-        <Section style={reviewWrap}>
-          <Text style={reviewTitle}>{t.review_title}</Text>
-          <Text style={reviewText}>{t.review_text}</Text>
-          <Section style={btnRow}>
-            <Button href={GOOGLE_REVIEW_URL} style={btnGoogle}>Review on Google</Button>
-            {' '}
-            <Button href={TRUSTPILOT_URL} style={btnTrustpilot}>Review on Trustpilot</Button>
-          </Section>
         </Section>
 
         <Hr style={divider} />
