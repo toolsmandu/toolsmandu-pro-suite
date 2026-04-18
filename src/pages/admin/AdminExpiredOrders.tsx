@@ -144,7 +144,7 @@ const AdminExpiredOrders = () => {
                   <TableCell className="text-xs text-muted-foreground">{formatDate(r.expiryDate)}</TableCell>
                   <TableCell>
                     <span className={`text-xs font-medium ${isExpired ? 'text-destructive' : isSoon ? 'text-warning' : 'text-foreground'}`}>
-                      {isExpired ? `${Math.abs(r.remaining)} day(s) ago` : `${r.remaining} day(s)`}
+                      {r.remaining}
                     </span>
                   </TableCell>
                   <TableCell>
