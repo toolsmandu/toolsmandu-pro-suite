@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const BOT_UA = /googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkshare|w3c_validator|whatsapp|discordbot|applebot|semrushbot|ahrefsbot|mj12bot|ia_archiver|sogou|petalbot|bytespider/i;
 
-const SITE = "https://web.toolsmandu.com";
+const SITE = "https://toolsmanducloud.com";
 
 function escHtml(s: string | null | undefined): string {
   if (!s) return "";

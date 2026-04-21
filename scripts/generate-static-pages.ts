@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
 import path from "path";
 
-const SITE = "https://web.toolsmandu.com";
+const SITE = "https://toolsmanducloud.com";
 const DIST = path.resolve("dist");
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;

@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-const SITE = "https://web.toolsmandu.com";
+const SITE = "https://toolsmanducloud.com";
 
 Deno.serve(async () => {
   try {
