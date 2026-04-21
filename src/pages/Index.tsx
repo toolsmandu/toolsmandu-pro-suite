@@ -186,7 +186,14 @@ const Index = () => {
   const loading = isLoading || categoriesLoading;
 
   return (
-    <>
+      <Helmet>
+        <title>Toolsmandu — Premium Digital Software Subscriptions</title>
+        <meta name="description" content="Your trusted destination for premium digital software subscriptions at unbeatable prices. Instant delivery, 24/7 support." />
+        <link rel="canonical" href="https://web.toolsmandu.com" />
+        <meta property="og:title" content="Toolsmandu — Premium Digital Software Subscriptions" />
+        <meta property="og:description" content="Get the best software tools at unbeatable prices. Instant delivery, after-sales support, and service warranty." />
+        <meta property="og:url" content="https://web.toolsmandu.com" />
+      </Helmet>
       {loading ? (
         <div className="flex items-center justify-center min-h-[80vh]">
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
