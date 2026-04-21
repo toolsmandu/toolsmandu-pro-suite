@@ -2,8 +2,19 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+function jsonResponse(body: Record<string, unknown>, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+function setupError(error: string, details?: unknown) {
+  return jsonResponse({ success: false, error, details });
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -13,53 +24,53 @@ Deno.serve(async (req) => {
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const authHeader = req.headers.get("Authorization");
 
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
-    }
+    if (!authHeader) return jsonResponse({ error: "Unauthorized" }, 401);
 
     const supabase = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (error || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
-    }
+    if (error || !user) return jsonResponse({ error: "Unauthorized" }, 401);
 
     const userId = user.id;
     const serviceClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { data: roles } = await serviceClient.from("user_roles").select("role").eq("user_id", userId);
+    const { data: roles, error: roleError } = await serviceClient.from("user_roles").select("role").eq("user_id", userId);
+    if (roleError) return jsonResponse({ error: "Could not verify admin access", details: roleError.message }, 500);
     const isAdminOrEditor = roles?.some((r: any) => ["admin", "editor"].includes(r.role));
-    if (!isAdminOrEditor) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: corsHeaders });
-    }
+    if (!isAdminOrEditor) return jsonResponse({ error: "Forbidden" }, 403);
 
     const zoneId = Deno.env.get("CLOUDFLARE_ZONE_ID");
     const cfToken = Deno.env.get("CLOUDFLARE_API_TOKEN");
 
-    if (!zoneId || !cfToken) {
-      return new Response(JSON.stringify({ error: "Cloudflare credentials not configured" }), { status: 500, headers: corsHeaders });
+    if (!zoneId || !cfToken) return setupError("Cloudflare credentials not configured");
+    if (!/^[a-f0-9]{32}$/i.test(zoneId.trim())) {
+      return setupError("Invalid Cloudflare Zone ID. Use the 32-character Zone ID from Cloudflare, not the domain name.");
     }
+
+    const normalizedToken = cfToken.replace(/^Bearer\s+/i, "").trim();
 
     const cfRes = await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${cfToken}`,
+        Authorization: `Bearer ${normalizedToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ purge_everything: true }),
     });
 
-    const cfData = await cfRes.json();
-
-    if (!cfData.success) {
-      return new Response(JSON.stringify({ error: "Cache purge failed", details: cfData.errors }), { status: 500, headers: corsHeaders });
+    const cfText = await cfRes.text();
+    let cfData: any = null;
+    try {
+      cfData = cfText ? JSON.parse(cfText) : null;
+    } catch {
+      return setupError("Cloudflare returned an invalid response", { status: cfRes.status, body: cfText.slice(0, 500) });
     }
 
-    return new Response(JSON.stringify({ success: true, message: "Cache purged successfully" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    if (!cfRes.ok || !cfData?.success) return setupError("Cache purge failed", { status: cfRes.status, errors: cfData?.errors || cfData });
+
+    return jsonResponse({ success: true, message: "Cache purged successfully" });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
+    return jsonResponse({ error: e.message || "Unexpected cache purge error" }, 500);
   }
 });

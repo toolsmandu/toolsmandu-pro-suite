@@ -33,8 +33,11 @@ const AdminDashboard = () => {
       const { data, error } = await supabase.functions.invoke('purge-cloudflare-cache', {
         method: 'POST',
       });
+      if (data?.error) {
+        const details = data.details ? `: ${JSON.stringify(data.details)}` : '';
+        throw new Error(`${data.error}${details}`);
+      }
       if (error) throw error;
-      if (data?.error) throw new Error(data.error);
       toast.success('CDN cache purged! Search engines will now see your latest changes.');
     } catch (e: any) {
       toast.error(e.message || 'Failed to purge cache');
