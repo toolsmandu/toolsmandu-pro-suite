@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-const DEFAULT = `User-agent: *\nAllow: /\n`;
+const DEFAULT = `User-agent: *\nAllow: /\n\nSitemap: https://iuussfrylzowigmaozwv.supabase.co/functions/v1/sitemap-xml\n`;
 
 Deno.serve(async () => {
   try {
