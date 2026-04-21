@@ -1,49 +1,75 @@
 
-## Why the email shows "view expanded content" in Gmail
 
-Gmail (and a few other inbox clients) collapses long emails behind a **"[Message clipped] View entire message"** link when:
+## The SEO problem
 
-1. The rendered HTML source is **larger than ~102 KB**, OR
-2. The email contains **identical content to a previous email** in the thread (Gmail clips quoted content), OR
-3. The message has **trailing whitespace / repeated structure** that Gmail thinks is a quoted reply.
+Your site is a **client-rendered React SPA**. When Google or anyone hits "View Page Source", they only see the empty shell in `index.html` — no product titles, no blog content, no per-page meta tags. Everything is injected by JavaScript after load.
 
-Looking at our two order templates, the most likely cause is **#1 — HTML size**. React Email renders inline styles on every element, and our templates use:
+Google *can* execute JavaScript, but:
+- It's slower, less reliable, and lower-priority than server-rendered HTML
+- Social previews (Facebook, WhatsApp, Twitter, LinkedIn) **do not run JS** — they only read raw HTML, so your share cards are always the generic homepage info
+- Per-page meta titles/descriptions you set in `BlogPost.tsx` etc. via `document.title` never appear in the source
 
-- `@react-email/components` `<Section>`, `<Container>`, `<Hr>`, `<Button>` → each expands into nested `<table><tr><td>` with full inline style attributes (often 3–6 levels deep per Section).
-- We have **8+ Sections** per email (brandBar, hero, amountCard, messageWrap, reminderWrap, detailsWrap, supportSection, footer).
-- Long inline gradient + box-shadow strings repeated multiple times.
-- The system-appended unsubscribe footer adds more HTML on top.
-- Order Completed adds `dangerouslySetInnerHTML` admin message which can include `<p>`, `<strong>`, `<a>` tags — pushing closer to the limit.
+Lovable hosts static SPAs only — true SSR (Next.js style) is not available here. So the fix is a **prerendering strategy** that runs inside the constraints of Lovable hosting.
 
-The combined output likely crosses Gmail's 102 KB threshold, triggering the clipping.
+## Recommended solution: Dynamic prerendering edge function + react-helmet-async
 
-## Fix Plan
+A two-layer approach that gives crawlers real HTML while keeping the app a normal SPA for users.
 
-Slim down the rendered HTML by reducing React Email's table nesting and consolidating styles. Concrete changes to **both** `new-order.tsx` and `order-completed.tsx`:
+### Layer 1 — Per-page meta tags with `react-helmet-async`
 
-1. **Replace `<Section>` with plain `<div>` where possible.** `<Section>` always renders a full `<table><tbody><tr><td>`. A simple `<div style={...}>` cuts ~150 bytes per section. With 8 sections × 2 templates, this alone saves several KB.
+Replace the manual `document.title` / `document.querySelector('meta')` code in `BlogPost.tsx` (and add to `ProductPage.tsx`, `CategoryPage.tsx`, `Index.tsx`, `BlogList.tsx`) with `<Helmet>` blocks. This:
+- Centralizes SEO tags per page (title, description, canonical, OG, Twitter, JSON-LD)
+- Lets Google's JS-capable crawler pick them up reliably
+- Provides the source of truth that the prerender layer (below) will read
 
-2. **Remove unused styles** in `order-completed.tsx`: `amountCard`, `amountLabel`, `amountValue`, `pillWrap`, `pill`, `reviewWrap`, `reviewTitle`, `reviewText`, `btnRow`, `btnGoogle`, `btnTrustpilot`, `waCircle` are defined but never used. Dead code that still ships in the bundle (minor) — but more importantly, signals to clean up.
+### Layer 2 — Prerender edge function for bots
 
-3. **Drop `<Hr>` in favor of a `<div>` with `borderTop`.** `<Hr>` renders a styled table row.
+Add a Supabase edge function `prerender` that:
+1. Detects if the request is a known crawler (Googlebot, Bingbot, facebookexternalhit, Twitterbot, WhatsApp, LinkedInBot, Slackbot, Discordbot, etc.) via User-Agent
+2. For product/blog/category routes, fetches the data directly from the database
+3. Injects real `<title>`, `<meta>`, OG tags, JSON-LD, and a server-rendered HTML snapshot of the main content (title, description, image, body) into the `index.html` shell
+4. Returns that enriched HTML to the bot
+5. Regular users continue to get the normal SPA (no change in UX)
 
-4. **Shorten the `boxShadow` and `gradient` strings** — long CSS values repeat in the output.
+The function will handle these route patterns:
+- `/` — homepage with featured products + blogs snippet
+- `/item/:slug` — product name, price, description, image
+- `/item-category/:slug` — category name + product list
+- `/blog` — blog index
+- `/:slug` — individual blog post (full content)
 
-5. **Strip the Preview component if not essential** — it injects a hidden span with the preview text padded by zero-width spaces (~600 bytes of `&zwnj;&nbsp;` repeated).
+### Layer 3 — Wire bots to the edge function
 
-6. **For `order-completed.tsx`: sanitize the admin message HTML** — strip `style=`, `class=`, and any unnecessary attributes from the rich-text editor output before injecting via `dangerouslySetInnerHTML`. Keep only `<p>`, `<strong>`, `<em>`, `<a href>`, `<br>`, `<ul>`, `<li>`. This both reduces size and prevents weird inline styles from the editor bloating the email.
+Two options for routing crawler traffic to the prerender function — I'll ask which you prefer.
 
-7. **Redeploy** `send-transactional-email` and `preview-transactional-email`.
+### Layer 4 — Sitemap + robots.txt
 
-## Files to change
+- Add a `sitemap-xml` edge function that generates a live XML sitemap from products, categories, and blogs in the database
+- Update `public/robots.txt` to reference the sitemap URL
+- Already have the `robots-txt` edge function — add `Sitemap:` line
 
-- `supabase/functions/_shared/transactional-email-templates/new-order.tsx`
-- `supabase/functions/_shared/transactional-email-templates/order-completed.tsx`
+### Files that will change
 
-## Verification
+- `index.html` — add `<!--app-head-->` and `<!--app-body-->` placeholders the prerender function will fill
+- `src/main.tsx` — wrap App in `HelmetProvider`
+- `src/pages/Index.tsx`, `BlogList.tsx`, `BlogPost.tsx`, `ProductPage.tsx`, `CategoryPage.tsx` — add `<Helmet>` with title, meta, canonical, OG, Twitter, JSON-LD
+- `supabase/functions/prerender/index.ts` — new edge function (bot detection + DB fetch + HTML injection)
+- `supabase/functions/sitemap-xml/index.ts` — new edge function (dynamic sitemap)
+- `public/robots.txt` and `supabase/functions/robots-txt/index.ts` — add sitemap reference
+- `package.json` — add `react-helmet-async`
 
-After deploying, place a real test order and check Gmail web — the "View entire message" link should be gone. As a secondary check, view the raw email source (Gmail → ⋮ → Show original) and confirm the HTML body is well under 102 KB.
+### Why this works on Lovable
 
-## Note
+- No Next.js / SSR framework needed — Lovable only hosts static + edge functions, both of which we use
+- Real users keep the fast SPA experience
+- Bots get real HTML, real titles, real meta, real content — visible in "View Page Source" when fetched via the prerender route
+- Social share cards finally work correctly
 
-If it turns out the size is already under 102 KB, the cause is likely **#2 — duplicate content in thread** (Gmail clips when the same order email is sent twice to the same recipient and threaded together). In that case the fix is to ensure each email subject/body has a unique element (e.g., always include the order ID in the subject — which we already do for some, will verify both).
+### Tradeoffs
+
+- Prerender function adds a small DB read per bot request (cached for 5–10 min)
+- Need to keep `<Helmet>` tags in sync when adding new SEO-relevant pages
+- The "View Page Source" of a normal browser request will still show the SPA shell — only crawler User-Agents see the enriched HTML. To verify, you fetch with `curl -A "Googlebot" https://web.toolsmandu.com/item/some-slug`
+
+## One decision needed before I implement
+
