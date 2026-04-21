@@ -128,8 +128,11 @@ async function main() {
         },
       });
       const head = buildHead({ title: `${title} — Toolsmandu`, desc, url: `${SITE}/item/${p.slug}`, image: p.image_url || undefined, type: "product", jsonLd });
-      let body = `<h1>${escHtml(p.name)}</h1><p>${escHtml(desc)}</p>`;
+      let body = `<h1>${escHtml(p.name)}</h1>`;
       if (p.image_url) body += `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}">`;
+      if (p.description) body += `<div>${p.description}</div>`;
+      else if (desc) body += `<p>${escHtml(desc)}</p>`;
+      body += `<p>Price: NPR ${p.price}</p>`;
       writePage(`item/${p.slug}`, template, head, body);
       sitemapUrls.push({ loc: `${SITE}/item/${p.slug}`, lastmod: p.updated_at?.split("T")[0], priority: "0.8", changefreq: "weekly" });
       count++;
