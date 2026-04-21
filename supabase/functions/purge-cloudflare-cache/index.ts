@@ -42,6 +42,7 @@ Deno.serve(async (req) => {
 
     const zoneId = Deno.env.get("CLOUDFLARE_ZONE_ID");
     const cfToken = Deno.env.get("CLOUDFLARE_API_TOKEN");
+    const cfEmail = Deno.env.get("CLOUDFLARE_AUTH_EMAIL");
 
     if (!zoneId || !cfToken) return setupError("Cloudflare credentials not configured");
     if (!/^[a-f0-9]{32}$/i.test(zoneId.trim())) {
@@ -50,12 +51,31 @@ Deno.serve(async (req) => {
 
     const normalizedToken = cfToken.replace(/^Bearer\s+/i, "").trim();
 
-    const cfRes = await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`, {
-      method: "POST",
-      headers: {
+    // Detect if this is a Global API Key (37-char hex) vs API Token
+    const isGlobalKey = /^[a-f0-9]{37}$/i.test(normalizedToken);
+
+    let cfHeaders: Record<string, string>;
+    if (isGlobalKey) {
+      if (!cfEmail) {
+        return setupError(
+          "Global API Key detected but CLOUDFLARE_AUTH_EMAIL secret is not set. Please add your Cloudflare account email as the CLOUDFLARE_AUTH_EMAIL secret."
+        );
+      }
+      cfHeaders = {
+        "X-Auth-Key": normalizedToken,
+        "X-Auth-Email": cfEmail.trim(),
+        "Content-Type": "application/json",
+      };
+    } else {
+      cfHeaders = {
         Authorization: `Bearer ${normalizedToken}`,
         "Content-Type": "application/json",
-      },
+      };
+    }
+
+    const cfRes = await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId.trim()}/purge_cache`, {
+      method: "POST",
+      headers: cfHeaders,
       body: JSON.stringify({ purge_everything: true }),
     });
 
@@ -67,7 +87,13 @@ Deno.serve(async (req) => {
       return setupError("Cloudflare returned an invalid response", { status: cfRes.status, body: cfText.slice(0, 500) });
     }
 
-    if (!cfRes.ok || !cfData?.success) return setupError("Cache purge failed", { status: cfRes.status, errors: cfData?.errors || cfData });
+    if (!cfRes.ok || !cfData?.success) {
+      return setupError("Cache purge failed", {
+        status: cfRes.status,
+        errors: cfData?.errors || cfData,
+        hint: "Ensure your CLOUDFLARE_API_TOKEN has 'Zone > Cache Purge > Purge' permission. If using a Global API Key, also set CLOUDFLARE_AUTH_EMAIL.",
+      });
+    }
 
     return jsonResponse({ success: true, message: "Cache purged successfully" });
   } catch (e: any) {
