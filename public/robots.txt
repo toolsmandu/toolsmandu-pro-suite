@@ -1,17 +1,10 @@
-# *
 User-agent: *
 Allow: /
-
-# *
-User-agent: *
 Disallow: /item/canva
-
-# *
-User-agent: *
 Disallow: /login
+Disallow: /signup
+Disallow: /admin
 
-# Host
 Host: https://toolsmandu.com
 
-# Sitemaps
-Sitemap: https://toolsmandu.com/sitemap.xml
+Sitemap: https://iuussfrylzowigmaozwv.supabase.co/functions/v1/sitemap-xml
