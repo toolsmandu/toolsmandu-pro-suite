@@ -137,13 +137,22 @@ async function main() {
   }
 
   // ── Categories ──
-  const { data: categories } = await supabase.from("categories").select("name, slug").order("sort_order");
+  const { data: categories } = await supabase.from("categories").select("id, name, slug").order("sort_order");
   if (categories) {
     for (const c of categories) {
       const title = `${c.name} — Toolsmandu`;
       const desc = `Browse ${c.name} products at Toolsmandu. Premium digital software subscriptions at unbeatable prices.`;
       const head = buildHead({ title, desc, url: `${SITE}/item-category/${c.slug}` });
-      const body = `<h1>${escHtml(c.name)}</h1><p>${escHtml(desc)}</p>`;
+      let body = `<h1>${escHtml(c.name)}</h1><p>${escHtml(desc)}</p>`;
+      // Fetch products for this category
+      const { data: catProducts } = await supabase
+        .from("products")
+        .select("name, slug, description, price, image_url")
+        .eq("category_id", c.id)
+        .order("created_at", { ascending: false });
+      if (catProducts?.length) {
+        body += `<ul>${catProducts.map(cp => `<li><a href="${SITE}/item/${cp.slug}">${escHtml(cp.name)}</a> — NPR ${cp.price}${cp.description ? `<p>${escHtml(cp.description)}</p>` : ""}</li>`).join("")}</ul>`;
+      }
       writePage(`item-category/${c.slug}`, template, head, body);
       sitemapUrls.push({ loc: `${SITE}/item-category/${c.slug}`, priority: "0.7", changefreq: "weekly" });
       count++;
