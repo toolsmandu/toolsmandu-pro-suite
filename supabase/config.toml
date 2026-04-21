@@ -15,3 +15,7 @@ project_id = "iuussfrylzowigmaozwv"
     verify_jwt = false
   [functions.handle-email-suppression]
     verify_jwt = false
+  [functions.prerender]
+    verify_jwt = false
+  [functions.sitemap-xml]
+    verify_jwt = false

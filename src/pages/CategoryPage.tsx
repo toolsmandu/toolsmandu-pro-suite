@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from '@/components/ProductCard';
@@ -27,6 +28,13 @@ const CategoryPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Helmet>
+        <title>{category?.name ? `${category.name} — Toolsmandu` : 'Category — Toolsmandu'}</title>
+        <meta name="description" content={`Browse ${category?.name || ''} products at Toolsmandu. Premium digital software subscriptions at unbeatable prices.`} />
+        {category?.slug && <link rel="canonical" href={`https://web.toolsmandu.com/item-category/${category.slug}`} />}
+        <meta property="og:title" content={`${category?.name || 'Category'} — Toolsmandu`} />
+        <meta property="og:url" content={`https://web.toolsmandu.com/item-category/${category?.slug || ''}`} />
+      </Helmet>
       <h1 className="text-3xl font-bold text-foreground mb-8 text-center">{category?.name || 'Category'}</h1>
       {isLoading ? null : products && products.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
