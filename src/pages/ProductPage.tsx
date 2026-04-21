@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -218,40 +217,8 @@ const ProductPage = () => {
     </div>
   );
 
-  const pTitle = product.meta_title || product.name;
-  const pDesc = product.meta_description || product.description || '';
-  const pCanonical = `https://web.toolsmandu.com/item/${product.slug}`;
-  const pJsonLd = JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    description: pDesc,
-    image: product.image_url,
-    offers: {
-      '@type': 'Offer',
-      price: selectedVariant?.price || product.price,
-      priceCurrency: 'NPR',
-      availability: product.stock_status === 'in_stock' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-    },
-  });
-
   return (
     <>
-      <Helmet>
-        <title>{pTitle}</title>
-        <meta name="description" content={pDesc} />
-        <link rel="canonical" href={pCanonical} />
-        <meta property="og:type" content="product" />
-        <meta property="og:title" content={pTitle} />
-        <meta property="og:description" content={pDesc} />
-        <meta property="og:url" content={pCanonical} />
-        {product.image_url && <meta property="og:image" content={product.image_url} />}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pTitle} />
-        <meta name="twitter:description" content={pDesc} />
-        {product.image_url && <meta name="twitter:image" content={product.image_url} />}
-        <script type="application/ld+json">{pJsonLd}</script>
-      </Helmet>
       <div className="container mx-auto px-4 py-8">
 
         {(() => {

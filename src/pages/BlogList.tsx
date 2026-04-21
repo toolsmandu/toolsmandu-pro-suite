@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Loader2, Calendar } from 'lucide-react';
@@ -62,14 +61,6 @@ const BlogList = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Helmet>
-        <title>Blog — Toolsmandu</title>
-        <meta name="description" content="Tips, guides, and updates from Toolsmandu about premium digital software subscriptions." />
-        <link rel="canonical" href="https://web.toolsmandu.com/blog" />
-        <meta property="og:title" content="Blog — Toolsmandu" />
-        <meta property="og:description" content="Tips, guides, and updates from Toolsmandu." />
-        <meta property="og:url" content="https://web.toolsmandu.com/blog" />
-      </Helmet>
       <h1 className="text-3xl font-bold text-foreground mb-2">Blog</h1>
       <p className="text-muted-foreground mb-8">Tips, guides, and updates from Toolsmandu.</p>
 

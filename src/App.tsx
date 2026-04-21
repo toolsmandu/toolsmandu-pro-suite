@@ -45,7 +45,6 @@ import AdminSiteSettings from "./pages/admin/settings/AdminSiteSettings";
 import AdminOrderMode from "./pages/admin/settings/AdminOrderMode";
 import AdminTopMenu from "./pages/admin/settings/AdminTopMenu";
 import AdminFooter from "./pages/admin/settings/AdminFooter";
-import AdminRobotsTxt from "./pages/admin/settings/AdminRobotsTxt";
 import AdminEmailTemplates from "./pages/admin/settings/AdminEmailTemplates";
 import AdminMedia from "./pages/admin/AdminMedia";
 import AdminFAQs from "./pages/admin/AdminFAQs";
@@ -115,7 +114,6 @@ const App = () => (
                 <Route path="settings/order-mode" element={<AdminOrderMode />} />
                 <Route path="settings/top-menu" element={<AdminTopMenu />} />
                 <Route path="settings/footer" element={<AdminFooter />} />
-                <Route path="settings/robots-txt" element={<AdminRobotsTxt />} />
                 <Route path="settings/email-templates" element={<AdminEmailTemplates />} />
                 <Route path="faqs" element={<AdminFAQs />} />
                 <Route path="family-sharing" element={<AdminFamilySharing />} />

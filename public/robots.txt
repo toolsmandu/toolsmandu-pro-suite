@@ -1,10 +1,2 @@
 User-agent: *
 Allow: /
-Disallow: /item/canva
-Disallow: /login
-Disallow: /signup
-Disallow: /admin
-
-Host: https://toolsmandu.com
-
-Sitemap: https://iuussfrylzowigmaozwv.supabase.co/functions/v1/sitemap-xml
