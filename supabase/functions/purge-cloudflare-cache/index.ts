@@ -17,12 +17,12 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data, error } = await supabase.auth.getClaims(authHeader.replace("Bearer ", ""));
-    if (error || !data?.claims) {
+    const { data: { user }, error } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+    if (error || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
     }
 
-    const userId = data.claims.sub as string;
+    const userId = user.id;
     const serviceClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const { data: roles } = await serviceClient.from("user_roles").select("role").eq("user_id", userId);
     const isAdminOrEditor = roles?.some((r: any) => ["admin", "editor"].includes(r.role));
