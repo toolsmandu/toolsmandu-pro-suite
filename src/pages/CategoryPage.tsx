@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from '@/components/ProductCard';
