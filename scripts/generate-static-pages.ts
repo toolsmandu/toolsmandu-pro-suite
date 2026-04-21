@@ -55,7 +55,9 @@ function buildHead(p: { title: string; desc: string; url: string; image?: string
 }
 
 function writePage(relPath: string, template: string, headContent: string, bodyContent: string) {
-  const html = template
+  let html = template
+    .replace(/<!--default-title--><title>[^<]*<\/title>\n?\s*/g, "")
+    .replace(/<!--default-desc--><meta[^>]*>\n?\s*/g, "")
     .replace("<!--app-head-->", headContent)
     .replace("<!--app-body-->", bodyContent);
   const filePath = path.join(DIST, relPath, "index.html");
