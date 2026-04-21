@@ -186,6 +186,7 @@ const Index = () => {
   const loading = isLoading || categoriesLoading;
 
   return (
+    <>
       <Helmet>
         <title>Toolsmandu — Premium Digital Software Subscriptions</title>
         <meta name="description" content="Your trusted destination for premium digital software subscriptions at unbeatable prices. Instant delivery, 24/7 support." />
