@@ -96,7 +96,11 @@ async function main() {
     homepageBody += `<ul>${homepageProducts.map(p => `<li><a href="${SITE}/item/${p.slug}">${escHtml(p.name)}</a> — NPR ${p.price}</li>`).join("")}</ul>`;
   }
   // Overwrite the root index.html
-  const homepageHtml = template.replace("<!--app-head-->", homepageHead).replace("<!--app-body-->", homepageBody);
+  const homepageHtml = template
+    .replace(/<!--default-title--><title>[^<]*<\/title>\n?\s*/g, "")
+    .replace(/<!--default-desc--><meta[^>]*>\n?\s*/g, "")
+    .replace("<!--app-head-->", homepageHead)
+    .replace("<!--app-body-->", homepageBody);
   fs.writeFileSync(templatePath, homepageHtml, "utf-8");
   count++;
 
