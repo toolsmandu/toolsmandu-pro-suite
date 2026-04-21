@@ -12,6 +12,10 @@ function jsonResponse(body: Record<string, unknown>, status = 200) {
   });
 }
 
+function setupError(error: string, details?: unknown) {
+  return jsonResponse({ success: false, error, details });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -39,12 +43,17 @@ Deno.serve(async (req) => {
     const zoneId = Deno.env.get("CLOUDFLARE_ZONE_ID");
     const cfToken = Deno.env.get("CLOUDFLARE_API_TOKEN");
 
-    if (!zoneId || !cfToken) return jsonResponse({ error: "Cloudflare credentials not configured" }, 500);
+    if (!zoneId || !cfToken) return setupError("Cloudflare credentials not configured");
+    if (!/^[a-f0-9]{32}$/i.test(zoneId.trim())) {
+      return setupError("Invalid Cloudflare Zone ID. Use the 32-character Zone ID from Cloudflare, not the domain name.");
+    }
+
+    const normalizedToken = cfToken.replace(/^Bearer\s+/i, "").trim();
 
     const cfRes = await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${cfToken}`,
+        Authorization: `Bearer ${normalizedToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ purge_everything: true }),
@@ -55,10 +64,10 @@ Deno.serve(async (req) => {
     try {
       cfData = cfText ? JSON.parse(cfText) : null;
     } catch {
-      return jsonResponse({ error: "Cloudflare returned an invalid response", status: cfRes.status, details: cfText.slice(0, 500) }, 502);
+      return setupError("Cloudflare returned an invalid response", { status: cfRes.status, body: cfText.slice(0, 500) });
     }
 
-    if (!cfRes.ok || !cfData?.success) return jsonResponse({ error: "Cache purge failed", status: cfRes.status, details: cfData?.errors || cfData }, 502);
+    if (!cfRes.ok || !cfData?.success) return setupError("Cache purge failed", { status: cfRes.status, errors: cfData?.errors || cfData });
 
     return jsonResponse({ success: true, message: "Cache purged successfully" });
   } catch (e: any) {
