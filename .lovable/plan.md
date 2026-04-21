@@ -1,46 +1,36 @@
 
 
-## Add "Publish SEO" Button to Admin Dashboard
+## Fix Cloudflare Cache Purge Authentication
 
-Add a button on the admin dashboard that triggers a rebuild of static SEO pages by calling an edge function. Since the prerender edge function already serves fresh content from the database dynamically, the primary value of this button is to **purge Cloudflare's cached responses** so bots immediately see updated content after you add/edit products or blogs.
+### Problem
+Cloudflare returns `401 Authentication error` (code 10000). The `CLOUDFLARE_API_TOKEN` secret stored in the project is invalid or lacks the correct permissions.
 
-### How it works
+### Root Cause
+The Cloudflare API token either:
+- Was created with incorrect permissions (needs **Zone > Cache Purge > Purge**)
+- Is a **Global API Key** instead of an **API Token** (they use different auth headers)
+- Has an incorrect value (typo, extra whitespace, or expired)
 
-1. Admin clicks "Publish SEO" on the dashboard
-2. It calls a new edge function `purge-cloudflare-cache`
-3. The edge function calls the Cloudflare API to purge the cache for `web.toolsmandu.com`
-4. After purge, the next bot visit hits the prerender edge function which fetches fresh data from the database
+### Solution
 
-This means: add a product → click "Publish SEO" → Google/Facebook/WhatsApp immediately see the new content.
+**Step 1 — Support Global API Key auth method**
 
-### Implementation
+Update `supabase/functions/purge-cloudflare-cache/index.ts` to support both authentication methods:
 
-**Step 1 — Add Cloudflare API secrets**
+- **API Token** (40+ character string): Uses `Authorization: Bearer <token>` header
+- **Global API Key** (37-character hex string): Uses `X-Auth-Key` + `X-Auth-Email` headers
 
-Two secrets needed:
-- `CLOUDFLARE_ZONE_ID` — your domain's zone ID (found in Cloudflare dashboard → Overview)
-- `CLOUDFLARE_API_TOKEN` — an API token with `Zone.Cache Purge` permission
+Add a new optional secret `CLOUDFLARE_AUTH_EMAIL` for Global API Key auth. Detect the token type automatically by its format and use the appropriate headers.
 
-**Step 2 — Create edge function `purge-cloudflare-cache`**
+**Step 2 — Add `CLOUDFLARE_AUTH_EMAIL` secret (if needed)**
 
-`supabase/functions/purge-cloudflare-cache/index.ts`
+If the user is using a Global API Key (found in Cloudflare dashboard → My Profile → API Tokens → Global API Key), they will also need their Cloudflare account email stored as a secret.
 
-- Accepts POST requests from authenticated admin/editor users
-- Calls `https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache` with `purge_everything: true`
-- Returns success/failure status
+**Step 3 — Improve error messaging**
 
-**Step 3 — Update `AdminDashboard.tsx`**
-
-Add a "Publish SEO" button (with a globe/refresh icon) to the dashboard header area. On click:
-- Calls the edge function
-- Shows a loading spinner while purging
-- Shows a success/error toast
-
-The button will appear next to the "Dashboard Overview" heading with a brief explanation: "Purge CDN cache so search engines see your latest changes."
+Update the dashboard button's error toast to show clear instructions about which token type to use and how to create one with the correct permissions.
 
 ### Files changed
-
-- `supabase/functions/purge-cloudflare-cache/index.ts` — new edge function
-- `src/pages/admin/AdminDashboard.tsx` — add Publish SEO button
-- Two new secrets: `CLOUDFLARE_ZONE_ID`, `CLOUDFLARE_API_TOKEN`
+- `supabase/functions/purge-cloudflare-cache/index.ts` — support both API Token and Global API Key auth
+- Potentially one new secret: `CLOUDFLARE_AUTH_EMAIL`
 
