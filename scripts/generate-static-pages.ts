@@ -128,8 +128,11 @@ async function main() {
         },
       });
       const head = buildHead({ title: `${title} — Toolsmandu`, desc, url: `${SITE}/item/${p.slug}`, image: p.image_url || undefined, type: "product", jsonLd });
-      let body = `<h1>${escHtml(p.name)}</h1><p>${escHtml(desc)}</p>`;
+      let body = `<h1>${escHtml(p.name)}</h1>`;
       if (p.image_url) body += `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}">`;
+      if (p.description) body += `<div>${p.description}</div>`;
+      else if (desc) body += `<p>${escHtml(desc)}</p>`;
+      body += `<p>Price: NPR ${p.price}</p>`;
       writePage(`item/${p.slug}`, template, head, body);
       sitemapUrls.push({ loc: `${SITE}/item/${p.slug}`, lastmod: p.updated_at?.split("T")[0], priority: "0.8", changefreq: "weekly" });
       count++;
@@ -137,13 +140,22 @@ async function main() {
   }
 
   // ── Categories ──
-  const { data: categories } = await supabase.from("categories").select("name, slug").order("sort_order");
+  const { data: categories } = await supabase.from("categories").select("id, name, slug").order("sort_order");
   if (categories) {
     for (const c of categories) {
       const title = `${c.name} — Toolsmandu`;
       const desc = `Browse ${c.name} products at Toolsmandu. Premium digital software subscriptions at unbeatable prices.`;
       const head = buildHead({ title, desc, url: `${SITE}/item-category/${c.slug}` });
-      const body = `<h1>${escHtml(c.name)}</h1><p>${escHtml(desc)}</p>`;
+      let body = `<h1>${escHtml(c.name)}</h1><p>${escHtml(desc)}</p>`;
+      // Fetch products for this category
+      const { data: catProducts } = await supabase
+        .from("products")
+        .select("name, slug, description, price, image_url")
+        .eq("category_id", c.id)
+        .order("created_at", { ascending: false });
+      if (catProducts?.length) {
+        body += `<ul>${catProducts.map(cp => `<li><a href="${SITE}/item/${cp.slug}">${escHtml(cp.name)}</a> — NPR ${cp.price}${cp.description ? `<p>${escHtml(cp.description)}</p>` : ""}</li>`).join("")}</ul>`;
+      }
       writePage(`item-category/${c.slug}`, template, head, body);
       sitemapUrls.push({ loc: `${SITE}/item-category/${c.slug}`, priority: "0.7", changefreq: "weekly" });
       count++;

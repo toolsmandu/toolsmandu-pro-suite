@@ -84,8 +84,11 @@ Deno.serve(async (req) => {
           },
         });
         headContent = buildHead({ title, desc, url: `${SITE}/item/${product.slug}`, image: product.image_url || undefined, type: "product", jsonLd });
-        bodyContent = `<h1>${escHtml(product.name)}</h1><p>${escHtml(desc)}</p>`;
+        bodyContent = `<h1>${escHtml(product.name)}</h1>`;
         if (product.image_url) bodyContent += `<img src="${escHtml(product.image_url)}" alt="${escHtml(product.name)}">`;
+        if (product.description) bodyContent += `<div>${product.description}</div>`;
+        else if (desc) bodyContent += `<p>${escHtml(desc)}</p>`;
+        bodyContent += `<p>Price: NPR ${product.price}</p>`;
       }
     }
 
@@ -93,12 +96,20 @@ Deno.serve(async (req) => {
     const catMatch = path.match(/^\/item-category\/([^/]+)\/?$/);
     if (catMatch && !headContent) {
       const slug = catMatch[1];
-      const { data: cat } = await supabase.from("categories").select("name, slug").eq("slug", slug).maybeSingle();
+      const { data: cat } = await supabase.from("categories").select("id, name, slug").eq("slug", slug).maybeSingle();
       if (cat) {
         const title = `${cat.name} — Toolsmandu`;
         const desc = `Browse ${cat.name} products at Toolsmandu. Premium digital software subscriptions at unbeatable prices.`;
         headContent = buildHead({ title, desc, url: `${SITE}/item-category/${cat.slug}` });
         bodyContent = `<h1>${escHtml(cat.name)}</h1><p>${escHtml(desc)}</p>`;
+        const { data: catProducts } = await supabase
+          .from("products")
+          .select("name, slug, description, price")
+          .eq("category_id", cat.id)
+          .order("created_at", { ascending: false });
+        if (catProducts?.length) {
+          bodyContent += `<ul>${catProducts.map((cp) => `<li><a href="${SITE}/item/${cp.slug}">${escHtml(cp.name)}</a> — NPR ${cp.price}${cp.description ? `<p>${escHtml(cp.description)}</p>` : ""}</li>`).join("")}</ul>`;
+        }
       }
     }
 
