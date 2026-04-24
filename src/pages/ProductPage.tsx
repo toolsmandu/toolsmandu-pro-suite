@@ -234,7 +234,7 @@ const ProductPage = () => {
             className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[180px] sm:h-[260px] lg:h-[420px] overflow-hidden"
           >
             <div
-              className="absolute inset-0 [background-size:contain]"
+              className="absolute inset-0 [background-size:100%_100%]"
               style={{
                 backgroundImage: `url(${productTopBannerImage})`,
                 backgroundPosition: 'center top',
