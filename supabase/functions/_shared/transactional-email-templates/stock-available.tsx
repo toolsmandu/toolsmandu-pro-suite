@@ -58,8 +58,10 @@ const StockAvailableEmail = ({
           </div>
 
           <div style={hero}>
-            <table style={bellTable} cellPadding={0} cellSpacing={0} role="presentation">
-              <tbody><tr><td style={bellCell}>🔔</td></tr></tbody>
+            <table style={bellTable} cellPadding={0} cellSpacing={0} role="presentation" align="center">
+              <tbody><tr><td style={bellCell}>
+                <img src="https://fonts.gstatic.com/s/e/notoemoji/17.0/1f514/72.png" alt="🔔" width="40" height="40" style={bellImg} />
+              </td></tr></tbody>
             </table>
             <Text style={eyebrow}>{t.eyebrow}</Text>
             <Heading style={h1}>{t.heading}</Heading>
