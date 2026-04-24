@@ -231,18 +231,25 @@ const ProductPage = () => {
         {productTopBannerImage && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[280px] sm:h-[420px] lg:h-[720px] [background-size:contain]"
-            style={{
-              backgroundImage: `url(${productTopBannerImage})`,
-              backgroundPosition: 'center top',
-              backgroundRepeat: 'no-repeat',
-              opacity: productTopBannerOpacity,
-              WebkitMaskImage:
-                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0) 100%)',
-              maskImage:
-                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0) 100%)',
-            }}
-          />
+            className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[180px] sm:h-[260px] lg:h-[420px] overflow-hidden"
+          >
+            <div
+              className="absolute inset-0 [background-size:contain]"
+              style={{
+                backgroundImage: `url(${productTopBannerImage})`,
+                backgroundPosition: 'center top',
+                backgroundRepeat: 'no-repeat',
+                opacity: productTopBannerOpacity,
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(to bottom, hsl(214 64% 24% / 0) 0%, hsl(214 64% 24% / 0) 40%, hsl(214 64% 24% / 0.35) 60%, hsl(214 64% 24% / 0.75) 80%, hsl(214 64% 24% / 1) 100%)',
+              }}
+            />
+          </div>
         )}
         <div className="container mx-auto px-4 pt-[80px] lg:pt-[125px] pb-8 relative z-10">
 
