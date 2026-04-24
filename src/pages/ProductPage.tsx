@@ -231,11 +231,10 @@ const ProductPage = () => {
         {productTopBannerImage && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 z-0"
+            className="pointer-events-none absolute inset-x-0 top-0 z-0 [background-size:contain] lg:[background-size:cover]"
             style={{
               height: '720px',
               backgroundImage: `url(${productTopBannerImage})`,
-              backgroundSize: 'cover',
               backgroundPosition: 'center top',
               backgroundRepeat: 'no-repeat',
               opacity: productTopBannerOpacity,
