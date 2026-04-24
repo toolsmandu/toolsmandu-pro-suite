@@ -39,10 +39,10 @@ const ProductFAQs = ({ productName }: { productName: string }) => {
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, idx) => (
             <AccordionItem key={faq.id} value={faq.id} className={cn("border-border/30", idx === faqs.length - 1 && "border-b-0")}>
-              <AccordionTrigger className="px-5 py-4 text-sm font-semibold text-foreground hover:no-underline transition-colors [&[data-state=open]]:text-[rgb(249,112,21)] hover:text-[rgb(249,112,21)]">
-                {replacePlaceholder(faq.question)}
+              <AccordionTrigger className="px-5 py-4 text-sm font-semibold text-foreground text-left hover:no-underline transition-colors [&[data-state=open]]:text-[rgb(249,112,21)] hover:text-[rgb(249,112,21)] [&>span]:text-left [&>*]:text-left">
+                <span className="flex-1 text-left">{replacePlaceholder(faq.question)}</span>
               </AccordionTrigger>
-              <AccordionContent className="px-5 pb-4 text-sm text-white leading-relaxed">
+              <AccordionContent className="px-5 pb-4 text-sm text-white leading-relaxed text-left">
                 {replacePlaceholder(faq.answer)}
               </AccordionContent>
             </AccordionItem>
