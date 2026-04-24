@@ -388,7 +388,7 @@ const ProductPage = () => {
               {/* Left Column - Product Info */}
               <div>
                 {/* Product Header: Image + Title (toolsmandu.com style) */}
-                <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 items-start">
+                <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 items-stretch">
                   <div className="col-span-1 flex justify-start">
                     <div className="w-full max-w-[260px]" style={{ aspectRatio: '0.69164265129683' }}>
                       {product.image_url ? (
@@ -398,7 +398,7 @@ const ProductPage = () => {
                       )}
                     </div>
                   </div>
-                  <div className="col-span-2 flex flex-col">
+                  <div className="col-span-2 flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-2">
                       {product.is_flash_sale && (
                         <Badge className="bg-destructive text-destructive-foreground">
