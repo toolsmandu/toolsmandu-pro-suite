@@ -82,17 +82,24 @@ const ProductPage = () => {
   const [orderMode, setOrderMode] = useState('cart');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [bannerImage, setBannerImage] = useState('');
+  const [productTopBannerImage, setProductTopBannerImage] = useState('');
+  const [productTopBannerOpacity, setProductTopBannerOpacity] = useState(1);
   const [fieldValues, setFieldValues] = useState<Record<string, string | string[]>>({});
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useQuery({
     queryKey: ['order-mode-settings'],
     queryFn: async () => {
-      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number', 'product_banner_image']);
+      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number', 'product_banner_image', 'product_top_banner_image', 'product_top_banner_opacity']);
       data?.forEach((s: any) => {
         if (s.key === 'order_mode') setOrderMode(s.value);
         if (s.key === 'whatsapp_number') setWhatsappNumber(s.value);
         if (s.key === 'product_banner_image') setBannerImage(s.value);
+        if (s.key === 'product_top_banner_image') setProductTopBannerImage(s.value);
+        if (s.key === 'product_top_banner_opacity') {
+          const n = parseFloat(s.value);
+          if (!isNaN(n)) setProductTopBannerOpacity(Math.max(0, Math.min(1, n)));
+        }
       });
       return data;
     },
