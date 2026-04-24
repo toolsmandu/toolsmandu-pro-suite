@@ -413,7 +413,7 @@ const ProductPage = () => {
                       )}
                     </div>
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground"> {product.name}</h1>
-                    <div className="my-5 border-t" style={{ borderColor: '#ffffff' }}></div>
+                    <div className="my-5 border-t bg-primary-foreground border-gray-200"></div>
                     <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-6 gap-y-2">
                       {product.categories && (
                         <Link to={`/item-category/${(product.categories as any).slug}`} className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity min-w-0">
