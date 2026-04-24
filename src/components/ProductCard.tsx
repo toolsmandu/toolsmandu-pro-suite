@@ -54,7 +54,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
               src={image_url}
               alt={name}
               loading="lazy"
-              className="absolute inset-0 flex items-center justify-center w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="absolute inset-0 flex items-center justify-center w-full h-full group-hover:scale-105 transition-transform duration-300 object-contain"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center w-full h-full text-4xl text-muted-foreground">📦</div>
