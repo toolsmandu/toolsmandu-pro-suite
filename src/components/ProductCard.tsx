@@ -46,7 +46,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
     : 0;
 
   return (
-    <div className="group flex flex-col rounded-2xl overflow-hidden">
+    <div className="group flex flex-col rounded-2xl overflow-hidden" style={{ backgroundColor: '#0a2e5c' }}>
       <Link to={`/item/${slug}`} className="block relative">
         <div className="relative w-full aspect-[2/3] overflow-hidden">
           {image_url ? (
