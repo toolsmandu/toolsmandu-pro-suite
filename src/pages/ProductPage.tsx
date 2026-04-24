@@ -289,7 +289,7 @@ const ProductPage = () => {
                           >
                             <div className="flex items-center gap-2 mb-2">
                               <div className="h-4 w-1 rounded-full" style={{ background: 'linear-gradient(180deg, #228be6, #15aabf)' }} />
-                              <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">Plan Details</h4>
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">Plan Details:</h4>
                             </div>
                             <div
                               className="text-sm text-white/90 leading-relaxed prose prose-sm prose-invert max-w-none [&_a]:underline [&_a]:text-[#15aabf] [&_img]:rounded-md [&_img]:max-w-full [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2"
