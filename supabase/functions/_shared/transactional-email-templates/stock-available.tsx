@@ -58,9 +58,9 @@ const StockAvailableEmail = ({
           </div>
 
           <div style={hero}>
-            <div style={bellCircle}>
-              <Text style={bellEmoji}>🔔</Text>
-            </div>
+            <table style={bellTable} cellPadding={0} cellSpacing={0} role="presentation">
+              <tbody><tr><td style={bellCell}>🔔</td></tr></tbody>
+            </table>
             <Text style={eyebrow}>{t.eyebrow}</Text>
             <Heading style={h1}>{t.heading}</Heading>
             {t.sub_message && <Text style={subText}>{t.sub_message}</Text>}
