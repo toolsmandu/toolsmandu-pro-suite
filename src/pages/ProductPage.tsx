@@ -390,7 +390,7 @@ const ProductPage = () => {
                 {/* Product Header: Image + Title (toolsmandu.com style) */}
                 <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 items-stretch">
                   <div className="col-span-1 flex justify-start">
-                    <div className="w-full max-w-[140px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[260px]" style={{ aspectRatio: '0.69164265129683' }}>
+                    <div className="w-full max-w-[140px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[182px]" style={{ aspectRatio: '0.69164265129683' }}>
                       {product.image_url ? (
                         <img src={product.image_url} alt={product.name} className="w-full h-full object-cover rounded-[10px]" />
                       ) : (
