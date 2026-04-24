@@ -309,9 +309,12 @@ const ProductPage = () => {
               )}
 
               {isOutOfStock ? (
-                <Button size="lg" className="w-full" disabled>
-                  Out of Stock
-                </Button>
+                <>
+                  <Button size="lg" className="w-full" disabled>
+                    Out of Stock
+                  </Button>
+                  <NotifyMe productId={(product as any).id} productName={(product as any).name} />
+                </>
               ) : (orderMode === 'whatsapp' || (orderMode === 'cart' && (product as any)?.order_mode === 'whatsapp')) ? (
                 <div className="rounded-xl border border-border/40 p-6 flex flex-col items-center text-center gap-4" style={{ backgroundColor: '#0a1e3d' }}>
                   <div className="flex items-center gap-2">

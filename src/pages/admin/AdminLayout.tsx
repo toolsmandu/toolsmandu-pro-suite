@@ -8,7 +8,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput } from 'lucide-react';
+  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
@@ -158,6 +158,16 @@ const AdminLayout = () => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
+
+                  {/* Waiting List (admin/editor) — placed just above Settings */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/admin/waiting-list" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                        <Bell className="mr-2 h-4 w-4" />
+                        <span className="flex-1">Waiting List</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
 
                   {/* Settings sub-menu (admin only) */}
                   {isAdmin && (
