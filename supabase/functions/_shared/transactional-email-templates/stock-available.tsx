@@ -58,8 +58,10 @@ const StockAvailableEmail = ({
           </div>
 
           <div style={hero}>
-            <table style={bellTable} cellPadding={0} cellSpacing={0} role="presentation">
-              <tbody><tr><td style={bellCell}>🔔</td></tr></tbody>
+            <table style={bellTable} cellPadding={0} cellSpacing={0} role="presentation" align="center">
+              <tbody><tr><td style={bellCell}>
+                <img src="https://fonts.gstatic.com/s/e/notoemoji/17.0/1f514/72.png" alt="🔔" width="40" height="40" style={bellImg} />
+              </td></tr></tbody>
             </table>
             <Text style={eyebrow}>{t.eyebrow}</Text>
             <Heading style={h1}>{t.heading}</Heading>
@@ -141,6 +143,7 @@ const bellCell = {
   textAlign: 'center' as const, verticalAlign: 'middle' as const,
   fontSize: '36px', lineHeight: '1', padding: 0,
 }
+const bellImg = { display: 'block', margin: '0 auto', width: '40px', height: '40px' }
 const eyebrow = {
   fontSize: '11px', fontWeight: 700 as const, letterSpacing: '0.18em',
   color: '#d97706', margin: '0 0 12px', textTransform: 'uppercase' as const,
