@@ -246,7 +246,7 @@ const ProductPage = () => {
             }}
           />
         )}
-        <div className="container mx-auto px-4 pt-4 pb-8 relative z-10">
+        <div className="container mx-auto px-4 pt-6 pb-8 relative z-10">
 
 
 
