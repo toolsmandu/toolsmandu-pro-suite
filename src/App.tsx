@@ -56,6 +56,7 @@ import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminNotes from "./pages/admin/AdminNotes";
 import AdminBlogs from "./pages/admin/AdminBlogs";
 import AdminBlogEditor from "./pages/admin/AdminBlogEditor";
+import AdminWaitingList from "./pages/admin/AdminWaitingList";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 
@@ -109,6 +110,7 @@ const App = () => (
                 <Route path="blogs/:id" element={<AdminBlogEditor />} />
                 <Route path="hero-slides" element={<AdminHeroSlides />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="waiting-list" element={<AdminWaitingList />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="settings/site" element={<AdminSiteSettings />} />
                 <Route path="settings/order-mode" element={<AdminOrderMode />} />
