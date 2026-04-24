@@ -42,7 +42,7 @@ const StockAvailableEmail = ({
     Object.entries(texts || {}).filter(([, v]) => typeof v === 'string' && v.trim() !== '')
   )
   const t = { ...DEFAULT_TEXTS, ...overrides }
-  const link = productUrl || SITE_URL
+  const link = SITE_URL
 
   return (
     <Html lang="en" dir="ltr">
@@ -58,9 +58,9 @@ const StockAvailableEmail = ({
           </div>
 
           <div style={hero}>
-            <div style={bellCircle}>
-              <Text style={bellEmoji}>🔔</Text>
-            </div>
+            <table style={bellTable} cellPadding={0} cellSpacing={0} role="presentation">
+              <tbody><tr><td style={bellCell}>🔔</td></tr></tbody>
+            </table>
             <Text style={eyebrow}>{t.eyebrow}</Text>
             <Heading style={h1}>{t.heading}</Heading>
             {t.sub_message && <Text style={subText}>{t.sub_message}</Text>}
@@ -131,13 +131,16 @@ const logoImg = { maxHeight: '44px', width: 'auto', display: 'inline-block', mar
 const brandText = { color: '#0b1220', fontSize: '20px', fontWeight: 700 as const, margin: 0 }
 
 const hero = { padding: '24px 32px 8px', textAlign: 'center' as const }
-const bellCircle = {
-  width: '72px', height: '72px', borderRadius: '50%',
+const bellTable = {
+  width: '72px', height: '72px', borderRadius: '36px',
   background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
-  margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-  lineHeight: '72px', textAlign: 'center' as const,
+  margin: '0 auto 16px', borderCollapse: 'separate' as const,
 }
-const bellEmoji = { fontSize: '36px', margin: 0, lineHeight: '72px' }
+const bellCell = {
+  width: '72px', height: '72px',
+  textAlign: 'center' as const, verticalAlign: 'middle' as const,
+  fontSize: '36px', lineHeight: '1', padding: 0,
+}
 const eyebrow = {
   fontSize: '11px', fontWeight: 700 as const, letterSpacing: '0.18em',
   color: '#d97706', margin: '0 0 12px', textTransform: 'uppercase' as const,
