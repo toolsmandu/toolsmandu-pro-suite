@@ -68,14 +68,8 @@ const ImageUpload = ({ value, onChange, label = 'Image' }: ImageUploadProps) => 
 
   return (
     <div>
-      <Label>{label}</Label>
-      <div className="flex gap-2 mt-1">
-        <Input
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          placeholder="Image URL or upload"
-          className="flex-1"
-        />
+      <Label className="text-sm font-semibold">{label}</Label>
+      <div className="mt-1.5">
         <input
           ref={fileInputRef}
           type="file"
@@ -83,33 +77,56 @@ const ImageUpload = ({ value, onChange, label = 'Image' }: ImageUploadProps) => 
           className="hidden"
           onChange={handleFileUpload}
         />
-        <Button
+        <button
           type="button"
-          variant="outline"
-          size="icon"
-          disabled={uploading}
           onClick={() => fileInputRef.current?.click()}
-          title="Upload file"
+          disabled={uploading}
+          className="group relative w-full rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 hover:bg-primary/10 hover:border-primary transition-colors flex flex-col items-center justify-center gap-2 p-6 cursor-pointer disabled:opacity-60"
         >
-          <Upload className={`h-4 w-4 ${uploading ? 'animate-pulse' : ''}`} />
-        </Button>
-        {value && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => onChange('')}
-            title="Clear"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-      {value && (
-        <div className="mt-2">
-          <img src={value} alt="Preview" className="h-16 w-16 object-cover rounded border border-border" />
+          {value ? (
+            <div className="flex items-center gap-3 w-full">
+              <img src={value} alt="Preview" className="h-20 w-20 object-cover rounded border border-border shrink-0" />
+              <div className="flex-1 text-left min-w-0">
+                <p className="text-sm font-medium text-foreground">Click to replace</p>
+                <p className="text-xs text-muted-foreground truncate">{value}</p>
+              </div>
+              <Upload className={`h-5 w-5 text-primary ${uploading ? 'animate-pulse' : ''}`} />
+            </div>
+          ) : (
+            <>
+              <div className="rounded-full bg-primary/15 p-3">
+                <Upload className={`h-6 w-6 text-primary ${uploading ? 'animate-pulse' : ''}`} />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-semibold text-foreground">
+                  {uploading ? 'Uploading…' : 'Click to upload image'}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">PNG, JPG, GIF or video up to 10MB</p>
+              </div>
+            </>
+          )}
+        </button>
+        <div className="flex gap-2 mt-2">
+          <Input
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            placeholder="Or paste image URL"
+            className="flex-1 h-9 text-xs"
+          />
+          {value && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => onChange('')}
+              title="Clear"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
