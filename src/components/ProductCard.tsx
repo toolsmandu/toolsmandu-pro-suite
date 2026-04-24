@@ -47,14 +47,14 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
 
   return (
     <div className="group flex flex-col">
-      <Link to={`/item/${slug}`} className="block relative rounded-t-[10px] -mx-3 -mt-3 mb-0">
-        <div className="relative w-[calc(100%+0px)] aspect-[4/5] overflow-hidden rounded-t-[10px]">
+      <Link to={`/item/${slug}`} className="block relative rounded-t-[10px]">
+        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-t-[10px] bg-white">
           {image_url ? (
             <img
               src={image_url}
               alt={name}
               loading="lazy"
-              className="absolute inset-0 flex items-center justify-center w-full h-full group-hover:scale-105 transition-transform duration-300 object-contain"
+              className="absolute inset-0 m-auto max-w-full max-h-full w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center w-full h-full text-4xl text-muted-foreground">📦</div>
