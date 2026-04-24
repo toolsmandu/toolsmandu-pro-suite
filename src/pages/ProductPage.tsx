@@ -227,7 +227,21 @@ const ProductPage = () => {
 
   return (
     <>
+      {productTopBannerImage && (
+        <div className="w-full">
+          <div className="container mx-auto px-4 pt-4">
+            <img
+              src={productTopBannerImage}
+              alt=""
+              aria-hidden="true"
+              className="w-full h-auto rounded-[10px] block"
+              style={{ opacity: productTopBannerOpacity }}
+            />
+          </div>
+        </div>
+      )}
       <div className="container mx-auto px-4 py-8">
+
 
         {(() => {
           const planCard = (
