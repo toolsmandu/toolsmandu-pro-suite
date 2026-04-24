@@ -13,3 +13,5 @@ project_id = "iuussfrylzowigmaozwv"
     verify_jwt = false
   [functions.handle-email-suppression]
     verify_jwt = false
+  [functions.notify-waiting-list]
+    verify_jwt = false
