@@ -263,14 +263,33 @@ const AdminProducts = () => {
       };
 
       let productId = editingId;
+      let previousStockStatus: string | null = null;
 
       if (editingId) {
+        const { data: existing } = await supabase
+          .from('products')
+          .select('stock_status')
+          .eq('id', editingId)
+          .single();
+        previousStockStatus = existing?.stock_status ?? null;
+
         const { error } = await supabase.from('products').update(payload).eq('id', editingId);
         if (error) throw error;
       } else {
         const { data, error } = await supabase.from('products').insert(payload).select('id').single();
         if (error) throw error;
         productId = data.id;
+      }
+
+      // Auto-notify waiting list when product transitions from out_of_stock back to in_stock
+      if (productId && previousStockStatus === 'out_of_stock' && form.stock_status !== 'out_of_stock') {
+        try {
+          await supabase.functions.invoke('notify-waiting-list', {
+            body: { productId, siteOrigin: window.location.origin },
+          });
+        } catch (e) {
+          console.warn('notify-waiting-list invocation failed', e);
+        }
       }
 
       if (!productId) return;
