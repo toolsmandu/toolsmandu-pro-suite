@@ -387,18 +387,18 @@ const ProductPage = () => {
             <div className="grid lg:grid-cols-[1fr_380px] gap-8">
               {/* Left Column - Product Info */}
               <div>
-                {/* Product Header: Image + Title */}
-                <div className="flex flex-col md:flex-row gap-6 mb-8">
-                  <div className="w-full md:w-60 flex-shrink-0 order-2 md:order-1">
-                    <div className="aspect-square bg-card border border-border rounded-lg overflow-hidden flex items-center justify-center">
+                {/* Product Header: Image + Title (toolsmandu.com style) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-8 items-start">
+                  <div className="md:col-span-1 flex justify-center md:justify-start order-2 md:order-1">
+                    <div className="w-full max-w-[260px]" style={{ aspectRatio: '0.69164265129683' }}>
                       {product.image_url ? (
-                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover rounded-[10px]" />
                       ) : (
-                        <div className="text-6xl">📦</div>
+                        <div className="w-full h-full flex items-center justify-center text-6xl bg-card rounded-[10px]">📦</div>
                       )}
                     </div>
                   </div>
-                  <div className="flex-1 flex flex-col justify-center order-1 md:order-2">
+                  <div className="md:col-span-2 flex flex-col order-1 md:order-2">
                     <div className="flex items-center gap-2 mb-2">
                       {product.is_flash_sale && (
                         <Badge className="bg-destructive text-destructive-foreground">
@@ -412,29 +412,35 @@ const ProductPage = () => {
                         <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-3">
-                      <h1 className="text-3xl font-bold text-foreground flex-1">{product.name}</h1>
-                    </div>
-                    <div className="border-t mt-1 mb-3" style={{ borderColor: 'white' }}></div>
-                    <div className="flex items-center gap-8">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground"> {product.name}</h1>
+                    <div className="my-5 border-t" style={{ borderColor: 'rgba(255,255,255,0.15)' }}></div>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-3">
                       {product.categories && (
-                        <Link to={`/item-category/${(product.categories as any).slug}`}>
-                          <Badge className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
+                        <Link to={`/item-category/${(product.categories as any).slug}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#7d8aa8' }}><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide text-white" style={{ background: 'linear-gradient(90deg, #228be6, #22d3ee)' }}>
                             {(product.categories as any).name}
-                          </Badge>
+                          </span>
                         </Link>
                       )}
-                      {(product as any).region && (
-                        <Badge className="flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9"/><path d="M12 3c-2.5 2.5-3.5 5.5-3.5 9s1 6.5 3.5 9"/></svg>
-                          Region: {(product as any).region}
-                        </Badge>
+                      <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#7d8aa8' }}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide text-white" style={{ background: 'linear-gradient(90deg, #228be6, #22d3ee)' }}>Private</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#7d8aa8' }}><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9"/><path d="M12 3c-2.5 2.5-3.5 5.5-3.5 9s1 6.5 3.5 9"/></svg>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide text-white" style={{ background: 'linear-gradient(90deg, #228be6, #22d3ee)' }}>
+                          {(product as any).region || 'Global'}
+                        </span>
+                      </div>
+                      {product.duration && (
+                        <div className="flex items-center gap-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#7d8aa8' }}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide text-white" style={{ background: 'linear-gradient(90deg, #228be6, #22d3ee)' }}>
+                            {product.duration}
+                          </span>
+                        </div>
                       )}
-                      <Badge className="hidden md:flex items-center gap-1" style={{ background: 'linear-gradient(90deg, #228be6, #15aabf)', color: 'white', border: 'none' }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                        Warranty & Support Included
-                      </Badge>
                     </div>
                   </div>
                 </div>
