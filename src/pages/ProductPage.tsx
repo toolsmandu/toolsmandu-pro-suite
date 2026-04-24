@@ -231,17 +231,16 @@ const ProductPage = () => {
         {productTopBannerImage && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 z-0 [background-size:contain] lg:[background-size:cover]"
+            className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[280px] sm:h-[420px] lg:h-[720px] [background-size:contain] lg:[background-size:cover]"
             style={{
-              height: '720px',
               backgroundImage: `url(${productTopBannerImage})`,
               backgroundPosition: 'center top',
               backgroundRepeat: 'no-repeat',
               opacity: productTopBannerOpacity,
               WebkitMaskImage:
-                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0) 100%)',
+                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0) 100%)',
               maskImage:
-                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0) 100%)',
+                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0) 100%)',
             }}
           />
         )}
