@@ -42,7 +42,7 @@ const StockAvailableEmail = ({
     Object.entries(texts || {}).filter(([, v]) => typeof v === 'string' && v.trim() !== '')
   )
   const t = { ...DEFAULT_TEXTS, ...overrides }
-  const link = productUrl || SITE_URL
+  const link = SITE_URL
 
   return (
     <Html lang="en" dir="ltr">
