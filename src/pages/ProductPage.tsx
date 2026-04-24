@@ -227,20 +227,27 @@ const ProductPage = () => {
 
   return (
     <>
-      {productTopBannerImage && (
-        <div className="w-full">
-          <div className="container mx-auto px-4 pt-4">
-            <img
-              src={productTopBannerImage}
-              alt=""
-              aria-hidden="true"
-              className="w-full h-auto rounded-[10px] block"
-              style={{ opacity: productTopBannerOpacity }}
-            />
-          </div>
-        </div>
-      )}
-      <div className="container mx-auto px-4 py-8">
+      <div className="relative">
+        {productTopBannerImage && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 z-0"
+            style={{
+              height: '720px',
+              backgroundImage: `url(${productTopBannerImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top',
+              backgroundRepeat: 'no-repeat',
+              opacity: productTopBannerOpacity,
+              WebkitMaskImage:
+                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0) 100%)',
+              maskImage:
+                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0) 100%)',
+            }}
+          />
+        )}
+        <div className="container mx-auto px-4 py-8 relative z-10">
+
 
 
         {(() => {
@@ -487,6 +494,7 @@ const ProductPage = () => {
             </div>
           </section>
         )}
+      </div>
       </div>
     </>
   );
