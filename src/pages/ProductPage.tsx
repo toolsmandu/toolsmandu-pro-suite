@@ -231,36 +231,20 @@ const ProductPage = () => {
         {productTopBannerImage && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden"
+            className="pointer-events-none absolute inset-x-0 top-0 z-0"
             style={{
               height: '720px',
+              backgroundImage: `url(${productTopBannerImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top',
+              backgroundRepeat: 'no-repeat',
               opacity: productTopBannerOpacity,
               WebkitMaskImage:
-                'radial-gradient(ellipse 75% 70% at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.35) 75%, rgba(0,0,0,0) 100%)',
+                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0) 100%)',
               maskImage:
-                'radial-gradient(ellipse 75% 70% at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.35) 75%, rgba(0,0,0,0) 100%)',
+                'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0) 100%)',
             }}
-          >
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `url(${productTopBannerImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center top',
-                backgroundRepeat: 'no-repeat',
-                filter: 'blur(2px) saturate(0.85)',
-                transform: 'scale(1.05)',
-              }}
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundColor: '#0a2e5c',
-                mixBlendMode: 'multiply',
-                opacity: 0.35,
-              }}
-            />
-          </div>
+          />
         )}
         <div className="container mx-auto px-4 pt-[125px] pb-8 relative z-10">
 

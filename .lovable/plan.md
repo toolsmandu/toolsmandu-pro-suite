@@ -1,33 +1,36 @@
-## Goal
 
-Make the product page top banner image blend beautifully into the page (like the NordVPN reference) instead of looking like a flat fading rectangle.
 
-## Changes
+## Fix Cloudflare Cache Purge Authentication
 
-Single file: `src/pages/ProductPage.tsx` — replace the current banner `<div>` (lines 231–248) with a layered structure.
+### Problem
+Cloudflare returns `401 Authentication error` (code 10000). The `CLOUDFLARE_API_TOKEN` secret stored in the project is invalid or lacks the correct permissions.
 
-### Three combined effects
+### Root Cause
+The Cloudflare API token either:
+- Was created with incorrect permissions (needs **Zone > Cache Purge > Purge**)
+- Is a **Global API Key** instead of an **API Token** (they use different auth headers)
+- Has an incorrect value (typo, extra whitespace, or expired)
 
-1. **Radial mask** — replace the top-to-bottom `linear-gradient` mask with a `radial-gradient` ellipse centered slightly above middle. Image is fully opaque in the center and fades to transparent on **all four sides** (top, bottom, left, right), so corners blend seamlessly into the page background.
+### Solution
 
-2. **Brand color tint overlay** — a `#0a2e5c` (page blue) layer at 35% opacity with `mix-blend-mode: multiply` sits on top of the image. This pulls the image colors toward the page palette so it never looks foreign.
+**Step 1 — Support Global API Key auth method**
 
-3. **Subtle blur + desaturation** — apply `filter: blur(2px) saturate(0.85)` on the image layer, plus a `scale(1.05)` to hide blur edges. Adds atmospheric depth without making the image unrecognizable.
+Update `supabase/functions/purge-cloudflare-cache/index.ts` to support both authentication methods:
 
-### Structure
+- **API Token** (40+ character string): Uses `Authorization: Bearer <token>` header
+- **Global API Key** (37-character hex string): Uses `X-Auth-Key` + `X-Auth-Email` headers
 
-```text
-<div mask=radial opacity=adminSlider>   ← radial fade wrapper
-  <div bg-image filter=blur+saturate />  ← image layer
-  <div bg=#0a2e5c blend=multiply 35% />  ← brand tint
-</div>
-```
+Add a new optional secret `CLOUDFLARE_AUTH_EMAIL` for Global API Key auth. Detect the token type automatically by its format and use the appropriate headers.
 
-The admin opacity slider continues to work as a master multiplier on the outer wrapper. Image URL still comes from the same `product_top_banner_image` site setting. No admin UI changes, no DB changes.
+**Step 2 — Add `CLOUDFLARE_AUTH_EMAIL` secret (if needed)**
 
-## Technical details
+If the user is using a Global API Key (found in Cloudflare dashboard → My Profile → API Tokens → Global API Key), they will also need their Cloudflare account email stored as a secret.
 
-- Radial gradient: `radial-gradient(ellipse 75% 70% at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.35) 75%, rgba(0,0,0,0) 100%)` for both `mask-image` and `-webkit-mask-image`.
-- Outer wrapper gets `overflow-hidden` so the scaled blurred layer doesn't leak.
-- Banner height stays at 720px; content `pt-[125px]` unchanged.
-- Pure CSS — no new dependencies, no perf impact.
+**Step 3 — Improve error messaging**
+
+Update the dashboard button's error toast to show clear instructions about which token type to use and how to create one with the correct permissions.
+
+### Files changed
+- `supabase/functions/purge-cloudflare-cache/index.ts` — support both API Token and Global API Key auth
+- Potentially one new secret: `CLOUDFLARE_AUTH_EMAIL`
+
