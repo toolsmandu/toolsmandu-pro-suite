@@ -42,7 +42,7 @@ const CategoryNavbar = () => {
   const isExternal = (url: string) => url.startsWith('http');
 
   return (
-    <nav className="hidden lg:block bg-secondary/50 border-b border-border">
+    <nav className="hidden lg:block bg-secondary/50 border-b border-border mb-2">
       <div className="container mx-auto px-4">
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-1 h-10 overflow-x-auto">
