@@ -8,7 +8,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Mail, Trash2, Loader2, Bell } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+
+const selectClassName =
+  'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
 
 interface WaitingRow {
   id: string;
@@ -23,6 +26,7 @@ interface WaitingRow {
 const AdminWaitingList = () => {
   const qc = useQueryClient();
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [productFilter, setProductFilter] = useState<string>('all');
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-waiting-list'],
@@ -35,6 +39,20 @@ const AdminWaitingList = () => {
       return (data || []) as unknown as WaitingRow[];
     },
   });
+
+  const productOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    (data || []).forEach((row) => {
+      if (row.product_id && row.products?.name) map.set(row.product_id, row.products.name);
+    });
+    return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    if (productFilter === 'all') return data || [];
+    if (productFilter === 'none') return (data || []).filter((r) => !r.product_id);
+    return (data || []).filter((r) => r.product_id === productFilter);
+  }, [data, productFilter]);
 
   const deleteEntry = useMutation({
     mutationFn: async (id: string) => {
@@ -97,9 +115,24 @@ const AdminWaitingList = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            {isLoading ? 'Loading...' : `${data?.length || 0} entries`}
-          </CardTitle>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="text-base">
+              {isLoading ? 'Loading...' : `${filteredData.length} of ${data?.length || 0} entries`}
+            </CardTitle>
+            <div className="sm:w-64">
+              <select
+                value={productFilter}
+                onChange={(e) => setProductFilter(e.target.value)}
+                className={selectClassName}
+              >
+                <option value="all">All Products</option>
+                {productOptions.map(([id, name]) => (
+                  <option key={id} value={id}>{name}</option>
+                ))}
+                <option value="none">— Deleted product —</option>
+              </select>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -107,6 +140,10 @@ const AdminWaitingList = () => {
           ) : !data?.length ? (
             <div className="text-muted-foreground text-sm py-12 text-center">
               No customers on the waiting list yet.
+            </div>
+          ) : !filteredData.length ? (
+            <div className="text-muted-foreground text-sm py-12 text-center">
+              No entries match the selected product.
             </div>
           ) : (
             <Table>
@@ -120,7 +157,7 @@ const AdminWaitingList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.map((row, idx) => {
+                {filteredData.map((row, idx) => {
                   const productInStock = row.products?.stock_status && row.products.stock_status !== 'out_of_stock';
                   const isNotified = row.status === 'notified';
                   return (
