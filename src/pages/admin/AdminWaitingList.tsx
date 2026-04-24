@@ -26,6 +26,7 @@ interface WaitingRow {
 const AdminWaitingList = () => {
   const qc = useQueryClient();
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [productFilter, setProductFilter] = useState<string>('all');
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-waiting-list'],
