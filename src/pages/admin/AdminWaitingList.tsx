@@ -8,7 +8,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Mail, Trash2, Loader2, Bell } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+
+const selectClassName =
+  'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
 
 interface WaitingRow {
   id: string;
