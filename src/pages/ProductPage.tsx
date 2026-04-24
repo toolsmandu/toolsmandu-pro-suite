@@ -231,7 +231,7 @@ const ProductPage = () => {
         {productTopBannerImage && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[280px] sm:h-[420px] lg:h-[720px] [background-size:contain] lg:[background-size:cover]"
+            className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[280px] sm:h-[420px] lg:h-[720px] [background-size:contain]"
             style={{
               backgroundImage: `url(${productTopBannerImage})`,
               backgroundPosition: 'center top',
