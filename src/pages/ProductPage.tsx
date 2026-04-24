@@ -392,7 +392,7 @@ const ProductPage = () => {
                   <div className="col-span-1 flex justify-start">
                     <div className="w-full max-w-[140px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[182px]" style={{ aspectRatio: '0.69164265129683' }}>
                       {product.image_url ? (
-                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover rounded-[10px]" />
+                        <img src={product.image_url} alt={product.name} className="w-full h-full rounded-[10px] object-scale-down px-0 mx-0" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-6xl bg-card rounded-[10px]">📦</div>
                       )}
