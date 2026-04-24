@@ -1,21 +1,7 @@
-## Goal
-Remove the background color behind the product image on homepage product cards. Keep the bottom section (product name, price, add-to-cart button) styled exactly as it is now (dark blue `#0a2e5c`).
+## Align Product Info Card Width with Image & Adjust Border Radius
 
-## Change
-In `src/components/ProductCard.tsx`, the image container currently uses `bg-secondary` which renders a colored background behind product images.
+In `src/components/ProductCard.tsx`:
 
-**Update the image wrapper:**
-- Remove `bg-secondary` from the `aspect-square` div so the image area becomes transparent.
-- Keep everything else (padding, `object-contain`, hover scale, badges) unchanged.
-- Keep the bottom info section (`p-4` div with `backgroundColor: '#0a2e5c'`) exactly as it is.
-
-### Snippet (before → after)
-```tsx
-// before
-<div className="aspect-square bg-secondary flex items-center justify-center p-2">
-
-// after
-<div className="aspect-square flex items-center justify-center p-2">
-```
-
-No other files need changes.
+1. On the `Link` wrapper (line 50): remove `-mx-3` so image aligns to same width as info card.
+2. On the image container `div` (line 51): change `w-auto` → `w-full`.
+3. On the info card `div` (line 71): change `rounded-lg` → `rounded-b-lg` so only bottom corners are rounded (image keeps its top corners rounded, they meet flush in the middle).
