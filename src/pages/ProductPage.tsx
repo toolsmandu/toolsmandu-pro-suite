@@ -235,42 +235,69 @@ const ProductPage = () => {
                     const isSelected = selectedVariant?.id === v.id;
 
                     return (
-                      <button
+                      <div
                         key={v.id}
-                        onClick={() => setSelectedVariant(v)}
-                        disabled={isOutOfStock}
                         className={cn(
-                          "w-full border-2 rounded-xl p-4 text-left transition-all flex items-center gap-4",
+                          "w-full border-2 rounded-xl transition-all overflow-hidden",
                           isSelected
                             ? "bg-[#228be6]/10 border-[#228be6] ring-1 ring-[#15aabf]"
                             : "bg-white/5 border-white/10 hover:border-[#228be6]/50 hover:bg-white/10",
-                          isOutOfStock && "opacity-50 cursor-not-allowed"
+                          isOutOfStock && "opacity-50"
                         )}
                       >
-                        <div className="w-12 h-12 rounded-md bg-secondary overflow-hidden flex-shrink-0">
-                          {product.image_url ? (
-                            <img src={product.image_url} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-sm">📦</div>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedVariant(v)}
+                          disabled={isOutOfStock}
+                          className={cn(
+                            "w-full text-left flex items-center gap-4 p-4",
+                            isOutOfStock && "cursor-not-allowed"
                           )}
-                        </div>
+                        >
+                          <div className="w-12 h-12 rounded-md bg-secondary overflow-hidden flex-shrink-0">
+                            {product.image_url ? (
+                              <img src={product.image_url} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-sm">📦</div>
+                            )}
+                          </div>
 
-                        <div className="flex-1 min-w-0 space-y-1">
-                          <div className="font-semibold text-foreground text-sm">{v.name}</div>
-                          <div className="font-semibold text-sm" style={{ color: '#16a249' }}>NPR {v.price}</div>
-                        </div>
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <div className="font-semibold text-foreground text-sm">{v.name}</div>
+                            <div className="font-semibold text-sm" style={{ color: '#16a249' }}>NPR {v.price}</div>
+                          </div>
 
-                        <div className={cn(
-                          "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-                          !isSelected && "bg-white/10"
-                        )} style={isSelected ? { background: 'linear-gradient(90deg, #228be6, #15aabf)' } : undefined}>
-                          {isSelected ? (
-                            <Check className="h-5 w-5 text-white" />
-                          ) : (
-                            <ShoppingCart className="h-5 w-5 text-white/40" />
-                          )}
-                        </div>
-                      </button>
+                          <div className={cn(
+                            "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+                            !isSelected && "bg-white/10"
+                          )} style={isSelected ? { background: 'linear-gradient(90deg, #228be6, #15aabf)' } : undefined}>
+                            {isSelected ? (
+                              <Check className="h-5 w-5 text-white" />
+                            ) : (
+                              <ShoppingCart className="h-5 w-5 text-white/40" />
+                            )}
+                          </div>
+                        </button>
+
+                        {isSelected && v.variation_info && (
+                          <div
+                            className="mx-4 mb-4 rounded-lg p-4 animate-in fade-in slide-in-from-top-1 duration-200"
+                            style={{
+                              border: '1.5px dashed rgba(34, 139, 230, 0.5)',
+                              background: 'linear-gradient(135deg, rgba(34,139,230,0.10), rgba(21,170,191,0.08))',
+                            }}
+                          >
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="h-4 w-1 rounded-full" style={{ background: 'linear-gradient(180deg, #228be6, #15aabf)' }} />
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">Plan Details</h4>
+                            </div>
+                            <div
+                              className="text-sm text-white/90 leading-relaxed prose prose-sm prose-invert max-w-none [&_a]:underline [&_a]:text-[#15aabf] [&_img]:rounded-md [&_img]:max-w-full [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2"
+                              dangerouslySetInnerHTML={{ __html: v.variation_info }}
+                            />
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
