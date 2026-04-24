@@ -508,12 +508,12 @@ const AdminProducts = () => {
         <div className="w-full">
           <div className="space-y-4">
               {/* Row 1: Product Name, Slug, Category, Region */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
+              <div className="grid gap-4 md:grid-cols-4">
+                <div className="md:col-span-1">
                   <Label>Product Name *</Label>
                   <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
                 </div>
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="md:col-span-3 grid gap-4 md:grid-cols-3">
                   <div>
                     <Label>Slug</Label>
                     <Input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="auto-generated" />
