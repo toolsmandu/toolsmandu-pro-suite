@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { useAuth } from '@/contexts/AuthContext';
 
 const emailSchema = z.string().trim().email({ message: 'Enter a valid email' }).max(255);
 
@@ -14,13 +15,14 @@ interface NotifyMeProps {
 }
 
 const NotifyMe = ({ productId, productName }: NotifyMeProps) => {
+  const { user, profile } = useAuth();
+  const loggedInEmail = profile?.email || user?.email || '';
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const parsed = emailSchema.safeParse(email);
+  const submitEmail = async (rawEmail: string) => {
+    const parsed = emailSchema.safeParse(rawEmail);
     if (!parsed.success) {
       toast.error(parsed.error.issues[0].message);
       return;
@@ -46,6 +48,11 @@ const NotifyMe = ({ productId, productName }: NotifyMeProps) => {
     }
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitEmail(email);
+  };
+
   if (done) {
     return (
       <div className="mt-3 rounded-xl border border-amber-300/40 bg-gradient-to-br from-amber-50/10 to-yellow-50/5 p-5 text-center">
@@ -62,33 +69,26 @@ const NotifyMe = ({ productId, productName }: NotifyMeProps) => {
 
   return (
     <div className="mt-3 rounded-xl border border-amber-300/40 bg-gradient-to-br from-amber-50/10 to-yellow-50/5 p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 to-yellow-300">
+      <div className="flex items-start gap-3 mb-4">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 to-yellow-300">
           <Bell className="h-4 w-4 text-amber-900" />
         </div>
-        <div>
+        <div className="space-y-1.5">
           <p className="text-sm font-semibold text-foreground leading-tight">
             Notify me when this product is available
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Get an email the moment it's back.
           </p>
         </div>
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
-        <Input
-          type="email"
-          placeholder="your@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={submitting}
-          className="flex-1"
-          required
-        />
+
+      {loggedInEmail ? (
         <Button
-          type="submit"
+          type="button"
+          onClick={() => submitEmail(loggedInEmail)}
           disabled={submitting}
-          className="bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 hover:from-amber-400 hover:to-yellow-400 font-semibold shadow-md"
+          className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 hover:from-amber-400 hover:to-yellow-400 font-semibold shadow-md"
         >
           {submitting ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -99,7 +99,33 @@ const NotifyMe = ({ productId, productName }: NotifyMeProps) => {
             </>
           )}
         </Button>
-      </form>
+      ) : (
+        <form onSubmit={handleFormSubmit} className="flex flex-col sm:flex-row gap-2">
+          <Input
+            type="email"
+            placeholder="your@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={submitting}
+            className="flex-1"
+            required
+          />
+          <Button
+            type="submit"
+            disabled={submitting}
+            className="bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 hover:from-amber-400 hover:to-yellow-400 font-semibold shadow-md"
+          >
+            {submitting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <Bell className="h-4 w-4 mr-1" />
+                Notify Me!
+              </>
+            )}
+          </Button>
+        </form>
+      )}
     </div>
   );
 };
