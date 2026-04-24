@@ -1349,6 +1349,44 @@ export type Database = {
           },
         ]
       }
+      waiting_list: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          notified_at: string | null
+          product_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          notified_at?: string | null
+          product_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          notified_at?: string | null
+          product_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waiting_list_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
