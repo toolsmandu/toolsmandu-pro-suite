@@ -11,6 +11,7 @@ import { ShoppingCart, Check, ClipboardList } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
+import NotifyMe from '@/components/NotifyMe';
 import InputFieldRenderer, { validateField, type InputFieldDef } from '@/components/InputFieldRenderer';
 import { toast } from 'sonner';
 
