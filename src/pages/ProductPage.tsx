@@ -413,7 +413,7 @@ const ProductPage = () => {
                       )}
                     </div>
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground"> {product.name}</h1>
-                    <div className="my-[20px] h-px w-full" style={{ backgroundColor: '#e5e7eb' }}></div>
+                    <div className="my-[20px] h-px w-full" style={{ backgroundColor: '#dee2e6' }}></div>
                     <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-6 gap-y-2">
                       {product.categories && (
                         <Link to={`/item-category/${(product.categories as any).slug}`} className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity min-w-0">
