@@ -4,6 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import ImageUpload from '@/components/admin/ImageUpload';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
 const AdminSiteSettings = () => {
@@ -11,6 +13,8 @@ const AdminSiteSettings = () => {
   const [logoUrl, setLogoUrl] = useState('');
   const [faviconUrl, setFaviconUrl] = useState('');
   const [emailLogoUrl, setEmailLogoUrl] = useState('');
+  const [productTopBannerImage, setProductTopBannerImage] = useState('');
+  const [productTopBannerOpacity, setProductTopBannerOpacity] = useState(1);
 
   useQuery({
     queryKey: ['admin-settings'],
@@ -20,6 +24,9 @@ const AdminSiteSettings = () => {
       setLogoUrl(map.logo_url?.value || '');
       setFaviconUrl(map.favicon_url?.value || '');
       setEmailLogoUrl(map.email_logo_url?.value || '');
+      setProductTopBannerImage(map.product_top_banner_image?.value || '');
+      const op = parseFloat(map.product_top_banner_opacity?.value);
+      setProductTopBannerOpacity(isNaN(op) ? 1 : Math.max(0, Math.min(1, op)));
       return map;
     },
   });
@@ -29,6 +36,8 @@ const AdminSiteSettings = () => {
       { key: 'logo_url', value: logoUrl },
       { key: 'favicon_url', value: faviconUrl },
       { key: 'email_logo_url', value: emailLogoUrl },
+      { key: 'product_top_banner_image', value: productTopBannerImage },
+      { key: 'product_top_banner_opacity', value: String(productTopBannerOpacity) },
     ];
     for (const item of keys) {
       const { data: existing } = await supabase.from('site_settings').select('id').eq('key', item.key).maybeSingle();
@@ -40,6 +49,7 @@ const AdminSiteSettings = () => {
     }
     queryClient.invalidateQueries({ queryKey: ['site-settings'] });
     queryClient.invalidateQueries({ queryKey: ['admin-settings'] });
+    queryClient.invalidateQueries({ queryKey: ['order-mode-settings'] });
     toast.success('Site settings saved!');
   };
 
@@ -57,6 +67,46 @@ const AdminSiteSettings = () => {
               Shown centered at the top of authentication emails (signup OTP, password reset, etc.). If empty, the site logo is used.
             </p>
           </div>
+          <Button onClick={saveSettings}>Save Settings</Button>
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6">
+        <CardHeader><CardTitle>Product Page Top Banner</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <ImageUpload
+            value={productTopBannerImage}
+            onChange={setProductTopBannerImage}
+            label="Top Banner Image"
+          />
+          <p className="text-xs text-muted-foreground -mt-2">
+            Displayed on every product page, just below the top navigation menu and above the product name and variation section. Leave empty to hide.
+          </p>
+
+          <div>
+            <Label>Banner Opacity: {Math.round(productTopBannerOpacity * 100)}%</Label>
+            <Slider
+              className="mt-2"
+              min={0}
+              max={1}
+              step={0.05}
+              value={[productTopBannerOpacity]}
+              onValueChange={(v) => setProductTopBannerOpacity(v[0])}
+            />
+          </div>
+
+          {productTopBannerImage && (
+            <div className="border border-border rounded p-2 bg-muted/30">
+              <p className="text-xs text-muted-foreground mb-2">Preview</p>
+              <img
+                src={productTopBannerImage}
+                alt="Banner preview"
+                className="w-full h-auto rounded"
+                style={{ opacity: productTopBannerOpacity }}
+              />
+            </div>
+          )}
+
           <Button onClick={saveSettings}>Save Settings</Button>
         </CardContent>
       </Card>
