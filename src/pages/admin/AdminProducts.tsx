@@ -173,7 +173,7 @@ const AdminProducts = () => {
       slug: product.slug || '',
       description: product.description || '',
       duration: product.duration || '',
-      region: product.region || '',
+      region: product.region || 'Global',
       image_url: product.image_url || '',
       category_id: product.category_id || '',
       is_featured: product.is_featured || false,
