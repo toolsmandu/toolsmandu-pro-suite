@@ -533,8 +533,8 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              {/* Row 3: Stock Status, Order Mode, Flash Sale Label */}
-              <div className="grid gap-4 md:grid-cols-3">
+              {/* Row 3: Stock Status, Order Mode, Flash Sale Label, Featured Tags */}
+              <div className="grid gap-4 md:grid-cols-4">
                 <div>
                   <Label>Stock Status</Label>
                   <select value={form.stock_status} onChange={(event) => setForm({ ...form, stock_status: event.target.value })} className={selectClassName}>
@@ -558,21 +558,23 @@ const AdminProducts = () => {
                     ))}
                   </select>
                 </div>
-              </div>
-
-              {/* Row 4: Featured, Bestseller, Flash Sale */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="flex items-center gap-4">
-                  <Switch checked={form.is_featured} onCheckedChange={(value) => setForm({ ...form, is_featured: value })} />
-                  <Label>Featured</Label>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Switch checked={form.is_bestseller} onCheckedChange={(value) => setForm({ ...form, is_bestseller: value })} />
-                  <Label>Bestseller</Label>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Switch checked={form.is_flash_sale} onCheckedChange={(value) => setForm({ ...form, is_flash_sale: value })} />
-                  <Label>Flash Sale</Label>
+                <div>
+                  <Label>Featured Tags</Label>
+                  <div className="flex flex-wrap gap-3 h-10 items-center">
+                    {[
+                      { key: 'is_featured', label: 'Featured' },
+                      { key: 'is_bestseller', label: 'Bestseller' },
+                      { key: 'is_flash_sale', label: 'Flash Sale' },
+                    ].map((tag) => (
+                      <label key={tag.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
+                        <Checkbox
+                          checked={(form as any)[tag.key]}
+                          onCheckedChange={(value) => setForm({ ...form, [tag.key]: !!value })}
+                        />
+                        <span>{tag.label}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               </div>
 
