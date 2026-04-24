@@ -50,7 +50,7 @@ const emptyForm = () => ({
   slug: '',
   description: '',
   duration: '',
-  region: '',
+  region: 'Global',
   image_url: '',
   category_id: '',
   is_featured: false,
@@ -173,7 +173,7 @@ const AdminProducts = () => {
       slug: product.slug || '',
       description: product.description || '',
       duration: product.duration || '',
-      region: product.region || '',
+      region: product.region || 'Global',
       image_url: product.image_url || '',
       category_id: product.category_id || '',
       is_featured: product.is_featured || false,
@@ -506,41 +506,30 @@ const AdminProducts = () => {
       <ScrollArea className="flex-1">
         <div className="w-full">
           <div className="space-y-4">
-              {/* Row 1: Product Name + Slug */}
+              {/* Row 1: Product Name, Slug, Category, Region */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label>Product Name *</Label>
                   <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
                 </div>
-                <div>
-                  <Label>Slug</Label>
-                  <Input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="auto-generated" />
-                </div>
-              </div>
-
-              {/* Row 2: Category, Product Type, Region */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <Label>Category *</Label>
-                  <select value={form.category_id} onChange={(event) => setForm({ ...form, category_id: event.target.value })} className={selectClassName}>
-                    <option value="">Select category</option>
-                    {categories?.map((category: any) => (
-                      <option key={category.id} value={category.id}>{category.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Label>Product Type *</Label>
-                  <select value={form.duration} onChange={(event) => setForm({ ...form, duration: event.target.value })} className={selectClassName}>
-                    <option value="">Select product type</option>
-                    {productTypes?.map((productType: any) => (
-                      <option key={productType.id} value={productType.name}>{productType.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Label>Region *</Label>
-                  <Input value={form.region} onChange={(event) => setForm({ ...form, region: event.target.value })} placeholder="e.g. Global, Nepal" />
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <Label>Slug</Label>
+                    <Input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="auto-generated" />
+                  </div>
+                  <div>
+                    <Label>Category *</Label>
+                    <select value={form.category_id} onChange={(event) => setForm({ ...form, category_id: event.target.value })} className={selectClassName}>
+                      <option value="">Select category</option>
+                      {categories?.map((category: any) => (
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Region *</Label>
+                    <Input value={form.region} onChange={(event) => setForm({ ...form, region: event.target.value })} placeholder="e.g. Global, Nepal" />
+                  </div>
                 </div>
               </div>
 
