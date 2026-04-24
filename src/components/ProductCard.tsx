@@ -63,32 +63,32 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         </div>
       </Link>
 
-      <div className="p-4 flex-1 flex flex-col rounded-lg text-center" style={{ backgroundColor: '#0a2e5c' }}>
+      <div className="p-4 flex-1 flex flex-col rounded-lg text-center relative" style={{ backgroundColor: '#0a2e5c' }}>
         <Link to={`/item/${slug}`}>
-          <h3 className="font-medium text-foreground text-sm line-clamp-2 hover:text-primary transition-colors">{name}</h3>
+          <h3 className="font-semibold text-foreground text-base line-clamp-2 hover:text-primary transition-colors">{name}</h3>
         </Link>
         {duration && <p className="text-xs text-muted-foreground mt-1">{duration}</p>}
-        <div className="mt-auto pt-3 flex items-center justify-between">
-          <div>
-            <span className="text-lg font-bold text-foreground">NPR {displayPrice}</span>
-          </div>
-          {isOutOfStock ? (
-            <Button size="icon" variant="secondary" className="h-8 w-8 opacity-50" disabled aria-label="Out of stock">
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button
-              size="icon"
-              variant="secondary"
-              className="h-8 w-8"
-              onClick={(e) => { e.preventDefault(); addItem({ id, name, price: displayPrice, image_url, duration }); }}
-              aria-label="Add to cart"
-            >
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
-          )}
+        <div className="mt-2">
+          <span className="text-xl font-bold" style={{ color: '#f5b800' }}>Rs {displayPrice}</span>
         </div>
+        {!isOutOfStock && (
+          <Button
+            size="icon"
+            variant="secondary"
+            className="h-8 w-8 absolute bottom-3 right-3"
+            onClick={(e) => { e.preventDefault(); addItem({ id, name, price: displayPrice, image_url, duration }); }}
+            aria-label="Add to cart"
+          >
+            <ShoppingCart className="h-4 w-4" />
+          </Button>
+        )}
+        {isOutOfStock && (
+          <Button size="icon" variant="secondary" className="h-8 w-8 absolute bottom-3 right-3 opacity-50" disabled aria-label="Out of stock">
+            <ShoppingCart className="h-4 w-4" />
+          </Button>
+        )}
       </div>
+
     </div>
   );
 };
