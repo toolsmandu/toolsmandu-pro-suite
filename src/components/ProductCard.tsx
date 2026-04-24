@@ -47,8 +47,8 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
 
   return (
     <div className="group flex flex-col">
-      <Link to={`/item/${slug}`} className="block relative rounded-t-[10px] -mx-3 -mt-3 mb-0">
-        <div className="relative w-[calc(100%+0px)] aspect-[4/5] overflow-hidden rounded-t-[10px]">
+      <Link to={`/item/${slug}`} className="block relative rounded-t-[10px]">
+        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-t-[10px]">
           {image_url ? (
             <img
               src={image_url}
