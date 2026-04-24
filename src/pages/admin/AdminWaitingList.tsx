@@ -40,6 +40,20 @@ const AdminWaitingList = () => {
     },
   });
 
+  const productOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    (data || []).forEach((row) => {
+      if (row.product_id && row.products?.name) map.set(row.product_id, row.products.name);
+    });
+    return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    if (productFilter === 'all') return data || [];
+    if (productFilter === 'none') return (data || []).filter((r) => !r.product_id);
+    return (data || []).filter((r) => r.product_id === productFilter);
+  }, [data, productFilter]);
+
   const deleteEntry = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('waiting_list').delete().eq('id', id);
