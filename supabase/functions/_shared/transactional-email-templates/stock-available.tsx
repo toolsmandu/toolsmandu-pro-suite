@@ -143,6 +143,7 @@ const bellCell = {
   textAlign: 'center' as const, verticalAlign: 'middle' as const,
   fontSize: '36px', lineHeight: '1', padding: 0,
 }
+const bellImg = { display: 'block', margin: '0 auto', width: '40px', height: '40px' }
 const eyebrow = {
   fontSize: '11px', fontWeight: 700 as const, letterSpacing: '0.18em',
   color: '#d97706', margin: '0 0 12px', textTransform: 'uppercase' as const,
