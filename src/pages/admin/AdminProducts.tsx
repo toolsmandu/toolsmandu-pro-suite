@@ -818,6 +818,9 @@ const AdminProducts = () => {
                             />
                           </div>
                         )}
+                        <div className="pb-1">
+                          {renderSaveButton()}
+                        </div>
                       </div>
 
                       {variation.has_special_input_fields && variation.input_field_ids.length > 0 && (
