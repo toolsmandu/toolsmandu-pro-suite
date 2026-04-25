@@ -493,7 +493,7 @@ const ProductPage = () => {
         {/* Related Products */}
         {related && related.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Related Products</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-6">Looking for similar items? Check these:</h2>
             <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, 165px)' }}>
               {related.map(p => (
                 <div key={p.id} className="w-[165px]">
