@@ -102,7 +102,12 @@ const AdminLicenseKeys = () => {
     return m;
   }, [views]);
 
-  const filteredKeys = (keys || []).filter(k => productFilter === 'all' || k.product_id === productFilter);
+  const filteredKeys = (keys || []).filter(k => {
+    if (productFilter !== 'all' && k.product_id !== productFilter) return false;
+    const term = keySearch.trim().toLowerCase();
+    if (term && !k.key_value.toLowerCase().includes(term)) return false;
+    return true;
+  });
   const fresh = filteredKeys.filter(k => k.status === 'fresh');
   const viewed = filteredKeys.filter(k => k.status === 'viewed');
 
