@@ -1509,6 +1509,23 @@ const AdminOrders = () => {
                 </div>
               )}
 
+              {/* Input Fields (optional for admin) */}
+              {newActiveFields.length > 0 && (
+                <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Linked input fields (optional for admin-created orders)
+                  </p>
+                  {newActiveFields.map((f) => (
+                    <InputFieldRenderer
+                      key={f.id}
+                      field={f}
+                      value={newFieldValues[f.id]}
+                      onChange={(val) => setNewFieldValues((prev) => ({ ...prev, [f.id]: val }))}
+                    />
+                  ))}
+                </div>
+              )}
+
               {/* Amount */}
               <div>
                 <Label>Amount (NPR)</Label>
