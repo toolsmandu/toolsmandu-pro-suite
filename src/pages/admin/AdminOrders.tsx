@@ -20,6 +20,7 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import InputFieldRenderer, { type InputFieldDef, type FieldResponse } from '@/components/InputFieldRenderer';
 
 const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').trim();
 
