@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
-import { useCart } from '@/contexts/CartContext';
+
 
 interface Variation {
   id: string;
