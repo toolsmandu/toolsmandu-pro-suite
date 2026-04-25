@@ -17,5 +17,3 @@ project_id = "iuussfrylzowigmaozwv"
     verify_jwt = false
   [functions.tasks-notifier]
     verify_jwt = false
-  [functions.push-product-to-b]
-    verify_jwt = false

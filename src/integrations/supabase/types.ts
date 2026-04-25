@@ -14,21 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      _sync_config: {
-        Row: {
-          key: string
-          value: string
-        }
-        Insert: {
-          key: string
-          value: string
-        }
-        Update: {
-          key?: string
-          value?: string
-        }
-        Relationships: []
-      }
       blogs: {
         Row: {
           author_name: string | null
