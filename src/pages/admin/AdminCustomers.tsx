@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Search, Eye, Pencil, Plus, X, Download } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import { useExportFormat } from '@/components/admin/useExportFormat';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
 
