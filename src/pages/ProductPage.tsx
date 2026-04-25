@@ -494,8 +494,12 @@ const ProductPage = () => {
         {related && related.length > 0 && (
           <section className="mt-16">
             <h2 className="text-2xl font-bold text-foreground mb-6">Related Products</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {related.map(p => <ProductCard key={p.id} {...p} />)}
+            <div className="flex flex-wrap gap-4">
+              {related.map(p => (
+                <div key={p.id} className="min-w-[165px] max-w-[165px]">
+                  <ProductCard {...p} />
+                </div>
+              ))}
             </div>
           </section>
         )}
