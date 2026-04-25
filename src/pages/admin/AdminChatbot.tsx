@@ -25,6 +25,41 @@ interface Draft {
   answer: string;
 }
 
+const ProductCombobox = ({ products, value, onChange }: { products: { id: string; name: string }[]; value: string; onChange: (v: string) => void }) => {
+  const [open, setOpen] = useState(false);
+  const selected = products.find(p => p.id === value);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" role="combobox" className={cn('w-full justify-between', !selected && 'text-muted-foreground')}>
+          {selected ? selected.name : 'Select a product'}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Search product..." />
+          <CommandList>
+            <CommandEmpty>No product found.</CommandEmpty>
+            <CommandGroup>
+              {products.map(p => (
+                <CommandItem
+                  key={p.id}
+                  value={p.name}
+                  onSelect={() => { onChange(p.id); setOpen(false); }}
+                >
+                  <Check className={cn('mr-2 h-4 w-4', value === p.id ? 'opacity-100' : 'opacity-0')} />
+                  {p.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
 const AdminChatbot = () => {
   const queryClient = useQueryClient();
   const [productId, setProductId] = useState<string>('');
