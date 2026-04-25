@@ -12,7 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
-import { Plus, Trash2, X, Save, Eye, Pencil, Copy, Check, ChevronsUpDown } from 'lucide-react';
+import { Plus, Trash2, X, Save, Eye, Pencil, Copy, Check, ChevronsUpDown, Search, History } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
@@ -49,6 +49,8 @@ const AdminLicenseKeys = () => {
 
   // Filter
   const [productFilter, setProductFilter] = useState<string>('all');
+  const [keySearch, setKeySearch] = useState('');
+  const [expandedHistory, setExpandedHistory] = useState<Record<string, boolean>>({});
 
   const { data: products } = useQuery({
     queryKey: ['admin-products-license'],
@@ -100,7 +102,12 @@ const AdminLicenseKeys = () => {
     return m;
   }, [views]);
 
-  const filteredKeys = (keys || []).filter(k => productFilter === 'all' || k.product_id === productFilter);
+  const filteredKeys = (keys || []).filter(k => {
+    if (productFilter !== 'all' && k.product_id !== productFilter) return false;
+    const term = keySearch.trim().toLowerCase();
+    if (term && !k.key_value.toLowerCase().includes(term)) return false;
+    return true;
+  });
   const fresh = filteredKeys.filter(k => k.status === 'fresh');
   const viewed = filteredKeys.filter(k => k.status === 'viewed');
 
@@ -192,6 +199,10 @@ const AdminLicenseKeys = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-foreground">License Keys</h2>
         <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={keySearch} onChange={e => setKeySearch(e.target.value)} placeholder="Search keys" className="pl-9 w-56" />
+          </div>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" role="combobox" className="w-56 justify-between font-normal">
@@ -293,6 +304,7 @@ const AdminLicenseKeys = () => {
                   const keyViews = (views || [])
                     .filter(v => v.license_key_id === k.id)
                     .sort((a, b) => new Date(b.viewed_at).getTime() - new Date(a.viewed_at).getTime());
+                  const showHistory = k.view_limit <= 1 || expandedHistory[k.id];
                   return (
                     <TableRow key={k.id} className="align-top">
                       <TableCell className="text-foreground">
@@ -301,21 +313,34 @@ const AdminLicenseKeys = () => {
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => { navigator.clipboard.writeText(k.key_value); toast.success('Copied'); }}>
                             <Copy className="h-3 w-3" />
                           </Button>
+                          {k.view_limit > 1 && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-7 px-2 text-xs"
+                              onClick={() => setExpandedHistory(prev => ({ ...prev, [k.id]: !prev[k.id] }))}
+                            >
+                              <History className="h-3 w-3 mr-1" />
+                              {expandedHistory[k.id] ? 'Hide history' : `View history (${keyViews.length})`}
+                            </Button>
+                          )}
                         </div>
-                        <div className="space-y-1.5 text-xs">
-                          {keyViews.length === 0 ? (
-                            <div className="text-muted-foreground">No view history</div>
-                          ) : keyViews.map((v, idx) => (
-                            <div key={v.id} className="border-l-2 border-border pl-2">
-                              {keyViews.length > 1 && (
-                                <div className="text-[10px] uppercase tracking-wide text-muted-foreground/70">View {keyViews.length - idx}</div>
-                              )}
-                              <div><span className="text-muted-foreground">Viewed by:</span> <span className="text-foreground">{v.viewed_by_email || '—'}</span></div>
-                              <div><span className="text-muted-foreground">Viewed on:</span> <span className="text-foreground">{formatDate(v.viewed_at)}</span></div>
-                              <div><span className="text-muted-foreground">Remarks:</span> <span className="text-foreground">{v.remarks || '—'}</span></div>
-                            </div>
-                          ))}
-                        </div>
+                        {showHistory && (
+                          <div className="space-y-1.5 text-xs">
+                            {keyViews.length === 0 ? (
+                              <div className="text-muted-foreground">No view history</div>
+                            ) : keyViews.map((v, idx) => (
+                              <div key={v.id} className="border-l-2 border-border pl-2">
+                                {keyViews.length > 1 && (
+                                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground/70">View {keyViews.length - idx}</div>
+                                )}
+                                <div><span className="text-muted-foreground">Viewed by:</span> <span className="text-foreground">{v.viewed_by_email || '—'}</span></div>
+                                <div><span className="text-muted-foreground">Viewed on:</span> <span className="text-foreground">{formatDate(v.viewed_at)}</span></div>
+                                <div><span className="text-muted-foreground">Remarks:</span> <span className="text-foreground">{v.remarks || '—'}</span></div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell className="text-foreground">{productLabel(k)}</TableCell>
                       <TableCell className="text-muted-foreground">{k.view_count}/{k.view_limit}</TableCell>
