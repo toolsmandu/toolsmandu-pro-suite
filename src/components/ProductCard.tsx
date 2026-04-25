@@ -70,11 +70,11 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
 
       <div className="p-4 flex-1 flex flex-col text-center relative" style={{ backgroundColor: '#0a2e5c' }}>
         <Link to={`/item/${slug}`}>
-          <h3 className="font-semibold text-foreground text-base line-clamp-2 hover:text-primary transition-colors">{name}</h3>
+          <h3 className="font-semibold text-foreground line-clamp-2 hover:text-primary transition-colors" style={{ fontSize: '12px' }}>{name}</h3>
         </Link>
         
         <div className="mt-2">
-          <span className="text-xl font-bold" style={{ color: '#f5b800' }}>Rs {displayPrice}</span>
+          <span className="font-bold" style={{ color: '#f5b800', fontSize: '12px' }}>Rs {displayPrice}</span>
         </div>
         {!isOutOfStock && (
           <Button
