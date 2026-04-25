@@ -924,6 +924,31 @@ const AdminProducts = () => {
           </div>
         </div>
       </ScrollArea>
+      <div className="border-t border-border pt-3 mt-2 flex justify-end">
+        {saveDisabled ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span tabIndex={0} className="inline-block cursor-not-allowed">
+                  <div className="pointer-events-none">
+                    <Button disabled>{editingId ? 'Update Product' : 'Create Product'}</Button>
+                  </div>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs">
+                <p className="font-semibold mb-1">Please complete the following:</p>
+                <ul className="list-disc pl-4 space-y-0.5">
+                  {saveMissing.map((m) => (<li key={m} className="text-xs">{m}</li>))}
+                </ul>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <Button onClick={() => saveMutation.mutate()}>
+            {editingId ? 'Update Product' : 'Create Product'}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
