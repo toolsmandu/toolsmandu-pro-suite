@@ -100,8 +100,9 @@ const AdminLicenseKeys = () => {
     return m;
   }, [views]);
 
-  const fresh = (keys || []).filter(k => k.status === 'fresh');
-  const viewed = (keys || []).filter(k => k.status === 'viewed');
+  const filteredKeys = (keys || []).filter(k => productFilter === 'all' || k.product_id === productFilter);
+  const fresh = filteredKeys.filter(k => k.status === 'fresh');
+  const viewed = filteredKeys.filter(k => k.status === 'viewed');
 
   const addMutation = useMutation({
     mutationFn: async () => {
