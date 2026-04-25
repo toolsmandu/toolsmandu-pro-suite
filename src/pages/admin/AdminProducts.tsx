@@ -653,10 +653,6 @@ const AdminProducts = () => {
                 <Separator className="my-2" />
                 <div className="flex items-center justify-between mb-3">
                   <Label className="text-base font-semibold">Variations</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setVariations((previous) => [...previous, emptyVariation()])}>
-                    <Plus className="h-3 w-3 mr-1" />
-                    Add Variation
-                  </Button>
                 </div>
 
                 {variations.length === 0 && (
