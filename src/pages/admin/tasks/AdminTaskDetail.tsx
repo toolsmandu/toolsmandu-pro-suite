@@ -197,12 +197,20 @@ const AdminTaskDetail = () => {
         <CardHeader><CardTitle className="text-base">Activity</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {activity?.length === 0 && <p className="text-sm text-muted-foreground">No activity yet.</p>}
-          {activity?.map((a: any) => (
-            <div key={a.id} className="text-sm flex justify-between border-b border-border/50 py-1">
-              <span><span className="font-medium">{a.action}</span>{a.details ? ` — ${a.details}` : ''}</span>
-              <span className="text-xs text-muted-foreground">{formatDate(a.created_at)}</span>
-            </div>
-          ))}
+          {activity?.map((a: any) => {
+            const actor = a.actor_id ? actorProfiles?.[a.actor_id] : null;
+            const actorLabel = actor?.email || actor?.name || (a.actor_id ? 'Unknown' : 'System');
+            return (
+              <div key={a.id} className="text-sm flex flex-col sm:flex-row sm:justify-between gap-1 border-b border-border/50 py-2">
+                <span>
+                  <span className="font-medium">{a.action}</span>
+                  {a.details ? ` — ${a.details}` : ''}
+                  <span className="block text-xs text-muted-foreground mt-0.5">Created by: {actorLabel}</span>
+                </span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDateTime(a.created_at)}</span>
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
     </div>
