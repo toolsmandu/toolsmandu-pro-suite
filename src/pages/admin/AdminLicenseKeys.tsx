@@ -292,11 +292,14 @@ const AdminLicenseKeys = () => {
               <TableBody>
                 {viewed.length === 0 ? (
                   <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">No viewed keys</TableCell></TableRow>
-                ) : viewed.map(k => {
-                  const v = latestViewByKey.get(k.id);
-                  return (
-                    <TableRow key={k.id}>
-                      <TableCell className="text-foreground">{productLabel(k)}</TableCell>
+                ) : viewed.flatMap(k => {
+                  const keyViews = (views || [])
+                    .filter(v => v.license_key_id === k.id)
+                    .sort((a, b) => new Date(b.viewed_at).getTime() - new Date(a.viewed_at).getTime());
+                  const rows = keyViews.length > 0 ? keyViews : [null];
+                  return rows.map((v, idx) => (
+                    <TableRow key={`${k.id}-${v?.id || 'none'}`}>
+                      <TableCell className="text-foreground">{productLabel(k)}{keyViews.length > 1 ? <span className="text-xs text-muted-foreground ml-1">(view {keyViews.length - idx})</span> : null}</TableCell>
                       <TableCell className="font-mono text-foreground">
                         <div className="flex items-center gap-2">
                           <span>{k.key_value}</span>
@@ -310,12 +313,14 @@ const AdminLicenseKeys = () => {
                       <TableCell className="text-muted-foreground">{v?.remarks || '—'}</TableCell>
                       <TableCell className="text-muted-foreground">{k.view_count}/{k.view_limit}</TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" title="Delete" onClick={() => { if (confirm('Delete this key?')) deleteMutation.mutate(k.id); }}>
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
+                        {idx === 0 && (
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" title="Delete" onClick={() => { if (confirm('Delete this key (and all its view history)?')) deleteMutation.mutate(k.id); }}>
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
-                  );
+                  ));
                 })}
               </TableBody>
             </Table>
