@@ -151,7 +151,7 @@ const CategorySection = ({ category, products }: { category: { id: string; name:
       </div>
       <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
         {products.map(p => (
-          <div key={p.id} className="min-w-[220px] max-w-[220px]">
+          <div key={p.id} className="min-w-[165px] max-w-[165px]">
             <ProductCard {...p} />
           </div>
         ))}
