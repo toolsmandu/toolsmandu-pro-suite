@@ -658,6 +658,26 @@ const AdminOrders = () => {
       } as any).select().single();
       if (orderError) throw orderError;
 
+      // Build input field responses (optional for admin — only include filled values)
+      const responses: FieldResponse[] = (newActiveFields || [])
+        .map((f) => {
+          const val = newFieldValues[f.id];
+          const isEmpty =
+            val === undefined ||
+            val === '' ||
+            (Array.isArray(val) && val.length === 0);
+          if (isEmpty) return null;
+          return {
+            field_id: f.id,
+            field_name: f.name,
+            field_type: f.field_type,
+            label: f.label,
+            question: f.question,
+            value: val as string | string[],
+          } as FieldResponse;
+        })
+        .filter((r): r is FieldResponse => r !== null);
+
       const { error: itemError } = await supabase.from('order_items').insert({
         order_id: order.id,
         product_id: newProductId,
@@ -665,6 +685,7 @@ const AdminOrders = () => {
         variation_name: variation?.name || null,
         price: parseFloat(newAmount),
         quantity: 1,
+        input_field_responses: responses as any,
       });
       if (itemError) throw itemError;
 
