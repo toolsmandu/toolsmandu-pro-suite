@@ -61,6 +61,7 @@ import AdminPromoCodes from "./pages/admin/AdminPromoCodes";
 import AdminLicenseKeys from "./pages/admin/AdminLicenseKeys";
 import AdminSalesStatement from "./pages/admin/reports/AdminSalesStatement";
 import AdminTopSelling from "./pages/admin/reports/AdminTopSelling";
+import AdminCustomerSegment from "./pages/admin/reports/AdminCustomerSegment";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 
