@@ -51,7 +51,7 @@ const emptyForm = () => ({
   name: '',
   slug: '',
   description: '',
-  duration: '',
+  
   region: 'Global',
   image_url: '',
   category_id: '',
@@ -174,7 +174,7 @@ const AdminProducts = () => {
       name: product.name || '',
       slug: product.slug || '',
       description: product.description || '',
-      duration: product.duration || '',
+      
       region: product.region || 'Global',
       image_url: product.image_url || '',
       category_id: product.category_id || '',
@@ -249,7 +249,7 @@ const AdminProducts = () => {
         description: form.description || null,
         price: prices.length > 0 ? Math.min(...prices) : 0,
         original_price: originalPrices.length > 0 ? Math.max(...originalPrices) : null,
-        duration: form.duration || null,
+        
         region: form.region || null,
         image_url: form.image_url || null,
         category_id: form.category_id || null,
@@ -520,7 +520,7 @@ const AdminProducts = () => {
                     setForm({ ...form, name, slug: slugWasAuto ? autoSlug : form.slug });
                   }} />
                 </div>
-                <div className="md:col-span-3 grid gap-4 md:grid-cols-4">
+                <div className="md:col-span-3 grid gap-4 md:grid-cols-3">
                   <div>
                     <Label>Slug</Label>
                     <Input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="auto-generated" />
@@ -533,10 +533,6 @@ const AdminProducts = () => {
                         <option key={category.id} value={category.id}>{category.name}</option>
                       ))}
                     </select>
-                  </div>
-                  <div>
-                    <Label>Duration *</Label>
-                    <Input value={form.duration} onChange={(event) => setForm({ ...form, duration: event.target.value })} placeholder="e.g. 1 Month, 1 Year" />
                   </div>
                   <div>
                     <Label>Region *</Label>
@@ -868,7 +864,7 @@ const AdminProducts = () => {
               const missing: string[] = [];
               if (!form.name) missing.push('Product Name');
               if (!form.category_id) missing.push('Category');
-              if (!form.duration) missing.push('Duration');
+              
               if (!form.region) missing.push('Region');
               const validVariations = variations.filter((variation) => variation.name && variation.price && variation.expiry_days);
               if (validVariations.length === 0) {
