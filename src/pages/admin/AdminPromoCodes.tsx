@@ -288,15 +288,6 @@ const AdminPromoCodes = () => {
                 />
               </div>
 
-              {form.instruction_template && (
-                <div>
-                  <Label className="text-xs text-muted-foreground">Preview</Label>
-                  <div
-                    className="mt-1 p-3 border border-border rounded-md bg-muted/30 prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: previewHtml }}
-                  />
-                </div>
-              )}
 
               <Button onClick={() => saveMutation.mutate()} className="w-full" disabled={!form.product_id || !form.code || saveMutation.isPending}>
                 <Save className="h-4 w-4 mr-2" />
