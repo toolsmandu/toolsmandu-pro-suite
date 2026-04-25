@@ -26,7 +26,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, is_flash_sale, flash_sale_label, stock_status, product_variations }: ProductCardProps) => {
-  const { addItem } = useCart();
+  useCart();
   const isOutOfStock = stock_status === 'out_of_stock';
 
   // Compute lowest price from active variations, fallback to product price
