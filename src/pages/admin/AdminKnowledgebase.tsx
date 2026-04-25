@@ -60,13 +60,13 @@ const ProductCombobox = ({ products, value, onChange }: { products: { id: string
   );
 };
 
-const AdminChatbot = () => {
+const AdminKnowledgebase = () => {
   const queryClient = useQueryClient();
   const [productId, setProductId] = useState<string>('');
   const [drafts, setDrafts] = useState<Draft[]>([{ question: '', answer: '' }]);
 
   const { data: products } = useQuery({
-    queryKey: ['admin-chatbot-products'],
+    queryKey: ['admin-knowledgebase-products'],
     queryFn: async () => {
       const { data, error } = await supabase.from('products').select('id, name').order('name');
       if (error) throw error;
@@ -75,7 +75,7 @@ const AdminChatbot = () => {
   });
 
   const { data: qas, isLoading } = useQuery({
-    queryKey: ['admin-chatbot-qa', productId],
+    queryKey: ['admin-knowledgebase-qa', productId],
     enabled: !!productId,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -110,7 +110,7 @@ const AdminChatbot = () => {
       }
     },
     onSuccess: (_, draft) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-chatbot-qa', productId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-knowledgebase-qa', productId] });
       toast.success(draft.id ? 'Q&A updated' : 'Q&A added');
     },
     onError: (e: any) => toast.error(e.message),
@@ -122,7 +122,7 @@ const AdminChatbot = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-chatbot-qa', productId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-knowledgebase-qa', productId] });
       toast.success('Q&A deleted');
     },
   });
@@ -152,9 +152,9 @@ const AdminChatbot = () => {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Chatbot</h2>
+        <h2 className="text-2xl font-bold text-foreground">Knowledgebase</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Add questions and answers a chatbot can use for a specific product.
+          Add questions and answers a knowledgebase can use for a specific product.
         </p>
       </div>
 
@@ -243,4 +243,4 @@ const AdminChatbot = () => {
   );
 };
 
-export default AdminChatbot;
+export default AdminKnowledgebase;

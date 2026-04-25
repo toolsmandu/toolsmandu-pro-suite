@@ -264,12 +264,12 @@ const AdminLayout = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
-                  {/* Chatbot — just above Settings */}
+                  {/* Knowledgebase — just above Settings */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <NavLink to="/admin/chatbot" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                      <NavLink to="/admin/knowledgebase" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
                         <MessageSquare className="mr-2 h-4 w-4" />
-                        <span className="flex-1">Chatbot</span>
+                        <span className="flex-1">Knowledgebase</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
