@@ -904,7 +904,7 @@ const AdminProducts = () => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span tabIndex={0} className="block w-full cursor-not-allowed">
+                      <span tabIndex={0} className="inline-block cursor-not-allowed">
                         <div className="pointer-events-none">{button}</div>
                       </span>
                     </TooltipTrigger>
