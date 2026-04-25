@@ -678,6 +678,69 @@ export type Database = {
         }
         Relationships: []
       }
+      license_key_views: {
+        Row: {
+          id: string
+          license_key_id: string
+          remarks: string | null
+          viewed_at: string
+          viewed_by: string
+          viewed_by_email: string | null
+        }
+        Insert: {
+          id?: string
+          license_key_id: string
+          remarks?: string | null
+          viewed_at?: string
+          viewed_by: string
+          viewed_by_email?: string | null
+        }
+        Update: {
+          id?: string
+          license_key_id?: string
+          remarks?: string | null
+          viewed_at?: string
+          viewed_by?: string
+          viewed_by_email?: string | null
+        }
+        Relationships: []
+      }
+      license_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_value: string
+          product_id: string
+          status: string
+          updated_at: string
+          variation_id: string | null
+          view_count: number
+          view_limit: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_value: string
+          product_id: string
+          status?: string
+          updated_at?: string
+          variation_id?: string | null
+          view_count?: number
+          view_limit?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_value?: string
+          product_id?: string
+          status?: string
+          updated_at?: string
+          variation_id?: string | null
+          view_count?: number
+          view_limit?: number
+        }
+        Relationships: []
+      }
       media: {
         Row: {
           created_at: string
