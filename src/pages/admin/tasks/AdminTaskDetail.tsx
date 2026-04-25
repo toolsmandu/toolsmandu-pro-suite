@@ -75,6 +75,10 @@ const AdminTaskDetail = () => {
       const { error } = await supabase.from('tasks').update({ status: newStatus }).eq('id', task.id);
       if (error) throw error;
       await logActivity(task.id, null, user.id, 'status_changed', `${task.status} → ${newStatus}`);
+      // Trigger notifier so admin gets the completion email immediately
+      if (newStatus === 'completed') {
+        supabase.functions.invoke('tasks-notifier').catch((e) => console.warn('notifier invoke failed', e));
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['task', id] });

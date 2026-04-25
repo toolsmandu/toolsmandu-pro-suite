@@ -15,3 +15,5 @@ project_id = "iuussfrylzowigmaozwv"
     verify_jwt = false
   [functions.notify-waiting-list]
     verify_jwt = false
+  [functions.tasks-notifier]
+    verify_jwt = false
