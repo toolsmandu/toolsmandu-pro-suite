@@ -16,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Info } from 'lucide-react';
 
 const selectClassName =
@@ -859,13 +860,59 @@ const AdminProducts = () => {
                 </DialogContent>
               </Dialog>
 
-            <Button
-              onClick={() => saveMutation.mutate()}
-              className="w-full mt-4 mb-8"
-              disabled={!form.name || !form.category_id || !form.duration || !form.region || variations.filter((variation) => variation.name && variation.price && variation.expiry_days).length === 0}
-            >
-              {editingId ? 'Update Product' : 'Create Product'}
-            </Button>
+            {(() => {
+              const missing: string[] = [];
+              if (!form.name) missing.push('Product Name');
+              if (!form.category_id) missing.push('Category');
+              if (!form.duration) missing.push('Duration');
+              if (!form.region) missing.push('Region');
+              const validVariations = variations.filter((variation) => variation.name && variation.price && variation.expiry_days);
+              if (validVariations.length === 0) {
+                const incompleteIdx: string[] = [];
+                variations.forEach((v, i) => {
+                  const miss: string[] = [];
+                  if (!v.name) miss.push('name');
+                  if (!v.price) miss.push('price');
+                  if (!v.expiry_days) miss.push('expiry days');
+                  if (miss.length) incompleteIdx.push(`Variation ${i + 1} (${miss.join(', ')})`);
+                });
+                if (incompleteIdx.length === 0) {
+                  missing.push('At least one variation');
+                } else {
+                  missing.push(...incompleteIdx);
+                }
+              }
+              const isDisabled = missing.length > 0;
+              const button = (
+                <Button
+                  onClick={() => saveMutation.mutate()}
+                  className="w-full mt-4 mb-8"
+                  disabled={isDisabled}
+                >
+                  {editingId ? 'Update Product' : 'Create Product'}
+                </Button>
+              );
+              if (!isDisabled) return button;
+              return (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} className="block w-full cursor-not-allowed">
+                        <div className="pointer-events-none">{button}</div>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs">
+                      <p className="font-semibold mb-1">Please complete the following:</p>
+                      <ul className="list-disc pl-4 space-y-0.5">
+                        {missing.map((m) => (
+                          <li key={m} className="text-xs">{m}</li>
+                        ))}
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              );
+            })()}
           </div>
         </div>
       </ScrollArea>
