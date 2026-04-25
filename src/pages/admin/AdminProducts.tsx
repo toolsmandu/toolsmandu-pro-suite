@@ -51,7 +51,7 @@ const emptyForm = () => ({
   name: '',
   slug: '',
   description: '',
-  duration: '',
+  
   region: 'Global',
   image_url: '',
   category_id: '',
