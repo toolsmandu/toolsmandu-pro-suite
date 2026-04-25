@@ -356,26 +356,20 @@ const AdminLayout = () => {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarFooter className="border-t border-border">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={async () => { await signOut(); navigate('/'); }}
-                  className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Logout</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
         </Sidebar>
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background">
             <SidebarTrigger className="text-foreground" />
             {isAdmin && <SalesStatsBar />}
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-3">
               <a href="/" className="text-sm text-muted-foreground hover:text-foreground">← Goto Website Homepage</a>
+              <button
+                type="button"
+                onClick={async () => { await signOut(); navigate('/'); }}
+                className="inline-flex items-center gap-1 text-sm text-destructive hover:opacity-80"
+              >
+                <LogOut className="h-4 w-4" /> Logout
+              </button>
             </div>
           </header>
           <main className="flex-1 p-6 overflow-auto bg-muted/30">
