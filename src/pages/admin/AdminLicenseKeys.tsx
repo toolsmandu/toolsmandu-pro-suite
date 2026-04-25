@@ -199,6 +199,10 @@ const AdminLicenseKeys = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-foreground">License Keys</h2>
         <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={keySearch} onChange={e => setKeySearch(e.target.value)} placeholder="Search keys" className="pl-9 w-56" />
+          </div>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" role="combobox" className="w-56 justify-between font-normal">
