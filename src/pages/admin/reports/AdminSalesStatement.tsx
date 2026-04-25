@@ -87,8 +87,8 @@ const AdminSalesStatement = () => {
       const row = map.get(key);
       if (!row) return;
       const total = Number(o.total) || 0;
-      if (o.status === 'completed') row.sales += total;
-      else if (o.status === 'refunded') row.refunds += total;
+      if (o.status === 'completed' || o.status === 'refunded') row.sales += total;
+      if (o.status === 'refunded') row.refunds += total;
     });
     return Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
   }, [orders, year, month, daysInMonth]);
