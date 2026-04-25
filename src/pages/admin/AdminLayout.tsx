@@ -41,6 +41,10 @@ const AdminLayout = () => {
   }, [isSettingsSection]);
 
   useEffect(() => {
+    if (isReportsSection) setReportsOpen(true);
+  }, [isReportsSection]);
+
+  useEffect(() => {
     if (!loading && (!user || (!isAdmin && !isEditor))) navigate('/');
   }, [user, loading, isAdmin, isEditor, navigate]);
 
