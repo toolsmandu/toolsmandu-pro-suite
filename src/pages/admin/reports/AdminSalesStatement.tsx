@@ -82,13 +82,16 @@ const AdminSalesStatement = () => {
       if (key > todayKey) continue;
       map.set(key, { date: key, sales: 0, refunds: 0 });
     }
-    (orders || []).forEach(o => {
+    (orders || []).forEach((o: any) => {
       const key = getKtmDateKey(o.created_at);
       const row = map.get(key);
       if (!row) return;
       const total = Number(o.total) || 0;
       if (o.status === 'completed' || o.status === 'refunded') row.sales += total;
-      if (o.status === 'refunded') row.refunds += total;
+      if (o.status === 'refunded') {
+        const refunded = o.refund_amount != null ? Number(o.refund_amount) : total;
+        row.refunds += refunded;
+      }
     });
     return Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
   }, [orders, year, month, daysInMonth]);
