@@ -17,6 +17,14 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { data: logoUrl } = useQuery({
+    queryKey: ['site-logo-url'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_settings').select('value').eq('key', 'logo_url').maybeSingle();
+      return data?.value || '';
+    },
+  });
+
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs');
   const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
