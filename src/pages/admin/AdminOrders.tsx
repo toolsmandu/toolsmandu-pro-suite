@@ -611,6 +611,7 @@ const AdminOrders = () => {
     setNewAmount('');
     setNewPaymentMethod('manual');
     setNewRemarks('');
+    setNewFieldValues({});
   };
 
   const handleCreateOrder = async () => {
