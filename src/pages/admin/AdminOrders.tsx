@@ -10,7 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, Save, Trash2, Plus, X, Search, Copy, Star, RefreshCw } from 'lucide-react';
+import { ChevronRight, Save, Trash2, Plus, X, Search, Copy, Star, RefreshCw, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate, getKathmanduNowLocal, kathmanduToUTC } from '@/lib/formatDate';
 import { toast } from 'sonner';
@@ -923,13 +924,93 @@ const AdminOrders = () => {
     });
   }, [orders, searchTerm, productFilter, statusFilter, dateFrom, dateTo, paymentFilter]);
 
+  const handleExportOrders = () => {
+    const source = (filteredOrders && filteredOrders.length > 0) ? filteredOrders : (orders || []);
+    if (!source || source.length === 0) {
+      toast.error('No orders to export');
+      return;
+    }
+
+    const ordersRows: any[] = [];
+    const itemsRows: any[] = [];
+
+    source.forEach((o: any) => {
+      const orderNum = o.order_number || o.id?.slice(0, 8) || '';
+      const email = o.profiles?.email || '';
+      const phone = o.profiles?.phone || '';
+      const name = o.profiles?.name || '';
+      const itemsCount = (o.order_items || []).length;
+      const productsStr = (o.order_items || [])
+        .map((i: any) => {
+          const n = i.products?.name || 'Product';
+          return i.variation_name ? `${n} - ${i.variation_name}` : n;
+        })
+        .join(', ');
+
+      ordersRows.push({
+        'Order #': orderNum,
+        'Date': o.created_at ? new Date(o.created_at).toISOString() : '',
+        'Completed At': o.completed_at ? new Date(o.completed_at).toISOString() : '',
+        'Customer Name': name,
+        'Email': email,
+        'Phone': phone,
+        'Status': o.status,
+        'Payment Method': o.payment_pidx ? 'Khalti' : (o.payment_method || 'Manual'),
+        'Payment Status': o.payment_status || '',
+        'Total': o.total ?? 0,
+        'Refund Amount': o.refund_amount ?? '',
+        'Items Count': itemsCount,
+        'Products': productsStr,
+      });
+
+      (o.order_items || []).forEach((it: any) => {
+        const responses = Array.isArray(it.input_field_responses) ? it.input_field_responses : [];
+        const fieldsStr = responses
+          .map((r: any) => {
+            const label = r?.label || r?.name || r?.field_id || 'Field';
+            let v = r?.value;
+            if (v == null) v = '';
+            else if (Array.isArray(v)) v = v.join(', ');
+            else if (typeof v === 'object') v = JSON.stringify(v);
+            return `${label}: ${v}`;
+          })
+          .join(' | ');
+
+        itemsRows.push({
+          'Order #': orderNum,
+          'Email': email,
+          'Phone': phone,
+          'Product': it.products?.name || '',
+          'Variation': it.variation_name || '',
+          'Quantity': it.quantity ?? 1,
+          'Price': it.price ?? 0,
+          'Input Fields': fieldsStr,
+        });
+      });
+    });
+
+    const wb = XLSX.utils.book_new();
+    const ws1 = XLSX.utils.json_to_sheet(ordersRows);
+    const ws2 = XLSX.utils.json_to_sheet(itemsRows);
+    XLSX.utils.book_append_sheet(wb, ws1, 'Orders');
+    XLSX.utils.book_append_sheet(wb, ws2, 'Order Items');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    XLSX.writeFile(wb, `orders-export-${ts}.xlsx`);
+    toast.success(`Exported ${source.length} orders`);
+  };
+
   return (
     <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(selectedOrder || addingOrder) ? 'lg:flex-row-reverse' : ''}`}>
       {/* Orders List */}
       <div className={`${(selectedOrder || addingOrder) ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-foreground">Orders</h2>
-          <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleExportOrders}>
+              <Download className="h-4 w-4 mr-2" /> Export Data
+            </Button>
+            <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
+          </div>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6 mb-4">
