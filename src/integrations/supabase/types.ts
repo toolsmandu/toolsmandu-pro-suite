@@ -957,6 +957,7 @@ export type Database = {
           payment_method: string
           payment_pidx: string | null
           payment_status: string
+          refund_amount: number | null
           status: Database["public"]["Enums"]["order_status"]
           total: number
           updated_at: string
@@ -970,6 +971,7 @@ export type Database = {
           payment_method?: string
           payment_pidx?: string | null
           payment_status?: string
+          refund_amount?: number | null
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
@@ -983,6 +985,7 @@ export type Database = {
           payment_method?: string
           payment_pidx?: string | null
           payment_status?: string
+          refund_amount?: number | null
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string

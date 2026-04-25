@@ -51,6 +51,8 @@ const AdminOrders = () => {
   const [orderNote, setOrderNote] = useState('');
   const [editTotal, setEditTotal] = useState('');
   const [editStatus, setEditStatus] = useState('');
+  const [refundType, setRefundType] = useState<'full' | 'partial'>('full');
+  const [refundAmount, setRefundAmount] = useState('');
   const [editItems, setEditItems] = useState<EditItem[]>([]);
   const [sending, setSending] = useState(false);
   const [isAdminOnly, setIsAdminOnly] = useState(false);
@@ -229,8 +231,8 @@ const AdminOrders = () => {
   });
 
   const updateOrder = useMutation({
-    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string }) => {
-      await supabase.from('orders').update({ total, status: status as any }).eq('id', id);
+    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId, refundAmount }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string; refundAmount: number | null }) => {
+      await supabase.from('orders').update({ total, status: status as any, refund_amount: refundAmount } as any).eq('id', id);
 
       if (deletedItemIds.length > 0) {
         await supabase.from('order_items').delete().in('id', deletedItemIds);
@@ -329,6 +331,14 @@ const AdminOrders = () => {
     setSelectedOrder(order);
     setEditTotal(String(order.total));
     setEditStatus(order.status);
+    const existingRefund = (order as any).refund_amount;
+    if (order.status === 'refunded' && existingRefund != null && Number(existingRefund) > 0 && Number(existingRefund) < Number(order.total)) {
+      setRefundType('partial');
+      setRefundAmount(String(existingRefund));
+    } else {
+      setRefundType('full');
+      setRefundAmount('');
+    }
     setDeletedItemIds([]);
     setEditItems(
       (order.order_items || []).map((item: any) => ({
@@ -394,14 +404,31 @@ const AdminOrders = () => {
         });
       }
 
+      const totalNum = parseFloat(editTotal) || selectedOrder.total;
+      let refundAmt: number | null = null;
+      if (editStatus === 'refunded') {
+        if (refundType === 'partial') {
+          const parsed = parseFloat(refundAmount);
+          if (!parsed || parsed <= 0 || parsed > totalNum) {
+            setSending(false);
+            toast.error(`Enter a valid partial refund amount between 0 and ${totalNum}`);
+            return;
+          }
+          refundAmt = parsed;
+        } else {
+          refundAmt = totalNum;
+        }
+      }
+
       await updateOrder.mutateAsync({
         id: selectedOrder.id,
-        total: parseFloat(editTotal) || selectedOrder.total,
+        total: totalNum,
         status: editStatus,
         items: editItems,
         deletedItemIds,
         previousStatus: selectedOrder.status,
         userId: selectedOrder.user_id,
+        refundAmount: refundAmt,
       });
 
       const noteSent = !!stripHtml(orderNote);
@@ -1190,6 +1217,50 @@ const AdminOrders = () => {
                   </Select>
                 </div>
               </div>
+
+              {/* Refund options */}
+              {editStatus === 'refunded' && (
+                <div className="border border-border rounded-md p-3 bg-muted/20 space-y-3">
+                  <Label className="text-xs text-muted-foreground">Refund Type</Label>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="refund-type"
+                        value="full"
+                        checked={refundType === 'full'}
+                        onChange={() => { setRefundType('full'); setRefundAmount(''); }}
+                      />
+                      Full Refund (NPR {parseFloat(editTotal) || selectedOrder?.total || 0})
+                    </label>
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="refund-type"
+                        value="partial"
+                        checked={refundType === 'partial'}
+                        onChange={() => setRefundType('partial')}
+                      />
+                      Partial Refund
+                    </label>
+                  </div>
+                  {refundType === 'partial' && (
+                    <div>
+                      <Label htmlFor="refund-amount" className="text-xs text-muted-foreground">Refund Amount (NPR)</Label>
+                      <Input
+                        id="refund-amount"
+                        type="number"
+                        min="0"
+                        max={editTotal}
+                        step="0.01"
+                        value={refundAmount}
+                        onChange={(e) => setRefundAmount(e.target.value)}
+                        placeholder={`Max ${parseFloat(editTotal) || selectedOrder?.total || 0}`}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Customer Note */}
               <div className="border-t border-border pt-4">
