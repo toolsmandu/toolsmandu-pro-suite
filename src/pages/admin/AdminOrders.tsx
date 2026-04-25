@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChevronRight, Save, Trash2, Plus, X, Search, Copy, Star, RefreshCw, Download } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import { useExportFormat } from '@/components/admin/useExportFormat';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate, getKathmanduNowLocal, kathmanduToUTC } from '@/lib/formatDate';
 import { toast } from 'sonner';
@@ -924,6 +924,8 @@ const AdminOrders = () => {
     });
   }, [orders, searchTerm, productFilter, statusFilter, dateFrom, dateTo, paymentFilter]);
 
+  const { requestExport, dialog: exportDialog } = useExportFormat();
+
   const handleExportOrders = () => {
     const source = (filteredOrders && filteredOrders.length > 0) ? filteredOrders : (orders || []);
     if (!source || source.length === 0) {
@@ -1014,19 +1016,19 @@ const AdminOrders = () => {
       });
     });
 
-    const wb = XLSX.utils.book_new();
-    const ws1 = XLSX.utils.json_to_sheet(ordersRows);
-    // Force header order on items sheet so per-field columns always show
     const itemsHeader = ['Order #', 'Email', 'Phone', 'Product', 'Variation', 'Quantity', 'Price', 'Input Fields (combined)', ...labelCols];
-    const ws2 = XLSX.utils.json_to_sheet(itemsRows, { header: itemsHeader });
-    XLSX.utils.book_append_sheet(wb, ws1, 'Orders');
-    XLSX.utils.book_append_sheet(wb, ws2, 'Order Items');
-    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
-    XLSX.writeFile(wb, `orders-export-${ts}.xlsx`);
-    toast.success(`Exported ${source.length} orders`);
+    requestExport({
+      filenameBase: 'orders-export',
+      sheets: [
+        { name: 'Orders', rows: ordersRows },
+        { name: 'Order Items', rows: itemsRows, header: itemsHeader },
+      ],
+    });
   };
 
   return (
+    <>
+    {exportDialog}
     <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(selectedOrder || addingOrder) ? 'lg:flex-row-reverse' : ''}`}>
       {/* Orders List */}
       <div className={`${(selectedOrder || addingOrder) ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
@@ -1724,6 +1726,7 @@ const AdminOrders = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
