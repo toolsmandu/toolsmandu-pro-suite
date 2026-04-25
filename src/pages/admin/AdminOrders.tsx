@@ -331,6 +331,14 @@ const AdminOrders = () => {
     setSelectedOrder(order);
     setEditTotal(String(order.total));
     setEditStatus(order.status);
+    const existingRefund = (order as any).refund_amount;
+    if (order.status === 'refunded' && existingRefund != null && Number(existingRefund) > 0 && Number(existingRefund) < Number(order.total)) {
+      setRefundType('partial');
+      setRefundAmount(String(existingRefund));
+    } else {
+      setRefundType('full');
+      setRefundAmount('');
+    }
     setDeletedItemIds([]);
     setEditItems(
       (order.order_items || []).map((item: any) => ({
