@@ -1209,8 +1209,8 @@ const AdminOrders = () => {
                                 return (
                                   <div key={idx} className="text-sm pl-2">
                                     <p className="text-xs text-muted-foreground">{heading}</p>
-                                    <div className="flex items-start gap-2">
-                                      <p className="text-foreground break-words whitespace-pre-wrap flex-1">{val}</p>
+                                    <p className="text-foreground break-words whitespace-pre-wrap inline">
+                                      <span>{val}</span>
                                       {canCopy && (
                                         <button
                                           type="button"
@@ -1218,13 +1218,13 @@ const AdminOrders = () => {
                                             navigator.clipboard.writeText(val);
                                             toast.success('Copied to clipboard');
                                           }}
-                                          className="text-muted-foreground hover:text-foreground transition-colors shrink-0 mt-0.5"
+                                          className="text-muted-foreground hover:text-foreground transition-colors inline-flex align-middle ml-1.5"
                                           title="Copy"
                                         >
                                           <Copy className="h-3.5 w-3.5" />
                                         </button>
                                       )}
-                                    </div>
+                                    </p>
                                   </div>
                                 );
                               })}
