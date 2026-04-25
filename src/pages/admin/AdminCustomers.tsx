@@ -324,7 +324,10 @@ const AdminCustomers = () => {
                             <TableRow key={o.id}>
                               <TableCell className="text-foreground">{o.order_number || o.id.slice(0, 8)}</TableCell>
                               <TableCell className="text-sm text-muted-foreground">
-                                {o.order_items?.map((i: any) => i.products?.name).filter(Boolean).join(', ') || '-'}
+                                {(() => {
+                                  const s = o.order_items?.map((i: any) => i.products?.name).filter(Boolean).join(', ') || '-';
+                                  return (<><span>{s}</span><CopyButton value={s} /></>);
+                                })()}
                               </TableCell>
                               <TableCell className="text-foreground">Rs. {o.total}</TableCell>
                               <TableCell>
