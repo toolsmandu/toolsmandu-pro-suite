@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
 
 import { toast } from 'sonner';
+import CopyButton from '@/components/admin/CopyButton';
 
 const selectClassName =
   'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
@@ -203,10 +204,14 @@ const AdminCustomers = () => {
                 {filteredUsers.map((u: any) => (
                   <TableRow key={u.id}>
                     <TableCell className="font-medium text-foreground">
-                      {u.email || '-'}
+                      <span>{u.email || '-'}</span>
+                      <CopyButton value={u.email} />
                       {u.is_suspended && <Badge variant="destructive" className="ml-2 text-[10px]">Suspended</Badge>}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{u.phone || '-'}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      <span>{u.phone || '-'}</span>
+                      <CopyButton value={u.phone} />
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
                         {u.roles.map((role: string) => (
@@ -319,7 +324,10 @@ const AdminCustomers = () => {
                             <TableRow key={o.id}>
                               <TableCell className="text-foreground">{o.order_number || o.id.slice(0, 8)}</TableCell>
                               <TableCell className="text-sm text-muted-foreground">
-                                {o.order_items?.map((i: any) => i.products?.name).filter(Boolean).join(', ') || '-'}
+                                {(() => {
+                                  const s = o.order_items?.map((i: any) => i.products?.name).filter(Boolean).join(', ') || '-';
+                                  return (<><span>{s}</span><CopyButton value={s} /></>);
+                                })()}
                               </TableCell>
                               <TableCell className="text-foreground">Rs. {o.total}</TableCell>
                               <TableCell>
