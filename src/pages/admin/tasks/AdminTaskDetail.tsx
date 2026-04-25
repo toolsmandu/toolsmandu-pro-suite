@@ -57,6 +57,18 @@ const AdminTaskDetail = () => {
     },
   });
 
+  const actorIds = Array.from(new Set((activity || []).map((a: any) => a.actor_id).filter(Boolean)));
+  const { data: actorProfiles } = useQuery({
+    queryKey: ['task-activity-actors', id, actorIds.join(',')],
+    enabled: actorIds.length > 0,
+    queryFn: async () => {
+      const { data } = await supabase.from('profiles').select('user_id, name, email').in('user_id', actorIds);
+      const map: Record<string, { name: string | null; email: string | null }> = {};
+      (data || []).forEach((p: any) => { map[p.user_id] = { name: p.name, email: p.email }; });
+      return map;
+    },
+  });
+
   const updateStatus = useMutation({
     mutationFn: async (newStatus: TaskStatus) => {
       if (!user || !task) return;
