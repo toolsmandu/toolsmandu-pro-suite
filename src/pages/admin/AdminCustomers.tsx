@@ -257,9 +257,11 @@ const AdminCustomers = () => {
                         <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleView(u)} title="View">
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEdit(u)} title="Edit">
-                          <Pencil className="h-4 w-4" />
-                        </Button>
+                        {(isAdmin || !u.roles.includes('admin')) && (
+                          <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEdit(u)} title="Edit">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
