@@ -493,7 +493,7 @@ const ProductPage = () => {
         {/* Related Products */}
         {related && related.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-2xl font-bold text-foreground mb-6">You May Like These:</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-6">Looking for similar items? Check these:</h2>
             <div className="flex flex-wrap gap-4">
               {related.map(p => (
                 <div key={p.id} className="min-w-[165px] max-w-[165px]">
