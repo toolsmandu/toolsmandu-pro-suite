@@ -924,6 +924,8 @@ const AdminOrders = () => {
     });
   }, [orders, searchTerm, productFilter, statusFilter, dateFrom, dateTo, paymentFilter]);
 
+  const { requestExport, dialog: exportDialog } = useExportFormat();
+
   const handleExportOrders = () => {
     const source = (filteredOrders && filteredOrders.length > 0) ? filteredOrders : (orders || []);
     if (!source || source.length === 0) {
