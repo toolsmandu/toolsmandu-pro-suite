@@ -404,14 +404,31 @@ const AdminOrders = () => {
         });
       }
 
+      const totalNum = parseFloat(editTotal) || selectedOrder.total;
+      let refundAmt: number | null = null;
+      if (editStatus === 'refunded') {
+        if (refundType === 'partial') {
+          const parsed = parseFloat(refundAmount);
+          if (!parsed || parsed <= 0 || parsed > totalNum) {
+            setSending(false);
+            toast.error(`Enter a valid partial refund amount between 0 and ${totalNum}`);
+            return;
+          }
+          refundAmt = parsed;
+        } else {
+          refundAmt = totalNum;
+        }
+      }
+
       await updateOrder.mutateAsync({
         id: selectedOrder.id,
-        total: parseFloat(editTotal) || selectedOrder.total,
+        total: totalNum,
         status: editStatus,
         items: editItems,
         deletedItemIds,
         previousStatus: selectedOrder.status,
         userId: selectedOrder.user_id,
+        refundAmount: refundAmt,
       });
 
       const noteSent = !!stripHtml(orderNote);
