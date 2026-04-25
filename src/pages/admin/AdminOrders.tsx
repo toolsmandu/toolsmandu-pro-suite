@@ -1726,6 +1726,7 @@ const AdminOrders = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
