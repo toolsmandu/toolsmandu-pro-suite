@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Eye, Pencil, Plus, X } from 'lucide-react';
+import { Search, Eye, Pencil, Plus, X, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
 
@@ -157,15 +158,42 @@ const AdminCustomers = () => {
     refunded: 'bg-muted text-muted-foreground',
   };
 
+  const handleExportCustomers = () => {
+    const source = filteredUsers || [];
+    if (source.length === 0) {
+      toast.error('No customers to export');
+      return;
+    }
+    const rows = source.map((u: any) => ({
+      'Name': u.name || '',
+      'Email': u.email || '',
+      'Phone': u.phone || '',
+      'Role': (u.roles || []).join(', '),
+      'Status': u.is_suspended ? 'Suspended' : 'Active',
+      'Joined': u.created_at ? new Date(u.created_at).toISOString() : '',
+    }));
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    XLSX.writeFile(wb, `customers-export-${ts}.xlsx`);
+    toast.success(`Exported ${source.length} customers`);
+  };
+
   return (
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
       {/* Customers List */}
       <div className={`${addOpen ? 'flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-foreground">Customers</h2>
-          <Button onClick={() => { setViewUser(null); setEditUser(null); setAddOpen(true); }} disabled={addOpen}>
-            <Plus className="h-4 w-4 mr-2" /> Add Customer
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleExportCustomers}>
+              <Download className="h-4 w-4 mr-2" /> Export Data
+            </Button>
+            <Button onClick={() => { setViewUser(null); setEditUser(null); setAddOpen(true); }} disabled={addOpen}>
+              <Plus className="h-4 w-4 mr-2" /> Add Customer
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
