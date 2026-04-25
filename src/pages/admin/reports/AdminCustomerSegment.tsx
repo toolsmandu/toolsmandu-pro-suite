@@ -93,6 +93,8 @@ const AdminCustomerSegment = () => {
     return products?.find((p) => p.id === productFilter)?.name || 'All products';
   }, [productFilter, products]);
 
+  const { requestExport, dialog: exportDialog } = useExportFormat();
+
   const handleExport = () => {
     if (filtered.length === 0) {
       toast.error('No customers to export');
@@ -104,12 +106,10 @@ const AdminCustomerSegment = () => {
       'Joined': r.joinedAt ? new Date(r.joinedAt).toISOString() : '',
       'Products Purchased': Array.from(r.productNames).join(', '),
     }));
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(data);
-    XLSX.utils.book_append_sheet(wb, ws, 'Customer Segment');
-    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
-    XLSX.writeFile(wb, `customer-segment-${ts}.xlsx`);
-    toast.success(`Exported ${filtered.length} customers`);
+    requestExport({
+      filenameBase: 'customer-segment',
+      sheets: [{ name: 'Customer Segment', rows: data }],
+    });
   };
 
   return (
