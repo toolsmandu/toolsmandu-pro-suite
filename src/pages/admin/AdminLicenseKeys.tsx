@@ -47,6 +47,9 @@ const AdminLicenseKeys = () => {
   const [viewRemarks, setViewRemarks] = useState('');
   const [revealedValue, setRevealedValue] = useState<string | null>(null);
 
+  // Filter
+  const [productFilter, setProductFilter] = useState<string>('all');
+
   const { data: products } = useQuery({
     queryKey: ['admin-products-license'],
     queryFn: async () => {
