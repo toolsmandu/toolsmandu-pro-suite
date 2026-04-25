@@ -2,6 +2,8 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { NavLink } from '@/components/NavLink';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem,
@@ -14,6 +16,14 @@ const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { data: logoUrl } = useQuery({
+    queryKey: ['site-logo-url'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_settings').select('value').eq('key', 'logo_url').maybeSingle();
+      return data?.value || '';
+    },
+  });
 
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs');
   const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides');
@@ -61,7 +71,11 @@ const AdminLayout = () => {
         <Sidebar collapsible="icon">
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Admin Panel</SidebarGroupLabel>
+              <SidebarGroupLabel className="h-auto py-2">
+                {logoUrl ? (
+                  <img src={logoUrl} alt="Site Logo" className="h-8 w-auto object-contain" />
+                ) : null}
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {topLinks.map(({ to, icon: Icon, label, end }) => (
@@ -243,7 +257,6 @@ const AdminLayout = () => {
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background">
             <SidebarTrigger className="text-foreground" />
-            <h1 className="font-semibold text-foreground">Toolsmandu Admin</h1>
             <div className="ml-auto">
               <a href="/" className="text-sm text-muted-foreground hover:text-foreground">← Back to Store</a>
             </div>
