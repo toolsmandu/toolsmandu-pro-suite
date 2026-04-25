@@ -509,7 +509,7 @@ const ProductPage = () => {
             <h2 className="text-lg font-bold text-foreground mb-6">Looking for similar items? Check these:</h2>
             <div className="flex flex-wrap gap-4">
               {related.map(p => (
-                <div key={p.id} className="min-w-[190px] max-w-[190px]">
+                <div key={p.id} className="min-w-[165px] max-w-[165px]">
                   <ProductCard {...p} />
                 </div>
               ))}
