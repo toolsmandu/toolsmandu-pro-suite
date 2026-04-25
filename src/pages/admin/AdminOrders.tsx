@@ -10,7 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, Save, Trash2, Plus, X, Search, Copy, Star, RefreshCw } from 'lucide-react';
+import { ChevronRight, Save, Trash2, Plus, X, Search, Copy, Star, RefreshCw, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime, formatRelativeDate, getKathmanduNowLocal, kathmanduToUTC } from '@/lib/formatDate';
 import { toast } from 'sonner';
