@@ -31,6 +31,7 @@ const AdminPromoCodes = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<PromoForm>(emptyForm());
   const [searchTerm, setSearchTerm] = useState('');
+  const [productFilter, setProductFilter] = useState<string>('all');
 
   const { data: promoCodes, isLoading } = useQuery({
     queryKey: ['admin-promo-codes'],
@@ -105,6 +106,7 @@ const AdminPromoCodes = () => {
   });
 
   const filtered = (promoCodes || []).filter(pc => {
+    if (productFilter !== 'all' && pc.product_id !== productFilter) return false;
     const term = searchTerm.trim().toLowerCase();
     if (!term) return true;
     const productName = productMap.get(pc.product_id) || '';
@@ -123,6 +125,13 @@ const AdminPromoCodes = () => {
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search promo codes" className="pl-9 w-56" />
             </div>
+            <Select value={productFilter} onValueChange={setProductFilter}>
+              <SelectTrigger className="w-56"><SelectValue placeholder="Filter by product" /></SelectTrigger>
+              <SelectContent position="popper" className="z-[9999]">
+                <SelectItem value="all">All Products</SelectItem>
+                {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
             <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Promo Code</Button>
           </div>
         </div>
