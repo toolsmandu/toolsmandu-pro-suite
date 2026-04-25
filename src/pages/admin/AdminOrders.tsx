@@ -625,6 +625,50 @@ const AdminOrders = () => {
       const product = products?.find((p: any) => p.id === newProductId);
       const variation = newVariationId ? (product as any)?.product_variations?.find((v: any) => v.id === newVariationId) : null;
 
+      // ---- WA Order: send to Project B only, do not save here ----
+      if (isWaOrder) {
+        const responses: FieldResponse[] = (newActiveFields || [])
+          .map((f) => {
+            const val = newFieldValues[f.id];
+            const isEmpty = val === undefined || val === '' || (Array.isArray(val) && val.length === 0);
+            if (isEmpty) return null;
+            return {
+              field_id: f.id, field_name: f.name, field_type: f.field_type,
+              label: f.label, question: f.question, value: val as string | string[],
+            } as FieldResponse;
+          })
+          .filter((r): r is FieldResponse => r !== null);
+
+        const payload = {
+          order: {
+            total: parseFloat(newAmount),
+            payment_method: newPaymentMethod,
+            created_at: kathmanduToUTC(newOrderDate),
+            remarks: newRemarks.trim() || null,
+          },
+          items: [{
+            product_id: newProductId,
+            variation_id: newVariationId || null,
+            variation_name: variation?.name || null,
+            price: parseFloat(newAmount),
+            quantity: 1,
+            input_field_responses: responses,
+          }],
+          customer: {
+            user_id: selectedCustomer.user_id,
+            email: selectedCustomer.email || null,
+            phone: selectedCustomer.phone || null,
+            name: selectedCustomer.name || null,
+          },
+        };
+        const { data, error } = await supabase.functions.invoke('push-wa-order-to-b', { body: payload });
+        if (error) throw error;
+        toast.success(`WA Order sent to Project B${data?.order_number ? ` (${data.order_number})` : ''}`);
+        setAddingOrder(false);
+        return;
+      }
+
+
       // Detect if variation is linked to a family-sharing product.
       // Family-sharing variants auto-complete; others stay in processing.
       let familyProductId: string | null = null;
@@ -1040,7 +1084,8 @@ const AdminOrders = () => {
             <Button variant="outline" onClick={handleExportOrders}>
               <Download className="h-4 w-4 mr-2" /> Export Data
             </Button>
-            <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
+            <Button onClick={() => openAddOrder(false)}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
+            <Button variant="secondary" onClick={() => openAddOrder(true)}><Plus className="h-4 w-4 mr-2" /> Add WA Order</Button>
           </div>
         </div>
 
@@ -1575,7 +1620,7 @@ const AdminOrders = () => {
       {addingOrder && (
         <div className="w-full lg:w-[480px] lg:min-w-[480px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
           <div className="flex items-center justify-between p-4 border-b border-border">
-            <h3 className="font-semibold text-foreground">Add Order</h3>
+            <h3 className="font-semibold text-foreground">{isWaOrder ? 'Add WA Order' : 'Add Order'}</h3>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setAddingOrder(false)}>
               <X className="h-4 w-4" />
             </Button>
