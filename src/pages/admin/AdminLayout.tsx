@@ -10,7 +10,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, MessageSquare } from 'lucide-react';
+  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
@@ -268,7 +268,7 @@ const AdminLayout = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <NavLink to="/admin/knowledgebase" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
-                        <MessageSquare className="mr-2 h-4 w-4" />
+                        <BookOpen className="mr-2 h-4 w-4" />
                         <span className="flex-1">Knowledgebase</span>
                       </NavLink>
                     </SidebarMenuButton>
