@@ -1205,10 +1205,26 @@ const AdminOrders = () => {
                               {responses.map((r: any, idx: number) => {
                                 const heading = r.question || r.label || r.field_name || 'Field';
                                 const val = Array.isArray(r.value) ? (r.value.length ? r.value.join(', ') : '—') : (r.value === '' || r.value == null ? '—' : String(r.value));
+                                 const canCopy = val && val !== '—';
                                 return (
                                   <div key={idx} className="text-sm pl-2">
                                     <p className="text-xs text-muted-foreground">{heading}</p>
-                                    <p className="text-foreground break-words whitespace-pre-wrap">{val}</p>
+                                    <div className="flex items-start gap-2">
+                                      <p className="text-foreground break-words whitespace-pre-wrap flex-1">{val}</p>
+                                      {canCopy && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            navigator.clipboard.writeText(val);
+                                            toast.success('Copied to clipboard');
+                                          }}
+                                          className="text-muted-foreground hover:text-foreground transition-colors shrink-0 mt-0.5"
+                                          title="Copy"
+                                        >
+                                          <Copy className="h-3.5 w-3.5" />
+                                        </button>
+                                      )}
+                                    </div>
                                   </div>
                                 );
                               })}
