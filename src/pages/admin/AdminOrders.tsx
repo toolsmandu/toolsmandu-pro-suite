@@ -82,6 +82,7 @@ const AdminOrders = () => {
   
   const [newRemarks, setNewRemarks] = useState('');
   const [creatingOrder, setCreatingOrder] = useState(false);
+  const [newFieldValues, setNewFieldValues] = useState<Record<string, string | string[]>>({});
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
