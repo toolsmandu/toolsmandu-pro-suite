@@ -931,6 +931,24 @@ const AdminOrders = () => {
       return;
     }
 
+    const fmtVal = (v: any) => {
+      if (v == null) return '';
+      if (Array.isArray(v)) return v.join(', ');
+      if (typeof v === 'object') return JSON.stringify(v);
+      return String(v);
+    };
+    const fieldLabel = (r: any) => r?.label || r?.field_name || r?.name || r?.field_id || 'Field';
+
+    // Collect all unique field labels across all items so each becomes its own column
+    const allLabels = new Set<string>();
+    source.forEach((o: any) => {
+      (o.order_items || []).forEach((it: any) => {
+        const responses = Array.isArray(it.input_field_responses) ? it.input_field_responses : [];
+        responses.forEach((r: any) => allLabels.add(fieldLabel(r)));
+      });
+    });
+    const labelCols = Array.from(allLabels);
+
     const ordersRows: any[] = [];
     const itemsRows: any[] = [];
 
@@ -939,13 +957,22 @@ const AdminOrders = () => {
       const email = o.profiles?.email || '';
       const phone = o.profiles?.phone || '';
       const name = o.profiles?.name || '';
-      const itemsCount = (o.order_items || []).length;
-      const productsStr = (o.order_items || [])
+      const items = o.order_items || [];
+      const productsStr = items
         .map((i: any) => {
           const n = i.products?.name || 'Product';
           return i.variation_name ? `${n} - ${i.variation_name}` : n;
         })
         .join(', ');
+
+      // Aggregate all input fields across all items in this order
+      const aggregatedFields: string[] = [];
+      items.forEach((it: any) => {
+        const responses = Array.isArray(it.input_field_responses) ? it.input_field_responses : [];
+        responses.forEach((r: any) => {
+          aggregatedFields.push(`${fieldLabel(r)}: ${fmtVal(r?.value)}`);
+        });
+      });
 
       ordersRows.push({
         'Order #': orderNum,
@@ -959,24 +986,20 @@ const AdminOrders = () => {
         'Payment Status': o.payment_status || '',
         'Total': o.total ?? 0,
         'Refund Amount': o.refund_amount ?? '',
-        'Items Count': itemsCount,
+        'Items Count': items.length,
         'Products': productsStr,
+        'Input Fields': aggregatedFields.join(' | '),
       });
 
-      (o.order_items || []).forEach((it: any) => {
+      items.forEach((it: any) => {
         const responses = Array.isArray(it.input_field_responses) ? it.input_field_responses : [];
-        const fieldsStr = responses
-          .map((r: any) => {
-            const label = r?.label || r?.name || r?.field_id || 'Field';
-            let v = r?.value;
-            if (v == null) v = '';
-            else if (Array.isArray(v)) v = v.join(', ');
-            else if (typeof v === 'object') v = JSON.stringify(v);
-            return `${label}: ${v}`;
-          })
-          .join(' | ');
+        const byLabel: Record<string, string> = {};
+        responses.forEach((r: any) => {
+          byLabel[fieldLabel(r)] = fmtVal(r?.value);
+        });
+        const combined = responses.map((r: any) => `${fieldLabel(r)}: ${fmtVal(r?.value)}`).join(' | ');
 
-        itemsRows.push({
+        const row: any = {
           'Order #': orderNum,
           'Email': email,
           'Phone': phone,
@@ -984,14 +1007,18 @@ const AdminOrders = () => {
           'Variation': it.variation_name || '',
           'Quantity': it.quantity ?? 1,
           'Price': it.price ?? 0,
-          'Input Fields': fieldsStr,
-        });
+          'Input Fields (combined)': combined,
+        };
+        labelCols.forEach((l) => { row[l] = byLabel[l] || ''; });
+        itemsRows.push(row);
       });
     });
 
     const wb = XLSX.utils.book_new();
     const ws1 = XLSX.utils.json_to_sheet(ordersRows);
-    const ws2 = XLSX.utils.json_to_sheet(itemsRows);
+    // Force header order on items sheet so per-field columns always show
+    const itemsHeader = ['Order #', 'Email', 'Phone', 'Product', 'Variation', 'Quantity', 'Price', 'Input Fields (combined)', ...labelCols];
+    const ws2 = XLSX.utils.json_to_sheet(itemsRows, { header: itemsHeader });
     XLSX.utils.book_append_sheet(wb, ws1, 'Orders');
     XLSX.utils.book_append_sheet(wb, ws2, 'Order Items');
     const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
