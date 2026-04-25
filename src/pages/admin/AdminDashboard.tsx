@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
-import { Package, ShoppingCart, Users, Newspaper } from 'lucide-react';
+import { Package, ShoppingCart, Users, Newspaper, PauseCircle, RotateCcw, CheckCircle2 } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { data: orderCounts } = useQuery({
     queryKey: ['admin-order-counts'],
     queryFn: async () => {
       const { data } = await supabase.from('orders').select('status');
-      const counts = { processing: 0, completed: 0, cancelled: 0, refunded: 0, total: 0 };
+      const counts = { processing: 0, on_hold: 0, completed: 0, cancelled: 0, refunded: 0, pending: 0, total: 0 };
       data?.forEach(o => { counts[o.status as keyof typeof counts]++; counts.total++; });
       return counts;
     },
@@ -44,6 +44,9 @@ const AdminDashboard = () => {
     { label: 'Total Customers', value: customerCount || 0, icon: Users, color: 'text-primary' },
     { label: 'Total Blogs', value: blogCount || 0, icon: Newspaper, color: 'text-success' },
     { label: 'Processing', value: orderCounts?.processing || 0, icon: ShoppingCart, color: 'text-warning' },
+    { label: 'Hold', value: orderCounts?.on_hold || 0, icon: PauseCircle, color: 'text-warning' },
+    { label: 'Refunded', value: orderCounts?.refunded || 0, icon: RotateCcw, color: 'text-destructive' },
+    { label: 'Completed', value: orderCounts?.completed || 0, icon: CheckCircle2, color: 'text-success' },
   ];
 
   return (
