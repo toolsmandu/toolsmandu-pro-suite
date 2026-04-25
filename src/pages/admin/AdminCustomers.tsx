@@ -158,6 +158,28 @@ const AdminCustomers = () => {
     refunded: 'bg-muted text-muted-foreground',
   };
 
+  const handleExportCustomers = () => {
+    const source = filteredUsers || [];
+    if (source.length === 0) {
+      toast.error('No customers to export');
+      return;
+    }
+    const rows = source.map((u: any) => ({
+      'Name': u.name || '',
+      'Email': u.email || '',
+      'Phone': u.phone || '',
+      'Role': (u.roles || []).join(', '),
+      'Status': u.is_suspended ? 'Suspended' : 'Active',
+      'Joined': u.created_at ? new Date(u.created_at).toISOString() : '',
+    }));
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    XLSX.writeFile(wb, `customers-export-${ts}.xlsx`);
+    toast.success(`Exported ${source.length} customers`);
+  };
+
   return (
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
       {/* Customers List */}
