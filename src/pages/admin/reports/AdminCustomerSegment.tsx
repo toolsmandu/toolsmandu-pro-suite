@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/formatDate';
 import CopyButton from '@/components/admin/CopyButton';
 import { toast } from 'sonner';
-import * as XLSX from 'xlsx';
+import { useExportFormat } from '@/components/admin/useExportFormat';
 
 const AdminCustomerSegment = () => {
   const [productFilter, setProductFilter] = useState<string>('all');
