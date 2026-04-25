@@ -249,7 +249,7 @@ const AdminProducts = () => {
         description: form.description || null,
         price: prices.length > 0 ? Math.min(...prices) : 0,
         original_price: originalPrices.length > 0 ? Math.max(...originalPrices) : null,
-        duration: form.duration || null,
+        
         region: form.region || null,
         image_url: form.image_url || null,
         category_id: form.category_id || null,
