@@ -198,24 +198,38 @@ const AdminPromoCodes = () => {
                           onClick={async (e) => {
                             e.stopPropagation();
                             const html = (pc.instruction_template || '').split('{code}').join(pc.code);
-                            const tmp = document.createElement('div');
-                            tmp.innerHTML = html;
-                            const plain = tmp.innerText || tmp.textContent || '';
+                            // Render off-screen with prose styles so visual formatting is preserved on paste
+                            const container = document.createElement('div');
+                            container.setAttribute('contenteditable', 'true');
+                            container.className = 'prose prose-sm max-w-none';
+                            container.style.cssText = 'position:fixed;left:-9999px;top:0;white-space:normal;';
+                            container.innerHTML = html;
+                            document.body.appendChild(container);
                             try {
-                              if (navigator.clipboard && (window as any).ClipboardItem) {
+                              const range = document.createRange();
+                              range.selectNodeContents(container);
+                              const sel = window.getSelection();
+                              sel?.removeAllRanges();
+                              sel?.addRange(range);
+                              const ok = document.execCommand('copy');
+                              sel?.removeAllRanges();
+                              if (!ok) throw new Error('execCommand failed');
+                              toast.success('Instructions copied (with formatting)');
+                            } catch {
+                              try {
                                 await navigator.clipboard.write([
                                   new ClipboardItem({
                                     'text/html': new Blob([html], { type: 'text/html' }),
-                                    'text/plain': new Blob([plain], { type: 'text/plain' }),
+                                    'text/plain': new Blob([container.innerText || ''], { type: 'text/plain' }),
                                   }),
                                 ]);
-                              } else {
-                                await navigator.clipboard.writeText(plain);
+                                toast.success('Instructions copied (with formatting)');
+                              } catch {
+                                await navigator.clipboard.writeText(container.innerText || '');
+                                toast.success('Instructions copied');
                               }
-                              toast.success('Instructions copied (with formatting)');
-                            } catch {
-                              await navigator.clipboard.writeText(plain);
-                              toast.success('Instructions copied');
+                            } finally {
+                              document.body.removeChild(container);
                             }
                           }}
                         >
