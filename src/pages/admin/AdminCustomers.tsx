@@ -204,10 +204,14 @@ const AdminCustomers = () => {
                 {filteredUsers.map((u: any) => (
                   <TableRow key={u.id}>
                     <TableCell className="font-medium text-foreground">
-                      {u.email || '-'}
+                      <span>{u.email || '-'}</span>
+                      <CopyButton value={u.email} />
                       {u.is_suspended && <Badge variant="destructive" className="ml-2 text-[10px]">Suspended</Badge>}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{u.phone || '-'}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      <span>{u.phone || '-'}</span>
+                      <CopyButton value={u.phone} />
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
                         {u.roles.map((role: string) => (
