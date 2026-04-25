@@ -74,7 +74,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         </Link>
         
         <div className="mt-2">
-          <span className="font-bold" style={{ color: '#f5b800', fontSize: '22px' }}>Rs {displayPrice}</span>
+          <span className="font-bold" style={{ color: '#f5b800', fontSize: '28px' }}>Rs {displayPrice}</span>
         </div>
         {!isOutOfStock && (
           <Button
