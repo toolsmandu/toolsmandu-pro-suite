@@ -1,72 +1,97 @@
+# Cross-Project Sync: Project A → Project B
 
-# Cross-Project Expired Orders
+Project A = this project (toolsmandu).
+Project B = `https://lovable.dev/projects/31ff25eb-45b4-4818-8015-2dc92bbeda7b` — currently empty.
 
-## Goal
+## Two flows
 
-- **Project B** is the source of truth for orders (creation, status, completion).
-- **Project A** (this one) shows those orders' expiry status on its **Expired Orders** page.
-- A never writes to B. No local mirror. No duplication.
+### 1. WA Orders (button on Admin → Orders)
+
+- New **"Add WA Order"** button next to "Add Order".
+- Opens the **same form** as Add Order (customer search, product, variation, amount, payment, remarks).
+- On Create: order is **inserted only into Project B**, nothing saved in A.
+- Customer is picked from A's existing customers (so we have email/phone). The customer's `user_id` from A is sent to B along with email/phone — B stores them in its own profiles row (created on the fly if missing).
+
+### 2. Product sync (automatic, realtime)
+
+- DB triggers in A on `products`, `product_variations`, `categories` fire on INSERT / UPDATE / DELETE.
+- Triggers call A's edge function `push-product-to-b` via `pg_net` (async HTTP).
+- Edge function forwards the change (with operation type) to B's `receive-from-a` function.
+- B upserts/deletes the row in its own table.
 
 ## Architecture
 
-```text
-[Project A - Admin UI]                         [Project B - Supabase]
-  Expired Orders page                            orders, order_items,
-        │                                        product_variations
-        │  invoke('fetch-expired-orders')              ▲
-        ▼                                              │
-[Project A edge function] ──HTTPS + shared API key──► [Project B edge function]
-  fetch-expired-orders-proxy                          expired-orders-feed
-  (forwards request, hides B's URL/key)               (service-role read,
-                                                       returns flattened rows)
+```
+[Project A admin UI]                         [Project B]
+  Admin → Orders                              orders, order_items,
+   ├─ "Add Order"  (local insert)             products, variations, categories,
+   └─ "Add WA Order" ─┐                       profiles
+                      ▼
+       supabase.functions.invoke(
+         'push-wa-order-to-b'
+       )                                              ▲
+                      │                               │
+[A edge functions]    └──HTTPS + x-push-key──► [B edge function]
+  push-wa-order-to-b ─────────────────────────► receive-from-a
+  push-product-to-b  ─────────────────────────►   (service-role,
+       ▲                                            handles: order,
+       │ pg_net                                     product, variation,
+[A Postgres triggers]                              category)
+  products, product_variations,
+  categories  → INSERT/UPDATE/DELETE
 ```
 
-Why this shape:
-- B holds a single edge function `expired-orders-feed` that uses its **service role** internally and returns only the fields needed for the Expired Orders table. No service-role key ever leaves B.
-- A holds a thin proxy edge function so B's URL/API key live as **secrets in A**, never in the browser bundle.
-- A's admin page just calls `supabase.functions.invoke('fetch-expired-orders-proxy')` exactly like any other edge function.
+## Project B schema (I'll provide the SQL for you to run)
 
-## What gets built
+Mirror tables only — no RLS-protected app code lives in B yet.
 
-### In Project B (you/the user does this part, I'll provide the code)
+- `categories` (id, name, slug, icon, sort_order, created_at) — id stays the same as A.
+- `products` (id, name, slug, description, price, original_price, duration, image_url, category_id, is_featured, is_bestseller, is_flash_sale, flash_sale_label, rating, meta_title, meta_description, stock_status, order_mode, region, features, created_at, updated_at) — id stays the same as A.
+- `product_variations` (id, product_id, name, price, original_price, expiry_days, stock_status, has_special_input_fields, sort_order, is_active, variation_info, created_at).
+- `profiles` (user_id, email, phone, name) — populated on-demand from incoming WA orders.
+- `orders` (id, user_id, total, status, payment_status, payment_method, order_number, completed_at, refund_amount, created_at, updated_at) — `user_id` references B's profiles row that was just upserted.
+- `order_items` (id, order_id, product_id, variation_id, variation_name, price, quantity, input_field_responses, created_at).
 
-1. **Edge function `expired-orders-feed`** (`verify_jwt = false`, gated by a shared secret header `x-feed-key`):
-   - Queries `orders` (status = completed, completed_at not null) with `order_items`, `products(name)`, `product_variations(expiry_days)`, and `profiles(email, phone)`.
-   - Flattens to the same row shape A's page already expects:
-     ```
-     { key, orderNumber, email, phone, product, createdAt, expiryDate, remaining, status }
-     ```
-   - Returns JSON. Computes `expiryDate = completed_at + expiry_days` and `remaining` server-side.
-2. **Secret in B**: `EXPIRED_ORDERS_FEED_KEY` — a long random string. Same value goes into A.
+All ids are UUIDs and copied verbatim from A so future cross-references work.
+RLS in B: deny-all from anon; only the receiver function (service role) writes.
 
-### In Project A (I'll build this)
+## Edge functions
 
-1. **Secrets** (added via `add_secret`):
-   - `PROJECT_B_SUPABASE_URL` — B's project URL
-   - `PROJECT_B_FEED_KEY` — same value as B's `EXPIRED_ORDERS_FEED_KEY`
-2. **New edge function `fetch-expired-orders-proxy`**:
-   - Verifies caller is an authenticated admin/editor of A (JWT).
-   - Calls `${PROJECT_B_SUPABASE_URL}/functions/v1/expired-orders-feed` with header `x-feed-key: ${PROJECT_B_FEED_KEY}`.
-   - Returns B's JSON to the client.
-3. **Refactor `src/pages/admin/AdminExpiredOrders.tsx`**:
-   - Replace the local `supabase.from('orders').select(...)` query with `supabase.functions.invoke('fetch-expired-orders-proxy')`.
-   - The rest of the page (search, product filter, "Expired today" / "All", table rendering) stays identical because the row shape is unchanged.
+### In A
 
-### Out of scope (not changed)
+1. **`push-wa-order-to-b`** — admin/editor JWT required. Receives the form payload, looks up customer email/phone from A's `profiles`, POSTs to B's receiver with `type: "order"`.
+2. **`push-product-to-b`** — called by DB trigger via pg_net (no JWT, gated by a separate trigger-only key + the shared push key). Body shape: `{ type: "product"|"variation"|"category", op: "insert"|"update"|"delete", row: {...} }`.
 
-- Other admin pages in A that show orders (Orders, Customers, Reports, License Keys, Family Sharing). You said *only* Expired Orders needs to read from B — those local pages keep using A's empty/test data unless you tell me otherwise later.
-- Manual order creation UI — you said orders are created in B, so nothing to add here. If later you want a "Create order in B" form inside A, that's a separate feature.
+### In B (you paste; I'll provide the full code)
 
-## Security notes
+1. **`receive-from-a`** — `verify_jwt = false`, gated by header `x-push-key` matching B's secret. Dispatches on `type` + `op`:
+   - `order` → upsert profile (by user_id), insert order + order_items.
+   - `product` / `variation` / `category` → upsert or delete.
 
-- B's service role never leaves B. A only ever holds a shared API key that lets it hit *one* read-only endpoint.
-- A's proxy enforces that only logged-in admins/editors can call it (so the feed key doesn't leak through public usage).
-- The feed returns customer email/phone — same data A already shows on its existing Expired Orders page, so no new exposure.
+## Secrets
 
-## Steps after you approve
+### In A (I'll request via add_secret)
 
-1. I add the secrets `PROJECT_B_SUPABASE_URL` and `PROJECT_B_FEED_KEY` to Project A (you'll paste the values).
-2. I write A's `fetch-expired-orders-proxy` edge function.
-3. I refactor `AdminExpiredOrders.tsx` to call the proxy.
-4. I give you the **complete code for `expired-orders-feed`** to paste into Project B, plus the SQL/secret setup instructions for B.
-5. You deploy on B → we test end-to-end.
+- Already have: `PROJECT_B_SUPABASE_URL`, `PROJECT_B_FEED_KEY` (read direction).
+- New: `PROJECT_B_PUSH_KEY` — shared with B, used by both push functions.
+
+### In B (you set in B's dashboard)
+
+- `PROJECT_A_PUSH_KEY` = same value as A's `PROJECT_B_PUSH_KEY`.
+
+## Caveats I want you to know about up front
+
+1. **No backfill**: existing products in A won't appear in B until you edit them. (You confirmed this is OK.)
+2. **No retry queue**: if B is down when a trigger fires, the change is lost. If you want durability later, we can add a `sync_outbox` table in A.
+3. **WA orders bypass A entirely** — they will NOT show up in A's orders list, A's reports, A's customer history, etc. The only record is in B. Confirming this is what you want.
+4. **`pg_net` extension** must be enabled in A. I'll enable it in the migration.
+5. **Trigger calls are async** (pg_net is fire-and-forget), so the admin UI won't see sync errors. Errors will only appear in the edge function logs.
+
+## Build order
+
+1. **A**: enable `pg_net`, add `PROJECT_B_PUSH_KEY` secret.
+2. **A**: write `push-wa-order-to-b` and `push-product-to-b` edge functions.
+3. **A**: create DB triggers on products / variations / categories that call `push-product-to-b`.
+4. **A**: add "Add WA Order" button + reuse existing form, wire submit to `push-wa-order-to-b`.
+5. **You**: run B's schema migration (I'll give you the SQL), create `receive-from-a` function in B, set `PROJECT_A_PUSH_KEY` secret in B.
+6. **Test**: edit a product in A → check B. Create WA order in A → check B.
