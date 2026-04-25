@@ -13,6 +13,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
   import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut } from 'lucide-react';
 import ChatbotWidget from '@/components/admin/ChatbotWidget';
 import SalesStatsBar from '@/components/admin/SalesStatsBar';
+import { Button } from '@/components/ui/button';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor, signOut } = useAuth();
