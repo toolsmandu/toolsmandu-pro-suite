@@ -924,7 +924,7 @@ const AdminProducts = () => {
           </div>
         </div>
       </ScrollArea>
-      <div className="border-t border-border pt-3 mt-2 flex justify-end">
+      <div className="border-t border-border pt-3 mt-2 flex justify-center">
         {saveDisabled ? (
           <TooltipProvider>
             <Tooltip>
