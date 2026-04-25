@@ -361,15 +361,14 @@ const AdminLayout = () => {
           <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background">
             <SidebarTrigger className="text-foreground" />
             {isAdmin && <SalesStatsBar />}
-            <div className="ml-auto flex items-center gap-3">
-              <a href="/" className="text-sm text-muted-foreground hover:text-foreground">← Goto Website Homepage</a>
-              <button
-                type="button"
+            <div className="ml-auto">
+              <Button
+                variant="destructive"
+                size="sm"
                 onClick={async () => { await signOut(); navigate('/'); }}
-                className="inline-flex items-center gap-1 text-sm text-destructive hover:opacity-80"
               >
-                <LogOut className="h-4 w-4" /> Logout
-              </button>
+                <LogOut className="h-4 w-4 mr-2" /> Logout
+              </Button>
             </div>
           </header>
           <main className="flex-1 p-6 overflow-auto bg-muted/30">
