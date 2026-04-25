@@ -114,6 +114,7 @@ const App = () => (
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="waiting-list" element={<AdminWaitingList />} />
                 <Route path="promo-codes" element={<AdminPromoCodes />} />
+                <Route path="license-keys" element={<AdminLicenseKeys />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="settings/site" element={<AdminSiteSettings />} />
                 <Route path="settings/order-mode" element={<AdminOrderMode />} />
