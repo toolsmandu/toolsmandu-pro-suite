@@ -15,7 +15,7 @@ import ChatbotWidget from '@/components/admin/ChatbotWidget';
 import SalesStatsBar from '@/components/admin/SalesStatsBar';
 
 const AdminLayout = () => {
-  const { user, loading, isAdmin, isEditor } = useAuth();
+  const { user, loading, isAdmin, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
