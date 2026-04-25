@@ -660,6 +660,27 @@ const AdminProducts = () => {
                 )}
 
                 <div className="space-y-3">
+                  {(() => {
+                    const missing: string[] = [];
+                    if (!form.name) missing.push('Product Name');
+                    if (!form.category_id) missing.push('Category');
+                    if (!form.region) missing.push('Region');
+                    const validVariations = variations.filter((v) => v.name && v.price && v.expiry_days);
+                    if (validVariations.length === 0) {
+                      const incompleteIdx: string[] = [];
+                      variations.forEach((v, i) => {
+                        const miss: string[] = [];
+                        if (!v.name) miss.push('name');
+                        if (!v.price) miss.push('price');
+                        if (!v.expiry_days) miss.push('expiry days');
+                        if (miss.length) incompleteIdx.push(`Variation ${i + 1} (${miss.join(', ')})`);
+                      });
+                      if (incompleteIdx.length === 0) missing.push('At least one variation');
+                      else missing.push(...incompleteIdx);
+                    }
+                    (window as any).__productSaveMissing = missing;
+                    return null;
+                  })()}
                   {variations.map((variation, index) => (
                     <div key={variation.id || index} className="border border-border rounded-lg p-3 space-y-3">
                       <div className="flex items-center justify-between flex-wrap gap-2">
