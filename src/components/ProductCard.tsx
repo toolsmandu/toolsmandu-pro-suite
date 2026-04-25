@@ -1,8 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useCart } from '@/contexts/CartContext';
 
 interface Variation {
   id: string;
@@ -28,7 +25,6 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, is_flash_sale, flash_sale_label, stock_status, product_variations }: ProductCardProps) => {
-  const { addItem } = useCart();
   const isOutOfStock = stock_status === 'out_of_stock';
 
   // Compute lowest price from active variations, fallback to product price
@@ -76,22 +72,6 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         <div className="mt-2">
           <span className="font-bold" style={{ color: '#f5b800', fontSize: '16px' }}>Rs {displayPrice}</span>
         </div>
-        {!isOutOfStock && (
-          <Button
-            size="icon"
-            variant="secondary"
-            className="h-8 w-8 absolute bottom-3 right-3"
-            onClick={(e) => { e.preventDefault(); addItem({ id, name, price: displayPrice, image_url, duration }); }}
-            aria-label="Add to cart"
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
-        )}
-        {isOutOfStock && (
-          <Button size="icon" variant="secondary" className="h-8 w-8 absolute bottom-3 right-3 opacity-50" disabled aria-label="Out of stock">
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
-        )}
       </div>
 
     </div>
