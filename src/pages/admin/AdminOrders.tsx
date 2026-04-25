@@ -51,6 +51,8 @@ const AdminOrders = () => {
   const [orderNote, setOrderNote] = useState('');
   const [editTotal, setEditTotal] = useState('');
   const [editStatus, setEditStatus] = useState('');
+  const [refundType, setRefundType] = useState<'full' | 'partial'>('full');
+  const [refundAmount, setRefundAmount] = useState('');
   const [editItems, setEditItems] = useState<EditItem[]>([]);
   const [sending, setSending] = useState(false);
   const [isAdminOnly, setIsAdminOnly] = useState(false);
