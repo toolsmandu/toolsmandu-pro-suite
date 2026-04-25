@@ -1218,6 +1218,50 @@ const AdminOrders = () => {
                 </div>
               </div>
 
+              {/* Refund options */}
+              {editStatus === 'refunded' && (
+                <div className="border border-border rounded-md p-3 bg-muted/20 space-y-3">
+                  <Label className="text-xs text-muted-foreground">Refund Type</Label>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="refund-type"
+                        value="full"
+                        checked={refundType === 'full'}
+                        onChange={() => { setRefundType('full'); setRefundAmount(''); }}
+                      />
+                      Full Refund (NPR {parseFloat(editTotal) || selectedOrder?.total || 0})
+                    </label>
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="refund-type"
+                        value="partial"
+                        checked={refundType === 'partial'}
+                        onChange={() => setRefundType('partial')}
+                      />
+                      Partial Refund
+                    </label>
+                  </div>
+                  {refundType === 'partial' && (
+                    <div>
+                      <Label htmlFor="refund-amount" className="text-xs text-muted-foreground">Refund Amount (NPR)</Label>
+                      <Input
+                        id="refund-amount"
+                        type="number"
+                        min="0"
+                        max={editTotal}
+                        step="0.01"
+                        value={refundAmount}
+                        onChange={(e) => setRefundAmount(e.target.value)}
+                        placeholder={`Max ${parseFloat(editTotal) || selectedOrder?.total || 0}`}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Customer Note */}
               <div className="border-t border-border pt-4">
                 <Label className="text-xs text-muted-foreground mb-1 block">Customer Note (optional)</Label>
