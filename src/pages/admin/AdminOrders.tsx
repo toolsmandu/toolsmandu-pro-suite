@@ -1094,16 +1094,30 @@ const AdminOrders = () => {
                       {order.order_number || order.id.slice(0, 8)}
                     </TableCell>
                     
-                    <TableCell className="text-foreground">{order.profiles?.email || '-'}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{order.profiles?.phone || '-'}</TableCell>
+                    <TableCell className="text-foreground">
+                      <span>{order.profiles?.email || '-'}</span>
+                      <CopyButton value={order.profiles?.email} />
+                    </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {order.order_items
-                        ?.map((i: any) => {
-                          const name = i.products?.name || 'Product';
-                          return i.variation_name ? `${name} - ${i.variation_name}` : name;
-                        })
-                        .filter(Boolean)
-                        .join(', ')}
+                      <span>{order.profiles?.phone || '-'}</span>
+                      <CopyButton value={order.profiles?.phone} />
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {(() => {
+                        const productsStr = order.order_items
+                          ?.map((i: any) => {
+                            const name = i.products?.name || 'Product';
+                            return i.variation_name ? `${name} - ${i.variation_name}` : name;
+                          })
+                          .filter(Boolean)
+                          .join(', ');
+                        return (
+                          <>
+                            <span>{productsStr}</span>
+                            <CopyButton value={productsStr} />
+                          </>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {formatRelativeDate(order.created_at)}
