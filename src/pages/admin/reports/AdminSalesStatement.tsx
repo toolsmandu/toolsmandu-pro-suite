@@ -106,8 +106,10 @@ const AdminSalesStatement = () => {
         sales: acc.sales + r.sales,
         refunds: acc.refunds + r.refunds,
         net: acc.net + (r.sales - r.refunds),
+        salesCount: acc.salesCount + r.salesCount,
+        refundsCount: acc.refundsCount + r.refundsCount,
       }),
-      { sales: 0, refunds: 0, net: 0 },
+      { sales: 0, refunds: 0, net: 0, salesCount: 0, refundsCount: 0 },
     );
   }, [rows]);
 
