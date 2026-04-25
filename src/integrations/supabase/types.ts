@@ -1356,6 +1356,193 @@ export type Database = {
         }
         Relationships: []
       }
+      task_activity_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: string | null
+          id: string
+          task_id: string | null
+          template_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: string | null
+          id?: string
+          task_id?: string | null
+          template_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: string | null
+          id?: string
+          task_id?: string | null
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_activity_logs_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_activity_logs_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "task_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          task_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          task_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_templates: {
+        Row: {
+          assigned_to: string
+          created_at: string
+          created_by: string
+          description: string | null
+          due_time: string
+          end_date: string | null
+          id: string
+          is_paused: boolean
+          last_generated_for: string | null
+          recurrence_interval: number
+          recurrence_type: Database["public"]["Enums"]["task_recurrence_type"]
+          start_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_time?: string
+          end_date?: string | null
+          id?: string
+          is_paused?: boolean
+          last_generated_for?: string | null
+          recurrence_interval?: number
+          recurrence_type: Database["public"]["Enums"]["task_recurrence_type"]
+          start_date?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_time?: string
+          end_date?: string | null
+          id?: string
+          is_paused?: boolean
+          last_generated_for?: string | null
+          recurrence_interval?: number
+          recurrence_type?: Database["public"]["Enums"]["task_recurrence_type"]
+          start_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          assigned_to: string
+          completed_at: string | null
+          completion_alert_sent_at: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          due_at: string
+          id: string
+          overdue_alert_sent_at: string | null
+          start_at: string | null
+          status: Database["public"]["Enums"]["task_status"]
+          template_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to: string
+          completed_at?: string | null
+          completion_alert_sent_at?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_at: string
+          id?: string
+          overdue_alert_sent_at?: string | null
+          start_at?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          template_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string
+          completed_at?: string | null
+          completion_alert_sent_at?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_at?: string
+          id?: string
+          overdue_alert_sent_at?: string | null
+          start_at?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "task_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ticket_messages: {
         Row: {
           created_at: string
@@ -1579,6 +1766,13 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "refunded"
+      task_recurrence_type: "daily" | "weekly" | "monthly" | "every_x_days"
+      task_status:
+        | "pending"
+        | "in_progress"
+        | "completed"
+        | "skipped"
+        | "overdue"
       ticket_status: "open" | "closed"
     }
     CompositeTypes: {
@@ -1715,6 +1909,14 @@ export const Constants = {
         "completed",
         "cancelled",
         "refunded",
+      ],
+      task_recurrence_type: ["daily", "weekly", "monthly", "every_x_days"],
+      task_status: [
+        "pending",
+        "in_progress",
+        "completed",
+        "skipped",
+        "overdue",
       ],
       ticket_status: ["open", "closed"],
     },

@@ -63,6 +63,11 @@ import AdminSalesStatement from "./pages/admin/reports/AdminSalesStatement";
 import AdminTopSelling from "./pages/admin/reports/AdminTopSelling";
 import AdminCustomerSegment from "./pages/admin/reports/AdminCustomerSegment";
 import AdminKnowledgebase from "./pages/admin/AdminKnowledgebase";
+import AdminTasksList from "./pages/admin/tasks/AdminTasksList";
+import AdminTaskEditor from "./pages/admin/tasks/AdminTaskEditor";
+import AdminTaskDetail from "./pages/admin/tasks/AdminTaskDetail";
+import AdminTaskRecurring from "./pages/admin/tasks/AdminTaskRecurring";
+import AdminTaskDashboard from "./pages/admin/tasks/AdminTaskDashboard";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 
@@ -123,6 +128,12 @@ const App = () => (
                 <Route path="reports/top-selling" element={<AdminTopSelling />} />
                 <Route path="reports/customer-segment" element={<AdminCustomerSegment />} />
                 <Route path="knowledgebase" element={<AdminKnowledgebase />} />
+                <Route path="tasks" element={<AdminTasksList />} />
+                <Route path="tasks/dashboard" element={<AdminTaskDashboard />} />
+                <Route path="tasks/recurring" element={<AdminTaskRecurring />} />
+                <Route path="tasks/new" element={<AdminTaskEditor />} />
+                <Route path="tasks/:id" element={<AdminTaskDetail />} />
+                <Route path="tasks/:id/edit" element={<AdminTaskEditor />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="settings/site" element={<AdminSiteSettings />} />
                 <Route path="settings/order-mode" element={<AdminOrderMode />} />
