@@ -495,6 +495,58 @@ const AdminProducts = () => {
     );
   }
 
+  // Compute missing fields for save button
+  const saveMissing: string[] = [];
+  if (!form.name) saveMissing.push('Product Name');
+  if (!form.category_id) saveMissing.push('Category');
+  if (!form.region) saveMissing.push('Region');
+  const validVariationsForSave = variations.filter((v) => v.name && v.price && v.expiry_days);
+  if (validVariationsForSave.length === 0) {
+    const incompleteIdx: string[] = [];
+    variations.forEach((v, i) => {
+      const miss: string[] = [];
+      if (!v.name) miss.push('name');
+      if (!v.price) miss.push('price');
+      if (!v.expiry_days) miss.push('expiry days');
+      if (miss.length) incompleteIdx.push(`Variation ${i + 1} (${miss.join(', ')})`);
+    });
+    if (incompleteIdx.length === 0) saveMissing.push('At least one variation');
+    else saveMissing.push(...incompleteIdx);
+  }
+  const saveDisabled = saveMissing.length > 0;
+  const renderSaveButton = () => {
+    const btn = (
+      <Button
+        onClick={() => saveMutation.mutate()}
+        size="icon"
+        className="h-8 w-8"
+        disabled={saveDisabled}
+        aria-label={editingId ? 'Update Product' : 'Create Product'}
+        title={editingId ? 'Update Product' : 'Create Product'}
+      >
+        <Save className="h-4 w-4" />
+      </Button>
+    );
+    if (!saveDisabled) return btn;
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span tabIndex={0} className="inline-block cursor-not-allowed">
+              <div className="pointer-events-none">{btn}</div>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs">
+            <p className="font-semibold mb-1">Please complete the following:</p>
+            <ul className="list-disc pl-4 space-y-0.5">
+              {saveMissing.map((m) => (<li key={m} className="text-xs">{m}</li>))}
+            </ul>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
   // FORM VIEW (full area)
   return (
     <div className="h-[calc(100vh-5rem)] flex flex-col">
