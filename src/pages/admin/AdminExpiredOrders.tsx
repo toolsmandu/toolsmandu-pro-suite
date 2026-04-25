@@ -186,9 +186,9 @@ const AdminExpiredOrders = () => {
               return (
                 <TableRow key={r.key}>
                   <TableCell className="font-medium">{r.orderNumber}</TableCell>
-                  <TableCell className="text-sm">{r.email}</TableCell>
-                  <TableCell className="text-sm">{r.phone}</TableCell>
-                  <TableCell className="text-sm">{r.product}</TableCell>
+                  <TableCell className="text-sm"><span>{r.email}</span><CopyButton value={r.email} /></TableCell>
+                  <TableCell className="text-sm"><span>{r.phone}</span><CopyButton value={r.phone} /></TableCell>
+                  <TableCell className="text-sm"><span>{r.product}</span><CopyButton value={r.product} /></TableCell>
                   <TableCell className="text-xs text-muted-foreground">{formatDate(r.createdAt)}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{formatDate(r.expiryDate)}</TableCell>
                   <TableCell>
