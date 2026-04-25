@@ -858,7 +858,7 @@ const AdminProducts = () => {
               const missing: string[] = [];
               if (!form.name) missing.push('Product name');
               if (!form.category_id) missing.push('Category');
-              if (!form.duration) missing.push('Duration');
+              
               if (!form.region) missing.push('Region');
               const validVariations = variations.filter((v) => v.name && v.price && v.expiry_days);
               if (validVariations.length === 0) {
