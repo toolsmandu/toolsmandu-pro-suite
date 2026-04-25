@@ -70,28 +70,12 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
 
       <div className="p-4 flex-1 flex flex-col text-center relative" style={{ backgroundColor: '#0a2e5c' }}>
         <Link to={`/item/${slug}`}>
-          <h3 className="font-semibold text-foreground line-clamp-2 hover:text-primary transition-colors" style={{ fontSize: '12px' }}>{name}</h3>
+          <h3 className="font-bold text-foreground line-clamp-2 hover:text-primary transition-colors" style={{ fontSize: '12px' }}>{name}</h3>
         </Link>
         
         <div className="mt-2">
-          <span className="font-bold" style={{ color: '#f5b800', fontSize: '12px' }}>Rs {displayPrice}</span>
+          <span className="font-bold" style={{ color: '#f5b800', fontSize: '14px' }}>Rs {displayPrice}</span>
         </div>
-        {!isOutOfStock && (
-          <Button
-            size="icon"
-            variant="secondary"
-            className="h-8 w-8 absolute bottom-3 right-3"
-            onClick={(e) => { e.preventDefault(); addItem({ id, name, price: displayPrice, image_url, duration }); }}
-            aria-label="Add to cart"
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
-        )}
-        {isOutOfStock && (
-          <Button size="icon" variant="secondary" className="h-8 w-8 absolute bottom-3 right-3 opacity-50" disabled aria-label="Out of stock">
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
-        )}
       </div>
 
     </div>
