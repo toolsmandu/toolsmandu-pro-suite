@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
 import NotifyMe from '@/components/NotifyMe';
 import InputFieldRenderer, { validateField, type InputFieldDef } from '@/components/InputFieldRenderer';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
 const ProductFAQs = ({ productName }: { productName: string }) => {
@@ -448,36 +447,24 @@ const ProductPage = () => {
                     </div>
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground"> {product.name}</h1>
                     <div className="my-5 border-t" style={{ borderColor: 'rgba(255,255,255,0.15)' }}></div>
-                    <TooltipProvider delayDuration={150}>
                     <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-6 gap-y-2">
                       {product.categories && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Link to={`/item-category/${(product.categories as any).slug}`} className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity min-w-0">
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 sm:w-[22px] sm:h-[22px] flex-shrink-0" style={{ color: '#7d8aa8' }}><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
-                              <span className="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide text-white truncate" style={{ background: 'linear-gradient(90deg, #228be6, #22d3ee)' }}>
-                                {(product.categories as any).name}
-                              </span>
-                            </Link>
-                          </TooltipTrigger>
-                          <TooltipContent>This is the category of this product</TooltipContent>
-                        </Tooltip>
+                        <Link to={`/item-category/${(product.categories as any).slug}`} className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity min-w-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 sm:w-[22px] sm:h-[22px] flex-shrink-0" style={{ color: '#7d8aa8' }}><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
+                          <span className="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide text-white truncate" style={{ background: 'linear-gradient(90deg, #228be6, #22d3ee)' }}>
+                            {(product.categories as any).name}
+                          </span>
+                        </Link>
                       )}
                       {(product as any).region && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 sm:w-[22px] sm:h-[22px] flex-shrink-0" style={{ color: '#7d8aa8' }}><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9"/><path d="M12 3c-2.5 2.5-3.5 5.5-3.5 9s1 6.5 3.5 9"/></svg>
-                              <span className="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide text-white truncate" style={{ background: 'linear-gradient(90deg, #228be6, #22d3ee)' }}>
-                                {(product as any).region}
-                              </span>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>This product works on these regions</TooltipContent>
-                        </Tooltip>
+                        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 sm:w-[22px] sm:h-[22px] flex-shrink-0" style={{ color: '#7d8aa8' }}><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9"/><path d="M12 3c-2.5 2.5-3.5 5.5-3.5 9s1 6.5 3.5 9"/></svg>
+                          <span className="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide text-white truncate" style={{ background: 'linear-gradient(90deg, #228be6, #22d3ee)' }}>
+                            {(product as any).region}
+                          </span>
+                        </div>
                       )}
                     </div>
-                    </TooltipProvider>
                   </div>
                 </div>
 
@@ -506,13 +493,9 @@ const ProductPage = () => {
         {/* Related Products */}
         {related && related.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-lg font-bold text-foreground mb-6">Looking for similar items? Check these:</h2>
-            <div className="flex flex-wrap gap-4">
-              {related.map(p => (
-                <div key={p.id} className="min-w-[165px] max-w-[165px]">
-                  <ProductCard {...p} />
-                </div>
-              ))}
+            <h2 className="text-2xl font-bold text-foreground mb-6">Related Products</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {related.map(p => <ProductCard key={p.id} {...p} />)}
             </div>
           </section>
         )}

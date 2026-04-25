@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { ShoppingCart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-
+import { useCart } from '@/contexts/CartContext';
 
 interface Variation {
   id: string;
@@ -26,6 +28,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ id, name, slug, price, original_price, image_url, duration, is_flash_sale, flash_sale_label, stock_status, product_variations }: ProductCardProps) => {
+  const { addItem } = useCart();
   const isOutOfStock = stock_status === 'out_of_stock';
 
   // Compute lowest price from active variations, fallback to product price
@@ -67,12 +70,28 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
 
       <div className="p-4 flex-1 flex flex-col text-center relative" style={{ backgroundColor: '#0a2e5c' }}>
         <Link to={`/item/${slug}`}>
-          <h3 className="font-bold text-foreground line-clamp-2" style={{ fontSize: '12px' }}>{name}</h3>
+          <h3 className="font-semibold text-foreground line-clamp-2 hover:text-primary transition-colors" style={{ fontSize: '12px' }}>{name}</h3>
         </Link>
         
-        <div className="mt-1">
-          <span className="font-bold" style={{ color: '#f5b800', fontSize: '1.080rem' }}>Rs {displayPrice}</span>
+        <div className="mt-2">
+          <span className="font-bold" style={{ color: '#f5b800', fontSize: '12px' }}>Rs {displayPrice}</span>
         </div>
+        {!isOutOfStock && (
+          <Button
+            size="icon"
+            variant="secondary"
+            className="h-8 w-8 absolute bottom-3 right-3"
+            onClick={(e) => { e.preventDefault(); addItem({ id, name, price: displayPrice, image_url, duration }); }}
+            aria-label="Add to cart"
+          >
+            <ShoppingCart className="h-4 w-4" />
+          </Button>
+        )}
+        {isOutOfStock && (
+          <Button size="icon" variant="secondary" className="h-8 w-8 absolute bottom-3 right-3 opacity-50" disabled aria-label="Out of stock">
+            <ShoppingCart className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
     </div>
