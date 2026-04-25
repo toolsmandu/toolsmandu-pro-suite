@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
-import { Plus, Trash2, X, Save, Search, Pencil, Check, ChevronsUpDown } from 'lucide-react';
+import { Plus, Trash2, X, Save, Search, Pencil, Check, ChevronsUpDown, Copy, FileText } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
@@ -176,7 +176,39 @@ const AdminPromoCodes = () => {
               <TableBody>
                 {filtered.map(pc => (
                   <TableRow key={pc.id} className={`cursor-pointer ${editingId === pc.id && panelOpen ? 'bg-muted/50' : ''}`} onClick={() => openEdit(pc)}>
-                    <TableCell className="font-mono font-medium text-foreground">{pc.code}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-medium text-foreground">{pc.code}</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(pc.code);
+                            toast.success('Promo code copied');
+                          }}
+                        >
+                          <Copy className="h-3 w-3 mr-1" /> Copy
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const tpl = (pc.instruction_template || '').split('{code}').join(pc.code);
+                            const tmp = document.createElement('div');
+                            tmp.innerHTML = tpl;
+                            const text = tmp.innerText || tmp.textContent || '';
+                            navigator.clipboard.writeText(text);
+                            toast.success('Instructions copied');
+                          }}
+                        >
+                          <FileText className="h-3 w-3 mr-1" /> Copy Instructions
+                        </Button>
+                      </div>
+                    </TableCell>
                     <TableCell className="text-foreground">{productMap.get(pc.product_id) || <span className="text-muted-foreground italic">Unknown</span>}</TableCell>
                     <TableCell className="text-muted-foreground">{pc.remarks || '—'}</TableCell>
                     <TableCell>
