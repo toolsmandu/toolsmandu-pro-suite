@@ -76,22 +76,6 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         <div className="mt-2">
           <span className="font-bold" style={{ color: '#f5b800', fontSize: '16px' }}>Rs {displayPrice}</span>
         </div>
-        {!isOutOfStock && (
-          <Button
-            size="icon"
-            variant="secondary"
-            className="h-8 w-8 absolute bottom-3 right-3"
-            onClick={(e) => { e.preventDefault(); addItem({ id, name, price: displayPrice, image_url, duration }); }}
-            aria-label="Add to cart"
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
-        )}
-        {isOutOfStock && (
-          <Button size="icon" variant="secondary" className="h-8 w-8 absolute bottom-3 right-3 opacity-50" disabled aria-label="Out of stock">
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
-        )}
       </div>
 
     </div>
