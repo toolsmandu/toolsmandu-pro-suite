@@ -81,7 +81,7 @@ const Navbar = () => {
   return (
     <>
       {/* Top bar */}
-      <div className="hidden lg:block bg-primary text-primary-foreground text-xs py-2">
+      <div className="hidden lg:block bg-primary text-primary-foreground text-xs py-2 uppercase">
         <div className="container mx-auto px-4 gap-6 md:gap-12 flex-row flex items-center justify-between">
           <div className="flex items-center gap-6 md:gap-12">
             <span>🔒 100% Safe & Secure</span>
