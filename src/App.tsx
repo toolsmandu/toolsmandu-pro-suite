@@ -58,6 +58,7 @@ import AdminBlogs from "./pages/admin/AdminBlogs";
 import AdminBlogEditor from "./pages/admin/AdminBlogEditor";
 import AdminWaitingList from "./pages/admin/AdminWaitingList";
 import AdminPromoCodes from "./pages/admin/AdminPromoCodes";
+import AdminLicenseKeys from "./pages/admin/AdminLicenseKeys";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 
@@ -113,6 +114,7 @@ const App = () => (
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="waiting-list" element={<AdminWaitingList />} />
                 <Route path="promo-codes" element={<AdminPromoCodes />} />
+                <Route path="license-keys" element={<AdminLicenseKeys />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="settings/site" element={<AdminSiteSettings />} />
                 <Route path="settings/order-mode" element={<AdminOrderMode />} />
