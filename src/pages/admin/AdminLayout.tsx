@@ -210,6 +210,14 @@ const AdminLayout = () => {
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/reports/customer-segment" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <Users className="mr-2 h-3 w-3" />
+                                <span>Customer Segment</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>
