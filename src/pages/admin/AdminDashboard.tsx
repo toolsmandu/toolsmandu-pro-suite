@@ -143,7 +143,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
         <Card className="border border-border shadow-sm">
           <CardHeader>
-            <CardTitle className="text-base">New Signups — Last 12 Months</CardTitle>
+            <CardTitle className="text-base">New Signups & Active Customers — Last 12 Months</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -152,7 +152,9 @@ const AdminDashboard = () => {
                 <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <YAxis allowDecimals={false} stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <Tooltip contentStyle={{ background: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
-                <Bar dataKey="signups" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Legend />
+                <Bar dataKey="signups" name="New Signups" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="active" name="Active Customers" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
