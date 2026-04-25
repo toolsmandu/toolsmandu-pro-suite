@@ -71,7 +71,11 @@ const AdminLayout = () => {
         <Sidebar collapsible="icon">
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Admin Panel</SidebarGroupLabel>
+              <SidebarGroupLabel className="h-auto py-2">
+                {logoUrl ? (
+                  <img src={logoUrl} alt="Site Logo" className="h-8 w-auto object-contain" />
+                ) : null}
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {topLinks.map(({ to, icon: Icon, label, end }) => (
