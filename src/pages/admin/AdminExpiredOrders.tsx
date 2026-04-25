@@ -21,52 +21,11 @@ const AdminExpiredOrders = () => {
   const [productPopoverOpen, setProductPopoverOpen] = useState(false);
 
   const { data: rows, isLoading } = useQuery({
-    queryKey: ['expired-orders'],
+    queryKey: ['expired-orders-proxy'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('orders')
-        .select(`
-          id, order_number, status, created_at, completed_at, user_id,
-          profiles:user_id ( email, phone ),
-          order_items (
-            id, variation_name,
-            products ( name ),
-            product_variations ( expiry_days )
-          )
-        `)
-        .eq('status', 'completed')
-        .not('completed_at', 'is', null)
-        .order('completed_at', { ascending: false });
+      const { data, error } = await supabase.functions.invoke('fetch-expired-orders-proxy');
       if (error) throw error;
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      // Flatten one row per order_item that has expiry_days
-      const flat: any[] = [];
-      (data || []).forEach((o: any) => {
-        (o.order_items || []).forEach((it: any) => {
-          const expiryDays = it.product_variations?.expiry_days;
-          if (!expiryDays || !o.completed_at) return;
-          const completed = new Date(o.completed_at);
-          const expiry = new Date(completed);
-          expiry.setDate(expiry.getDate() + expiryDays);
-          const diffMs = expiry.getTime() - today.getTime();
-          const remaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-          flat.push({
-            key: `${o.id}-${it.id}`,
-            orderNumber: o.order_number || o.id.slice(0, 8),
-            email: o.profiles?.email || '-',
-            phone: o.profiles?.phone || '-',
-            product: `${it.products?.name || 'Product'}${it.variation_name ? ` - ${it.variation_name}` : ''}`,
-            createdAt: o.created_at,
-            expiryDate: expiry.toISOString(),
-            remaining,
-            status: o.status,
-          });
-        });
-      });
-      return flat;
+      return (data as any[]) || [];
     },
   });
 
