@@ -126,18 +126,7 @@ const AdminChatbot = () => {
       <div className="flex flex-col lg:flex-row gap-6 mb-8 items-start">
         <Card className="p-4 w-full lg:w-80 lg:flex-shrink-0">
           <label className="text-sm font-medium text-foreground mb-1.5 block">Product</label>
-          <Select value={productId} onValueChange={setProductId}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select a product" />
-            </SelectTrigger>
-            <SelectContent>
-              {products?.map(p => (
-                <SelectItem key={p.id} value={p.id}>
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <ProductCombobox products={products || []} value={productId} onChange={setProductId} />
         </Card>
 
         {productId && (
