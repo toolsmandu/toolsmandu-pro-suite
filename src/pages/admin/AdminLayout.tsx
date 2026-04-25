@@ -10,7 +10,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen } from 'lucide-react';
+  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks } from 'lucide-react';
 import ChatbotWidget from '@/components/admin/ChatbotWidget';
 import SalesStatsBar from '@/components/admin/SalesStatsBar';
 
@@ -272,6 +272,16 @@ const AdminLayout = () => {
                       <NavLink to="/admin/knowledgebase" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
                         <BookOpen className="mr-2 h-4 w-4" />
                         <span className="flex-1">Knowledgebase</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
+                  {/* Tasks — just below Knowledgebase */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/admin/tasks" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                        <ListChecks className="mr-2 h-4 w-4" />
+                        <span className="flex-1">Tasks</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
