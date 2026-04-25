@@ -113,9 +113,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let initialized = false;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (initialized) {
         syncAuthState(nextSession, false);
+      }
+      // Record login event for active-customer analytics
+      if (event === 'SIGNED_IN' && nextSession?.user) {
+        supabase.from('customer_logins').insert({ user_id: nextSession.user.id }).then(() => {});
       }
     });
 

@@ -323,6 +323,24 @@ export type Database = {
           },
         ]
       }
+      customer_logins: {
+        Row: {
+          id: string
+          logged_in_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          logged_in_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          logged_in_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string

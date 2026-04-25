@@ -60,17 +60,29 @@ const AdminDashboard = () => {
   const earliest = months[0].start.toISOString();
 
   const { data: signupChart } = useQuery({
-    queryKey: ['admin-signups-12m'],
+    queryKey: ['admin-signups-active-12m'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('created_at')
-        .gte('created_at', earliest);
-      const buckets = months.map(m => ({ month: m.label, signups: 0 }));
-      data?.forEach((row: any) => {
+      const [signupsRes, loginsRes] = await Promise.all([
+        supabase.from('profiles').select('created_at').gte('created_at', earliest),
+        supabase.from('customer_logins').select('user_id, logged_in_at').gte('logged_in_at', earliest),
+      ]);
+      const buckets = months.map(m => ({ month: m.label, signups: 0, active: 0 }));
+      signupsRes.data?.forEach((row: any) => {
         const d = new Date(row.created_at);
         const idx = months.findIndex(m => d >= m.start && d < m.end);
         if (idx >= 0) buckets[idx].signups += 1;
+      });
+      // Unique active users per month
+      const uniqueByMonth: Record<number, Set<string>> = {};
+      loginsRes.data?.forEach((row: any) => {
+        const d = new Date(row.logged_in_at);
+        const idx = months.findIndex(m => d >= m.start && d < m.end);
+        if (idx < 0) return;
+        if (!uniqueByMonth[idx]) uniqueByMonth[idx] = new Set();
+        uniqueByMonth[idx].add(row.user_id);
+      });
+      Object.entries(uniqueByMonth).forEach(([idx, set]) => {
+        buckets[Number(idx)].active = set.size;
       });
       return buckets;
     },
@@ -131,7 +143,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
         <Card className="border border-border shadow-sm">
           <CardHeader>
-            <CardTitle className="text-base">New Signups — Last 12 Months</CardTitle>
+            <CardTitle className="text-base">New Signups & Active Customers — Last 12 Months</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -140,7 +152,9 @@ const AdminDashboard = () => {
                 <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <YAxis allowDecimals={false} stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <Tooltip contentStyle={{ background: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
-                <Bar dataKey="signups" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Legend />
+                <Bar dataKey="signups" name="New Signups" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="active" name="Active Customers" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
