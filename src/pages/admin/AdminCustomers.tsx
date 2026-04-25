@@ -164,9 +164,14 @@ const AdminCustomers = () => {
       <div className={`${addOpen ? 'flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-foreground">Customers</h2>
-          <Button onClick={() => { setViewUser(null); setEditUser(null); setAddOpen(true); }} disabled={addOpen}>
-            <Plus className="h-4 w-4 mr-2" /> Add Customer
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleExportCustomers}>
+              <Download className="h-4 w-4 mr-2" /> Export Data
+            </Button>
+            <Button onClick={() => { setViewUser(null); setEditUser(null); setAddOpen(true); }} disabled={addOpen}>
+              <Plus className="h-4 w-4 mr-2" /> Add Customer
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
