@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Package, ShoppingCart } from 'lucide-react';
-import ChatbotWidget from '@/components/admin/ChatbotWidget';
 
 const AdminDashboard = () => {
   const { data: orderCounts } = useQuery({
@@ -47,7 +46,6 @@ const AdminDashboard = () => {
           </Card>
         ))}
       </div>
-      <ChatbotWidget />
     </div>
   );
 };
