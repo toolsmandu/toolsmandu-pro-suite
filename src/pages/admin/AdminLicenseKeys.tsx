@@ -304,6 +304,7 @@ const AdminLicenseKeys = () => {
                   const keyViews = (views || [])
                     .filter(v => v.license_key_id === k.id)
                     .sort((a, b) => new Date(b.viewed_at).getTime() - new Date(a.viewed_at).getTime());
+                  const showHistory = k.view_limit <= 1 || expandedHistory[k.id];
                   return (
                     <TableRow key={k.id} className="align-top">
                       <TableCell className="text-foreground">
@@ -312,21 +313,34 @@ const AdminLicenseKeys = () => {
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => { navigator.clipboard.writeText(k.key_value); toast.success('Copied'); }}>
                             <Copy className="h-3 w-3" />
                           </Button>
+                          {k.view_limit > 1 && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-7 px-2 text-xs"
+                              onClick={() => setExpandedHistory(prev => ({ ...prev, [k.id]: !prev[k.id] }))}
+                            >
+                              <History className="h-3 w-3 mr-1" />
+                              {expandedHistory[k.id] ? 'Hide history' : `View history (${keyViews.length})`}
+                            </Button>
+                          )}
                         </div>
-                        <div className="space-y-1.5 text-xs">
-                          {keyViews.length === 0 ? (
-                            <div className="text-muted-foreground">No view history</div>
-                          ) : keyViews.map((v, idx) => (
-                            <div key={v.id} className="border-l-2 border-border pl-2">
-                              {keyViews.length > 1 && (
-                                <div className="text-[10px] uppercase tracking-wide text-muted-foreground/70">View {keyViews.length - idx}</div>
-                              )}
-                              <div><span className="text-muted-foreground">Viewed by:</span> <span className="text-foreground">{v.viewed_by_email || '—'}</span></div>
-                              <div><span className="text-muted-foreground">Viewed on:</span> <span className="text-foreground">{formatDate(v.viewed_at)}</span></div>
-                              <div><span className="text-muted-foreground">Remarks:</span> <span className="text-foreground">{v.remarks || '—'}</span></div>
-                            </div>
-                          ))}
-                        </div>
+                        {showHistory && (
+                          <div className="space-y-1.5 text-xs">
+                            {keyViews.length === 0 ? (
+                              <div className="text-muted-foreground">No view history</div>
+                            ) : keyViews.map((v, idx) => (
+                              <div key={v.id} className="border-l-2 border-border pl-2">
+                                {keyViews.length > 1 && (
+                                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground/70">View {keyViews.length - idx}</div>
+                                )}
+                                <div><span className="text-muted-foreground">Viewed by:</span> <span className="text-foreground">{v.viewed_by_email || '—'}</span></div>
+                                <div><span className="text-muted-foreground">Viewed on:</span> <span className="text-foreground">{formatDate(v.viewed_at)}</span></div>
+                                <div><span className="text-muted-foreground">Remarks:</span> <span className="text-foreground">{v.remarks || '—'}</span></div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell className="text-foreground">{productLabel(k)}</TableCell>
                       <TableCell className="text-muted-foreground">{k.view_count}/{k.view_limit}</TableCell>
