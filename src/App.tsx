@@ -62,7 +62,7 @@ import AdminLicenseKeys from "./pages/admin/AdminLicenseKeys";
 import AdminSalesStatement from "./pages/admin/reports/AdminSalesStatement";
 import AdminTopSelling from "./pages/admin/reports/AdminTopSelling";
 import AdminCustomerSegment from "./pages/admin/reports/AdminCustomerSegment";
-import AdminChatbot from "./pages/admin/AdminChatbot";
+import AdminKnowledgebase from "./pages/admin/AdminKnowledgebase";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 
@@ -122,7 +122,7 @@ const App = () => (
                 <Route path="reports/sales-statement" element={<AdminSalesStatement />} />
                 <Route path="reports/top-selling" element={<AdminTopSelling />} />
                 <Route path="reports/customer-segment" element={<AdminCustomerSegment />} />
-                <Route path="chatbot" element={<AdminChatbot />} />
+                <Route path="knowledgebase" element={<AdminKnowledgebase />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="settings/site" element={<AdminSiteSettings />} />
                 <Route path="settings/order-mode" element={<AdminOrderMode />} />
