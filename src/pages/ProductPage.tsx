@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
 import NotifyMe from '@/components/NotifyMe';
 import InputFieldRenderer, { validateField, type InputFieldDef } from '@/components/InputFieldRenderer';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
 const ProductFAQs = ({ productName }: { productName: string }) => {
