@@ -133,7 +133,7 @@ const AdminTasksList = () => {
                 <TableHead>Title</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Due</TableHead>
+                <TableHead>Due Date</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead className="w-24">Action</TableHead>
               </TableRow>
@@ -144,7 +144,7 @@ const AdminTasksList = () => {
                 return (
                   <TableRow key={t.id}>
                     <TableCell>
-                      <Link to={`/admin/tasks/${t.id}`} className="font-medium hover:underline">{t.title}</Link>
+                      <span className="font-medium">{t.title}</span>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground max-w-[280px] truncate" title={t.description || ''}>
                       {t.description || '—'}
