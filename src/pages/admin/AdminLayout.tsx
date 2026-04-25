@@ -350,6 +350,7 @@ const AdminLayout = () => {
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background">
             <SidebarTrigger className="text-foreground" />
+            {isAdmin && <SalesStatsBar />}
             <div className="ml-auto">
               <a href="/" className="text-sm text-muted-foreground hover:text-foreground">← Goto Website Homepage</a>
             </div>
