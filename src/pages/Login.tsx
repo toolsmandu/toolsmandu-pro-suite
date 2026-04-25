@@ -126,7 +126,9 @@ const Login = () => {
       return;
     }
     toast.success('Email verified! Welcome.');
-    navigate('/dashboard/orders');
+    const { data: roles } = await supabase.from('user_roles').select('role').eq('user_id', signInData.user.id);
+    const isStaff = roles?.some(r => r.role === 'admin' || r.role === 'editor');
+    navigate(isStaff ? '/admin' : '/dashboard/orders');
   };
 
   const handleResend = async () => {
