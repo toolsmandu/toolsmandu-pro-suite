@@ -168,15 +168,15 @@ const AdminSalesStatement = () => {
                 {rows.map(r => (
                   <TableRow key={r.date}>
                     <TableCell>{formatDate(r.date + 'T00:00:00+05:45')}</TableCell>
-                    <TableCell className="text-right">{fmt(r.sales)}</TableCell>
-                    <TableCell className="text-right">{fmt(r.refunds)}</TableCell>
+                    <TableCell className="text-right">{fmt(r.sales)} <span className="text-muted-foreground">({r.salesCount})</span></TableCell>
+                    <TableCell className="text-right">{fmt(r.refunds)} <span className="text-muted-foreground">({r.refundsCount})</span></TableCell>
                     <TableCell className="text-right font-medium">{fmt(r.sales - r.refunds)}</TableCell>
                   </TableRow>
                 ))}
                 <TableRow className="bg-muted/50 font-semibold">
                   <TableCell>Total</TableCell>
-                  <TableCell className="text-right">{fmt(totals.sales)}</TableCell>
-                  <TableCell className="text-right">{fmt(totals.refunds)}</TableCell>
+                  <TableCell className="text-right">{fmt(totals.sales)} <span className="text-muted-foreground font-normal">({totals.salesCount})</span></TableCell>
+                  <TableCell className="text-right">{fmt(totals.refunds)} <span className="text-muted-foreground font-normal">({totals.refundsCount})</span></TableCell>
                   <TableCell className="text-right">{fmt(totals.net)}</TableCell>
                 </TableRow>
               </>
