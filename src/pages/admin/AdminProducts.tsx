@@ -16,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Info } from 'lucide-react';
 
 const selectClassName =
@@ -853,13 +854,55 @@ const AdminProducts = () => {
                 </DialogContent>
               </Dialog>
 
-            <Button
-              onClick={() => saveMutation.mutate()}
-              className="w-full mt-4 mb-8"
-              disabled={!form.name || !form.category_id || !form.duration || !form.region || variations.filter((variation) => variation.name && variation.price && variation.expiry_days).length === 0}
-            >
-              {editingId ? 'Update Product' : 'Create Product'}
-            </Button>
+            {(() => {
+              const missing: string[] = [];
+              if (!form.name) missing.push('Product name');
+              if (!form.category_id) missing.push('Category');
+              if (!form.duration) missing.push('Duration');
+              if (!form.region) missing.push('Region');
+              const validVariations = variations.filter((v) => v.name && v.price && v.expiry_days);
+              if (validVariations.length === 0) {
+                const incomplete: string[] = [];
+                variations.forEach((v, i) => {
+                  const f: string[] = [];
+                  if (!v.name) f.push('name');
+                  if (!v.price) f.push('price');
+                  if (!v.expiry_days) f.push('expiry days');
+                  if (f.length) incomplete.push(`Variation ${i + 1}: ${f.join(', ')}`);
+                });
+                if (incomplete.length) {
+                  missing.push(...incomplete);
+                } else {
+                  missing.push('At least one complete variation');
+                }
+              }
+              const isDisabled = missing.length > 0;
+              const btn = (
+                <Button
+                  onClick={() => saveMutation.mutate()}
+                  className="w-full mt-4 mb-8"
+                  disabled={isDisabled}
+                >
+                  {editingId ? 'Update Product' : 'Create Product'}
+                </Button>
+              );
+              if (!isDisabled) return btn;
+              return (
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="w-full cursor-not-allowed">{btn}</div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs">
+                      <div className="text-xs font-semibold mb-1">Missing required fields:</div>
+                      <ul className="text-xs list-disc list-inside space-y-0.5">
+                        {missing.map((m, i) => <li key={i}>{m}</li>)}
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              );
+            })()}
           </div>
         </div>
       </ScrollArea>
