@@ -79,7 +79,7 @@ const AdminKnowledgebase = () => {
     enabled: !!productId,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('knowledgebase_qa')
+        .from('chatbot_qa')
         .select('*')
         .eq('product_id', productId)
         .order('sort_order');
@@ -94,13 +94,13 @@ const AdminKnowledgebase = () => {
       if (!draft.question.trim() || !draft.answer.trim()) throw new Error('Question and answer required');
       if (draft.id) {
         const { error } = await supabase
-          .from('knowledgebase_qa')
+          .from('chatbot_qa')
           .update({ question: draft.question, answer: draft.answer })
           .eq('id', draft.id);
         if (error) throw error;
       } else {
         const maxOrder = qas?.length ? Math.max(...qas.map(q => q.sort_order)) + 1 : 0;
-        const { error } = await supabase.from('knowledgebase_qa').insert({
+        const { error } = await supabase.from('chatbot_qa').insert({
           product_id: productId,
           question: draft.question,
           answer: draft.answer,
@@ -118,7 +118,7 @@ const AdminKnowledgebase = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('knowledgebase_qa').delete().eq('id', id);
+      const { error } = await supabase.from('chatbot_qa').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
