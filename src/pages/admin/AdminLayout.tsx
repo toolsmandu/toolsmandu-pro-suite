@@ -12,6 +12,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
   import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen } from 'lucide-react';
 import ChatbotWidget from '@/components/admin/ChatbotWidget';
+import SalesStatsBar from '@/components/admin/SalesStatsBar';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
@@ -349,6 +350,7 @@ const AdminLayout = () => {
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background">
             <SidebarTrigger className="text-foreground" />
+            {isAdmin && <SalesStatsBar />}
             <div className="ml-auto">
               <a href="/" className="text-sm text-muted-foreground hover:text-foreground">← Goto Website Homepage</a>
             </div>
