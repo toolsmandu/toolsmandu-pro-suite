@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Eye, Pencil, Plus, X } from 'lucide-react';
+import { Search, Eye, Pencil, Plus, X, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/formatDate';
 
