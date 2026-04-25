@@ -100,7 +100,7 @@ const AdminOrders = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from('products')
-        .select('id, name, price, product_variations(id, name, price)')
+        .select('id, name, price, product_variations(id, name, price, has_special_input_fields)')
         .order('name');
       return data || [];
     },
