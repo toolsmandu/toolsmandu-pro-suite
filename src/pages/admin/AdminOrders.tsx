@@ -231,8 +231,8 @@ const AdminOrders = () => {
   });
 
   const updateOrder = useMutation({
-    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string }) => {
-      await supabase.from('orders').update({ total, status: status as any }).eq('id', id);
+    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId, refundAmount }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string; refundAmount: number | null }) => {
+      await supabase.from('orders').update({ total, status: status as any, refund_amount: refundAmount } as any).eq('id', id);
 
       if (deletedItemIds.length > 0) {
         await supabase.from('order_items').delete().in('id', deletedItemIds);
