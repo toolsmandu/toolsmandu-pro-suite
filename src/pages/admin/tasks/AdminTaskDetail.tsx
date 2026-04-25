@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { ArrowLeft, Trash2 } from 'lucide-react';
+import { ArrowLeft, Trash2, CheckCircle2 } from 'lucide-react';
 import { STATUS_CLASS, STATUS_LABEL, TaskStatus, effectiveStatus, logActivity } from './taskHelpers';
 import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -150,25 +150,23 @@ const AdminTaskDetail = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3 text-sm">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-muted-foreground font-medium">Current Status:</span>
-              <Badge variant="outline" className={STATUS_CLASS[eff]}>{STATUS_LABEL[eff]}</Badge>
-            </div>
-
             <div>
               <div className="text-muted-foreground font-medium mb-1">Task Description:</div>
               <div className="whitespace-pre-wrap">{task.description || '—'}</div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <div className="text-muted-foreground font-medium">Start Date:</div>
-                <div>{task.start_at ? formatDate(task.start_at) : '—'}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground font-medium">Due Date:</div>
-                <div>{formatDate(task.due_at)}</div>
-              </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-muted-foreground font-medium">Current Status:</span>
+              <Badge variant="outline" className={STATUS_CLASS[eff]}>{STATUS_LABEL[eff]}</Badge>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground font-medium">Start Date:</span>
+              <span>{task.start_at ? formatDateTime(task.start_at) : '—'}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground font-medium">Due Date:</span>
+              <span>{formatDateTime(task.due_at)}</span>
             </div>
           </div>
 
@@ -177,7 +175,8 @@ const AdminTaskDetail = () => {
               onClick={() => updateStatus.mutate('completed')}
               disabled={updateStatus.isPending || task.status === 'completed'}
             >
-              {task.status === 'completed' ? 'Already Completed' : 'Mark as Completed and Update'}
+              <CheckCircle2 className="h-4 w-4 mr-2" />
+              {task.status === 'completed' ? 'Already Completed' : 'Mark Task as Completed'}
             </Button>
           </div>
         </CardContent>
