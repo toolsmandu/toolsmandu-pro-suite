@@ -4,8 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Plus, Pencil, Trash2, Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 
@@ -22,6 +24,41 @@ interface Draft {
   question: string;
   answer: string;
 }
+
+const ProductCombobox = ({ products, value, onChange }: { products: { id: string; name: string }[]; value: string; onChange: (v: string) => void }) => {
+  const [open, setOpen] = useState(false);
+  const selected = products.find(p => p.id === value);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" role="combobox" className={cn('w-full justify-between', !selected && 'text-muted-foreground')}>
+          {selected ? selected.name : 'Select a product'}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Search product..." />
+          <CommandList>
+            <CommandEmpty>No product found.</CommandEmpty>
+            <CommandGroup>
+              {products.map(p => (
+                <CommandItem
+                  key={p.id}
+                  value={p.name}
+                  onSelect={() => { onChange(p.id); setOpen(false); }}
+                >
+                  <Check className={cn('mr-2 h-4 w-4', value === p.id ? 'opacity-100' : 'opacity-0')} />
+                  {p.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const AdminChatbot = () => {
   const queryClient = useQueryClient();
@@ -124,18 +161,7 @@ const AdminChatbot = () => {
       <div className="flex flex-col lg:flex-row gap-6 mb-8 items-start">
         <Card className="p-4 w-full lg:w-80 lg:flex-shrink-0">
           <label className="text-sm font-medium text-foreground mb-1.5 block">Product</label>
-          <Select value={productId} onValueChange={setProductId}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select a product" />
-            </SelectTrigger>
-            <SelectContent>
-              {products?.map(p => (
-                <SelectItem key={p.id} value={p.id}>
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <ProductCombobox products={products || []} value={productId} onChange={setProductId} />
         </Card>
 
         {productId && (
