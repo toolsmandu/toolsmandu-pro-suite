@@ -890,10 +890,13 @@ const AdminProducts = () => {
               const button = (
                 <Button
                   onClick={() => saveMutation.mutate()}
-                  className="w-full mt-4 mb-8"
+                  size="icon"
+                  className="mt-4 mb-8"
                   disabled={isDisabled}
+                  aria-label={editingId ? 'Update Product' : 'Create Product'}
+                  title={editingId ? 'Update Product' : 'Create Product'}
                 >
-                  {editingId ? 'Update Product' : 'Create Product'}
+                  <Save className="h-4 w-4" />
                 </Button>
               );
               if (!isDisabled) return button;
