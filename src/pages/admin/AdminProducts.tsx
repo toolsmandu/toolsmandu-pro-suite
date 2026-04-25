@@ -666,9 +666,22 @@ const AdminProducts = () => {
                 <div className="space-y-3">
                   {variations.map((variation, index) => (
                     <div key={variation.id || index} className="border border-border rounded-lg p-3 space-y-3">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
                         <span className="text-sm font-medium text-foreground">Variation {index + 1}</span>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <div className="flex items-center gap-2">
+                            <Checkbox
+                              checked={variation.has_special_input_fields}
+                              onCheckedChange={(c) => updateVariation(index, 'has_special_input_fields', !!c)}
+                              id={`special-${index}`}
+                            />
+                            <Label htmlFor={`special-${index}`} className="text-xs cursor-pointer">Add Special Input Field</Label>
+                            {variation.has_special_input_fields && (
+                              <Button type="button" variant="outline" size="sm" className="h-7 px-2 text-xs" onClick={() => setFieldPickerIndex(index)}>
+                                <Plus className="h-3 w-3 mr-1" /> Choose Fields
+                              </Button>
+                            )}
+                          </div>
                           <Button
                             type="button"
                             variant="outline"
@@ -694,9 +707,9 @@ const AdminProducts = () => {
                         </div>
                       </div>
 
-                      {/* Row 1: Name, Stock Status, Expiry Days */}
-                      <div className="grid gap-3 md:grid-cols-3">
-                        <div>
+                      {/* All fields on one line: Name, Stock, Expiry, Selling Price, Has Full Price toggle, Full Price */}
+                      <div className="flex flex-wrap items-end gap-3">
+                        <div className="flex-1 min-w-[140px]">
                           <Label className="text-xs">Name</Label>
                           <Input
                             value={variation.name}
@@ -705,7 +718,7 @@ const AdminProducts = () => {
                             className="h-8 text-sm"
                           />
                         </div>
-                        <div>
+                        <div className="flex-1 min-w-[120px]">
                           <Label className="text-xs">Stock Status</Label>
                           <select
                             value={variation.stock_status}
@@ -716,7 +729,7 @@ const AdminProducts = () => {
                             <option value="out_of_stock">Out of Stock</option>
                           </select>
                         </div>
-                        <div>
+                        <div className="flex-1 min-w-[100px]">
                           <Label className="text-xs">Expiry Days <span className="text-destructive">*</span></Label>
                           <Input
                             type="number"
@@ -726,11 +739,7 @@ const AdminProducts = () => {
                             className="h-8 text-sm"
                           />
                         </div>
-                      </div>
-
-                      {/* Row 2: Selling Price, Full Price */}
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
+                        <div className="flex-1 min-w-[110px]">
                           <Label className="text-xs">Selling Price <span className="text-destructive">*</span></Label>
                           <Input
                             type="number"
@@ -739,50 +748,45 @@ const AdminProducts = () => {
                             className="h-8 text-sm"
                           />
                         </div>
-                        <div>
-                          <Label className="text-xs">Full Price</Label>
-                          <Input
-                            type="number"
-                            value={variation.original_price}
-                            onChange={(event) => updateVariation(index, 'original_price', event.target.value)}
-                            className="h-8 text-sm"
+                        <div className="flex items-center gap-1 pb-2">
+                          <Checkbox
+                            id={`hasfull-${index}`}
+                            checked={!!variation.original_price}
+                            onCheckedChange={(c) => {
+                              if (!c) updateVariation(index, 'original_price', '');
+                              else updateVariation(index, 'original_price', variation.original_price || '0');
+                            }}
                           />
+                          <Label htmlFor={`hasfull-${index}`} className="text-xs cursor-pointer whitespace-nowrap">Full Price</Label>
                         </div>
-                      </div>
-
-                      {/* Special Input Fields toggle */}
-                      <div className="border-t border-border pt-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Checkbox
-                              checked={variation.has_special_input_fields}
-                              onCheckedChange={(c) => updateVariation(index, 'has_special_input_fields', !!c)}
-                              id={`special-${index}`}
+                        {!!variation.original_price && (
+                          <div className="flex-1 min-w-[110px]">
+                            <Label className="text-xs">Full Price</Label>
+                            <Input
+                              type="number"
+                              value={variation.original_price}
+                              onChange={(event) => updateVariation(index, 'original_price', event.target.value)}
+                              className="h-8 text-sm"
                             />
-                            <Label htmlFor={`special-${index}`} className="text-xs cursor-pointer">Add Special Input Field</Label>
-                          </div>
-                          {variation.has_special_input_fields && (
-                            <Button type="button" variant="outline" size="sm" className="h-7 px-2 text-xs" onClick={() => setFieldPickerIndex(index)}>
-                              <Plus className="h-3 w-3 mr-1" /> Choose Fields
-                            </Button>
-                          )}
-                        </div>
-                        {variation.has_special_input_fields && variation.input_field_ids.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {variation.input_field_ids.map((fid) => {
-                              const f = (allInputFields || []).find((x: any) => x.id === fid);
-                              return (
-                                <span key={fid} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs">
-                                  {f?.name || 'Unknown'}
-                                  <button type="button" className="text-destructive" onClick={() => updateVariation(index, 'input_field_ids', variation.input_field_ids.filter((x) => x !== fid))}>
-                                    <X className="h-3 w-3" />
-                                  </button>
-                                </span>
-                              );
-                            })}
                           </div>
                         )}
                       </div>
+
+                      {variation.has_special_input_fields && variation.input_field_ids.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+                          {variation.input_field_ids.map((fid) => {
+                            const f = (allInputFields || []).find((x: any) => x.id === fid);
+                            return (
+                              <span key={fid} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs">
+                                {f?.name || 'Unknown'}
+                                <button type="button" className="text-destructive" onClick={() => updateVariation(index, 'input_field_ids', variation.input_field_ids.filter((x) => x !== fid))}>
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
