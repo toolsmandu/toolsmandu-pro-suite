@@ -114,6 +114,7 @@ const AdminCustomerSegment = () => {
 
   return (
     <div className="space-y-4">
+      {exportDialog}
       <div className="flex flex-col gap-1">
         <h2 className="text-xl font-bold text-foreground">Customer Segment</h2>
         <p className="text-sm text-muted-foreground">
