@@ -58,10 +58,10 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
           )}
         </div>
         {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1 origin-top-left -rotate-90 translate-x-0 -translate-y-full">
-          {isOutOfStock && <Badge className="bg-destructive text-destructive-foreground text-xs whitespace-nowrap">Out of Stock</Badge>}
-          {!isOutOfStock && flash_sale_label && <Badge className="bg-destructive text-destructive-foreground text-xs whitespace-nowrap">{flash_sale_label}</Badge>}
-          {!isOutOfStock && !flash_sale_label && discount > 0 && <Badge className="bg-success text-success-foreground text-xs whitespace-nowrap">-{discount}%</Badge>}
+        <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {isOutOfStock && <Badge className="bg-destructive text-destructive-foreground text-xs">Out of Stock</Badge>}
+          {!isOutOfStock && flash_sale_label && <Badge className="bg-destructive text-destructive-foreground text-xs">{flash_sale_label}</Badge>}
+          {!isOutOfStock && !flash_sale_label && discount > 0 && <Badge className="bg-success text-success-foreground text-xs">-{discount}%</Badge>}
         </div>
       </Link>
 
