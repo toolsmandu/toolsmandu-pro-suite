@@ -98,6 +98,36 @@ export type Database = {
         }
         Relationships: []
       }
+      chatbot_qa: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          product_id: string
+          question: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          answer?: string
+          created_at?: string
+          id?: string
+          product_id: string
+          question: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          question?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       coupon_usages: {
         Row: {
           coupon_id: string
