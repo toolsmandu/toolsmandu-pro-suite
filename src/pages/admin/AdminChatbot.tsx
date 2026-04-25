@@ -169,9 +169,6 @@ const AdminChatbot = () => {
                 </div>
               </Card>
             ))}
-            <Button variant="outline" onClick={addDraft}>
-              <Plus className="h-4 w-4 mr-2" /> Add another Q&A
-            </Button>
           </div>
         )}
       </div>
