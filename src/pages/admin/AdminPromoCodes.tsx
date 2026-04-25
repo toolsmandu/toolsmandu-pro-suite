@@ -8,7 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
-import { Plus, Trash2, X, Save, Search, Pencil } from 'lucide-react';
+import { Plus, Trash2, X, Save, Search, Pencil, Check, ChevronsUpDown } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 
 interface PromoForm {
@@ -125,13 +128,36 @@ const AdminPromoCodes = () => {
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search promo codes" className="pl-9 w-56" />
             </div>
-            <Select value={productFilter} onValueChange={setProductFilter}>
-              <SelectTrigger className="w-56"><SelectValue placeholder="Filter by product" /></SelectTrigger>
-              <SelectContent position="popper" className="z-[9999]">
-                <SelectItem value="all">All Products</SelectItem>
-                {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" className="w-56 justify-between font-normal">
+                  <span className="truncate">
+                    {productFilter === 'all' ? 'All Products' : (productMap.get(productFilter) || 'Select product')}
+                  </span>
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-0 z-[9999]" align="end">
+                <Command>
+                  <CommandInput placeholder="Search products..." />
+                  <CommandList>
+                    <CommandEmpty>No product found.</CommandEmpty>
+                    <CommandGroup>
+                      <CommandItem value="All Products" onSelect={() => setProductFilter('all')}>
+                        <Check className={cn('mr-2 h-4 w-4', productFilter === 'all' ? 'opacity-100' : 'opacity-0')} />
+                        All Products
+                      </CommandItem>
+                      {products?.map(p => (
+                        <CommandItem key={p.id} value={p.name} onSelect={() => setProductFilter(p.id)}>
+                          <Check className={cn('mr-2 h-4 w-4', productFilter === p.id ? 'opacity-100' : 'opacity-0')} />
+                          {p.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Promo Code</Button>
           </div>
         </div>
