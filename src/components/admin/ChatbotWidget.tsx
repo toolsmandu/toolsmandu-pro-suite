@@ -130,6 +130,20 @@ const ChatbotWidget = () => {
                     dangerouslySetInnerHTML={{ __html: activeQA.answer }}
                   />
                 </div>
+                {qas && qas.filter(q => q.id !== activeQA.id).length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Other Questions:</p>
+                    {qas.filter(q => q.id !== activeQA.id).map(qa => (
+                      <button
+                        key={qa.id}
+                        onClick={() => setActiveQA(qa)}
+                        className="w-full text-left text-sm px-3 py-2 rounded-lg border border-border hover:bg-muted transition-colors"
+                      >
+                        {qa.question}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             ) : !qas?.length ? (
               <p className="text-sm text-muted-foreground text-center mt-8">
