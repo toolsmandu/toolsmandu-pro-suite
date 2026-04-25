@@ -797,6 +797,49 @@ const AdminOrders = () => {
     return (product as any)?.product_variations || [];
   }, [newProductId, products]);
 
+  const newSelectedVariation = useMemo(() => {
+    if (!newVariationId) return null;
+    return (newProductVariations || []).find((v: any) => v.id === newVariationId) || null;
+  }, [newVariationId, newProductVariations]);
+
+  // Reset field values when product/variation changes
+  useEffect(() => {
+    setNewFieldValues({});
+  }, [newProductId, newVariationId]);
+
+  const useVariationFields = !!newSelectedVariation?.has_special_input_fields;
+
+  const { data: newProductFields } = useQuery({
+    queryKey: ['add-order-product-fields', newProductId],
+    enabled: !!newProductId && !useVariationFields,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('product_input_fields')
+        .select('input_field_id, sort_order, input_fields(*)')
+        .eq('product_id', newProductId)
+        .order('sort_order');
+      return (data || []).map((r: any) => r.input_fields).filter(Boolean) as InputFieldDef[];
+    },
+  });
+
+  const { data: newVariationFields } = useQuery({
+    queryKey: ['add-order-variation-fields', newVariationId],
+    enabled: !!newVariationId && useVariationFields,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('variation_input_fields')
+        .select('input_field_id, sort_order, input_fields(*)')
+        .eq('variation_id', newVariationId)
+        .order('sort_order');
+      return (data || []).map((r: any) => r.input_fields).filter(Boolean) as InputFieldDef[];
+    },
+  });
+
+  const newActiveFields: InputFieldDef[] = useVariationFields
+    ? (newVariationFields || [])
+    : (newProductFields || []);
+
+
   // Compute each user's first order id
   const firstOrderMap = useMemo(() => {
     const map: Record<string, string> = {};
