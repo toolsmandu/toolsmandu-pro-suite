@@ -841,6 +841,12 @@ const AdminProducts = () => {
                     </div>
                   ))}
                 </div>
+                <div className="mt-3">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setVariations((previous) => [...previous, emptyVariation()])}>
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add Variation
+                  </Button>
+                </div>
               </div>
 
               <Dialog open={infoEditorIndex !== null} onOpenChange={(open) => { if (!open) setInfoEditorIndex(null); }}>
