@@ -511,7 +511,13 @@ const AdminProducts = () => {
               <div className="grid gap-4 md:grid-cols-4">
                 <div className="md:col-span-1">
                   <Label>Product Name *</Label>
-                  <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
+                  <Input value={form.name} onChange={(event) => {
+                    const name = event.target.value;
+                    const autoSlug = name.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+                    const currentAutoSlug = form.name.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+                    const slugWasAuto = !form.slug || form.slug === currentAutoSlug;
+                    setForm({ ...form, name, slug: slugWasAuto ? autoSlug : form.slug });
+                  }} />
                 </div>
                 <div className="md:col-span-3 grid gap-4 md:grid-cols-3">
                   <div>
