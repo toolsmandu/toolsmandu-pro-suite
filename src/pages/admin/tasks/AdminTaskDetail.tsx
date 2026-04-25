@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { STATUS_CLASS, STATUS_LABEL, TaskStatus, effectiveStatus, logActivity } from './taskHelpers';
-import { formatDate } from '@/lib/formatDate';
+import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 const STATUSES: TaskStatus[] = ['pending', 'in_progress', 'completed', 'skipped'];
@@ -54,6 +54,18 @@ const AdminTaskDetail = () => {
     queryFn: async () => {
       const { data } = await supabase.from('task_activity_logs').select('*').eq('task_id', id!).order('created_at', { ascending: false });
       return data || [];
+    },
+  });
+
+  const actorIds = Array.from(new Set((activity || []).map((a: any) => a.actor_id).filter(Boolean)));
+  const { data: actorProfiles } = useQuery({
+    queryKey: ['task-activity-actors', id, actorIds.join(',')],
+    enabled: actorIds.length > 0,
+    queryFn: async () => {
+      const { data } = await supabase.from('profiles').select('user_id, name, email').in('user_id', actorIds);
+      const map: Record<string, { name: string | null; email: string | null }> = {};
+      (data || []).forEach((p: any) => { map[p.user_id] = { name: p.name, email: p.email }; });
+      return map;
     },
   });
 
@@ -185,12 +197,20 @@ const AdminTaskDetail = () => {
         <CardHeader><CardTitle className="text-base">Activity</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {activity?.length === 0 && <p className="text-sm text-muted-foreground">No activity yet.</p>}
-          {activity?.map((a: any) => (
-            <div key={a.id} className="text-sm flex justify-between border-b border-border/50 py-1">
-              <span><span className="font-medium">{a.action}</span>{a.details ? ` — ${a.details}` : ''}</span>
-              <span className="text-xs text-muted-foreground">{formatDate(a.created_at)}</span>
-            </div>
-          ))}
+          {activity?.map((a: any) => {
+            const actor = a.actor_id ? actorProfiles?.[a.actor_id] : null;
+            const actorLabel = actor?.email || actor?.name || (a.actor_id ? 'Unknown' : 'System');
+            return (
+              <div key={a.id} className="text-sm flex flex-col sm:flex-row sm:justify-between gap-1 border-b border-border/50 py-2">
+                <span>
+                  <span className="font-medium">{a.action}</span>
+                  {a.details ? ` — ${a.details}` : ''}
+                  <span className="block text-xs text-muted-foreground mt-0.5">Created by: {actorLabel}</span>
+                </span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDateTime(a.created_at)}</span>
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
     </div>
