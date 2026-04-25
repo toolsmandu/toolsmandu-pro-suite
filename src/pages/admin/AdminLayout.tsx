@@ -183,6 +183,16 @@ const AdminLayout = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
+                  {/* License Keys (admin/editor) — just above Promo Codes */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/admin/license-keys" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                        <KeyRound className="mr-2 h-4 w-4" />
+                        <span className="flex-1">License Keys</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
                   {/* Promo Codes (admin/editor) — just above Settings */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
