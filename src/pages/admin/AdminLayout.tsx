@@ -10,7 +10,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound } from 'lucide-react';
+  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor } = useAuth();
@@ -27,8 +27,10 @@ const AdminLayout = () => {
 
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs');
   const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides');
+  const isReportsSection = location.pathname.startsWith('/admin/reports');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
   const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
+  const [reportsOpen, setReportsOpen] = useState(isReportsSection);
 
   useEffect(() => {
     if (isProductsSection) setProductsOpen(true);
@@ -37,6 +39,10 @@ const AdminLayout = () => {
   useEffect(() => {
     if (isSettingsSection) setSettingsOpen(true);
   }, [isSettingsSection]);
+
+  useEffect(() => {
+    if (isReportsSection) setReportsOpen(true);
+  }, [isReportsSection]);
 
   useEffect(() => {
     if (!loading && (!user || (!isAdmin && !isEditor))) navigate('/');
@@ -55,11 +61,14 @@ const AdminLayout = () => {
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   ];
 
-  const bottomLinks = [
+  const bottomLinksBeforeReports = [
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/admin/expired-orders', icon: ShoppingCart, label: 'Expired Orders' },
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },
+  ];
+
+  const bottomLinksAfterReports = [
     { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
     { to: '/admin/blogs', icon: Newspaper, label: 'Blogs' },
     { to: '/admin/media', icon: Film, label: 'Media' },
@@ -162,7 +171,51 @@ const AdminLayout = () => {
                     </SidebarMenuItem>
                   </Collapsible>
 
-                  {bottomLinks.map(({ to, icon: Icon, label }) => (
+                  {bottomLinksBeforeReports.map(({ to, icon: Icon, label }) => (
+                    <SidebarMenuItem key={to}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={to} className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                          <Icon className="mr-2 h-4 w-4" />
+                          <span className="flex-1">{label}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+
+                  {/* Reports sub-menu (admin/editor) — just below Customers */}
+                  <Collapsible open={reportsOpen} onOpenChange={setReportsOpen} className="group/reports">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="hover:bg-muted/50">
+                          <BarChart3 className="mr-2 h-4 w-4" />
+                          <span>Reports</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/reports:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/reports/sales-statement" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <FileBarChart className="mr-2 h-3 w-3" />
+                                <span>Sales Statement</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/reports/top-selling" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <TrendingUp className="mr-2 h-3 w-3" />
+                                <span>Top Selling</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+                  {bottomLinksAfterReports.map(({ to, icon: Icon, label }) => (
                     <SidebarMenuItem key={to}>
                       <SidebarMenuButton asChild>
                         <NavLink to={to} className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
