@@ -111,7 +111,7 @@ const AdminPromoCodes = () => {
     return pc.code.toLowerCase().includes(term) || productName.toLowerCase().includes(term);
   });
 
-  const previewHtml = (form.instruction_template || '').replaceAll('{code}', form.code || '{code}');
+  const previewHtml = (form.instruction_template || '').split('{code}').join(form.code || '{code}');
 
   return (
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
