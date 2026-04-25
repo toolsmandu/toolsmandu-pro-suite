@@ -1014,16 +1014,14 @@ const AdminOrders = () => {
       });
     });
 
-    const wb = XLSX.utils.book_new();
-    const ws1 = XLSX.utils.json_to_sheet(ordersRows);
-    // Force header order on items sheet so per-field columns always show
     const itemsHeader = ['Order #', 'Email', 'Phone', 'Product', 'Variation', 'Quantity', 'Price', 'Input Fields (combined)', ...labelCols];
-    const ws2 = XLSX.utils.json_to_sheet(itemsRows, { header: itemsHeader });
-    XLSX.utils.book_append_sheet(wb, ws1, 'Orders');
-    XLSX.utils.book_append_sheet(wb, ws2, 'Order Items');
-    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
-    XLSX.writeFile(wb, `orders-export-${ts}.xlsx`);
-    toast.success(`Exported ${source.length} orders`);
+    requestExport({
+      filenameBase: 'orders-export',
+      sheets: [
+        { name: 'Orders', rows: ordersRows },
+        { name: 'Order Items', rows: itemsRows, header: itemsHeader },
+      ],
+    });
   };
 
   return (
