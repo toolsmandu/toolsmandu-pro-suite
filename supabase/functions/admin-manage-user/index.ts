@@ -65,6 +65,15 @@ Deno.serve(async (req) => {
     if (action === "update") {
       const { name, email, phone, password, is_suspended, email_confirmed, role } = body;
 
+      // Editors cannot modify admin accounts
+      if (isEditor && !isAdmin) {
+        const { data: targetRoles } = await supabase.from("user_roles").select("role").eq("user_id", user_id);
+        if (targetRoles?.some((r: any) => r.role === "admin")) {
+          return new Response(JSON.stringify({ error: "Editors cannot edit admin accounts" }), { status: 403, headers: corsHeaders });
+        }
+      }
+
+
       // Update profile
       const profileUpdate: any = {};
       if (name !== undefined) profileUpdate.name = name;
