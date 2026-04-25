@@ -44,10 +44,13 @@ const SalesStatsBar = () => {
   ];
 
   return (
-    <div className="hidden md:flex items-center gap-4 text-xs">
+    <div className="hidden md:flex items-center gap-2 whitespace-nowrap">
       {items.map(i => (
-        <div key={i.label} className="flex flex-col leading-tight">
-          <span className="text-muted-foreground">{i.label}</span>
+        <div
+          key={i.label}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border bg-secondary text-xs"
+        >
+          <span className="text-muted-foreground">{i.label}:</span>
           <span className="font-semibold text-foreground">{formatNPR(i.value)}</span>
         </div>
       ))}
