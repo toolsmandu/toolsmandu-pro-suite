@@ -60,17 +60,29 @@ const AdminDashboard = () => {
   const earliest = months[0].start.toISOString();
 
   const { data: signupChart } = useQuery({
-    queryKey: ['admin-signups-12m'],
+    queryKey: ['admin-signups-active-12m'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('created_at')
-        .gte('created_at', earliest);
-      const buckets = months.map(m => ({ month: m.label, signups: 0 }));
-      data?.forEach((row: any) => {
+      const [signupsRes, loginsRes] = await Promise.all([
+        supabase.from('profiles').select('created_at').gte('created_at', earliest),
+        supabase.from('customer_logins').select('user_id, logged_in_at').gte('logged_in_at', earliest),
+      ]);
+      const buckets = months.map(m => ({ month: m.label, signups: 0, active: 0 }));
+      signupsRes.data?.forEach((row: any) => {
         const d = new Date(row.created_at);
         const idx = months.findIndex(m => d >= m.start && d < m.end);
         if (idx >= 0) buckets[idx].signups += 1;
+      });
+      // Unique active users per month
+      const uniqueByMonth: Record<number, Set<string>> = {};
+      loginsRes.data?.forEach((row: any) => {
+        const d = new Date(row.logged_in_at);
+        const idx = months.findIndex(m => d >= m.start && d < m.end);
+        if (idx < 0) return;
+        if (!uniqueByMonth[idx]) uniqueByMonth[idx] = new Set();
+        uniqueByMonth[idx].add(row.user_id);
+      });
+      Object.entries(uniqueByMonth).forEach(([idx, set]) => {
+        buckets[Number(idx)].active = set.size;
       });
       return buckets;
     },
