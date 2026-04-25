@@ -84,6 +84,7 @@ const AdminOrders = () => {
   
   const [newRemarks, setNewRemarks] = useState('');
   const [creatingOrder, setCreatingOrder] = useState(false);
+  const [isWaOrder, setIsWaOrder] = useState(false);
   const [newFieldValues, setNewFieldValues] = useState<Record<string, string | string[]>>({});
 
   const { data: orders, isLoading } = useQuery({
@@ -600,9 +601,10 @@ const AdminOrders = () => {
     setCustomerSearching(false);
   };
 
-  const openAddOrder = () => {
+  const openAddOrder = (wa = false) => {
     setSelectedOrder(null);
     setAddingOrder(true);
+    setIsWaOrder(wa);
     setNewOrderDate(getKathmanduNowLocal());
     setCustomerSearch('');
     setCustomerResults([]);
