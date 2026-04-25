@@ -71,7 +71,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         </Link>
         
         <div className="mt-2">
-          <span className="font-bold" style={{ color: '#f5b800', fontSize: '1.125rem' }}>Rs {displayPrice}</span>
+          <span className="font-bold" style={{ color: '#f5b800', fontSize: '1.080rem' }}>Rs {displayPrice}</span>
         </div>
       </div>
 
