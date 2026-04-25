@@ -171,7 +171,51 @@ const AdminLayout = () => {
                     </SidebarMenuItem>
                   </Collapsible>
 
-                  {bottomLinks.map(({ to, icon: Icon, label }) => (
+                  {bottomLinksBeforeReports.map(({ to, icon: Icon, label }) => (
+                    <SidebarMenuItem key={to}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={to} className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                          <Icon className="mr-2 h-4 w-4" />
+                          <span className="flex-1">{label}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+
+                  {/* Reports sub-menu (admin/editor) — just below Customers */}
+                  <Collapsible open={reportsOpen} onOpenChange={setReportsOpen} className="group/reports">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="hover:bg-muted/50">
+                          <BarChart3 className="mr-2 h-4 w-4" />
+                          <span>Reports</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/reports:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/reports/sales-statement" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <FileBarChart className="mr-2 h-3 w-3" />
+                                <span>Sales Statement</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/reports/top-selling" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <TrendingUp className="mr-2 h-3 w-3" />
+                                <span>Top Selling</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+                  {bottomLinksAfterReports.map(({ to, icon: Icon, label }) => (
                     <SidebarMenuItem key={to}>
                       <SidebarMenuButton asChild>
                         <NavLink to={to} className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
