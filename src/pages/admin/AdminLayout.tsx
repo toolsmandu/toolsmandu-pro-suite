@@ -367,8 +367,10 @@ const AdminLayout = () => {
                 variant="destructive"
                 size="sm"
                 onClick={async () => { await signOut(); navigate('/'); }}
+                className="justify-center"
               >
-                <LogOut className="h-4 w-4 mr-2" /> Logout
+                <LogOut className="h-4 w-4 mr-2" />
+                <span>Logout</span>
               </Button>
             </div>
           </header>
