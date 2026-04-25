@@ -158,6 +158,8 @@ const AdminCustomers = () => {
     refunded: 'bg-muted text-muted-foreground',
   };
 
+  const { requestExport, dialog: exportDialog } = useExportFormat();
+
   const handleExportCustomers = () => {
     const source = filteredUsers || [];
     if (source.length === 0) {
@@ -172,12 +174,10 @@ const AdminCustomers = () => {
       'Status': u.is_suspended ? 'Suspended' : 'Active',
       'Joined': u.created_at ? new Date(u.created_at).toISOString() : '',
     }));
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(rows);
-    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
-    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
-    XLSX.writeFile(wb, `customers-export-${ts}.xlsx`);
-    toast.success(`Exported ${source.length} customers`);
+    requestExport({
+      filenameBase: 'customers-export',
+      sheets: [{ name: 'Customers', rows }],
+    });
   };
 
   return (
