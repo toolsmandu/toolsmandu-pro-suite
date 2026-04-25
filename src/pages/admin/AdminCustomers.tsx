@@ -181,6 +181,8 @@ const AdminCustomers = () => {
   };
 
   return (
+    <>
+    {exportDialog}
     <div className="flex gap-6 h-[calc(100vh-5rem)]">
       {/* Customers List */}
       <div className={`${addOpen ? 'flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
