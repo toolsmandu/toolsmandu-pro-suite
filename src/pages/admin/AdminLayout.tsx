@@ -258,7 +258,7 @@ const AdminLayout = () => {
           <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background">
             <SidebarTrigger className="text-foreground" />
             <div className="ml-auto">
-              <a href="/" className="text-sm text-muted-foreground hover:text-foreground">← Back to Store</a>
+              <a href="/" className="text-sm text-muted-foreground hover:text-foreground">← Goto Website Homepage</a>
             </div>
           </header>
           <main className="flex-1 p-6 overflow-auto bg-muted/30">
