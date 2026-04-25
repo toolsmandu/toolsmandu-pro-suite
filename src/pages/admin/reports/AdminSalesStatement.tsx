@@ -58,7 +58,7 @@ const AdminSalesStatement = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('orders')
-        .select('id, total, status, created_at')
+        .select('id, total, refund_amount, status, created_at')
         .gte('created_at', fromIso)
         .lt('created_at', toIso);
       if (error) throw error;
