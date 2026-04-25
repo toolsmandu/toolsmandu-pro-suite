@@ -120,6 +120,7 @@ const App = () => (
                 <Route path="license-keys" element={<AdminLicenseKeys />} />
                 <Route path="reports/sales-statement" element={<AdminSalesStatement />} />
                 <Route path="reports/top-selling" element={<AdminTopSelling />} />
+                <Route path="reports/customer-segment" element={<AdminCustomerSegment />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="settings/site" element={<AdminSiteSettings />} />
                 <Route path="settings/order-mode" element={<AdminOrderMode />} />
