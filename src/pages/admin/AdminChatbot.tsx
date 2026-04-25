@@ -121,25 +121,25 @@ const AdminChatbot = () => {
         </p>
       </div>
 
-      <Card className="p-4 mb-6 max-w-md">
-        <label className="text-sm font-medium text-foreground mb-1.5 block">Product</label>
-        <Select value={productId} onValueChange={setProductId}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a product" />
-          </SelectTrigger>
-          <SelectContent>
-            {products?.map(p => (
-              <SelectItem key={p.id} value={p.id}>
-                {p.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </Card>
+      <div className="flex flex-col lg:flex-row gap-6 mb-8 items-start">
+        <Card className="p-4 w-full lg:w-80 lg:flex-shrink-0">
+          <label className="text-sm font-medium text-foreground mb-1.5 block">Product</label>
+          <Select value={productId} onValueChange={setProductId}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a product" />
+            </SelectTrigger>
+            <SelectContent>
+              {products?.map(p => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Card>
 
-      {productId && (
-        <>
-          <div className="space-y-4 mb-8">
+        {productId && (
+          <div className="flex-1 min-w-0 w-full space-y-4">
             {drafts.map((draft, idx) => (
               <Card key={idx} className="p-4 space-y-3">
                 <div>
@@ -173,6 +173,11 @@ const AdminChatbot = () => {
               <Plus className="h-4 w-4 mr-2" /> Add another Q&A
             </Button>
           </div>
+        )}
+      </div>
+
+      {productId && (
+        <>
 
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-3">Existing Q&A</h3>
