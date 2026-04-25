@@ -197,7 +197,7 @@ const AdminLayout = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <NavLink to="/admin/promo-codes" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
-                        <Megaphone className="mr-2 h-4 w-4" />
+                        <BadgePercent className="mr-2 h-4 w-4" />
                         <span className="flex-1">Promo Codes</span>
                       </NavLink>
                     </SidebarMenuButton>
