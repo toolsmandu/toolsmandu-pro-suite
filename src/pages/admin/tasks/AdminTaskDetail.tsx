@@ -123,15 +123,9 @@ const AdminTaskDetail = () => {
 
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-2">
-          <div>
-            <CardTitle className="text-xl">{task.title}</CardTitle>
-            <div className="flex items-center gap-2 mt-2">
-              <Badge variant="outline" className={STATUS_CLASS[eff]}>{STATUS_LABEL[eff]}</Badge>
-              <span className="text-sm text-muted-foreground">Due: {formatDate(task.due_at)}</span>
-              {task.template_id && <Badge variant="outline">Recurring</Badge>}
-            </div>
-          </div>
+          <CardTitle className="text-xl">{task.title}</CardTitle>
           <div className="flex gap-2">
+            {task.template_id && <Badge variant="outline">Recurring</Badge>}
             {isAdmin && (
               <>
                 <Button variant="outline" size="sm" asChild><Link to={`/admin/tasks/${task.id}/edit`}>Edit</Link></Button>
@@ -155,23 +149,36 @@ const AdminTaskDetail = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {task.description && <p className="text-sm whitespace-pre-wrap">{task.description}</p>}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-            <div><div className="text-muted-foreground text-xs">Assigned to</div>{assigneeProfile?.name || assigneeProfile?.email || '—'}</div>
-            <div><div className="text-muted-foreground text-xs">Start</div>{task.start_at ? formatDate(task.start_at) : '—'}</div>
-            <div><div className="text-muted-foreground text-xs">Completed</div>{task.completed_at ? formatDate(task.completed_at) : '—'}</div>
-            <div><div className="text-muted-foreground text-xs">Created</div>{formatDate(task.created_at)}</div>
+          <div className="space-y-3 text-sm">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-muted-foreground font-medium">Current Status:</span>
+              <Badge variant="outline" className={STATUS_CLASS[eff]}>{STATUS_LABEL[eff]}</Badge>
+            </div>
+
+            <div>
+              <div className="text-muted-foreground font-medium mb-1">Task Description:</div>
+              <div className="whitespace-pre-wrap">{task.description || '—'}</div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <div className="text-muted-foreground font-medium">Start Date:</div>
+                <div>{task.start_at ? formatDate(task.start_at) : '—'}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground font-medium">Due Date:</div>
+                <div>{formatDate(task.due_at)}</div>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <div className="text-sm font-medium mb-2">Update status</div>
-            <div className="flex flex-wrap gap-2">
-              {STATUSES.map(s => (
-                <Button key={s} size="sm" variant={task.status === s ? 'default' : 'outline'} onClick={() => updateStatus.mutate(s)} disabled={updateStatus.isPending}>
-                  {STATUS_LABEL[s]}
-                </Button>
-              ))}
-            </div>
+          <div className="pt-2">
+            <Button
+              onClick={() => updateStatus.mutate('completed')}
+              disabled={updateStatus.isPending || task.status === 'completed'}
+            >
+              {task.status === 'completed' ? 'Already Completed' : 'Mark as Completed and Update'}
+            </Button>
           </div>
         </CardContent>
       </Card>
