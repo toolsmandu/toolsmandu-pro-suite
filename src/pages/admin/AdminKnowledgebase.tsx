@@ -60,13 +60,13 @@ const ProductCombobox = ({ products, value, onChange }: { products: { id: string
   );
 };
 
-const AdminChatbot = () => {
+const AdminKnowledgebase = () => {
   const queryClient = useQueryClient();
   const [productId, setProductId] = useState<string>('');
   const [drafts, setDrafts] = useState<Draft[]>([{ question: '', answer: '' }]);
 
   const { data: products } = useQuery({
-    queryKey: ['admin-chatbot-products'],
+    queryKey: ['admin-knowledgebase-products'],
     queryFn: async () => {
       const { data, error } = await supabase.from('products').select('id, name').order('name');
       if (error) throw error;
@@ -75,11 +75,11 @@ const AdminChatbot = () => {
   });
 
   const { data: qas, isLoading } = useQuery({
-    queryKey: ['admin-chatbot-qa', productId],
+    queryKey: ['admin-knowledgebase-qa', productId],
     enabled: !!productId,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('chatbot_qa')
+        .from('knowledgebase_qa')
         .select('*')
         .eq('product_id', productId)
         .order('sort_order');
@@ -94,13 +94,13 @@ const AdminChatbot = () => {
       if (!draft.question.trim() || !draft.answer.trim()) throw new Error('Question and answer required');
       if (draft.id) {
         const { error } = await supabase
-          .from('chatbot_qa')
+          .from('knowledgebase_qa')
           .update({ question: draft.question, answer: draft.answer })
           .eq('id', draft.id);
         if (error) throw error;
       } else {
         const maxOrder = qas?.length ? Math.max(...qas.map(q => q.sort_order)) + 1 : 0;
-        const { error } = await supabase.from('chatbot_qa').insert({
+        const { error } = await supabase.from('knowledgebase_qa').insert({
           product_id: productId,
           question: draft.question,
           answer: draft.answer,
@@ -110,7 +110,7 @@ const AdminChatbot = () => {
       }
     },
     onSuccess: (_, draft) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-chatbot-qa', productId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-knowledgebase-qa', productId] });
       toast.success(draft.id ? 'Q&A updated' : 'Q&A added');
     },
     onError: (e: any) => toast.error(e.message),
@@ -118,11 +118,11 @@ const AdminChatbot = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('chatbot_qa').delete().eq('id', id);
+      const { error } = await supabase.from('knowledgebase_qa').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-chatbot-qa', productId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-knowledgebase-qa', productId] });
       toast.success('Q&A deleted');
     },
   });
@@ -152,9 +152,9 @@ const AdminChatbot = () => {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Chatbot</h2>
+        <h2 className="text-2xl font-bold text-foreground">Knowledgebase</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Add questions and answers a chatbot can use for a specific product.
+          Add questions and answers a knowledgebase can use for a specific product.
         </p>
       </div>
 
@@ -243,4 +243,4 @@ const AdminChatbot = () => {
   );
 };
 
-export default AdminChatbot;
+export default AdminKnowledgebase;
