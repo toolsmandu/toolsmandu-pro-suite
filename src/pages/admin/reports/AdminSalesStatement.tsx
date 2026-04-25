@@ -76,21 +76,25 @@ const AdminSalesStatement = () => {
       const d = parts.find(p => p.type === 'day')!.value;
       return `${y}-${m}-${d}`;
     })();
-    const map = new Map<string, { date: string; sales: number; refunds: number }>();
+    const map = new Map<string, { date: string; sales: number; refunds: number; salesCount: number; refundsCount: number }>();
     for (let d = 1; d <= daysInMonth; d++) {
       const key = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
       if (key > todayKey) continue;
-      map.set(key, { date: key, sales: 0, refunds: 0 });
+      map.set(key, { date: key, sales: 0, refunds: 0, salesCount: 0, refundsCount: 0 });
     }
     (orders || []).forEach((o: any) => {
       const key = getKtmDateKey(o.created_at);
       const row = map.get(key);
       if (!row) return;
       const total = Number(o.total) || 0;
-      if (o.status === 'completed' || o.status === 'refunded') row.sales += total;
+      if (o.status === 'completed' || o.status === 'refunded') {
+        row.sales += total;
+        row.salesCount += 1;
+      }
       if (o.status === 'refunded') {
         const refunded = o.refund_amount != null ? Number(o.refund_amount) : total;
         row.refunds += refunded;
+        row.refundsCount += 1;
       }
     });
     return Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
@@ -102,8 +106,10 @@ const AdminSalesStatement = () => {
         sales: acc.sales + r.sales,
         refunds: acc.refunds + r.refunds,
         net: acc.net + (r.sales - r.refunds),
+        salesCount: acc.salesCount + r.salesCount,
+        refundsCount: acc.refundsCount + r.refundsCount,
       }),
-      { sales: 0, refunds: 0, net: 0 },
+      { sales: 0, refunds: 0, net: 0, salesCount: 0, refundsCount: 0 },
     );
   }, [rows]);
 
@@ -162,15 +168,15 @@ const AdminSalesStatement = () => {
                 {rows.map(r => (
                   <TableRow key={r.date}>
                     <TableCell>{formatDate(r.date + 'T00:00:00+05:45')}</TableCell>
-                    <TableCell className="text-right">{fmt(r.sales)}</TableCell>
-                    <TableCell className="text-right">{fmt(r.refunds)}</TableCell>
+                    <TableCell className="text-right">{fmt(r.sales)} <span className="text-muted-foreground">({r.salesCount})</span></TableCell>
+                    <TableCell className="text-right">{fmt(r.refunds)} <span className="text-muted-foreground">({r.refundsCount})</span></TableCell>
                     <TableCell className="text-right font-medium">{fmt(r.sales - r.refunds)}</TableCell>
                   </TableRow>
                 ))}
                 <TableRow className="bg-muted/50 font-semibold">
                   <TableCell>Total</TableCell>
-                  <TableCell className="text-right">{fmt(totals.sales)}</TableCell>
-                  <TableCell className="text-right">{fmt(totals.refunds)}</TableCell>
+                  <TableCell className="text-right">{fmt(totals.sales)} <span className="text-muted-foreground font-normal">({totals.salesCount})</span></TableCell>
+                  <TableCell className="text-right">{fmt(totals.refunds)} <span className="text-muted-foreground font-normal">({totals.refundsCount})</span></TableCell>
                   <TableCell className="text-right">{fmt(totals.net)}</TableCell>
                 </TableRow>
               </>
