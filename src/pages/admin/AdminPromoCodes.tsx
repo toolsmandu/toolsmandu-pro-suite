@@ -195,14 +195,28 @@ const AdminPromoCodes = () => {
                           variant="outline"
                           size="sm"
                           className="h-7 px-2 text-xs"
-                          onClick={(e) => {
+                          onClick={async (e) => {
                             e.stopPropagation();
-                            const tpl = (pc.instruction_template || '').split('{code}').join(pc.code);
+                            const html = (pc.instruction_template || '').split('{code}').join(pc.code);
                             const tmp = document.createElement('div');
-                            tmp.innerHTML = tpl;
-                            const text = tmp.innerText || tmp.textContent || '';
-                            navigator.clipboard.writeText(text);
-                            toast.success('Instructions copied');
+                            tmp.innerHTML = html;
+                            const plain = tmp.innerText || tmp.textContent || '';
+                            try {
+                              if (navigator.clipboard && (window as any).ClipboardItem) {
+                                await navigator.clipboard.write([
+                                  new ClipboardItem({
+                                    'text/html': new Blob([html], { type: 'text/html' }),
+                                    'text/plain': new Blob([plain], { type: 'text/plain' }),
+                                  }),
+                                ]);
+                              } else {
+                                await navigator.clipboard.writeText(plain);
+                              }
+                              toast.success('Instructions copied (with formatting)');
+                            } catch {
+                              await navigator.clipboard.writeText(plain);
+                              toast.success('Instructions copied');
+                            }
                           }}
                         >
                           <FileText className="h-3 w-3 mr-1" /> Copy Instructions
