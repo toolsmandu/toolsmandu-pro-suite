@@ -1766,7 +1766,7 @@ const AdminOrders = () => {
                 onClick={handleCreateOrder}
                 disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
               >
-                {creatingOrder ? 'Creating...' : 'Create Order'}
+                {creatingOrder ? (isWaOrder ? 'Sending...' : 'Creating...') : (isWaOrder ? 'Create WA Order' : 'Create Order')}
               </Button>
             </div>
           </ScrollArea>
