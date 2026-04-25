@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { STATUS_CLASS, STATUS_LABEL, TaskStatus, effectiveStatus, logActivity } from './taskHelpers';
-import { formatDate } from '@/lib/formatDate';
+import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 const STATUSES: TaskStatus[] = ['pending', 'in_progress', 'completed', 'skipped'];
