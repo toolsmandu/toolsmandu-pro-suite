@@ -13,7 +13,7 @@ import { STATUS_CLASS, STATUS_LABEL, TaskStatus, effectiveStatus, logActivity } 
 import { formatDate, formatDateTime } from '@/lib/formatDate';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
-const STATUSES: TaskStatus[] = ['pending', 'in_progress', 'completed', 'skipped'];
+const STATUSES: TaskStatus[] = ['pending', 'completed'];
 
 const AdminTaskDetail = () => {
   const { id } = useParams();

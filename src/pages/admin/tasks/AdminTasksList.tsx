@@ -12,7 +12,7 @@ import { Plus, Repeat, LayoutDashboard, Search } from 'lucide-react';
 import { STATUS_CLASS, STATUS_LABEL, TaskStatus, effectiveStatus } from './taskHelpers';
 import { formatDate } from '@/lib/formatDate';
 
-const STATUSES: TaskStatus[] = ['pending', 'in_progress', 'overdue', 'completed', 'skipped'];
+const STATUSES: TaskStatus[] = ['pending', 'overdue', 'completed'];
 
 const AdminTasksList = () => {
   const { user, isAdmin } = useAuth();
