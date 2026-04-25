@@ -61,11 +61,14 @@ const AdminLayout = () => {
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   ];
 
-  const bottomLinks = [
+  const bottomLinksBeforeReports = [
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/admin/expired-orders', icon: ShoppingCart, label: 'Expired Orders' },
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },
+  ];
+
+  const bottomLinksAfterReports = [
     { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
     { to: '/admin/blogs', icon: Newspaper, label: 'Blogs' },
     { to: '/admin/media', icon: Film, label: 'Media' },
