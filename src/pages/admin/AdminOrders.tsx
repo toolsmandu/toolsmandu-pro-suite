@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import InputFieldRenderer, { type InputFieldDef, type FieldResponse } from '@/components/InputFieldRenderer';
 
 const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').trim();
 
@@ -81,6 +82,7 @@ const AdminOrders = () => {
   
   const [newRemarks, setNewRemarks] = useState('');
   const [creatingOrder, setCreatingOrder] = useState(false);
+  const [newFieldValues, setNewFieldValues] = useState<Record<string, string | string[]>>({});
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
@@ -98,7 +100,7 @@ const AdminOrders = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from('products')
-        .select('id, name, price, product_variations(id, name, price)')
+        .select('id, name, price, product_variations(id, name, price, has_special_input_fields)')
         .order('name');
       return data || [];
     },
@@ -609,6 +611,7 @@ const AdminOrders = () => {
     setNewAmount('');
     setNewPaymentMethod('manual');
     setNewRemarks('');
+    setNewFieldValues({});
   };
 
   const handleCreateOrder = async () => {
@@ -655,6 +658,26 @@ const AdminOrders = () => {
       } as any).select().single();
       if (orderError) throw orderError;
 
+      // Build input field responses (optional for admin — only include filled values)
+      const responses: FieldResponse[] = (newActiveFields || [])
+        .map((f) => {
+          const val = newFieldValues[f.id];
+          const isEmpty =
+            val === undefined ||
+            val === '' ||
+            (Array.isArray(val) && val.length === 0);
+          if (isEmpty) return null;
+          return {
+            field_id: f.id,
+            field_name: f.name,
+            field_type: f.field_type,
+            label: f.label,
+            question: f.question,
+            value: val as string | string[],
+          } as FieldResponse;
+        })
+        .filter((r): r is FieldResponse => r !== null);
+
       const { error: itemError } = await supabase.from('order_items').insert({
         order_id: order.id,
         product_id: newProductId,
@@ -662,6 +685,7 @@ const AdminOrders = () => {
         variation_name: variation?.name || null,
         price: parseFloat(newAmount),
         quantity: 1,
+        input_field_responses: responses as any,
       });
       if (itemError) throw itemError;
 
@@ -794,6 +818,49 @@ const AdminOrders = () => {
     const product = products?.find((p: any) => p.id === newProductId);
     return (product as any)?.product_variations || [];
   }, [newProductId, products]);
+
+  const newSelectedVariation = useMemo(() => {
+    if (!newVariationId) return null;
+    return (newProductVariations || []).find((v: any) => v.id === newVariationId) || null;
+  }, [newVariationId, newProductVariations]);
+
+  // Reset field values when product/variation changes
+  useEffect(() => {
+    setNewFieldValues({});
+  }, [newProductId, newVariationId]);
+
+  const useVariationFields = !!newSelectedVariation?.has_special_input_fields;
+
+  const { data: newProductFields } = useQuery({
+    queryKey: ['add-order-product-fields', newProductId],
+    enabled: !!newProductId && !useVariationFields,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('product_input_fields')
+        .select('input_field_id, sort_order, input_fields(*)')
+        .eq('product_id', newProductId)
+        .order('sort_order');
+      return (data || []).map((r: any) => r.input_fields).filter(Boolean) as InputFieldDef[];
+    },
+  });
+
+  const { data: newVariationFields } = useQuery({
+    queryKey: ['add-order-variation-fields', newVariationId],
+    enabled: !!newVariationId && useVariationFields,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('variation_input_fields')
+        .select('input_field_id, sort_order, input_fields(*)')
+        .eq('variation_id', newVariationId)
+        .order('sort_order');
+      return (data || []).map((r: any) => r.input_fields).filter(Boolean) as InputFieldDef[];
+    },
+  });
+
+  const newActiveFields: InputFieldDef[] = useVariationFields
+    ? (newVariationFields || [])
+    : (newProductFields || []);
+
 
   // Compute each user's first order id
   const firstOrderMap = useMemo(() => {
@@ -1439,6 +1506,23 @@ const AdminOrders = () => {
                       <option key={v.id} value={v.id}>{v.name} — NPR {v.price}</option>
                     ))}
                   </select>
+                </div>
+              )}
+
+              {/* Input Fields (optional for admin) */}
+              {newActiveFields.length > 0 && (
+                <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Linked input fields (optional for admin-created orders)
+                  </p>
+                  {newActiveFields.map((f) => (
+                    <InputFieldRenderer
+                      key={f.id}
+                      field={f}
+                      value={newFieldValues[f.id]}
+                      onChange={(val) => setNewFieldValues((prev) => ({ ...prev, [f.id]: val }))}
+                    />
+                  ))}
                 </div>
               )}
 
