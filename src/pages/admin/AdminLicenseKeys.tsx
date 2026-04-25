@@ -280,47 +280,52 @@ const AdminLicenseKeys = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Product</TableHead>
                   <TableHead>Key</TableHead>
-                  <TableHead>Viewed On</TableHead>
-                  <TableHead>Viewed By</TableHead>
-                  <TableHead>Remarks</TableHead>
+                  <TableHead>Product</TableHead>
                   <TableHead>View Limit</TableHead>
                   <TableHead className="w-20">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {viewed.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">No viewed keys</TableCell></TableRow>
-                ) : viewed.flatMap(k => {
+                  <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">No viewed keys</TableCell></TableRow>
+                ) : viewed.map(k => {
                   const keyViews = (views || [])
                     .filter(v => v.license_key_id === k.id)
                     .sort((a, b) => new Date(b.viewed_at).getTime() - new Date(a.viewed_at).getTime());
-                  const rows = keyViews.length > 0 ? keyViews : [null];
-                  return rows.map((v, idx) => (
-                    <TableRow key={`${k.id}-${v?.id || 'none'}`}>
-                      <TableCell className="text-foreground">{productLabel(k)}{keyViews.length > 1 ? <span className="text-xs text-muted-foreground ml-1">(view {keyViews.length - idx})</span> : null}</TableCell>
-                      <TableCell className="font-mono text-foreground">
-                        <div className="flex items-center gap-2">
-                          <span>{k.key_value}</span>
+                  return (
+                    <TableRow key={k.id} className="align-top">
+                      <TableCell className="text-foreground">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-mono">{k.key_value}</span>
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => { navigator.clipboard.writeText(k.key_value); toast.success('Copied'); }}>
                             <Copy className="h-3 w-3" />
                           </Button>
                         </div>
+                        <div className="space-y-1.5 text-xs">
+                          {keyViews.length === 0 ? (
+                            <div className="text-muted-foreground">No view history</div>
+                          ) : keyViews.map((v, idx) => (
+                            <div key={v.id} className="border-l-2 border-border pl-2">
+                              {keyViews.length > 1 && (
+                                <div className="text-[10px] uppercase tracking-wide text-muted-foreground/70">View {keyViews.length - idx}</div>
+                              )}
+                              <div><span className="text-muted-foreground">Viewed by:</span> <span className="text-foreground">{v.viewed_by_email || '—'}</span></div>
+                              <div><span className="text-muted-foreground">Viewed on:</span> <span className="text-foreground">{formatDate(v.viewed_at)}</span></div>
+                              <div><span className="text-muted-foreground">Remarks:</span> <span className="text-foreground">{v.remarks || '—'}</span></div>
+                            </div>
+                          ))}
+                        </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{v ? formatDate(v.viewed_at) : '—'}</TableCell>
-                      <TableCell className="text-muted-foreground">{v?.viewed_by_email || '—'}</TableCell>
-                      <TableCell className="text-muted-foreground">{v?.remarks || '—'}</TableCell>
+                      <TableCell className="text-foreground">{productLabel(k)}</TableCell>
                       <TableCell className="text-muted-foreground">{k.view_count}/{k.view_limit}</TableCell>
                       <TableCell>
-                        {idx === 0 && (
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" title="Delete" onClick={() => { if (confirm('Delete this key (and all its view history)?')) deleteMutation.mutate(k.id); }}>
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        )}
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" title="Delete" onClick={() => { if (confirm('Delete this key (and all its view history)?')) deleteMutation.mutate(k.id); }}>
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       </TableCell>
                     </TableRow>
-                  ));
+                  );
                 })}
               </TableBody>
             </Table>
