@@ -49,6 +49,8 @@ const AdminLicenseKeys = () => {
 
   // Filter
   const [productFilter, setProductFilter] = useState<string>('all');
+  const [keySearch, setKeySearch] = useState('');
+  const [expandedHistory, setExpandedHistory] = useState<Record<string, boolean>>({});
 
   const { data: products } = useQuery({
     queryKey: ['admin-products-license'],
