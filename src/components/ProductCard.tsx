@@ -72,7 +72,7 @@ const ProductCard = ({ id, name, slug, price, original_price, image_url, duratio
         <Link to={`/item/${slug}`}>
           <h3 className="font-semibold text-foreground text-base line-clamp-2 hover:text-primary transition-colors">{name}</h3>
         </Link>
-        {duration && false && <p className="text-xs text-muted-foreground mt-1">{duration}</p>}
+        
         <div className="mt-2">
           <span className="text-xl font-bold" style={{ color: '#f5b800' }}>Rs {displayPrice}</span>
         </div>
