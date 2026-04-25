@@ -67,9 +67,19 @@ const AdminSalesStatement = () => {
   });
 
   const rows = useMemo(() => {
+    const todayKey = (() => {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit',
+      }).formatToParts(new Date());
+      const y = parts.find(p => p.type === 'year')!.value;
+      const m = parts.find(p => p.type === 'month')!.value;
+      const d = parts.find(p => p.type === 'day')!.value;
+      return `${y}-${m}-${d}`;
+    })();
     const map = new Map<string, { date: string; sales: number; refunds: number }>();
     for (let d = 1; d <= daysInMonth; d++) {
       const key = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      if (key > todayKey) continue;
       map.set(key, { date: key, sales: 0, refunds: 0 });
     }
     (orders || []).forEach(o => {
