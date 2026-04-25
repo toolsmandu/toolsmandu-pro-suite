@@ -71,7 +71,6 @@ const AdminLayout = () => {
         <Sidebar collapsible="icon">
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Admin Panel</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {topLinks.map(({ to, icon: Icon, label, end }) => (
