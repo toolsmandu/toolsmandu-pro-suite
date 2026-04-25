@@ -520,7 +520,7 @@ const AdminProducts = () => {
                     setForm({ ...form, name, slug: slugWasAuto ? autoSlug : form.slug });
                   }} />
                 </div>
-                <div className="md:col-span-3 grid gap-4 md:grid-cols-3">
+                <div className="md:col-span-3 grid gap-4 md:grid-cols-4">
                   <div>
                     <Label>Slug</Label>
                     <Input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="auto-generated" />
@@ -533,6 +533,10 @@ const AdminProducts = () => {
                         <option key={category.id} value={category.id}>{category.name}</option>
                       ))}
                     </select>
+                  </div>
+                  <div>
+                    <Label>Duration *</Label>
+                    <Input value={form.duration} onChange={(event) => setForm({ ...form, duration: event.target.value })} placeholder="e.g. 1 Month, 1 Year" />
                   </div>
                   <div>
                     <Label>Region *</Label>
