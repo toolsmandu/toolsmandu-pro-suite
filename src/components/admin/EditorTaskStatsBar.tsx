@@ -42,15 +42,15 @@ const EditorTaskStatsBar = () => {
   const Item = ({ icon: Icon, label, value, className }: any) => (
     <div className={`flex items-center gap-2 px-3 py-1 rounded-md border ${className}`}>
       <Icon className="h-4 w-4" />
-      <span className="text-xs text-muted-foreground">{label}:</span>
+      <span className="text-xs text-white">{label}:</span>
       <span className="text-sm font-semibold">{value}</span>
     </div>
   );
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <Item icon={Clock} label="Today's Tasks" value={stats.today} className="bg-background" />
-      <Item icon={CheckCircle2} label="Completed Today" value={stats.completedToday} className="bg-emerald-100 border-emerald-300 text-emerald-800" />
+      <Item icon={Clock} label="Today's Tasks" value={stats.today} className="bg-background text-foreground" />
+      <Item icon={CheckCircle2} label="Completed Today" value={stats.completedToday} className="border-emerald-300 bg-emerald-700 text-white" />
       <Item icon={ListChecks} label="Pending" value={stats.pending} className="bg-blue-100 border-blue-300 text-blue-800" />
       <Item icon={AlertTriangle} label="Overdue" value={stats.overdue} className="bg-red-100 border-red-300 text-red-800" />
     </div>
