@@ -137,11 +137,11 @@ const CategorySection = ({ category, products }: { category: { id: string; name:
   return (
     <section className="mb-12">
       <div className="flex items-center gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-foreground whitespace-nowrap">{category.name}</h2>
+        <h2 className="text-2xl font-bold text-[#ffffff] whitespace-nowrap">{category.name}</h2>
         <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }} />
         <div className="flex items-center gap-2">
           <Link to={`/item-category/${category.slug}`}>
-            <Button variant="outline" size="sm" className="h-8 text-xs font-medium hover:bg-[rgb(59,130,246)] hover:text-white" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
+            <Button variant="outline" size="sm" className="h-8 text-xs font-medium text-[#ffffff] hover:bg-[rgb(59,130,246)] hover:text-white" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
               View All
             </Button>
           </Link>
