@@ -32,6 +32,7 @@ const AdminBlogEditor = () => {
     title: '',
     slug: '',
     excerpt: '',
+    category_id: '' as string,
     content: '',
     cover_image_url: '',
     author_name: '',
@@ -43,6 +44,15 @@ const AdminBlogEditor = () => {
     sort_order: 0,
   });
   const [slugTouched, setSlugTouched] = useState(false);
+
+  const { data: categories } = useQuery({
+    queryKey: ['blog-categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('blog_categories').select('*').order('sort_order').order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const { data: blog, isLoading } = useQuery({
     queryKey: ['admin-blog', id],
