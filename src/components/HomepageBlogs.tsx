@@ -9,12 +9,12 @@ const HomepageBlogs = () => {
   const [current, setCurrent] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [visibleCount, setVisibleCount] = useState(
-    typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1
+    typeof window !== 'undefined' && window.innerWidth >= 1024 ? 4 : window.innerWidth >= 640 ? 2 : 1
   );
 
   useEffect(() => {
     const handleResize = () => {
-      const count = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1;
+      const count = window.innerWidth >= 1024 ? 4 : window.innerWidth >= 640 ? 2 : 1;
       setVisibleCount(prev => {
         if (prev !== count) {
           setCurrent(0);
@@ -38,7 +38,7 @@ const HomepageBlogs = () => {
         .eq('show_on_homepage', true)
         .order('sort_order', { ascending: true })
         .order('published_at', { ascending: false })
-        .limit(7);
+        .limit(8);
       return data || [];
     },
   });
