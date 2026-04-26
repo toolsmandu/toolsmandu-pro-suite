@@ -39,8 +39,8 @@ const EditorTaskStatsBar = () => {
 
   const stats = data || { today: 0, completedToday: 0, pending: 0, overdue: 0 };
 
-  const Item = ({ icon: Icon, label, value, className }: any) => (
-    <div className={`flex items-center gap-2 px-3 py-1 rounded-md border ${className}`}>
+  const Item = ({ icon: Icon, label, value, className, style }: any) => (
+    <div className={`flex items-center gap-2 px-3 py-1 rounded-md border ${className}`} style={style}>
       <Icon className="h-4 w-4" />
       <span className="text-xs text-white">{label}:</span>
       <span className="text-sm font-semibold">{value}</span>
