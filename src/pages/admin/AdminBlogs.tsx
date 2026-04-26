@@ -53,6 +53,28 @@ const AdminBlogs = () => {
     setDeleteId(null);
   };
 
+  const saveCategory = async () => {
+    const name = (editingCat?.name ?? newCatName).trim();
+    if (!name) return toast.error('Name required');
+    const payload = { name, slug: slugify(name) };
+    const { error } = editingCat
+      ? await supabase.from('blog_categories').update(payload).eq('id', editingCat.id)
+      : await supabase.from('blog_categories').insert(payload);
+    if (error) return toast.error(error.message);
+    toast.success(editingCat ? 'Category updated' : 'Category added');
+    setNewCatName('');
+    setEditingCat(null);
+    qc.invalidateQueries({ queryKey: ['blog-categories'] });
+  };
+
+  const deleteCategory = async (id: string) => {
+    const { error } = await supabase.from('blog_categories').delete().eq('id', id);
+    if (error) return toast.error(error.message);
+    toast.success('Category deleted');
+    qc.invalidateQueries({ queryKey: ['blog-categories'] });
+    qc.invalidateQueries({ queryKey: ['admin-blogs'] });
+  };
+
   const filtered = blogs?.filter(b =>
     b.title.toLowerCase().includes(search.toLowerCase()) ||
     b.slug.toLowerCase().includes(search.toLowerCase())
