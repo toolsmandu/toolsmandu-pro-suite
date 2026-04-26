@@ -20,11 +20,15 @@ const SearchPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Search Results</h1>
-      <p className="text-muted-foreground mb-8">Showing results for "{q}"</p>
+      <h1 className="text-3xl font-bold text-foreground mb-2 text-center">Search Results</h1>
+      <p className="text-muted-foreground mb-8 text-center">Showing results for "{q}"</p>
       {isLoading ? null : products && products.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {products.map(p => <ProductCard key={p.id} {...p} />)}
+        <div className="grid gap-4 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, 165px)' }}>
+          {products.map(p => (
+            <div key={p.id} className="w-[165px]">
+              <ProductCard {...p} />
+            </div>
+          ))}
         </div>
       ) : (
         <div className="text-center py-20">
