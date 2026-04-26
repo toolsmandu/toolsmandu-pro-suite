@@ -23,7 +23,8 @@ const AdminBlogs = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [catOpen, setCatOpen] = useState(false);
   const [newCatName, setNewCatName] = useState('');
-  const [editingCat, setEditingCat] = useState<{ id: string; name: string } | null>(null);
+  const [newCatSlug, setNewCatSlug] = useState('');
+  const [editingCat, setEditingCat] = useState<{ id: string; name: string; slug: string } | null>(null);
 
   const { data: categories } = useQuery({
     queryKey: ['blog-categories'],
@@ -56,13 +57,17 @@ const AdminBlogs = () => {
   const saveCategory = async () => {
     const name = (editingCat?.name ?? newCatName).trim();
     if (!name) return toast.error('Name required');
-    const payload = { name, slug: slugify(name) };
+    const slugInput = (editingCat?.slug ?? newCatSlug).trim();
+    const slug = slugInput ? slugify(slugInput) : slugify(name);
+    if (!slug) return toast.error('Slug required');
+    const payload = { name, slug };
     const { error } = editingCat
       ? await supabase.from('blog_categories').update(payload).eq('id', editingCat.id)
       : await supabase.from('blog_categories').insert(payload);
     if (error) return toast.error(error.message);
     toast.success(editingCat ? 'Category updated' : 'Category added');
     setNewCatName('');
+    setNewCatSlug('');
     setEditingCat(null);
     qc.invalidateQueries({ queryKey: ['blog-categories'] });
   };
@@ -82,7 +87,7 @@ const AdminBlogs = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4 flex-wrap">
+      <div className="flex items-center gap-3 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">Blogs</h1>
           <p className="text-sm text-muted-foreground">Publish and manage blog posts</p>
@@ -93,11 +98,10 @@ const AdminBlogs = () => {
         <Button asChild>
           <Link to="/admin/blogs/new"><Plus className="mr-2 h-4 w-4" /> New Blog Post</Link>
         </Button>
-      </div>
-
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Search posts..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+        <div className="relative w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Search posts..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+        </div>
       </div>
 
       {isLoading ? (
@@ -170,17 +174,27 @@ const AdminBlogs = () => {
             <DialogTitle>Blog Categories</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <div className="flex gap-2">
-              <Input
-                placeholder={editingCat ? 'Edit category name' : 'New category name'}
-                value={editingCat?.name ?? newCatName}
-                onChange={e => editingCat ? setEditingCat({ ...editingCat, name: e.target.value }) : setNewCatName(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && saveCategory()}
-              />
-              <Button onClick={saveCategory}>{editingCat ? 'Update' : 'Add'}</Button>
-              {editingCat && (
-                <Button variant="ghost" onClick={() => setEditingCat(null)}>Cancel</Button>
-              )}
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  placeholder={editingCat ? 'Edit category name' : 'Category name'}
+                  value={editingCat?.name ?? newCatName}
+                  onChange={e => editingCat ? setEditingCat({ ...editingCat, name: e.target.value }) : setNewCatName(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && saveCategory()}
+                />
+                <Input
+                  placeholder="Slug (auto from name if empty)"
+                  value={editingCat?.slug ?? newCatSlug}
+                  onChange={e => editingCat ? setEditingCat({ ...editingCat, slug: e.target.value }) : setNewCatSlug(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && saveCategory()}
+                />
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button onClick={saveCategory}>{editingCat ? 'Update' : 'Add'}</Button>
+                {editingCat && (
+                  <Button variant="ghost" onClick={() => setEditingCat(null)}>Cancel</Button>
+                )}
+              </div>
             </div>
             <div className="space-y-1 max-h-72 overflow-y-auto">
               {categories?.length === 0 && (
@@ -188,9 +202,12 @@ const AdminBlogs = () => {
               )}
               {categories?.map(cat => (
                 <div key={cat.id} className="flex items-center justify-between p-2 rounded border border-border">
-                  <span className="text-sm">{cat.name}</span>
+                  <div className="flex flex-col">
+                    <span className="text-sm">{cat.name}</span>
+                    <span className="text-xs text-muted-foreground">/{cat.slug}</span>
+                  </div>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingCat({ id: cat.id, name: cat.name })}>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingCat({ id: cat.id, name: cat.name, slug: cat.slug })}>
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteCategory(cat.id)}>
