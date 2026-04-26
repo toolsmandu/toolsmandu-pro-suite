@@ -195,13 +195,13 @@ const AdminCustomers = () => {
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by email, phone" className="pl-9" />
           </div>
-          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={`${selectClassName} w-auto`}>
+          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={`${selectClassName} w-24`}>
             <option value="all">All Roles</option>
             <option value="admin">Admin</option>
             <option value="editor">Editor</option>
             <option value="customer">Customer</option>
           </select>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={`${selectClassName} w-auto`}>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={`${selectClassName} w-24`}>
             <option value="all">All Status</option>
             <option value="active">Active</option>
             <option value="suspended">Suspended</option>
