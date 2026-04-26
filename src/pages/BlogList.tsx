@@ -29,13 +29,24 @@ const BlogList = () => {
     },
   });
 
-  const totalPages = Math.max(1, Math.ceil((blogs?.length || 0) / PAGE_SIZE));
-  const paginated = useMemo(() => {
+  const filtered = useMemo(() => {
     if (!blogs) return [];
-    const start = (page - 1) * PAGE_SIZE;
-    return blogs.slice(start, start + PAGE_SIZE);
-  }, [blogs, page]);
+    const q = search.trim().toLowerCase();
+    if (!q) return blogs;
+    return blogs.filter(b =>
+      b.title?.toLowerCase().includes(q) ||
+      b.excerpt?.toLowerCase().includes(q) ||
+      b.slug?.toLowerCase().includes(q)
+    );
+  }, [blogs, search]);
 
+  const totalPages = Math.max(1, Math.ceil((filtered?.length || 0) / PAGE_SIZE));
+  const paginated = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, page]);
+
+  useEffect(() => { setPage(1); }, [search]);
   useEffect(() => {
     if (page > totalPages) setPage(1);
   }, [totalPages, page]);
