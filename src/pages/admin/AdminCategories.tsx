@@ -54,7 +54,7 @@ const AdminCategories = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-3 mb-6">
         <h2 className="text-2xl font-bold text-foreground">Categories</h2>
         <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Category</Button>
       </div>
