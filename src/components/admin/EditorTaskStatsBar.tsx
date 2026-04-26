@@ -39,8 +39,8 @@ const EditorTaskStatsBar = () => {
 
   const stats = data || { today: 0, completedToday: 0, pending: 0, overdue: 0 };
 
-  const Item = ({ icon: Icon, label, value, className }: any) => (
-    <div className={`flex items-center gap-2 px-3 py-1 rounded-md border ${className}`}>
+  const Item = ({ icon: Icon, label, value, className, style }: any) => (
+    <div className={`flex items-center gap-2 px-3 py-1 rounded-md border ${className}`} style={style}>
       <Icon className="h-4 w-4" />
       <span className="text-xs text-white">{label}:</span>
       <span className="text-sm font-semibold">{value}</span>
@@ -49,7 +49,7 @@ const EditorTaskStatsBar = () => {
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <Item icon={Clock} label="Today's Tasks" value={stats.today} className="bg-slate-700 text-white border-transparent" />
+      <Item icon={Clock} label="Today's Tasks" value={stats.today} className="text-white border-transparent" style={{ backgroundColor: '#377F8C' }} />
       <Item icon={CheckCircle2} label="Completed Today" value={stats.completedToday} className="bg-emerald-700 text-white border-transparent" />
       <Item icon={ListChecks} label="Pending" value={stats.pending} className="bg-blue-700 text-white border-transparent" />
       <Item icon={AlertTriangle} label="Overdue" value={stats.overdue} className="bg-red-700 text-white border-transparent" />
