@@ -35,7 +35,6 @@ const AdminBlogEditor = () => {
     category_id: '' as string,
     content: '',
     cover_image_url: '',
-    author_name: '',
     meta_title: '',
     meta_description: '',
     meta_keywords: '',
@@ -73,7 +72,6 @@ const AdminBlogEditor = () => {
         category_id: (blog as any).category_id || '',
         content: blog.content || '',
         cover_image_url: blog.cover_image_url || '',
-        author_name: blog.author_name || '',
         meta_title: blog.meta_title || '',
         meta_description: blog.meta_description || '',
         meta_keywords: blog.meta_keywords || '',
@@ -227,14 +225,10 @@ const AdminBlogEditor = () => {
               <Label htmlFor="so">Sort Order</Label>
               <Input id="so" type="number" value={form.sort_order} onChange={e => setForm(f => ({ ...f, sort_order: parseInt(e.target.value) || 0 }))} />
             </div>
-            <div>
-              <Label htmlFor="auth">Author Name</Label>
-              <Input id="auth" value={form.author_name} onChange={e => setForm(f => ({ ...f, author_name: e.target.value }))} placeholder="Optional" />
-            </div>
           </Card>
 
           <Card className="p-4 space-y-2">
-            <h3 className="font-semibold">Cover Image</h3>
+            <h3 className="font-semibold">Featured Image</h3>
             <ImageUpload value={form.cover_image_url} onChange={url => setForm(f => ({ ...f, cover_image_url: url }))} label="" />
           </Card>
         </div>
