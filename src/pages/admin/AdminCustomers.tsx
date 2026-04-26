@@ -183,7 +183,7 @@ const AdminCustomers = () => {
   return (
     <>
     {exportDialog}
-    <div className="flex gap-6 h-[calc(100vh-5rem)]">
+    <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(addOpen || viewUser || editUser) ? 'lg:flex-row-reverse' : ''}`}>
       {/* Customers List */}
       <div className={`${addOpen ? 'flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
         <div className="flex items-center justify-between mb-4">

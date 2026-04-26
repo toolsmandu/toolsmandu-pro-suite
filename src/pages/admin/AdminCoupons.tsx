@@ -143,7 +143,7 @@ const AdminCoupons = () => {
   const isExpired = (d: string) => new Date(d) < new Date();
 
   return (
-    <div className="flex gap-6 h-[calc(100vh-5rem)]">
+    <div className={`flex gap-6 h-[calc(100vh-5rem)] ${panelOpen ? 'lg:flex-row-reverse' : ''}`}>
       {/* Coupons List */}
       <div className={`${panelOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center justify-between mb-6">
