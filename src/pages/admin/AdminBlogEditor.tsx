@@ -70,6 +70,7 @@ const AdminBlogEditor = () => {
         title: blog.title || '',
         slug: blog.slug || '',
         excerpt: blog.excerpt || '',
+        category_id: (blog as any).category_id || '',
         content: blog.content || '',
         cover_image_url: blog.cover_image_url || '',
         author_name: blog.author_name || '',
