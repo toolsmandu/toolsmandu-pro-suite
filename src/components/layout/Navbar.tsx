@@ -124,7 +124,7 @@ const Navbar = () => {
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 h-8 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-[#ffffff] placeholder:text-[#ffffff]"
+                  className="flex-1 h-12 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-[#ffffff] placeholder:text-[#ffffff]"
                 />
                 <button
                   type="submit"
