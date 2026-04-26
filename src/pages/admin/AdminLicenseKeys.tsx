@@ -195,7 +195,8 @@ const AdminLicenseKeys = () => {
   };
 
   return (
-    <div>
+    <div className={`flex gap-6 ${addOpen ? 'lg:flex-row-reverse' : ''}`}>
+      <div className={`${addOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-foreground">License Keys</h2>
         <div className="flex items-center gap-3">
