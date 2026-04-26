@@ -57,13 +57,17 @@ const AdminBlogs = () => {
   const saveCategory = async () => {
     const name = (editingCat?.name ?? newCatName).trim();
     if (!name) return toast.error('Name required');
-    const payload = { name, slug: slugify(name) };
+    const slugInput = (editingCat?.slug ?? newCatSlug).trim();
+    const slug = slugInput ? slugify(slugInput) : slugify(name);
+    if (!slug) return toast.error('Slug required');
+    const payload = { name, slug };
     const { error } = editingCat
       ? await supabase.from('blog_categories').update(payload).eq('id', editingCat.id)
       : await supabase.from('blog_categories').insert(payload);
     if (error) return toast.error(error.message);
     toast.success(editingCat ? 'Category updated' : 'Category added');
     setNewCatName('');
+    setNewCatSlug('');
     setEditingCat(null);
     qc.invalidateQueries({ queryKey: ['blog-categories'] });
   };
