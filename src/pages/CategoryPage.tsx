@@ -29,7 +29,7 @@ const CategoryPage = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-foreground mb-8 text-center">{category?.name || 'Category'}</h1>
       {isLoading ? null : products && products.length > 0 ? (
-        <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(165px, 165px))' }}>
+        <div className="grid gap-4 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, 165px)' }}>
           {products.map(p => (
             <div key={p.id} className="w-[165px]">
               <ProductCard {...p} />
