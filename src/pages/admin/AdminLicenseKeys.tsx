@@ -358,13 +358,19 @@ const AdminLicenseKeys = () => {
           </div>
         </TabsContent>
       </Tabs>
+      </div>
 
-      {/* Add Keys Dialog */}
-      <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Add License Keys</DialogTitle></DialogHeader>
-          <ScrollArea className="max-h-[70vh]">
-            <div className="space-y-4 pr-2">
+      {/* Add Keys Inline Panel */}
+      {addOpen && (
+        <div className="w-full lg:w-[480px] lg:min-w-[480px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h3 className="font-semibold text-foreground">Add License Keys</h3>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setAddOpen(false)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <ScrollArea className="flex-1 p-4">
+            <div className="space-y-4">
               <div>
                 <Label className="text-xs text-muted-foreground">Product *</Label>
                 <Select value={productId} onValueChange={(v) => { setProductId(v); setVariationId('none'); }}>
@@ -400,12 +406,12 @@ const AdminLicenseKeys = () => {
               </div>
             </div>
           </ScrollArea>
-          <DialogFooter>
+          <div className="flex justify-end gap-2 p-4 border-t border-border">
             <Button variant="outline" onClick={() => setAddOpen(false)}><X className="h-4 w-4 mr-2" />Cancel</Button>
             <Button onClick={() => addMutation.mutate()} disabled={addMutation.isPending}><Save className="h-4 w-4 mr-2" />Save Keys</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+        </div>
+      )}
 
       {/* Edit Dialog */}
       <Dialog open={!!editKey} onOpenChange={(o) => !o && setEditKey(null)}>
