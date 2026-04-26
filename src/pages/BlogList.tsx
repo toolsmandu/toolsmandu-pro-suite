@@ -19,6 +19,7 @@ const PAGE_SIZE = 15;
 
 const BlogList = () => {
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
 
   const { data: blogs, isLoading } = useQuery({
     queryKey: ['blogs-list'],
