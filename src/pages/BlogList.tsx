@@ -83,7 +83,7 @@ const BlogList = () => {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search blog posts..."
-            className="pl-9"
+            className="pl-9 border-white"
           />
         </div>
       </div>
