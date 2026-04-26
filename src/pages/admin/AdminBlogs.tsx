@@ -130,10 +130,6 @@ const AdminBlogs = () => {
                     <Badge variant="outline" className="gap-1"><Star className="h-3 w-3" /> Homepage</Badge>
                   )}
                 </div>
-                  {blog.show_on_homepage && (
-                    <Badge variant="outline" className="gap-1"><Star className="h-3 w-3" /> Homepage</Badge>
-                  )}
-                </div>
                 <p className="text-xs text-muted-foreground truncate mt-1">/{blog.slug}</p>
                 {blog.excerpt && <p className="text-sm text-muted-foreground line-clamp-1 mt-1">{blog.excerpt}</p>}
               </div>
