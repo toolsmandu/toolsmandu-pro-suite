@@ -111,7 +111,7 @@ const App = () => (
                 <Route path="product-types" element={<AdminProductTypes />} />
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="input-fields" element={<AdminInputFields />} />
-                <Route path="flash-sale-labels" element={<AdminFlashSaleLabels />} />
+                <Route path="product-tags" element={<AdminFlashSaleLabels />} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="expired-orders" element={<AdminExpiredOrders />} />
                 <Route path="customers" element={<AdminCustomers />} />
