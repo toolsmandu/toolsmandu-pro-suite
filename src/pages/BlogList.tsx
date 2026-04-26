@@ -77,14 +77,20 @@ const BlogList = () => {
       <div className="text-center max-w-2xl mx-auto mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Blog</h1>
         <p className="text-muted-foreground mb-6">Tips, guides, and updates from Toolsmandu.</p>
-        <div className="relative max-w-md mx-auto">
-          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className="relative max-w-md mx-auto flex items-center gap-2 rounded-md border border-white bg-primary/20 p-1 pl-4">
           <Input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search blog posts..."
-            className="pl-9 border-white"
+            placeholder="Search..."
+            className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-0"
           />
+          <button
+            type="button"
+            aria-label="Search"
+            className="flex items-center justify-center h-10 w-12 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <Search className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
