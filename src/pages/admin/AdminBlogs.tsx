@@ -5,23 +5,39 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2, Eye, Search, Star } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, Search, Star, Tag, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
+const slugify = (s: string) =>
+  s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
 
 const AdminBlogs = () => {
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [catOpen, setCatOpen] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
+  const [editingCat, setEditingCat] = useState<{ id: string; name: string } | null>(null);
+
+  const { data: categories } = useQuery({
+    queryKey: ['blog-categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('blog_categories').select('*').order('sort_order').order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const { data: blogs, isLoading } = useQuery({
     queryKey: ['admin-blogs'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('blogs').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('blogs').select('*, blog_categories(name)').order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -37,6 +53,28 @@ const AdminBlogs = () => {
     setDeleteId(null);
   };
 
+  const saveCategory = async () => {
+    const name = (editingCat?.name ?? newCatName).trim();
+    if (!name) return toast.error('Name required');
+    const payload = { name, slug: slugify(name) };
+    const { error } = editingCat
+      ? await supabase.from('blog_categories').update(payload).eq('id', editingCat.id)
+      : await supabase.from('blog_categories').insert(payload);
+    if (error) return toast.error(error.message);
+    toast.success(editingCat ? 'Category updated' : 'Category added');
+    setNewCatName('');
+    setEditingCat(null);
+    qc.invalidateQueries({ queryKey: ['blog-categories'] });
+  };
+
+  const deleteCategory = async (id: string) => {
+    const { error } = await supabase.from('blog_categories').delete().eq('id', id);
+    if (error) return toast.error(error.message);
+    toast.success('Category deleted');
+    qc.invalidateQueries({ queryKey: ['blog-categories'] });
+    qc.invalidateQueries({ queryKey: ['admin-blogs'] });
+  };
+
   const filtered = blogs?.filter(b =>
     b.title.toLowerCase().includes(search.toLowerCase()) ||
     b.slug.toLowerCase().includes(search.toLowerCase())
@@ -49,6 +87,9 @@ const AdminBlogs = () => {
           <h1 className="text-2xl font-bold">Blogs</h1>
           <p className="text-sm text-muted-foreground">Publish and manage blog posts</p>
         </div>
+        <Button variant="outline" onClick={() => setCatOpen(true)}>
+          <Tag className="mr-2 h-4 w-4" /> Add Blog Category
+        </Button>
         <Button asChild>
           <Link to="/admin/blogs/new"><Plus className="mr-2 h-4 w-4" /> New Blog Post</Link>
         </Button>
@@ -81,6 +122,9 @@ const AdminBlogs = () => {
                     <Badge variant="default">Published</Badge>
                   ) : (
                     <Badge variant="secondary">Draft</Badge>
+                  )}
+                  {(blog as any).blog_categories?.name && (
+                    <Badge variant="outline">{(blog as any).blog_categories.name}</Badge>
                   )}
                   {blog.show_on_homepage && (
                     <Badge variant="outline" className="gap-1"><Star className="h-3 w-3" /> Homepage</Badge>
@@ -119,6 +163,46 @@ const AdminBlogs = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={catOpen} onOpenChange={setCatOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Blog Categories</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <Input
+                placeholder={editingCat ? 'Edit category name' : 'New category name'}
+                value={editingCat?.name ?? newCatName}
+                onChange={e => editingCat ? setEditingCat({ ...editingCat, name: e.target.value }) : setNewCatName(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && saveCategory()}
+              />
+              <Button onClick={saveCategory}>{editingCat ? 'Update' : 'Add'}</Button>
+              {editingCat && (
+                <Button variant="ghost" onClick={() => setEditingCat(null)}>Cancel</Button>
+              )}
+            </div>
+            <div className="space-y-1 max-h-72 overflow-y-auto">
+              {categories?.length === 0 && (
+                <p className="text-sm text-muted-foreground py-4 text-center">No categories yet.</p>
+              )}
+              {categories?.map(cat => (
+                <div key={cat.id} className="flex items-center justify-between p-2 rounded border border-border">
+                  <span className="text-sm">{cat.name}</span>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingCat({ id: cat.id, name: cat.name })}>
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteCategory(cat.id)}>
+                      <X className="h-3.5 w-3.5 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

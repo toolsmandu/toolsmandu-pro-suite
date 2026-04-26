@@ -13,6 +13,7 @@ import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUpload from '@/components/admin/ImageUpload';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const slugify = (s: string) =>
   s.toLowerCase().trim()
@@ -31,6 +32,7 @@ const AdminBlogEditor = () => {
     title: '',
     slug: '',
     excerpt: '',
+    category_id: '' as string,
     content: '',
     cover_image_url: '',
     author_name: '',
@@ -42,6 +44,15 @@ const AdminBlogEditor = () => {
     sort_order: 0,
   });
   const [slugTouched, setSlugTouched] = useState(false);
+
+  const { data: categories } = useQuery({
+    queryKey: ['blog-categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('blog_categories').select('*').order('sort_order').order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const { data: blog, isLoading } = useQuery({
     queryKey: ['admin-blog', id],
@@ -59,6 +70,7 @@ const AdminBlogEditor = () => {
         title: blog.title || '',
         slug: blog.slug || '',
         excerpt: blog.excerpt || '',
+        category_id: (blog as any).category_id || '',
         content: blog.content || '',
         cover_image_url: blog.cover_image_url || '',
         author_name: blog.author_name || '',
@@ -90,6 +102,7 @@ const AdminBlogEditor = () => {
     const payload = {
       ...form,
       slug: slugify(form.slug),
+      category_id: form.category_id || null,
       published_at: form.is_published && !blog?.published_at ? new Date().toISOString() : blog?.published_at,
     };
 
@@ -145,6 +158,23 @@ const AdminBlogEditor = () => {
             <div>
               <Label htmlFor="excerpt">Excerpt</Label>
               <Textarea id="excerpt" value={form.excerpt} onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))} placeholder="Short summary shown in cards and previews" rows={2} />
+            </div>
+            <div>
+              <Label htmlFor="category">Category</Label>
+              <Select
+                value={form.category_id || 'none'}
+                onValueChange={v => setForm(f => ({ ...f, category_id: v === 'none' ? '' : v }))}
+              >
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">— No category —</SelectItem>
+                  {categories?.map(c => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </Card>
 
