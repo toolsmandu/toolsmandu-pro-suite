@@ -33,10 +33,15 @@ const BlogList = () => {
     if (!blogs) return [];
     const q = search.trim().toLowerCase();
     if (!q) return blogs;
+    const stripHtml = (s?: string | null) => (s || '').replace(/<[^>]*>/g, ' ').toLowerCase();
     return blogs.filter(b =>
       b.title?.toLowerCase().includes(q) ||
       b.excerpt?.toLowerCase().includes(q) ||
-      b.slug?.toLowerCase().includes(q)
+      b.slug?.toLowerCase().includes(q) ||
+      b.meta_keywords?.toLowerCase().includes(q) ||
+      b.meta_title?.toLowerCase().includes(q) ||
+      b.meta_description?.toLowerCase().includes(q) ||
+      stripHtml(b.content).includes(q)
     );
   }, [blogs, search]);
 
