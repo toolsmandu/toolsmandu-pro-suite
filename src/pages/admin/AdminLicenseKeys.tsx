@@ -197,48 +197,46 @@ const AdminLicenseKeys = () => {
   return (
     <div className={`flex gap-6 ${addOpen ? 'lg:flex-row-reverse' : ''}`}>
       <div className={`${addOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-6 flex-wrap">
         <h2 className="text-2xl font-bold text-foreground">License Keys</h2>
         <Button onClick={() => setAddOpen(true)}><Plus className="h-4 w-4 mr-2" /> Add Keys</Button>
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input value={keySearch} onChange={e => setKeySearch(e.target.value)} placeholder="Search keys" className="pl-9 w-56" />
         </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" role="combobox" className="w-56 justify-between font-normal">
+              <span className="truncate">
+                {productFilter === 'all' ? 'All Products' : (productMap.get(productFilter) || 'Select product')}
+              </span>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-0 z-[9999]" align="start">
+            <Command>
+              <CommandInput placeholder="Search products..." />
+              <CommandList>
+                <CommandEmpty>No product found.</CommandEmpty>
+                <CommandGroup>
+                  <CommandItem value="All Products" onSelect={() => setProductFilter('all')}>
+                    <Check className={cn('mr-2 h-4 w-4', productFilter === 'all' ? 'opacity-100' : 'opacity-0')} />
+                    All Products
+                  </CommandItem>
+                  {products?.map(p => (
+                    <CommandItem key={p.id} value={p.name} onSelect={() => setProductFilter(p.id)}>
+                      <Check className={cn('mr-2 h-4 w-4', productFilter === p.id ? 'opacity-100' : 'opacity-0')} />
+                      {p.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <Tabs defaultValue="fresh">
-        <div className="flex items-center justify-between mb-2 gap-3">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" role="combobox" className="w-56 justify-between font-normal">
-                <span className="truncate">
-                  {productFilter === 'all' ? 'All Products' : (productMap.get(productFilter) || 'Select product')}
-                </span>
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56 p-0 z-[9999]" align="start">
-              <Command>
-                <CommandInput placeholder="Search products..." />
-                <CommandList>
-                  <CommandEmpty>No product found.</CommandEmpty>
-                  <CommandGroup>
-                    <CommandItem value="All Products" onSelect={() => setProductFilter('all')}>
-                      <Check className={cn('mr-2 h-4 w-4', productFilter === 'all' ? 'opacity-100' : 'opacity-0')} />
-                      All Products
-                    </CommandItem>
-                    {products?.map(p => (
-                      <CommandItem key={p.id} value={p.name} onSelect={() => setProductFilter(p.id)}>
-                        <Check className={cn('mr-2 h-4 w-4', productFilter === p.id ? 'opacity-100' : 'opacity-0')} />
-                        {p.name}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        </div>
         <TabsList>
           <TabsTrigger value="fresh">Fresh Keys ({fresh.length})</TabsTrigger>
           <TabsTrigger value="viewed">Viewed Keys ({viewed.length})</TabsTrigger>
