@@ -59,6 +59,7 @@ const emptyForm = () => ({
   is_bestseller: false,
   is_flash_sale: false,
   flash_sale_label: '',
+  single_product_tag: '',
   meta_title: '',
   meta_description: '',
   features: '',
@@ -128,6 +129,15 @@ const AdminProducts = () => {
     },
   });
 
+  const { data: singleProductTags } = useQuery({
+    queryKey: ['single-product-tags'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('single_product_tags').select('*').order('sort_order');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const { data: allInputFields } = useQuery({
     queryKey: ['input-fields-all'],
     queryFn: async () => {
@@ -182,6 +192,7 @@ const AdminProducts = () => {
       is_bestseller: product.is_bestseller || false,
       is_flash_sale: product.is_flash_sale || false,
       flash_sale_label: product.flash_sale_label || '',
+      single_product_tag: product.single_product_tag || '',
       meta_title: product.meta_title || '',
       meta_description: product.meta_description || '',
       features: Array.isArray(product.features) ? product.features.join('\n') : '',
@@ -257,6 +268,7 @@ const AdminProducts = () => {
         is_bestseller: form.is_bestseller,
         is_flash_sale: form.is_flash_sale,
         flash_sale_label: form.flash_sale_label || null,
+        single_product_tag: form.single_product_tag || null,
         meta_title: form.meta_title || null,
         meta_description: form.meta_description || null,
         features: form.features ? form.features.split('\n').map((item) => item.trim()).filter(Boolean) : [],
@@ -620,35 +632,12 @@ const AdminProducts = () => {
                 </div>
                 <div>
                   <Label>Single Product Tag</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button type="button" className={selectClassName + ' justify-between flex items-center text-left'}>
-                        <span className="truncate">
-                          {[
-                            form.is_featured && 'Featured',
-                            form.is_bestseller && 'Bestseller',
-                            form.is_flash_sale && 'Flash Sale',
-                          ].filter(Boolean).join(', ') || 'Select tags'}
-                        </span>
-                        <ChevronDown className="h-4 w-4 opacity-50 shrink-0 ml-2" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[--radix-popover-trigger-width] p-2" align="start">
-                      {[
-                        { key: 'is_featured', label: 'Featured' },
-                        { key: 'is_bestseller', label: 'Bestseller' },
-                        { key: 'is_flash_sale', label: 'Flash Sale' },
-                      ].map((tag) => (
-                        <label key={tag.key} className="flex items-center gap-2 text-sm cursor-pointer rounded px-2 py-1.5 hover:bg-accent">
-                          <Checkbox
-                            checked={(form as any)[tag.key]}
-                            onCheckedChange={(value) => setForm({ ...form, [tag.key]: !!value })}
-                          />
-                          <span>{tag.label}</span>
-                        </label>
-                      ))}
-                    </PopoverContent>
-                  </Popover>
+                  <select value={form.single_product_tag} onChange={(event) => setForm({ ...form, single_product_tag: event.target.value })} className={selectClassName}>
+                    <option value="">No Tag</option>
+                    {singleProductTags?.map((tag: any) => (
+                      <option key={tag.id} value={tag.label}>{tag.label}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
