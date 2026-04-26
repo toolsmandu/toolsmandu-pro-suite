@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
-import { Loader2, Calendar } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Loader2, Calendar, Search } from 'lucide-react';
 import {
   Pagination,
   PaginationContent,
