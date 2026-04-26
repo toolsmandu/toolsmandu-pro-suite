@@ -199,11 +199,15 @@ const AdminLicenseKeys = () => {
       <div className={`${addOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
       <div className="flex items-center gap-3 mb-6">
         <h2 className="text-2xl font-bold text-foreground">License Keys</h2>
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={keySearch} onChange={e => setKeySearch(e.target.value)} placeholder="Search keys" className="pl-9 w-56" />
-          </div>
+        <Button onClick={() => setAddOpen(true)}><Plus className="h-4 w-4 mr-2" /> Add Keys</Button>
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input value={keySearch} onChange={e => setKeySearch(e.target.value)} placeholder="Search keys" className="pl-9 w-56" />
+        </div>
+      </div>
+
+      <Tabs defaultValue="fresh">
+        <div className="flex items-center justify-between mb-2 gap-3">
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" role="combobox" className="w-56 justify-between font-normal">
@@ -213,7 +217,7 @@ const AdminLicenseKeys = () => {
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-56 p-0 z-[9999]" align="end">
+            <PopoverContent className="w-56 p-0 z-[9999]" align="start">
               <Command>
                 <CommandInput placeholder="Search products..." />
                 <CommandList>
@@ -234,11 +238,7 @@ const AdminLicenseKeys = () => {
               </Command>
             </PopoverContent>
           </Popover>
-          <Button onClick={() => setAddOpen(true)}><Plus className="h-4 w-4 mr-2" /> Add Keys</Button>
         </div>
-      </div>
-
-      <Tabs defaultValue="fresh">
         <TabsList>
           <TabsTrigger value="fresh">Fresh Keys ({fresh.length})</TabsTrigger>
           <TabsTrigger value="viewed">Viewed Keys ({viewed.length})</TabsTrigger>
