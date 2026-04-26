@@ -163,6 +163,46 @@ const AdminBlogs = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={catOpen} onOpenChange={setCatOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Blog Categories</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <Input
+                placeholder={editingCat ? 'Edit category name' : 'New category name'}
+                value={editingCat?.name ?? newCatName}
+                onChange={e => editingCat ? setEditingCat({ ...editingCat, name: e.target.value }) : setNewCatName(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && saveCategory()}
+              />
+              <Button onClick={saveCategory}>{editingCat ? 'Update' : 'Add'}</Button>
+              {editingCat && (
+                <Button variant="ghost" onClick={() => setEditingCat(null)}>Cancel</Button>
+              )}
+            </div>
+            <div className="space-y-1 max-h-72 overflow-y-auto">
+              {categories?.length === 0 && (
+                <p className="text-sm text-muted-foreground py-4 text-center">No categories yet.</p>
+              )}
+              {categories?.map(cat => (
+                <div key={cat.id} className="flex items-center justify-between p-2 rounded border border-border">
+                  <span className="text-sm">{cat.name}</span>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingCat({ id: cat.id, name: cat.name })}>
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteCategory(cat.id)}>
+                      <X className="h-3.5 w-3.5 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
