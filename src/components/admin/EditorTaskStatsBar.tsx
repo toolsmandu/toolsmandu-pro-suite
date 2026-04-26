@@ -50,9 +50,9 @@ const EditorTaskStatsBar = () => {
   return (
     <div className="flex items-center gap-2 flex-wrap">
       <Item icon={Clock} label="Today's Tasks" value={stats.today} className="bg-background" />
-      <Item icon={CheckCircle2} label="Completed Today" value={stats.completedToday} className="bg-emerald-50 border-emerald-200 text-emerald-700" />
-      <Item icon={ListChecks} label="Pending" value={stats.pending} className="bg-amber-50 border-amber-200 text-amber-700" />
-      <Item icon={AlertTriangle} label="Overdue" value={stats.overdue} className="bg-red-50 border-red-200 text-red-700" />
+      <Item icon={CheckCircle2} label="Completed Today" value={stats.completedToday} className="bg-emerald-100 border-emerald-300 text-emerald-800" />
+      <Item icon={ListChecks} label="Pending" value={stats.pending} className="bg-blue-100 border-blue-300 text-blue-800" />
+      <Item icon={AlertTriangle} label="Overdue" value={stats.overdue} className="bg-red-100 border-red-300 text-red-800" />
     </div>
   );
 };
