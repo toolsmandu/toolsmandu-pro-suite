@@ -123,6 +123,13 @@ const AdminBlogs = () => {
                   ) : (
                     <Badge variant="secondary">Draft</Badge>
                   )}
+                  {(blog as any).blog_categories?.name && (
+                    <Badge variant="outline">{(blog as any).blog_categories.name}</Badge>
+                  )}
+                  {blog.show_on_homepage && (
+                    <Badge variant="outline" className="gap-1"><Star className="h-3 w-3" /> Homepage</Badge>
+                  )}
+                </div>
                   {blog.show_on_homepage && (
                     <Badge variant="outline" className="gap-1"><Star className="h-3 w-3" /> Homepage</Badge>
                   )}
