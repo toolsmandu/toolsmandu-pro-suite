@@ -74,13 +74,24 @@ const BlogList = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Blog</h1>
-      <p className="text-muted-foreground mb-8">Tips, guides, and updates from Toolsmandu.</p>
+      <div className="text-center max-w-2xl mx-auto mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Blog</h1>
+        <p className="text-muted-foreground mb-6">Tips, guides, and updates from Toolsmandu.</p>
+        <div className="relative max-w-md mx-auto">
+          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search blog posts..."
+            className="pl-9"
+          />
+        </div>
+      </div>
 
       {isLoading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-      ) : !blogs?.length ? (
-        <p className="text-muted-foreground">No posts yet.</p>
+      ) : !filtered?.length ? (
+        <p className="text-muted-foreground text-center">{search ? 'No posts match your search.' : 'No posts yet.'}</p>
       ) : (
         <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
