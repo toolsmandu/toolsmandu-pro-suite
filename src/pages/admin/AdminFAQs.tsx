@@ -99,7 +99,7 @@ const AdminFAQs = () => {
         </Button>
       </div>
 
-      <div className="flex gap-6">
+      <div className={`flex gap-6 ${panelOpen ? 'lg:flex-row-reverse' : ''}`}>
         <div className="flex-1 min-w-0">
           {isLoading ? (
             <p className="text-muted-foreground">Loading...</p>

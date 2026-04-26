@@ -58,7 +58,7 @@ const AdminCategories = () => {
         <h2 className="text-2xl font-bold text-foreground">Categories</h2>
         <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Category</Button>
       </div>
-      <div className="flex gap-6">
+      <div className={`flex gap-6 ${panelOpen ? 'lg:flex-row-reverse' : ''}`}>
         <div className="flex-1 min-w-0 border border-border rounded-lg overflow-hidden">
           <Table>
             <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Slug</TableHead><TableHead>Order</TableHead><TableHead className="w-28">Actions</TableHead></TableRow></TableHeader>
