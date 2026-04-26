@@ -94,7 +94,6 @@ const HomepageBlogs = () => {
             <Button variant="outline" size="sm" className="h-8 text-xs font-medium text-[#ffffff] hover:bg-[rgb(59,130,246)] hover:text-white" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
               View All <ArrowRight className="ml-1 h-3 w-3" />
             </Button>
-            </Button>
           </Link>
           {canSlide && (
             <>
