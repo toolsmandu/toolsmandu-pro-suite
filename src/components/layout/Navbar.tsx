@@ -119,7 +119,7 @@ const Navbar = () => {
 
             {/* Desktop search */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8">
-              <div className="flex items-center gap-2 w-full rounded-md border border-white bg-primary/20 p-1 pl-4">
+              <div className="flex items-center gap-2 w-full rounded-md p-1 pl-4 bg-blue-900">
                 <Input
                   placeholder="Search..."
                   value={searchQuery}
