@@ -137,7 +137,7 @@ const AdminInputFields = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by label..."
-              className="pl-8 pr-8 h-9 w-64"
+              className="pl-8 pr-8 w-64"
             />
             {searchTerm && (
               <button
