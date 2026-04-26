@@ -213,118 +213,124 @@ const AdminInputFields = () => {
           </Table>
         </div>
       )}
+      </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle>{editingId ? 'Edit Input Field' : 'Add Input Field'}</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
-            <div>
-              <Label>Input Field Name *</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Customer Email" />
-            </div>
-
-            <div>
-              <Label>Field Type *</Label>
-              <select
-                value={form.field_type}
-                onChange={(e) => setForm({ ...form, field_type: e.target.value as FieldType })}
-                className={selectClassName}
-              >
-                <option value="email">Email</option>
-                <option value="text">Text</option>
-                <option value="password">Password</option>
-                <option value="number">Number</option>
-                <option value="checkbox">Checkbox</option>
-              </select>
-            </div>
-
-            {!isCheckbox && (
-              <>
-                <div>
-                  <Label>Label *</Label>
-                  <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Shown above the field" />
-                </div>
-                <div>
-                  <Label>Placeholder</Label>
-                  <Input value={form.placeholder} onChange={(e) => setForm({ ...form, placeholder: e.target.value })} />
-                </div>
-              </>
-            )}
-
-            {isCheckbox && (
-              <>
-                <div>
-                  <Label>Internal Label *</Label>
-                  <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Internal name" />
-                </div>
-                <div>
-                  <Label>Selection Mode *</Label>
-                  <select
-                    value={form.checkbox_mode}
-                    onChange={(e) => setForm({ ...form, checkbox_mode: e.target.value as 'single' | 'multi' })}
-                    className={selectClassName}
-                  >
-                    <option value="single">Single Option (only one can be selected)</option>
-                    <option value="multi">Multi Option (multiple can be selected)</option>
-                  </select>
-                </div>
-                <div>
-                  <Label>Question *</Label>
-                  <Input value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} placeholder="e.g. Choose your platform" />
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <Label>Options *</Label>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, options: [...form.options, ''] })}>
-                      <Plus className="h-3 w-3 mr-1" /> Add Option
-                    </Button>
-                  </div>
-                  <div className="space-y-2">
-                    {form.options.map((opt, i) => (
-                      <div key={i} className="flex gap-2">
-                        <Input
-                          value={opt}
-                          onChange={(e) => {
-                            const next = [...form.options];
-                            next[i] = e.target.value;
-                            setForm({ ...form, options: next });
-                          }}
-                          placeholder={`Option ${i + 1}`}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="text-destructive shrink-0"
-                          onClick={() => setForm({ ...form, options: form.options.filter((_, x) => x !== i) })}
-                          disabled={form.options.length <= 1}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            <div className="flex items-center gap-3">
-              <Switch checked={form.is_required} onCheckedChange={(v) => setForm({ ...form, is_required: v })} />
-              <Label>Required</Label>
-            </div>
+      {open && (
+        <div className="w-full lg:w-[480px] lg:min-w-[480px] border border-border rounded-lg bg-background flex flex-col max-h-[calc(100vh-5rem)]">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h3 className="font-semibold text-foreground">{editingId ? 'Edit Input Field' : 'Add Input Field'}</h3>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setOpen(false)}>
+              <X className="h-4 w-4" />
+            </Button>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <ScrollArea className="flex-1 p-4">
+            <div className="space-y-4">
+              <div>
+                <Label>Input Field Name *</Label>
+                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Customer Email" />
+              </div>
+
+              <div>
+                <Label>Field Type *</Label>
+                <select
+                  value={form.field_type}
+                  onChange={(e) => setForm({ ...form, field_type: e.target.value as FieldType })}
+                  className={selectClassName}
+                >
+                  <option value="email">Email</option>
+                  <option value="text">Text</option>
+                  <option value="password">Password</option>
+                  <option value="number">Number</option>
+                  <option value="checkbox">Checkbox</option>
+                </select>
+              </div>
+
+              {!isCheckbox && (
+                <>
+                  <div>
+                    <Label>Label *</Label>
+                    <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Shown above the field" />
+                  </div>
+                  <div>
+                    <Label>Placeholder</Label>
+                    <Input value={form.placeholder} onChange={(e) => setForm({ ...form, placeholder: e.target.value })} />
+                  </div>
+                </>
+              )}
+
+              {isCheckbox && (
+                <>
+                  <div>
+                    <Label>Internal Label *</Label>
+                    <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Internal name" />
+                  </div>
+                  <div>
+                    <Label>Selection Mode *</Label>
+                    <select
+                      value={form.checkbox_mode}
+                      onChange={(e) => setForm({ ...form, checkbox_mode: e.target.value as 'single' | 'multi' })}
+                      className={selectClassName}
+                    >
+                      <option value="single">Single Option (only one can be selected)</option>
+                      <option value="multi">Multi Option (multiple can be selected)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Question *</Label>
+                    <Input value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} placeholder="e.g. Choose your platform" />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label>Options *</Label>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, options: [...form.options, ''] })}>
+                        <Plus className="h-3 w-3 mr-1" /> Add Option
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {form.options.map((opt, i) => (
+                        <div key={i} className="flex gap-2">
+                          <Input
+                            value={opt}
+                            onChange={(e) => {
+                              const next = [...form.options];
+                              next[i] = e.target.value;
+                              setForm({ ...form, options: next });
+                            }}
+                            placeholder={`Option ${i + 1}`}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive shrink-0"
+                            onClick={() => setForm({ ...form, options: form.options.filter((_, x) => x !== i) })}
+                            disabled={form.options.length <= 1}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div className="flex items-center gap-3">
+                <Switch checked={form.is_required} onCheckedChange={(v) => setForm({ ...form, is_required: v })} />
+                <Label>Required</Label>
+              </div>
+            </div>
+          </ScrollArea>
+
+          <div className="flex justify-end gap-2 p-4 border-t border-border">
+            <Button variant="outline" onClick={() => setOpen(false)}><X className="h-4 w-4 mr-2" />Cancel</Button>
             <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-              {editingId ? 'Update' : 'Create'}
+              <Save className="h-4 w-4 mr-2" />{editingId ? 'Update' : 'Create'}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
