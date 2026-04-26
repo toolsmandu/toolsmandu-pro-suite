@@ -433,13 +433,10 @@ const ProductPage = () => {
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-2">
-                      {product.is_flash_sale && (
-                        <Badge className="bg-destructive text-destructive-foreground">
-                          {product.flash_sale_label || '🔥 Sale'}
+                      {(product as any).single_product_tag && (
+                        <Badge className="bg-primary text-primary-foreground">
+                          {(product as any).single_product_tag}
                         </Badge>
-                      )}
-                      {product.is_bestseller && (
-                        <Badge className="bg-warning text-warning-foreground">⭐ Bestseller</Badge>
                       )}
                       {isOutOfStock && (
                         <Badge className="bg-destructive text-destructive-foreground">Out of Stock</Badge>
