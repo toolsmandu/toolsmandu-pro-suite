@@ -123,10 +123,7 @@ const AdminMedia = () => {
             </label>
           </Button>
         </div>
-      </div>
-
-      <div className="mb-4">
-        <div className="relative">
+        <div className="relative w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search media..."
