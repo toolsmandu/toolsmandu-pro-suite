@@ -129,7 +129,8 @@ const Navbar = () => {
                 <button
                   type="submit"
                   aria-label="Search"
-                  className="flex items-center justify-center h-9 w-11 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                  className="flex items-center justify-center h-9 w-11 rounded-md text-white hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: '#228be6' }}
                 >
                   <Search className="h-4 w-4" />
                 </button>
