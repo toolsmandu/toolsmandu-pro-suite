@@ -371,7 +371,7 @@ const AdminProducts = () => {
     return (
       <div>
         <div className="flex flex-col gap-4 mb-6">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
               <h2 className="text-2xl font-bold text-foreground">Products</h2>
             <Button onClick={openAdd}>
               <Plus className="h-4 w-4 mr-2" />

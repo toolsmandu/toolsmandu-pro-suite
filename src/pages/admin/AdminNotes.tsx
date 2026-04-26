@@ -161,7 +161,7 @@ const AdminNotes = () => {
     <div className={`flex gap-6 h-[calc(100vh-5rem)] ${isPanelOpen ? 'lg:flex-row-reverse' : ''}`}>
       {/* Notes List - grouped by product */}
       <div className={`${isPanelOpen ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3 mb-4">
           <h2 className="text-2xl font-bold text-foreground">Notes</h2>
           <div className="flex gap-2">
             <Popover open={filterOpen} onOpenChange={setFilterOpen}>

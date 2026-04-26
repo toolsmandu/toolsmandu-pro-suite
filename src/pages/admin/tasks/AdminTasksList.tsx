@@ -71,7 +71,7 @@ const AdminTasksList = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2 justify-between">
+      <div className="flex flex-wrap items-center gap-2">
         <div>
           <h1 className="text-2xl font-semibold">Tasks</h1>
           <p className="text-sm text-muted-foreground">{isAdmin ? 'All team tasks' : 'My assigned tasks'}</p>

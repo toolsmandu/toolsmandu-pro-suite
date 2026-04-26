@@ -1032,7 +1032,7 @@ const AdminOrders = () => {
     <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(selectedOrder || addingOrder) ? 'lg:flex-row-reverse' : ''}`}>
       {/* Orders List */}
       <div className={`${(selectedOrder || addingOrder) ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3 mb-4">
           <h2 className="text-2xl font-bold text-foreground">Orders</h2>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={handleExportOrders}>

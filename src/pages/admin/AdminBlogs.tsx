@@ -44,7 +44,7 @@ const AdminBlogs = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex items-center gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">Blogs</h1>
           <p className="text-sm text-muted-foreground">Publish and manage blog posts</p>

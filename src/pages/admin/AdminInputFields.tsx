@@ -127,7 +127,7 @@ const AdminInputFields = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
+      <div className="flex items-center mb-6 gap-2 flex-wrap">
         <h2 className="text-2xl font-bold text-foreground">Input Fields</h2>
         <div className="flex items-center gap-2">
           {searchOpen ? (

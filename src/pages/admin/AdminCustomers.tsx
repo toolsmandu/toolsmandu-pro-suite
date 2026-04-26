@@ -186,7 +186,7 @@ const AdminCustomers = () => {
     <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(addOpen || viewUser || editUser) ? 'lg:flex-row-reverse' : ''}`}>
       {/* Customers List */}
       <div className={`${addOpen ? 'flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3 mb-4">
           <h2 className="text-2xl font-bold text-foreground">Customers</h2>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={handleExportCustomers}>
