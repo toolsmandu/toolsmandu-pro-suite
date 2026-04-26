@@ -131,29 +131,24 @@ const AdminInputFields = () => {
       <div className="flex items-center mb-6 gap-2 flex-wrap">
         <h2 className="text-2xl font-bold text-foreground">Input Fields</h2>
         <div className="flex items-center gap-2">
-          {searchOpen ? (
-            <div className="relative">
-              <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-              <Input
-                autoFocus
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by label..."
-                className="pl-8 pr-8 h-9 w-64"
-              />
+          <div className="relative">
+            <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by label..."
+              className="pl-8 pr-8 h-9 w-64"
+            />
+            {searchTerm && (
               <button
                 type="button"
-                onClick={() => { setSearchOpen(false); setSearchTerm(''); }}
+                onClick={() => setSearchTerm('')}
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </button>
-            </div>
-          ) : (
-            <Button variant="outline" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search input fields">
-              <Search className="h-4 w-4" />
-            </Button>
-          )}
+            )}
+          </div>
           <Button onClick={openAdd}>
             <Plus className="h-4 w-4 mr-2" />
             Add Input Field
