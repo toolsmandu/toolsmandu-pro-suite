@@ -55,7 +55,7 @@ const AdminTaskRecurring = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={() => navigate('/admin/tasks')}><ArrowLeft className="h-4 w-4 mr-1" />Back</Button>
           <h1 className="text-2xl font-semibold">Recurring Templates</h1>
