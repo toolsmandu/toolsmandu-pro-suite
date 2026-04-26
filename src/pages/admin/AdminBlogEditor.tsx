@@ -102,6 +102,7 @@ const AdminBlogEditor = () => {
     const payload = {
       ...form,
       slug: slugify(form.slug),
+      category_id: form.category_id || null,
       published_at: form.is_published && !blog?.published_at ? new Date().toISOString() : blog?.published_at,
     };
 
