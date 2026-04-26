@@ -119,7 +119,7 @@ const Navbar = () => {
 
             {/* Desktop search */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8">
-              <div className="flex items-stretch gap-2 w-full rounded-md p-1 pl-4 bg-blue-900">
+              <div className="flex items-center gap-2 w-full rounded-md p-1 pl-4 bg-blue-900">
                 <Input
                   placeholder="Search..."
                   value={searchQuery}
@@ -129,7 +129,7 @@ const Navbar = () => {
                 <button
                   type="submit"
                   aria-label="Search"
-                  className="flex items-center justify-center self-stretch w-11 rounded-md text-white hover:opacity-90 transition-opacity"
+                  className="flex items-center justify-center h-7 w-11 rounded-md text-white hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: '#228be6' }}
                 >
                   <Search className="h-4 w-4" />
