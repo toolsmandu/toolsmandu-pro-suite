@@ -158,7 +158,7 @@ const AdminLayout = () => {
                             <SidebarMenuSubButton asChild>
                               <NavLink to="/admin/flash-sale-labels" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                 <Zap className="mr-2 h-3 w-3" />
-                                <span>Flash Sale Labels</span>
+                                <span>Product Tags</span>
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>

@@ -62,7 +62,7 @@ const AdminFlashSaleLabels = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-foreground mb-6">Flash Sale Labels</h2>
+      <h2 className="text-2xl font-bold text-foreground mb-6">Product Tags</h2>
 
       <div className="flex gap-2 mb-6 max-w-md">
         <Input
