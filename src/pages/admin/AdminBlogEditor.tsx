@@ -38,7 +38,7 @@ const AdminBlogEditor = () => {
     meta_title: '',
     meta_description: '',
     meta_keywords: '',
-    is_published: false,
+    is_published: true,
     show_on_homepage: false,
     sort_order: 0,
   });
