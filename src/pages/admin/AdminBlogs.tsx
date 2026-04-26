@@ -87,6 +87,9 @@ const AdminBlogs = () => {
           <h1 className="text-2xl font-bold">Blogs</h1>
           <p className="text-sm text-muted-foreground">Publish and manage blog posts</p>
         </div>
+        <Button variant="outline" onClick={() => setCatOpen(true)}>
+          <Tag className="mr-2 h-4 w-4" /> Add Blog Category
+        </Button>
         <Button asChild>
           <Link to="/admin/blogs/new"><Plus className="mr-2 h-4 w-4" /> New Blog Post</Link>
         </Button>
