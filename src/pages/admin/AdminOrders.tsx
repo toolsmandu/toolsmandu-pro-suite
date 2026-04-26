@@ -1034,11 +1034,11 @@ const AdminOrders = () => {
       <div className={`${(selectedOrder || addingOrder) ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center gap-3 mb-4">
           <h2 className="text-2xl font-bold text-foreground">Orders</h2>
-          <div className="flex items-center gap-2">
+          <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
+          <div className="ml-auto">
             <Button variant="outline" onClick={handleExportOrders}>
               <Download className="h-4 w-4 mr-2" /> Export Data
             </Button>
-            <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
           </div>
         </div>
 
