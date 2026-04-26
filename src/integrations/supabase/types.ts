@@ -1358,6 +1358,27 @@ export type Database = {
         }
         Relationships: []
       }
+      single_product_tags: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           created_at: string
