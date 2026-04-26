@@ -194,7 +194,7 @@ const AdminFamilySharing = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
         <h2 className="text-2xl font-bold text-foreground">Family Sharing</h2>
         <div className="flex items-center gap-3">
           <OrderSearch navigate={navigate} />
