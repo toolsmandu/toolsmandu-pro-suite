@@ -21,6 +21,18 @@ const AdminBlogs = () => {
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [catOpen, setCatOpen] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
+  const [editingCat, setEditingCat] = useState<{ id: string; name: string } | null>(null);
+
+  const { data: categories } = useQuery({
+    queryKey: ['blog-categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('blog_categories').select('*').order('sort_order').order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const { data: blogs, isLoading } = useQuery({
     queryKey: ['admin-blogs'],
