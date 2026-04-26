@@ -610,7 +610,7 @@ const AdminProducts = () => {
                   </select>
                 </div>
                 <div>
-                  <Label>Flash Sale Label</Label>
+                  <Label>Homepage Product Tag</Label>
                   <select value={form.flash_sale_label} onChange={(event) => setForm({ ...form, flash_sale_label: event.target.value })} className={selectClassName}>
                     <option value="">No Label</option>
                     {flashSaleLabels?.map((label: any) => (
@@ -619,7 +619,7 @@ const AdminProducts = () => {
                   </select>
                 </div>
                 <div>
-                  <Label>Featured Tags</Label>
+                  <Label>Single Product Tag</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <button type="button" className={selectClassName + ' justify-between flex items-center text-left'}>
