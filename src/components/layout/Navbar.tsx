@@ -119,14 +119,20 @@ const Navbar = () => {
 
             {/* Desktop search */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8">
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-2 w-full rounded-md border border-white bg-primary/20 p-1 pl-4">
                 <Input
-                  placeholder="Search products..."
+                  placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-secondary border-border"
+                  className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-0"
                 />
+                <button
+                  type="submit"
+                  aria-label="Search"
+                  className="flex items-center justify-center h-9 w-11 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
               </div>
             </form>
 
