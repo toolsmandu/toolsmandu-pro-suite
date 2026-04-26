@@ -124,6 +124,7 @@ const AdminPromoCodes = () => {
         <div className="flex items-center gap-3 mb-6">
           <h2 className="text-2xl font-bold text-foreground">Promo Codes</h2>
           <div className="flex items-center gap-3">
+            <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Promo Code</Button>
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search promo codes" className="pl-9 w-56" />
