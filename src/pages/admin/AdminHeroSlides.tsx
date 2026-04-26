@@ -45,7 +45,7 @@ const AdminHeroSlides = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-3 mb-6">
         <h2 className="text-2xl font-bold text-foreground">Hero Slides</h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" /> Add Slide</Button></DialogTrigger>
