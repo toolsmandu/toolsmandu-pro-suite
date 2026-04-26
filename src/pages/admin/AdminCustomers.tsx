@@ -186,34 +186,31 @@ const AdminCustomers = () => {
     <div className={`flex gap-6 h-[calc(100vh-5rem)] ${(addOpen || viewUser || editUser) ? 'lg:flex-row-reverse' : ''}`}>
       {/* Customers List */}
       <div className={`${addOpen ? 'flex-1' : 'flex-1'} min-w-0 flex flex-col`}>
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
           <h2 className="text-2xl font-bold text-foreground">Customers</h2>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleExportCustomers}>
-              <Download className="h-4 w-4 mr-2" /> Export Data
-            </Button>
-            <Button onClick={() => { setViewUser(null); setEditUser(null); setAddOpen(true); }} disabled={addOpen}>
-              <Plus className="h-4 w-4 mr-2" /> Add Customer
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
-          <div className="relative md:col-span-2">
+          <Button onClick={() => { setViewUser(null); setEditUser(null); setAddOpen(true); }} disabled={addOpen}>
+            <Plus className="h-4 w-4 mr-2" /> Add Customer
+          </Button>
+          <div className="relative w-64">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by email, phone" className="pl-9" />
           </div>
-          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={selectClassName}>
+          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={`${selectClassName} w-auto`}>
             <option value="all">All Roles</option>
             <option value="admin">Admin</option>
             <option value="editor">Editor</option>
             <option value="customer">Customer</option>
           </select>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={selectClassName}>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={`${selectClassName} w-auto`}>
             <option value="all">All Status</option>
             <option value="active">Active</option>
             <option value="suspended">Suspended</option>
           </select>
+          <div className="ml-auto">
+            <Button variant="outline" onClick={handleExportCustomers}>
+              <Download className="h-4 w-4 mr-2" /> Export Data
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (
