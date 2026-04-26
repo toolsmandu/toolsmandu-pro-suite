@@ -159,7 +159,6 @@ const AdminPromoCodes = () => {
                 </Command>
               </PopoverContent>
             </Popover>
-            <Button onClick={openAdd}><Plus className="h-4 w-4 mr-2" /> Add Promo Code</Button>
           </div>
         </div>
 
