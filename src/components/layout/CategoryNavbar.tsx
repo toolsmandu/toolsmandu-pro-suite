@@ -45,10 +45,10 @@ const CategoryNavbar = () => {
     <nav className="hidden lg:block bg-secondary/50 border-b border-border">
       <div className="container mx-auto px-4">
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-1 h-10 overflow-x-auto">
+        <div className="hidden md:flex items-center justify-center gap-1 h-10 overflow-x-auto">
           {items.map((item) => {
             const content = (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold uppercase text-white hover:text-white/80 transition-colors rounded-md hover:bg-secondary">
+              <span className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold uppercase text-[#ffffff] hover:text-white/80 transition-colors rounded-md hover:bg-secondary">
                 {renderIcon(item.icon)}
                 {item.label}
               </span>
