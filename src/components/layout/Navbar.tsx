@@ -124,12 +124,12 @@ const Navbar = () => {
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-[#ffffff] placeholder:text-[#ffffff]"
+                  className="flex-1 h-8 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-[#ffffff] placeholder:text-[#ffffff]"
                 />
                 <button
                   type="submit"
                   aria-label="Search"
-                  className="flex items-center justify-center h-9 w-11 rounded-md text-white hover:opacity-90 transition-opacity"
+                  className="flex items-center justify-center h-7 w-11 rounded-md text-white hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: '#228be6' }}
                 >
                   <Search className="h-4 w-4" />
