@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
-import { Loader2, Calendar } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Loader2, Calendar, Search } from 'lucide-react';
 import {
   Pagination,
   PaginationContent,
@@ -18,6 +19,7 @@ const PAGE_SIZE = 15;
 
 const BlogList = () => {
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
 
   const { data: blogs, isLoading } = useQuery({
     queryKey: ['blogs-list'],
@@ -27,13 +29,24 @@ const BlogList = () => {
     },
   });
 
-  const totalPages = Math.max(1, Math.ceil((blogs?.length || 0) / PAGE_SIZE));
-  const paginated = useMemo(() => {
+  const filtered = useMemo(() => {
     if (!blogs) return [];
-    const start = (page - 1) * PAGE_SIZE;
-    return blogs.slice(start, start + PAGE_SIZE);
-  }, [blogs, page]);
+    const q = search.trim().toLowerCase();
+    if (!q) return blogs;
+    return blogs.filter(b =>
+      b.title?.toLowerCase().includes(q) ||
+      b.excerpt?.toLowerCase().includes(q) ||
+      b.slug?.toLowerCase().includes(q)
+    );
+  }, [blogs, search]);
 
+  const totalPages = Math.max(1, Math.ceil((filtered?.length || 0) / PAGE_SIZE));
+  const paginated = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, page]);
+
+  useEffect(() => { setPage(1); }, [search]);
   useEffect(() => {
     if (page > totalPages) setPage(1);
   }, [totalPages, page]);
@@ -61,13 +74,24 @@ const BlogList = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Blog</h1>
-      <p className="text-muted-foreground mb-8">Tips, guides, and updates from Toolsmandu.</p>
+      <div className="text-center max-w-2xl mx-auto mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Blog</h1>
+        <p className="text-muted-foreground mb-6">Tips, guides, and updates from Toolsmandu.</p>
+        <div className="relative max-w-md mx-auto">
+          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search blog posts..."
+            className="pl-9"
+          />
+        </div>
+      </div>
 
       {isLoading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-      ) : !blogs?.length ? (
-        <p className="text-muted-foreground">No posts yet.</p>
+      ) : !filtered?.length ? (
+        <p className="text-muted-foreground text-center">{search ? 'No posts match your search.' : 'No posts yet.'}</p>
       ) : (
         <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
