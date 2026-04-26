@@ -23,7 +23,8 @@ const AdminBlogs = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [catOpen, setCatOpen] = useState(false);
   const [newCatName, setNewCatName] = useState('');
-  const [editingCat, setEditingCat] = useState<{ id: string; name: string } | null>(null);
+  const [newCatSlug, setNewCatSlug] = useState('');
+  const [editingCat, setEditingCat] = useState<{ id: string; name: string; slug: string } | null>(null);
 
   const { data: categories } = useQuery({
     queryKey: ['blog-categories'],
