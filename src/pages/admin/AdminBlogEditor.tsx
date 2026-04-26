@@ -159,6 +159,23 @@ const AdminBlogEditor = () => {
               <Label htmlFor="excerpt">Excerpt</Label>
               <Textarea id="excerpt" value={form.excerpt} onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))} placeholder="Short summary shown in cards and previews" rows={2} />
             </div>
+            <div>
+              <Label htmlFor="category">Category</Label>
+              <Select
+                value={form.category_id || 'none'}
+                onValueChange={v => setForm(f => ({ ...f, category_id: v === 'none' ? '' : v }))}
+              >
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">— No category —</SelectItem>
+                  {categories?.map(c => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </Card>
 
           <Card className="p-4 space-y-2">
