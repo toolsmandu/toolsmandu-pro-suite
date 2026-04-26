@@ -37,7 +37,7 @@ const AdminBlogs = () => {
   const { data: blogs, isLoading } = useQuery({
     queryKey: ['admin-blogs'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('blogs').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('blogs').select('*, blog_categories(name)').order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     },
