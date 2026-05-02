@@ -8,7 +8,9 @@ const WHATSAPP_LINK = 'https://api.whatsapp.com/send?phone=9779864484274&text=I+
 const ReportProblemPage = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <Card className="p-6 md:p-8 space-y-6" style={{ backgroundColor: 'hsl(128.31, 4.59%, 29.67%)' }}>
+      <Card className="relative overflow-hidden p-6 md:p-8 space-y-6 border-primary/20 bg-gradient-to-br from-primary/20 via-card to-accent/30 shadow-xl shadow-primary/10 backdrop-blur-sm">
+        <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-accent/30 blur-3xl" />
         <div className="flex items-center justify-center gap-3">
           <TriangleAlert className="h-7 w-7 text-foreground" />
           <h1 className="text-2xl md:text-3xl font-bold">Report a Problem</h1>
