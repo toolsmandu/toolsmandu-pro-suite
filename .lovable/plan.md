@@ -1,85 +1,119 @@
-## Tasks Module — Plan
+## Public Disposable Inbox System (Plan B) — toolsmandu
 
-A lightweight internal task management system inside the existing admin panel. Sidebar entry "Tasks" added just below "Knowledgebase".
+A catch-all inbox feature where users (and admins) can manually create email addresses on multiple custom domains, send/receive mail to them publicly, view inbox messages with attachments, and have everything auto-purged after 24 hours.
 
-### Roles & access
-- Admin: full CRUD on tasks and templates, sees all tasks and dashboards.
-- Editor: sees only tasks assigned to them. Can update status, add comments, mark complete/skipped.
-- No Priority field (per your choice). One editor per task.
+---
 
-### Pages (under `/admin/tasks`)
-1. `/admin/tasks` — Task list (admin sees all, editor sees own). Filters: assignee (admin only), status, date range, search. Toggle: list/calendar view.
-2. `/admin/tasks/new` and `/admin/tasks/:id/edit` — Create/edit task (admin only).
-3. `/admin/tasks/:id` — Task detail: status updates, comments, full activity history.
-4. `/admin/tasks/recurring` — Recurring templates list (admin only). Pause/resume/stop/delete.
-5. `/admin/tasks/dashboard` — Tasks dashboard with the cards below. (Admin sees global; editor sees personal "My Tasks Today / Upcoming / Overdue".)
+## How it works
 
-The main `/admin` dashboard gets a small "My Tasks Today" widget for editors, and a "Pending / Overdue / Completed today" strip for admin.
+```text
+Sender → Cloudflare Email Routing (catch-all on each domain)
+       → Cloudflare Worker (parses MIME, uploads attachments)
+       → Edge Function `inbox-receive` (HMAC-verified webhook)
+       → Database (inbox_addresses + inbox_messages + inbox_attachments)
+       → Frontend polls / realtime → user reads message
+       
+Hourly cron → Edge Function `inbox-purge` → deletes >24h messages, attachments, and addresses
+```
 
-### Dashboard cards
-- Admin: total pending, overdue, completed (today/this week), tasks per editor (bar chart), today's tasks list, upcoming recurring instances (next 7 days).
-- Editor: today's tasks, upcoming (next 7 days), overdue.
+Multiple domains supported: each domain you add in admin gets its own MX records pointing at Cloudflare Email Routing. The Worker forwards everything to one edge function, which detects which domain the mail belongs to.
 
-### Recurring task logic
-- A recurring task is stored as a `task_templates` row with a recurrence rule (daily / weekly / monthly / every X days, plus start date and optional end date, plus paused flag).
-- A scheduled edge function `tasks-generator` runs every 15 minutes and:
-  - For each active template, generates the next pending task instance(s) up to a 7-day lookahead window if not already generated.
-  - Marks any task past `due_at` and not in completed/skipped as `overdue`.
-- Completing one instance does not affect the schedule. Missed instances stay in history with `overdue` status.
+---
 
-### Notifications & emails
-- Edge function `tasks-notifier` runs every 15 minutes.
-- 9:00 AM Asia/Kathmandu (cron in UTC = `15 3 * * *` for daily summary slot, but the same notifier handles it on its 15-min ticks and gates by time of day):
-  - Send "Your tasks today" digest email to each editor with at least one task due today.
-- Overdue alerts: when a task has been overdue for ≥ 24 hours and overdue alert not yet sent, email both the assigned editor and admin(s).
-- Completion alert: when a task transitions to `completed`, queue an email to admin(s).
-- All emails go through the existing `send-transactional-email` Edge Function (Lovable Emails). New templates registered:
-  - `tasks-daily-digest`
-  - `tasks-overdue-alert`
-  - `tasks-completed-admin`
-- Editable copy is also added to the existing `email_templates` table so admin can tweak subject/body in Settings → Email Templates.
+## What gets built
 
-### Activity log
-Every state change (created, edited, reassigned, status changed, comment added, deleted, recurring template paused/resumed) is recorded in `task_activity_logs` with actor, timestamp, and a short detail string. Visible on the task detail page and (for admin) on a global activity tab.
+### 1. Database (new tables, all with RLS following existing `has_role` pattern)
 
-### Database schema (new tables, all with RLS)
-- `task_templates` — id, title, description, assigned_to (uuid), recurrence_type ('daily'|'weekly'|'monthly'|'every_x_days'), recurrence_interval (int, for every_x_days / weekly day count etc.), start_date, end_date (nullable), due_time (time of day), is_paused (bool), created_by, created_at, updated_at.
-- `tasks` — id, template_id (nullable, set when generated from template), title, description, assigned_to (uuid, references auth user), status ('pending'|'in_progress'|'completed'|'skipped'|'overdue'), start_at, due_at (timestamptz), completed_at, overdue_alert_sent_at, created_by, created_at, updated_at.
-- `task_comments` — id, task_id, author_id, body, created_at.
-- `task_activity_logs` — id, task_id (nullable for template-level events), template_id (nullable), actor_id, action (text), details (text), created_at.
+- **`inbox_domains`** — `id, domain (unique), is_active, notes, created_at`
+  - Admin-managed list of domains usable for inbox addresses.
+- **`inbox_addresses`** — `id, local_part, domain_id, full_address (unique, generated), created_by (nullable for anon), created_at, expires_at`
+  - Manual creation only (user types `local_part`, picks a `domain_id`). Validation: lowercase letters, numbers, hyphens; 3–32 chars.
+- **`inbox_messages`** — `id, address_id, from_email, from_name, subject, text_body, html_body, received_at, expires_at, raw_size`
+- **`inbox_attachments`** — `id, message_id, file_name, mime_type, size_bytes, storage_path, expires_at`
 
-RLS pattern (mirrors existing `has_role` security-definer pattern):
-- Admin (`has_role(auth.uid(),'admin')`): full ALL on every table.
-- Editor: SELECT/UPDATE on `tasks` where `assigned_to = auth.uid()`. INSERT on `task_comments` for own tasks. SELECT on `task_activity_logs` for own tasks. SELECT on `task_templates` for templates whose `assigned_to = auth.uid()` (read-only).
-- No customer access.
+RLS: addresses, messages, attachments are **publicly readable** (since access model is fully public). Admin/editor full manage. Insert restricted to service role (webhook only). Delete restricted to service role + admin.
 
-Status auto-update: a small DB trigger sets `completed_at` when status flips to `completed` (mirrors existing `set_order_completed_at` pattern). Overdue marking is done by the scheduled function (CHECK constraints can't reference `now()`).
+### 2. Storage
 
-### Edge functions (new)
-- `tasks-generator` — generates upcoming task instances from active templates and marks overdue.
-- `tasks-notifier` — sends daily 9am Kathmandu digest, 24h overdue alerts, and completion alerts. Uses `send-transactional-email`.
-- Both scheduled via `pg_cron` + `pg_net` calling the function URL every 15 minutes (using project URL + anon key, inserted via the data tool, not migration, per Lovable rules).
+- Bucket **`inbox-attachments`** (public read, 24h TTL enforced by purge job).
+- Max attachment size: 10 MB; total per message: 25 MB.
 
-### UI
-- Reuses existing shadcn `Card`, `Table`, `Badge`, `Dialog`, `Calendar`, `Tabs`, `Select`, `Popover`, `Command` components.
-- Status color coding via badge variants: pending (secondary), in_progress (default/blue), completed (green), skipped (muted), overdue (destructive).
-- Mobile responsive — list collapses to cards under `md`.
-- Calendar view uses existing `react-day-picker` Calendar with task dots.
+### 3. Edge functions
 
-### Sidebar
-Add a new "Tasks" item in `AdminLayout` just below "Knowledgebase" using a `ListChecks` icon. Visible to both admin and editor (editor only sees their own tasks inside).
+| Function | Purpose | `verify_jwt` |
+|---|---|---|
+| `inbox-receive` | Webhook from Cloudflare Worker. HMAC-verify, parse, insert message + attachments. | false (HMAC instead) |
+| `inbox-purge` | Hourly cron. Delete messages, attachments, expired addresses past 24h. | false (cron only) |
+| `inbox-create-address` | Validate + create a manual address. Checks uniqueness, domain active, format. | true (rate-limited per IP) |
 
-### Out of scope (will not build)
-- Multiple assignees per task.
-- Priority field and priority filter.
-- Push/in-app notifications (only email).
-- Customer-facing task views.
+`pg_cron` + `pg_net` schedules `inbox-purge` every hour.
 
-### Build order
-1. Migration: enums, 4 tables, RLS, completed_at trigger.
-2. Sidebar entry + routes + role guard.
-3. Task list, create/edit, detail pages.
-4. Recurring templates page.
-5. Tasks dashboard + widget on main admin dashboard.
-6. Edge functions `tasks-generator` and `tasks-notifier` + email templates + cron schedules.
-7. Editable email copy in `email_templates` table.
+### 4. Frontend pages
+
+**Public**
+- `/inbox` — Landing: "Create your disposable inbox". Form with `local_part` text input + domain dropdown (populated from active `inbox_domains`). Live availability check. Shows generated address + countdown to expiry.
+- `/inbox/:address` — Inbox view. List of messages, click to open, view text/HTML body, download attachments. Auto-refresh every 10s + Supabase realtime subscription. "Copy address" + "Open in new window" + "Delete inbox" buttons.
+
+**Customer dashboard** (`/dashboard/inbox`)
+- Sidebar entry under existing items. Lists addresses created while logged in. Click → same inbox view. Convenience only — addresses are still public.
+
+**Admin** (`/admin/disposable-inbox`)
+- Sidebar entry under Knowledgebase.
+- **Domains tab**: add/edit/disable/delete domains. Each row shows the MX records to configure (copy buttons).
+- **Addresses tab**: search, filter by domain, see who created what, force-delete, view message count.
+- **Messages tab**: global recent inbox, search by address/subject/sender, view raw, delete.
+- Stats card: total messages last 24h, active addresses, attachments storage used.
+
+### 5. Cloudflare Worker (provided as code + setup doc)
+
+Single Worker file handling catch-all forwarding for all domains. Reads raw MIME via `message.raw`, parses with `postal-mime`, uploads attachments to a temp endpoint on the edge function, then POSTs JSON payload with HMAC signature header `x-inbox-signature`.
+
+Setup steps documented in `/admin/disposable-inbox` "Setup guide" tab:
+1. Add domain in Cloudflare → enable Email Routing.
+2. Add MX + SPF + verification TXT records (records shown in admin UI).
+3. Set catch-all rule → forward to Worker.
+4. Deploy Worker (code provided; only env vars are `WEBHOOK_URL` + `WEBHOOK_SECRET`).
+5. Mark domain "active" in admin.
+
+### 6. Secrets needed
+
+- `INBOX_WEBHOOK_SECRET` — HMAC secret shared with Worker.
+
+(No new third-party API keys; Cloudflare Email Routing is free and you already use Cloudflare.)
+
+---
+
+## Decisions locked in
+
+| Setting | Value |
+|---|---|
+| Inbound provider | Cloudflare Email Routing → Worker → Edge Function |
+| Public access | Fully public (anyone with the address can read it) |
+| Address creation | Manual: user types local-part + picks domain |
+| Multiple domains | Yes, admin-manageable list |
+| Retention | 24h for messages, attachments, and addresses |
+| Attachments | Stored in `inbox-attachments` bucket for 24h |
+| Realtime | Yes, on `inbox_messages` |
+
+---
+
+## Build order
+
+1. Migration: 4 tables + enums + RLS + storage bucket + cron schedule.
+2. Edge functions: `inbox-receive`, `inbox-create-address`, `inbox-purge`.
+3. Public pages: `/inbox`, `/inbox/:address`.
+4. Customer dashboard inbox tab.
+5. Admin page with Domains / Addresses / Messages / Setup guide tabs + sidebar link.
+6. Provide Cloudflare Worker code and step-by-step DNS instructions.
+7. End-to-end test with one real domain.
+
+---
+
+## Out of scope
+
+- Sending mail from disposable addresses (receive-only).
+- Auto-generated addresses (manual only, per your decision).
+- Authentication required to view inboxes.
+- Spam filtering beyond size limits and attachment type allowlist.
+
+Reply **approve** to switch to build mode and ship it.
