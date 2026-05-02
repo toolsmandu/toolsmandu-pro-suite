@@ -207,7 +207,7 @@ export const DisposableInboxView = ({ mode, persist = true }: Props) => {
         </CardContent>
       </Card>
 
-      {myAddresses.length > 0 && (
+      {persist && myAddresses.length > 0 && (
         <Card>
           <CardHeader><CardTitle className="text-base">My inboxes</CardTitle></CardHeader>
           <CardContent>
