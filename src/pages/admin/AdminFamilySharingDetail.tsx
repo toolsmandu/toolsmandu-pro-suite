@@ -260,7 +260,7 @@ const AdminFamilySharingDetail = () => {
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {linkedNames.length > 0 ? linkedNames.map((name, i) => (
-                      <Badge key={i} variant="secondary" className="text-[10px]">{name}</Badge>
+                      <span key={i} className="inline-flex items-center px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium border border-primary/20">{name}</span>
                     )) : <span className="text-muted-foreground text-xs">None</span>}
                   </div>
                 </TableCell>
