@@ -420,7 +420,7 @@ const InboxViewer = () => {
             <div className="flex-1 min-w-[200px]">
               <Label>Username</Label>
               <div className="flex gap-2">
-                <Input value={username} onChange={e => setUsername(e.target.value)} placeholder="myname123" />
+                <Input value={username} onChange={e => setUsername(e.target.value)} placeholder="" />
                 <Button variant="outline" type="button" onClick={generateRandom}>Random</Button>
               </div>
             </div>
