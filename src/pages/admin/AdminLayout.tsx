@@ -280,6 +280,16 @@ const AdminLayout = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
+                  {/* Tasks — just below Knowledgebase */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/admin/tasks" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                        <ListChecks className="mr-2 h-4 w-4" />
+                        <span className="flex-1">Tasks</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
                   {/* Email Inbox (admin only) — just above Settings */}
                   {isAdmin && (
                     <SidebarMenuItem>
@@ -291,17 +301,6 @@ const AdminLayout = () => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   )}
-
-                  {/* Tasks — just below Knowledgebase */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <NavLink to="/admin/tasks" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
-                        <ListChecks className="mr-2 h-4 w-4" />
-                        <span className="flex-1">Tasks</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
 
                   {/* Settings sub-menu (admin only) */}
                   {isAdmin && (
