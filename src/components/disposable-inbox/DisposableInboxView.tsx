@@ -152,9 +152,27 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
     setLoading(true);
     const { data, error } = await supabase.functions.invoke("inbox-fetch", { body: { email } });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    if (data?.error) return toast.error(data.error);
+    if (error) {
+      // Suppress noisy "Address not found" so simple-mode users can type any email
+      if (!/not found/i.test(error.message || "")) toast.error(error.message);
+      setMessages([]);
+      return;
+    }
+    if (data?.error) {
+      if (!/not found/i.test(data.error)) toast.error(data.error);
+      setMessages([]);
+      return;
+    }
     setMessages(data?.messages || []);
+  };
+
+  const openByEmail = () => {
+    const email = emailInput.toLowerCase().trim();
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) return toast.error("Enter a valid email");
+    setCurrentEmail(email);
+    localStorage.setItem(STORAGE_KEY_CURRENT, email);
+    setMessages([]);
+    fetchMail(email);
   };
 
   const switchTo = (email: string) => {
