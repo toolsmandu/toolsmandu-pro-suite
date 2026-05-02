@@ -29,8 +29,8 @@ interface Props {
 const STORAGE_KEY_SESSION = "disposable_inbox_session_id";
 const STORAGE_KEY_CURRENT = "disposable_inbox_current_email";
 
-export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }: Props) => {
-  const [emailInput, setEmailInput] = useState("");
+export const DisposableInboxView = ({ mode, persist = true, simpleMode = false, initialEmail }: Props) => {
+  const [emailInput, setEmailInput] = useState(initialEmail || "");
   const { data: domains = [] } = useQuery({
     queryKey: ["inbox_domains_active"],
     queryFn: async () => {
