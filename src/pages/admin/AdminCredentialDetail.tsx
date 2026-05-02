@@ -5,6 +5,7 @@ import { ArrowLeft, Save, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -49,6 +50,7 @@ const AdminCredentialDetail = () => {
   const [editedExpiry, setEditedExpiry] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [useInbuiltOtp, setUseInbuiltOtp] = useState(true);
   const [form, setForm] = useState({
     username: "",
     password: "",
@@ -80,6 +82,7 @@ const AdminCredentialDetail = () => {
         twofa_link: cred.twofa_link || "",
         index_number: String(cred.index_number),
       });
+      setUseInbuiltOtp(!cred.twofa_link);
     }
 
     // Fetch assigned customers
@@ -168,7 +171,7 @@ const AdminCredentialDetail = () => {
         remarks: form.remarks || null,
         expiry_date: form.expiry_date || null,
         max_limit: parseInt(form.max_limit) || 1,
-        twofa_link: form.twofa_link || null,
+        twofa_link: useInbuiltOtp ? null : (form.twofa_link || null),
         index_number: parseInt(form.index_number) || 1,
       })
       .eq("id", credentialId);
@@ -383,7 +386,26 @@ const AdminCredentialDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div><Label>Username *</Label><Input value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} /></div>
           <div><Label>Password *</Label><Input value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>
-          <div><Label>2FA Link</Label><Input value={form.twofa_link} onChange={e => setForm({ ...form, twofa_link: e.target.value })} /></div>
+          <div className="md:col-span-2 space-y-2">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="use-inbuilt-otp"
+                checked={useInbuiltOtp}
+                onCheckedChange={(checked) => {
+                  const v = !!checked;
+                  setUseInbuiltOtp(v);
+                  if (v) setForm(f => ({ ...f, twofa_link: "" }));
+                }}
+              />
+              <Label htmlFor="use-inbuilt-otp" className="cursor-pointer">Use Inbuilt OTP Inbox</Label>
+            </div>
+            {!useInbuiltOtp && (
+              <div>
+                <Label>2FA Link (custom URL)</Label>
+                <Input value={form.twofa_link} onChange={e => setForm({ ...form, twofa_link: e.target.value })} placeholder="https://..." />
+              </div>
+            )}
+          </div>
           <div><Label>Remarks</Label><Input value={form.remarks} onChange={e => setForm({ ...form, remarks: e.target.value })} /></div>
           <div><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={e => setForm({ ...form, expiry_date: e.target.value })} /></div>
           <div><Label>Limit (max assignments)</Label><Input type="number" min="1" value={form.max_limit} onChange={e => setForm({ ...form, max_limit: e.target.value })} /></div>

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -33,6 +34,7 @@ const copyToClipboard = (text: string) => {
 
 const OrdersPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [statusFilter, setStatusFilter] = useState<string[]>(DEFAULT_STATUSES);
 
@@ -260,11 +262,16 @@ const OrdersPage = () => {
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
                                     <KeyRound className="h-3 w-3" /> Password: {cred?.password} <Copy className="h-3 w-3" />
                                   </button>
-                                  {cred?.twofa_link && (
+                                  {cred?.twofa_link ? (
                                     <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/30 transition-colors">
                                       <RotateCcwKey className="h-3 w-3" /> Get OTP Code
                                     </a>
+                                  ) : (
+                                    <button onClick={() => navigate('/dashboard/inbox')}
+                                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/30 transition-colors">
+                                      <RotateCcwKey className="h-3 w-3" /> Get OTP Code
+                                    </button>
                                   )}
                                   {cred?.family_sharing_products?.login_link && (
                                     <a href={cred.family_sharing_products.login_link} target="_blank" rel="noopener noreferrer"
