@@ -1,38 +1,25 @@
+## Goal
+On the customer dashboard inbox (`/dashboard/inbox`), stop persisting inbox addresses to the database and hide the "My inboxes" card entirely. Admin behavior stays unchanged.
+
 ## Changes
 
-### 1. Only show emails from the last 2 days
-**File:** `supabase/functions/inbox-fetch/index.ts`
+**1. `src/components/disposable-inbox/DisposableInboxView.tsx`**
+- Add a new prop `persist?: boolean` (default `true`) OR branch on `mode === "user"` to skip persistence. Cleanest approach: introduce a `persist` prop so admin keeps current behavior.
+- When `persist === false`:
+  - Skip the initial `supabase.from("inbox_addresses").select(...)` load.
+  - In `createInbox`, skip the insert into `inbox_addresses` for `mode === "user"` — just set `currentEmail` locally and call `fetchMail`.
+  - Do not refresh `myAddresses` after creation.
+  - Hide the entire "My inboxes" card (don't render the block).
+- Keep `localStorage` for `current_email` so the inbox persists across page reloads on the same device.
 
-Add a `since` filter to the IMAP search (server-side, so it's also faster):
+**2. `src/pages/dashboard/InboxPage.tsx`**
+- Pass `persist={false}` to `<DisposableInboxView mode="user" />`.
 
-```ts
-const since = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
-const search = await client.search({ to: email, since });
-```
+**3. Admin usage (`AdminDisposableInbox.tsx`) and Account OTP usage in OrdersPage**
+- Leave as-is (default `persist=true`) so admin still sees and manages saved inboxes.
+- Verify Account OTP / OTP redirect flow (which opens the inbox view) — if it's the customer dashboard inbox page, it will inherit `persist={false}` automatically. No change needed unless we want admin-side OTP redirects to also persist (they already use admin route).
 
-This replaces the current unfiltered `client.search({ to: email })` on line 61. ImapFlow translates `since` to the IMAP `SINCE` criterion, so the mail server itself drops anything older than 2 days — no extra round-trips, no client-side filtering.
-
-### 2. Rename "Refresh" → "Refresh Inbox" and make the button green
-**File:** `src/components/disposable-inbox/DisposableInboxView.tsx` (around lines 218–221)
-
-Change the Refresh button to:
-- Label: `Refresh Inbox`
-- Style: solid green using Tailwind classes that match the existing design tokens (`bg-green-600 hover:bg-green-700 text-white border-green-600`), keeping the same icon + loading spinner behavior.
-
-```tsx
-<Button
-  onClick={() => fetchMail(currentEmail)}
-  disabled={loading}
-  className="bg-green-600 hover:bg-green-700 text-white"
->
-  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
-  Refresh Inbox
-</Button>
-```
-
-(Drop `variant="outline"` so the green fill shows.)
-
-### Notes
-- No DB or schema changes.
-- `inbox-fetch` will be redeployed automatically after the edit.
-- The 2-day window applies to **all** views (admin inbox viewer, customer dashboard inbox, and public `/inbox`) since they all go through the same edge function.
+## Notes
+- No DB schema changes required. Existing rows remain untouched.
+- `inbox-fetch` edge function works purely from the email string, so no backend impact.
+- Public mode (anonymous visitors) is unaffected — still uses the edge function path.

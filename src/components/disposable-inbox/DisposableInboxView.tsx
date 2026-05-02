@@ -18,12 +18,14 @@ type Message = { uid: number; subject: string; from: string; date: string; text:
 interface Props {
   /** "user" = signed-in (uses user_id); "public" = anon (uses session_id via edge fn) */
   mode: "user" | "public";
+  /** When false, do not save addresses to DB and hide "My inboxes" list. Default true. */
+  persist?: boolean;
 }
 
 const STORAGE_KEY_SESSION = "disposable_inbox_session_id";
 const STORAGE_KEY_CURRENT = "disposable_inbox_current_email";
 
-export const DisposableInboxView = ({ mode }: Props) => {
+export const DisposableInboxView = ({ mode, persist = true }: Props) => {
   const { data: domains = [] } = useQuery({
     queryKey: ["inbox_domains_active"],
     queryFn: async () => {
@@ -55,15 +57,18 @@ export const DisposableInboxView = ({ mode }: Props) => {
   // Load saved addresses
   useEffect(() => {
     const load = async () => {
-      if (mode === "user") {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        const { data } = await supabase.from("inbox_addresses").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
-        setMyAddresses((data || []) as Address[]);
-      } else {
-        const sid = getSessionId();
-        const { data } = await supabase.from("inbox_addresses").select("*").eq("session_id", sid).order("created_at", { ascending: false });
-        setMyAddresses((data || []) as Address[]);
+      if (persist) {
+        if (mode === "user") {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data } = await supabase.from("inbox_addresses").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+            setMyAddresses((data || []) as Address[]);
+          }
+        } else {
+          const sid = getSessionId();
+          const { data } = await supabase.from("inbox_addresses").select("*").eq("session_id", sid).order("created_at", { ascending: false });
+          setMyAddresses((data || []) as Address[]);
+        }
       }
       const saved = localStorage.getItem(STORAGE_KEY_CURRENT);
       if (saved) {
@@ -73,7 +78,7 @@ export const DisposableInboxView = ({ mode }: Props) => {
     };
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode]);
+  }, [mode, persist]);
 
   const generateRandom = () => {
     const adj = ["swift","silent","cosmic","hidden","quick","brave","lucky","clever","brisk","mellow"];
@@ -93,16 +98,18 @@ export const DisposableInboxView = ({ mode }: Props) => {
     setCreating(true);
     try {
       if (mode === "user") {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error("Not signed in");
-        const { data: existing } = await supabase.from("inbox_addresses").select("*").eq("email", email).maybeSingle();
-        if (existing) {
-          if (existing.user_id !== user.id) throw new Error("Address already taken");
-        } else {
-          const { error } = await supabase.from("inbox_addresses").insert({
-            email, username: cleanUser, domain_id: domainId, user_id: user.id,
-          });
-          if (error) throw error;
+        if (persist) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) throw new Error("Not signed in");
+          const { data: existing } = await supabase.from("inbox_addresses").select("*").eq("email", email).maybeSingle();
+          if (existing) {
+            if (existing.user_id !== user.id) throw new Error("Address already taken");
+          } else {
+            const { error } = await supabase.from("inbox_addresses").insert({
+              email, username: cleanUser, domain_id: domainId, user_id: user.id,
+            });
+            if (error) throw error;
+          }
         }
       } else {
         const sid = getSessionId();
@@ -117,14 +124,18 @@ export const DisposableInboxView = ({ mode }: Props) => {
       localStorage.setItem(STORAGE_KEY_CURRENT, email);
       setMessages([]);
       // refresh saved list
-      if (mode === "user") {
-        const { data: { user } } = await supabase.auth.getUser();
-        const { data } = await supabase.from("inbox_addresses").select("*").eq("user_id", user!.id).order("created_at", { ascending: false });
-        setMyAddresses((data || []) as Address[]);
-      } else {
-        const sid = getSessionId();
-        const { data } = await supabase.from("inbox_addresses").select("*").eq("session_id", sid).order("created_at", { ascending: false });
-        setMyAddresses((data || []) as Address[]);
+      if (persist) {
+        if (mode === "user") {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data } = await supabase.from("inbox_addresses").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+            setMyAddresses((data || []) as Address[]);
+          }
+        } else {
+          const sid = getSessionId();
+          const { data } = await supabase.from("inbox_addresses").select("*").eq("session_id", sid).order("created_at", { ascending: false });
+          setMyAddresses((data || []) as Address[]);
+        }
       }
       fetchMail(email);
     } catch (e: any) {
@@ -196,7 +207,7 @@ export const DisposableInboxView = ({ mode }: Props) => {
         </CardContent>
       </Card>
 
-      {myAddresses.length > 0 && (
+      {persist && myAddresses.length > 0 && (
         <Card>
           <CardHeader><CardTitle className="text-base">My inboxes</CardTitle></CardHeader>
           <CardContent>
