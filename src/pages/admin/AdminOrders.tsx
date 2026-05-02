@@ -1676,6 +1676,7 @@ const AdminOrders = () => {
                                 e.preventDefault();
                                 setNewProductId(o.productId);
                                 setNewVariationId(o.variationId);
+                                setNewAmount(String(o.price));
                                 setProductPickerOpen(false);
                                 setProductPickerSearch('');
                               }}
