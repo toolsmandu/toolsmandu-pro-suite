@@ -93,23 +93,23 @@ const ServersTab = () => {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<ImapServer | null>(null);
   const [form, setForm] = useState({
-    tag: "", host: "", port: 993, encryption: "ssl",
+    host: "", port: 993, encryption: "ssl",
     username: "", password: "", validate_cert: true, is_active: true,
   });
   const [saving, setSaving] = useState(false);
 
-  const openNew = () => { setEditing(null); setForm({ tag: "", host: "", port: 993, encryption: "ssl", username: "", password: "", validate_cert: true, is_active: true }); setOpen(true); };
-  const openEdit = (s: ImapServer) => { setEditing(s); setForm({ tag: s.tag, host: s.host, port: s.port, encryption: s.encryption, username: s.username, password: "", validate_cert: s.validate_cert, is_active: s.is_active }); setOpen(true); };
+  const openNew = () => { setEditing(null); setForm({ host: "", port: 993, encryption: "ssl", username: "", password: "", validate_cert: true, is_active: true }); setOpen(true); };
+  const openEdit = (s: ImapServer) => { setEditing(s); setForm({ host: s.host, port: s.port, encryption: s.encryption, username: s.username, password: "", validate_cert: s.validate_cert, is_active: s.is_active }); setOpen(true); };
 
   const save = async () => {
-    if (!form.tag || !form.host || !form.username) return toast.error("Tag, host and username required");
+    if (!form.host || !form.username) return toast.error("Host and username required");
     if (!editing && !form.password) return toast.error("Password required for new server");
     setSaving(true);
     try {
       const { data, error } = await supabase.functions.invoke("inbox-save-server", {
         body: {
           id: editing?.id ?? null,
-          tag: form.tag,
+          tag: form.username,
           host: form.host,
           port: form.port,
           encryption: form.encryption,
@@ -157,16 +157,15 @@ const ServersTab = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Tag</TableHead><TableHead>Host</TableHead><TableHead>Username</TableHead>
+                <TableHead>Username</TableHead><TableHead>Host</TableHead>
                 <TableHead>Encryption</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {servers.map(s => (
                 <TableRow key={s.id}>
-                  <TableCell className="font-mono">{s.tag}</TableCell>
-                  <TableCell>{s.host}:{s.port}</TableCell>
                   <TableCell>{s.username}</TableCell>
+                  <TableCell>{s.host}:{s.port}</TableCell>
                   <TableCell><Badge variant="outline">{s.encryption}</Badge></TableCell>
                   <TableCell>{s.is_active ? <Badge>Active</Badge> : <Badge variant="secondary">Inactive</Badge>}</TableCell>
                   <TableCell className="text-right space-x-2">
@@ -176,7 +175,7 @@ const ServersTab = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {servers.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">No servers yet</TableCell></TableRow>}
+              {servers.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No servers yet</TableCell></TableRow>}
             </TableBody>
           </Table>
         )}
@@ -186,7 +185,7 @@ const ServersTab = () => {
         <DialogContent>
           <DialogHeader><DialogTitle>{editing ? "Edit" : "Add"} IMAP Server</DialogTitle></DialogHeader>
           <div className="space-y-3">
-            <div><Label>Tag (unique label)</Label><Input value={form.tag} onChange={e => setForm({ ...form, tag: e.target.value })} placeholder="main" /></div>
+            <div><Label>Username (catch-all mailbox)</Label><Input value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} placeholder="catchall@example.com" /></div>
             <div className="grid grid-cols-2 gap-3">
               <div><Label>Host</Label><Input value={form.host} onChange={e => setForm({ ...form, host: e.target.value })} placeholder="mail.example.com" /></div>
               <div><Label>Port</Label><Input type="number" value={form.port} onChange={e => setForm({ ...form, port: parseInt(e.target.value) || 993 })} /></div>
@@ -201,7 +200,6 @@ const ServersTab = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div><Label>Username (catch-all mailbox)</Label><Input value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} placeholder="catchall@example.com" /></div>
             <div><Label>Password {editing && <span className="text-xs text-muted-foreground">(leave blank to keep)</span>}</Label>
               <Input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
             </div>
