@@ -50,6 +50,7 @@ const AdminCredentialDetail = () => {
   const [editedExpiry, setEditedExpiry] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [useInbuiltOtp, setUseInbuiltOtp] = useState(true);
   const [form, setForm] = useState({
     username: "",
     password: "",
