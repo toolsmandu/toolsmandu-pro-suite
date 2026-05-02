@@ -384,7 +384,22 @@ const AdminCredentialDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div><Label>Username *</Label><Input value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} /></div>
           <div><Label>Password *</Label><Input value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>
-          <div><Label>2FA Link</Label><Input value={form.twofa_link} onChange={e => setForm({ ...form, twofa_link: e.target.value })} /></div>
+          <div className="md:col-span-2">
+            <div className="flex items-center gap-2 mb-2">
+              <Checkbox
+                id="use-inbuilt-otp"
+                checked={form.twofa_link === ""}
+                onCheckedChange={(checked) => setForm({ ...form, twofa_link: checked ? "" : " " })}
+              />
+              <Label htmlFor="use-inbuilt-otp" className="cursor-pointer">Use Inbuilt OTP Inbox</Label>
+            </div>
+            {form.twofa_link !== "" && (
+              <>
+                <Label>2FA Link (custom URL)</Label>
+                <Input value={form.twofa_link} onChange={e => setForm({ ...form, twofa_link: e.target.value })} placeholder="https://..." />
+              </>
+            )}
+          </div>
           <div><Label>Remarks</Label><Input value={form.remarks} onChange={e => setForm({ ...form, remarks: e.target.value })} /></div>
           <div><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={e => setForm({ ...form, expiry_date: e.target.value })} /></div>
           <div><Label>Limit (max assignments)</Label><Input type="number" min="1" value={form.max_limit} onChange={e => setForm({ ...form, max_limit: e.target.value })} /></div>
