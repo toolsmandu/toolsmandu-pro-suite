@@ -734,6 +734,159 @@ export type Database = {
         }
         Relationships: []
       }
+      inbox_addresses: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          domain_id: string
+          expires_at: string
+          full_address: string
+          id: string
+          local_part: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          domain_id: string
+          expires_at?: string
+          full_address: string
+          id?: string
+          local_part: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          domain_id?: string
+          expires_at?: string
+          full_address?: string
+          id?: string
+          local_part?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inbox_addresses_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "inbox_domains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inbox_attachments: {
+        Row: {
+          created_at: string
+          expires_at: string
+          file_name: string
+          id: string
+          message_id: string
+          mime_type: string | null
+          size_bytes: number | null
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          file_name: string
+          id?: string
+          message_id: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          file_name?: string
+          id?: string
+          message_id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inbox_attachments_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "inbox_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inbox_domains: {
+        Row: {
+          created_at: string
+          domain: string
+          id: string
+          is_active: boolean
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          domain: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          domain?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inbox_messages: {
+        Row: {
+          address_id: string
+          expires_at: string
+          from_email: string | null
+          from_name: string | null
+          html_body: string | null
+          id: string
+          raw_size: number | null
+          received_at: string
+          subject: string | null
+          text_body: string | null
+        }
+        Insert: {
+          address_id: string
+          expires_at?: string
+          from_email?: string | null
+          from_name?: string | null
+          html_body?: string | null
+          id?: string
+          raw_size?: number | null
+          received_at?: string
+          subject?: string | null
+          text_body?: string | null
+        }
+        Update: {
+          address_id?: string
+          expires_at?: string
+          from_email?: string | null
+          from_name?: string | null
+          html_body?: string | null
+          id?: string
+          raw_size?: number | null
+          received_at?: string
+          subject?: string | null
+          text_body?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inbox_messages_address_id_fkey"
+            columns: ["address_id"]
+            isOneToOne: false
+            referencedRelation: "inbox_addresses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       input_fields: {
         Row: {
           checkbox_mode: string | null
