@@ -79,6 +79,8 @@ const AdminOrders = () => {
   const [customerError, setCustomerError] = useState('');
   const [newProductId, setNewProductId] = useState('');
   const [newVariationId, setNewVariationId] = useState('');
+  const [productPickerSearch, setProductPickerSearch] = useState('');
+  const [productPickerOpen, setProductPickerOpen] = useState(false);
   const [newAmount, setNewAmount] = useState('');
   const [newPaymentMethod, setNewPaymentMethod] = useState('manual');
   
@@ -1630,35 +1632,65 @@ const AdminOrders = () => {
                 )}
               </div>
 
-              {/* Product Selection */}
+              {/* Product + Variation Selection (searchable) */}
               <div>
                 <Label>Product</Label>
-                <select
-                  value={newProductId}
-                  onChange={e => { setNewProductId(e.target.value); setNewVariationId(''); }}
-                  className={selectClassName.replace('border-input', '')}
-                >
-                  <option value="">Select a product</option>
-                  {products?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
+                {(() => {
+                  const options: { productId: string; variationId: string; label: string; price: number }[] = [];
+                  (products || []).forEach((p: any) => {
+                    const vars = (p.product_variations || []).filter((v: any) => v.is_active !== false);
+                    if (vars.length > 0) {
+                      vars.forEach((v: any) => options.push({
+                        productId: p.id,
+                        variationId: v.id,
+                        label: `${p.name} — ${v.name}`,
+                        price: Number(v.price) || 0,
+                      }));
+                    } else {
+                      options.push({ productId: p.id, variationId: '', label: p.name, price: Number(p.price) || 0 });
+                    }
+                  });
+                  const q = productPickerSearch.trim().toLowerCase();
+                  const filtered = q ? options.filter(o => o.label.toLowerCase().includes(q)) : options;
+                  const selected = options.find(o => o.productId === newProductId && (o.variationId || '') === (newVariationId || ''));
+                  return (
+                    <div className="relative">
+                      <Input
+                        placeholder="Search product or variation..."
+                        value={productPickerOpen ? productPickerSearch : (selected?.label || '')}
+                        onFocus={() => { setProductPickerOpen(true); setProductPickerSearch(''); }}
+                        onChange={(e) => { setProductPickerSearch(e.target.value); setProductPickerOpen(true); }}
+                        onBlur={() => setTimeout(() => setProductPickerOpen(false), 150)}
+                      />
+                      {productPickerOpen && (
+                        <div className="absolute z-50 mt-1 w-full max-h-64 overflow-y-auto rounded-md border border-border bg-popover shadow-lg">
+                          {filtered.length === 0 && (
+                            <div className="px-3 py-2 text-sm text-muted-foreground">No products found</div>
+                          )}
+                          {filtered.map((o) => (
+                            <button
+                              key={`${o.productId}-${o.variationId}`}
+                              type="button"
+                              className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex justify-between gap-2"
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                setNewProductId(o.productId);
+                                setNewVariationId(o.variationId);
+                                setProductPickerOpen(false);
+                                setProductPickerSearch('');
+                              }}
+                            >
+                              <span className="truncate">{o.label}</span>
+                              <span className="text-muted-foreground shrink-0">NPR {o.price}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
-              {/* Variation Selection */}
-              {newProductVariations.length > 0 && (
-                <div>
-                  <Label>Variation</Label>
-                  <select
-                    value={newVariationId}
-                    onChange={e => setNewVariationId(e.target.value)}
-                    className={selectClassName.replace('border-input', '')}
-                  >
-                    <option value="">Select a variation</option>
-                    {newProductVariations.map((v: any) => (
-                      <option key={v.id} value={v.id}>{v.name} — NPR {v.price}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
 
               {/* Input Fields (optional for admin) */}
               {newActiveFields.length > 0 && (
