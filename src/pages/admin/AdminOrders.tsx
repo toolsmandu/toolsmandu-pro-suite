@@ -79,6 +79,8 @@ const AdminOrders = () => {
   const [customerError, setCustomerError] = useState('');
   const [newProductId, setNewProductId] = useState('');
   const [newVariationId, setNewVariationId] = useState('');
+  const [productSearch, setProductSearch] = useState('');
+  const [productPickerOpen, setProductPickerOpen] = useState(false);
   const [newAmount, setNewAmount] = useState('');
   const [newPaymentMethod, setNewPaymentMethod] = useState('manual');
   
