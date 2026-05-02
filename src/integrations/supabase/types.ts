@@ -734,6 +734,124 @@ export type Database = {
         }
         Relationships: []
       }
+      inbox_addresses: {
+        Row: {
+          created_at: string
+          domain_id: string
+          email: string
+          expires_at: string | null
+          id: string
+          session_id: string | null
+          user_id: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          domain_id: string
+          email: string
+          expires_at?: string | null
+          id?: string
+          session_id?: string | null
+          user_id?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string
+          domain_id?: string
+          email?: string
+          expires_at?: string | null
+          id?: string
+          session_id?: string | null
+          user_id?: string | null
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inbox_addresses_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "inbox_domains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inbox_domains: {
+        Row: {
+          created_at: string
+          domain: string
+          id: string
+          imap_server_id: string
+          is_active: boolean
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          domain: string
+          id?: string
+          imap_server_id: string
+          is_active?: boolean
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          domain?: string
+          id?: string
+          imap_server_id?: string
+          is_active?: boolean
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inbox_domains_imap_server_id_fkey"
+            columns: ["imap_server_id"]
+            isOneToOne: false
+            referencedRelation: "inbox_imap_servers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inbox_imap_servers: {
+        Row: {
+          created_at: string
+          encryption: string
+          host: string
+          id: string
+          is_active: boolean
+          password_encrypted: string
+          port: number
+          tag: string
+          updated_at: string
+          username: string
+          validate_cert: boolean
+        }
+        Insert: {
+          created_at?: string
+          encryption?: string
+          host: string
+          id?: string
+          is_active?: boolean
+          password_encrypted: string
+          port?: number
+          tag: string
+          updated_at?: string
+          username: string
+          validate_cert?: boolean
+        }
+        Update: {
+          created_at?: string
+          encryption?: string
+          host?: string
+          id?: string
+          is_active?: boolean
+          password_encrypted?: string
+          port?: number
+          tag?: string
+          updated_at?: string
+          username?: string
+          validate_cert?: boolean
+        }
+        Relationships: []
+      }
       input_fields: {
         Row: {
           checkbox_mode: string | null
@@ -1806,12 +1924,40 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_imap_server_decrypted: {
+        Args: { _encryption_key: string; _id: string }
+        Returns: {
+          encryption: string
+          host: string
+          id: string
+          is_active: boolean
+          password: string
+          port: number
+          tag: string
+          username: string
+          validate_cert: boolean
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      insert_imap_server_with_password: {
+        Args: {
+          _encryption: string
+          _encryption_key: string
+          _host: string
+          _is_active: boolean
+          _password: string
+          _port: number
+          _tag: string
+          _username: string
+          _validate_cert: boolean
+        }
+        Returns: string
       }
       move_to_dlq: {
         Args: {
@@ -1829,6 +1975,21 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      update_imap_server_with_password: {
+        Args: {
+          _encryption: string
+          _encryption_key: string
+          _host: string
+          _id: string
+          _is_active: boolean
+          _password: string
+          _port: number
+          _tag: string
+          _username: string
+          _validate_cert: boolean
+        }
+        Returns: undefined
       }
     }
     Enums: {
