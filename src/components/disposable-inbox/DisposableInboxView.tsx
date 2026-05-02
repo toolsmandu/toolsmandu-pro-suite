@@ -82,6 +82,14 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, persist]);
 
+  // Auto-open inbox when an initialEmail is provided (e.g. from Orders "Get OTP Code")
+  useEffect(() => {
+    if (initialEmail) {
+      openByEmail();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialEmail]);
+
   const generateRandom = () => {
     const adj = ["swift","silent","cosmic","hidden","quick","brave","lucky","clever","brisk","mellow"];
     const noun = ["fox","wolf","panda","tiger","eagle","river","stone","cloud","spark","aero"];
