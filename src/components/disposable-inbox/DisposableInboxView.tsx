@@ -20,12 +20,15 @@ interface Props {
   mode: "user" | "public";
   /** When false, do not save addresses to DB and hide "My inboxes" list. Default true. */
   persist?: boolean;
+  /** When true, show only a single email input (no username/domain pickers). Default false. */
+  simpleMode?: boolean;
 }
 
 const STORAGE_KEY_SESSION = "disposable_inbox_session_id";
 const STORAGE_KEY_CURRENT = "disposable_inbox_current_email";
 
-export const DisposableInboxView = ({ mode, persist = true }: Props) => {
+export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }: Props) => {
+  const [emailInput, setEmailInput] = useState("");
   const { data: domains = [] } = useQuery({
     queryKey: ["inbox_domains_active"],
     queryFn: async () => {
@@ -149,9 +152,27 @@ export const DisposableInboxView = ({ mode, persist = true }: Props) => {
     setLoading(true);
     const { data, error } = await supabase.functions.invoke("inbox-fetch", { body: { email } });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    if (data?.error) return toast.error(data.error);
+    if (error) {
+      // Suppress noisy "Address not found" so simple-mode users can type any email
+      if (!/not found/i.test(error.message || "")) toast.error(error.message);
+      setMessages([]);
+      return;
+    }
+    if (data?.error) {
+      if (!/not found/i.test(data.error)) toast.error(data.error);
+      setMessages([]);
+      return;
+    }
     setMessages(data?.messages || []);
+  };
+
+  const openByEmail = () => {
+    const email = emailInput.toLowerCase().trim();
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) return toast.error("Enter a valid email");
+    setCurrentEmail(email);
+    localStorage.setItem(STORAGE_KEY_CURRENT, email);
+    setMessages([]);
+    fetchMail(email);
   };
 
   const switchTo = (email: string) => {
@@ -183,27 +204,46 @@ export const DisposableInboxView = ({ mode, persist = true }: Props) => {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5" /> Disposable Email Inbox</CardTitle></CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[200px]">
-              <Label>Choose username</Label>
-              <div className="flex gap-2">
-                <Input value={username} onChange={e => setUsername(e.target.value)} placeholder="myname123" />
-                <Button variant="outline" type="button" onClick={generateRandom}>Random</Button>
+          {simpleMode ? (
+            <div className="flex flex-wrap gap-3 items-end">
+              <div className="flex-1 min-w-[240px]">
+                <Label>Enter Email ID to View OTP</Label>
+                <Input
+                  type="email"
+                  value={emailInput}
+                  onChange={e => setEmailInput(e.target.value)}
+                  placeholder="name@example.com"
+                  onKeyDown={e => { if (e.key === "Enter") openByEmail(); }}
+                />
               </div>
+              <Button onClick={openByEmail} disabled={loading}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Mail className="mr-2 h-4 w-4" />}
+                Open Inbox
+              </Button>
             </div>
-            <div className="min-w-[180px]">
-              <Label>Domain</Label>
-              <Select value={domainId} onValueChange={setDomainId}>
-                <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                <SelectContent>{domains.map(d => <SelectItem key={d.id} value={d.id}>@{d.domain}</SelectItem>)}</SelectContent>
-              </Select>
+          ) : (
+            <div className="flex flex-wrap gap-3 items-end">
+              <div className="flex-1 min-w-[200px]">
+                <Label>Choose username</Label>
+                <div className="flex gap-2">
+                  <Input value={username} onChange={e => setUsername(e.target.value)} placeholder="myname123" />
+                  <Button variant="outline" type="button" onClick={generateRandom}>Random</Button>
+                </div>
+              </div>
+              <div className="min-w-[180px]">
+                <Label>Domain</Label>
+                <Select value={domainId} onValueChange={setDomainId}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>{domains.map(d => <SelectItem key={d.id} value={d.id}>@{d.domain}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <Button onClick={createInbox} disabled={creating}>
+                {creating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Mail className="mr-2 h-4 w-4" />}
+                Open Inbox
+              </Button>
             </div>
-            <Button onClick={createInbox} disabled={creating}>
-              {creating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Mail className="mr-2 h-4 w-4" />}
-              Open Inbox
-            </Button>
-          </div>
-          {domains.length === 0 && <p className="text-sm text-muted-foreground mt-3">No domains available yet.</p>}
+          )}
+          {!simpleMode && domains.length === 0 && <p className="text-sm text-muted-foreground mt-3">No domains available yet.</p>}
         </CardContent>
       </Card>
 
