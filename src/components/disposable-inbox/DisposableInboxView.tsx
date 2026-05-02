@@ -166,9 +166,37 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
     setMessages(data?.messages || []);
   };
 
-  const openByEmail = () => {
+  const openByEmail = async () => {
     const email = emailInput.toLowerCase().trim();
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) return toast.error("Enter a valid email");
+    if (!email || /\s/.test(email)) return toast.error("Enter a valid email");
+
+    // Validate against the user's active family-sharing credential usernames
+    if (mode === "user") {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return toast.error("Not signed in");
+      const { data: assignments, error } = await supabase
+        .from("credential_assignments")
+        .select("assigned_at, validity_days, family_sharing_credentials(username)")
+        .eq("user_id", user.id);
+      if (error) return toast.error(error.message);
+
+      const now = Date.now();
+      const allowed = (assignments || []).some((a: any) => {
+        const uname = (a.family_sharing_credentials?.username || "").toLowerCase().trim();
+        if (!uname) return false;
+        // active = no expiry OR assigned_at + validity_days > now
+        if (a.validity_days != null && a.assigned_at) {
+          const exp = new Date(a.assigned_at).getTime() + a.validity_days * 86400000;
+          if (exp <= now) return false;
+        }
+        return uname === email;
+      });
+
+      if (!allowed) {
+        return toast.error("This email is not linked to any active family-sharing order on your account.");
+      }
+    }
+
     setCurrentEmail(email);
     localStorage.setItem(STORAGE_KEY_CURRENT, email);
     setMessages([]);
