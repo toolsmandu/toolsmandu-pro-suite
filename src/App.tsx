@@ -105,7 +105,7 @@ const App = () => (
                   <Route path="report-problem" element={<ReportProblemPage />} />
                   <Route path="inbox" element={<DashboardInboxPage />} />
               </Route>
-              <Route path="/inbox" element={<PublicInboxPage />} />
+              
               <Route path="/:slug" element={<BlogPost />} />
               <Route path="*" element={<NotFound />} />
             </Route>
