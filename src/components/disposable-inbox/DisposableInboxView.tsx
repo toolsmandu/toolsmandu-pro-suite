@@ -73,11 +73,8 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
           setMyAddresses((data || []) as Address[]);
         }
       }
-      const saved = localStorage.getItem(STORAGE_KEY_CURRENT);
-      if (saved) {
-        setCurrentEmail(saved);
-        fetchMail(saved);
-      }
+      // Do not restore last-opened email; reset on each refresh
+      localStorage.removeItem(STORAGE_KEY_CURRENT);
     };
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
