@@ -58,7 +58,8 @@ Deno.serve(async (req) => {
     const messages: any[] = [];
 
     try {
-      const search = await client.search({ to: email });
+      const since = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+      const search = await client.search({ to: email, since });
       const uids = (search || []).slice(-limit).reverse();
       for (const uid of uids) {
         const msg = await client.fetchOne(uid, { source: true, envelope: true, internalDate: true });
