@@ -384,20 +384,24 @@ const AdminCredentialDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div><Label>Username *</Label><Input value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} /></div>
           <div><Label>Password *</Label><Input value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="md:col-span-2 space-y-2">
+            <div className="flex items-center gap-2">
               <Checkbox
                 id="use-inbuilt-otp"
-                checked={form.twofa_link === ""}
-                onCheckedChange={(checked) => setForm({ ...form, twofa_link: checked ? "" : " " })}
+                checked={useInbuiltOtp}
+                onCheckedChange={(checked) => {
+                  const v = !!checked;
+                  setUseInbuiltOtp(v);
+                  if (v) setForm(f => ({ ...f, twofa_link: "" }));
+                }}
               />
               <Label htmlFor="use-inbuilt-otp" className="cursor-pointer">Use Inbuilt OTP Inbox</Label>
             </div>
-            {form.twofa_link !== "" && (
-              <>
+            {!useInbuiltOtp && (
+              <div>
                 <Label>2FA Link (custom URL)</Label>
                 <Input value={form.twofa_link} onChange={e => setForm({ ...form, twofa_link: e.target.value })} placeholder="https://..." />
-              </>
+              </div>
             )}
           </div>
           <div><Label>Remarks</Label><Input value={form.remarks} onChange={e => setForm({ ...form, remarks: e.target.value })} /></div>
