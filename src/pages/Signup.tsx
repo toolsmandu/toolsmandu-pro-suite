@@ -96,9 +96,28 @@ const Signup = () => {
       toast.error('Password must be at least 6 characters');
       return;
     }
-    const phoneRegex = /^\d{6,15}$/;
-    if (!phoneRegex.test(phone)) {
-      toast.error('Please enter a valid phone number');
+    if (phone.trim() === '') {
+      toast.error('Phone number is required');
+      return;
+    }
+    if (/\s/.test(phone)) {
+      toast.error('Phone number cannot contain spaces');
+      return;
+    }
+    if (/^[+]/.test(phone)) {
+      toast.error('Do not include country code (+) in the phone number — it is already selected');
+      return;
+    }
+    if (/[^0-9]/.test(phone)) {
+      toast.error('Phone number can only contain digits (0–9)');
+      return;
+    }
+    if (phone.length < 6) {
+      toast.error(`Phone number is too short (${phone.length} digits). It must be at least 6 digits.`);
+      return;
+    }
+    if (phone.length > 15) {
+      toast.error(`Phone number is too long (${phone.length} digits). It must be at most 15 digits.`);
       return;
     }
 
