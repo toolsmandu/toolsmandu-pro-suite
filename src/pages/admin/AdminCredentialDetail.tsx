@@ -82,6 +82,7 @@ const AdminCredentialDetail = () => {
         twofa_link: cred.twofa_link || "",
         index_number: String(cred.index_number),
       });
+      setUseInbuiltOtp(!cred.twofa_link);
     }
 
     // Fetch assigned customers
