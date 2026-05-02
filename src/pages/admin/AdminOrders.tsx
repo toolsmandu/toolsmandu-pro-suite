@@ -1676,6 +1676,7 @@ const AdminOrders = () => {
                                 e.preventDefault();
                                 setNewProductId(o.productId);
                                 setNewVariationId(o.variationId);
+                                setNewAmount(String(o.price));
                                 setProductPickerOpen(false);
                                 setProductPickerSearch('');
                               }}
@@ -1719,19 +1720,6 @@ const AdminOrders = () => {
                   onChange={e => setNewAmount(e.target.value)}
                   className=""
                 />
-              </div>
-
-              {/* Payment Method */}
-              <div>
-                <Label>Payment Method</Label>
-                <select
-                  value={newPaymentMethod}
-                  onChange={e => setNewPaymentMethod(e.target.value)}
-                  className={selectClassName.replace('border-input', '')}
-                >
-                  <option value="manual">Manual</option>
-                  <option value="khalti">Khalti</option>
-                </select>
               </div>
 
               {/* Remarks */}
