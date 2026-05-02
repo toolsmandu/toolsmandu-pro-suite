@@ -157,16 +157,15 @@ const ServersTab = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Tag</TableHead><TableHead>Host</TableHead><TableHead>Username</TableHead>
+                <TableHead>Username</TableHead><TableHead>Host</TableHead>
                 <TableHead>Encryption</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {servers.map(s => (
                 <TableRow key={s.id}>
-                  <TableCell className="font-mono">{s.tag}</TableCell>
-                  <TableCell>{s.host}:{s.port}</TableCell>
                   <TableCell>{s.username}</TableCell>
+                  <TableCell>{s.host}:{s.port}</TableCell>
                   <TableCell><Badge variant="outline">{s.encryption}</Badge></TableCell>
                   <TableCell>{s.is_active ? <Badge>Active</Badge> : <Badge variant="secondary">Inactive</Badge>}</TableCell>
                   <TableCell className="text-right space-x-2">
@@ -176,7 +175,7 @@ const ServersTab = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {servers.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">No servers yet</TableCell></TableRow>}
+              {servers.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No servers yet</TableCell></TableRow>}
             </TableBody>
           </Table>
         )}
