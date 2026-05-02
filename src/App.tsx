@@ -63,6 +63,9 @@ import AdminSalesStatement from "./pages/admin/reports/AdminSalesStatement";
 import AdminTopSelling from "./pages/admin/reports/AdminTopSelling";
 import AdminCustomerSegment from "./pages/admin/reports/AdminCustomerSegment";
 import AdminKnowledgebase from "./pages/admin/AdminKnowledgebase";
+import AdminDisposableInbox from "./pages/admin/AdminDisposableInbox";
+import DashboardInboxPage from "./pages/dashboard/InboxPage";
+import PublicInboxPage from "./pages/PublicInbox";
 import AdminTasksList from "./pages/admin/tasks/AdminTasksList";
 import AdminTaskEditor from "./pages/admin/tasks/AdminTaskEditor";
 import AdminTaskDetail from "./pages/admin/tasks/AdminTaskDetail";
@@ -100,7 +103,9 @@ const App = () => (
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
                   <Route path="report-problem" element={<ReportProblemPage />} />
+                  <Route path="inbox" element={<DashboardInboxPage />} />
               </Route>
+              <Route path="/inbox" element={<PublicInboxPage />} />
               <Route path="/:slug" element={<BlogPost />} />
               <Route path="*" element={<NotFound />} />
             </Route>
@@ -128,6 +133,7 @@ const App = () => (
                 <Route path="reports/top-selling" element={<AdminTopSelling />} />
                 <Route path="reports/customer-segment" element={<AdminCustomerSegment />} />
                 <Route path="knowledgebase" element={<AdminKnowledgebase />} />
+                <Route path="disposable-inbox" element={<AdminDisposableInbox />} />
                 <Route path="tasks" element={<AdminTasksList />} />
                 <Route path="tasks/dashboard" element={<AdminTaskDashboard />} />
                 <Route path="tasks/recurring" element={<AdminTaskRecurring />} />
