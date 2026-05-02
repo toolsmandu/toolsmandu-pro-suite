@@ -10,7 +10,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, Inbox as InboxIcon, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut } from 'lucide-react';
+  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut } from 'lucide-react';
 import ChatbotWidget from '@/components/admin/ChatbotWidget';
 import SalesStatsBar from '@/components/admin/SalesStatsBar';
 import EditorTaskStatsBar from '@/components/admin/EditorTaskStatsBar';
