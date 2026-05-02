@@ -20,6 +20,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PaymentVerify from "./pages/PaymentVerify";
 import Unsubscribe from "./pages/Unsubscribe";
+import PublicInboxPage from "./pages/PublicInboxPage";
 
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import ProfilePage from "./pages/dashboard/ProfilePage";
@@ -98,6 +99,7 @@ const App = () => (
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/payment/verify" element={<PaymentVerify />} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
+                <Route path="/inbox" element={<PublicInboxPage />} />
                 <Route path="/blog" element={<BlogList />} />
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} />
