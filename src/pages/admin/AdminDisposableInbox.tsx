@@ -93,23 +93,23 @@ const ServersTab = () => {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<ImapServer | null>(null);
   const [form, setForm] = useState({
-    tag: "", host: "", port: 993, encryption: "ssl",
+    host: "", port: 993, encryption: "ssl",
     username: "", password: "", validate_cert: true, is_active: true,
   });
   const [saving, setSaving] = useState(false);
 
-  const openNew = () => { setEditing(null); setForm({ tag: "", host: "", port: 993, encryption: "ssl", username: "", password: "", validate_cert: true, is_active: true }); setOpen(true); };
-  const openEdit = (s: ImapServer) => { setEditing(s); setForm({ tag: s.tag, host: s.host, port: s.port, encryption: s.encryption, username: s.username, password: "", validate_cert: s.validate_cert, is_active: s.is_active }); setOpen(true); };
+  const openNew = () => { setEditing(null); setForm({ host: "", port: 993, encryption: "ssl", username: "", password: "", validate_cert: true, is_active: true }); setOpen(true); };
+  const openEdit = (s: ImapServer) => { setEditing(s); setForm({ host: s.host, port: s.port, encryption: s.encryption, username: s.username, password: "", validate_cert: s.validate_cert, is_active: s.is_active }); setOpen(true); };
 
   const save = async () => {
-    if (!form.tag || !form.host || !form.username) return toast.error("Tag, host and username required");
+    if (!form.host || !form.username) return toast.error("Host and username required");
     if (!editing && !form.password) return toast.error("Password required for new server");
     setSaving(true);
     try {
       const { data, error } = await supabase.functions.invoke("inbox-save-server", {
         body: {
           id: editing?.id ?? null,
-          tag: form.tag,
+          tag: form.username,
           host: form.host,
           port: form.port,
           encryption: form.encryption,
