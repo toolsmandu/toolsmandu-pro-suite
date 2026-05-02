@@ -56,6 +56,7 @@ const AdminFamilySharingDetail = () => {
   const [selectedCredentialId, setSelectedCredentialId] = useState<string | null>(null);
   const [selectedVariantMap, setSelectedVariantMap] = useState<Record<string, string>>({});
   const [form, setForm] = useState(emptyForm);
+  const [useInbuiltOtp, setUseInbuiltOtp] = useState(true);
 
   const fetchData = async () => {
     const { data: fp } = await supabase
