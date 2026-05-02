@@ -107,6 +107,7 @@ const AdminFamilySharingDetail = () => {
     setEditingId(null);
     const maxIndex = credentials.length > 0 ? Math.max(...credentials.map(c => c.index_number)) : 0;
     setForm({ ...emptyForm, index_number: String(maxIndex + 1) });
+    setUseInbuiltOtp(true);
     setDialogOpen(true);
   };
 
@@ -117,6 +118,7 @@ const AdminFamilySharingDetail = () => {
       expiry_date: c.expiry_date || "", max_limit: String(c.max_limit), twofa_link: c.twofa_link || "",
       index_number: String(c.index_number),
     });
+    setUseInbuiltOtp(!c.twofa_link);
     setDialogOpen(true);
   };
 
