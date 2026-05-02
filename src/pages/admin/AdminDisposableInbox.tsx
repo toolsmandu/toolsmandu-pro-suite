@@ -359,10 +359,6 @@ const InboxViewer = () => {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Message | null>(null);
 
-  useEffect(() => {
-    if (!domainId && domains.length > 0) setDomainId(domains[0].id);
-  }, [domains, domainId]);
-
   const generateRandom = () => {
     const adj = ["swift","silent","cosmic","hidden","quick","brave","lucky","clever"];
     const noun = ["fox","wolf","panda","tiger","eagle","river","stone","cloud"];
@@ -371,10 +367,25 @@ const InboxViewer = () => {
   };
 
   const createInbox = async () => {
-    if (!username || !domainId) return toast.error("Username and domain required");
-    const dom = domains.find(d => d.id === domainId);
-    if (!dom) return;
-    const email = `${username.toLowerCase().trim()}@${dom.domain}`;
+    if (!username) return toast.error("Username required");
+    const raw = username.toLowerCase().trim();
+
+    let localPart = raw;
+    let dom: Domain | undefined;
+
+    if (raw.includes("@")) {
+      const [u, d] = raw.split("@");
+      if (!u || !d) return toast.error("Invalid email");
+      dom = domains.find(x => x.domain.toLowerCase() === d);
+      if (!dom) return toast.error(`Domain @${d} is not configured`);
+      localPart = u;
+    } else {
+      if (!domainId) return toast.error("Please select a domain");
+      dom = domains.find(d => d.id === domainId);
+      if (!dom) return;
+    }
+
+    const email = `${localPart}@${dom.domain}`;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return toast.error("Not signed in");
 
@@ -382,7 +393,7 @@ const InboxViewer = () => {
     const { data: existing } = await supabase.from("inbox_addresses").select("*").eq("email", email).maybeSingle();
     if (!existing) {
       const { error } = await supabase.from("inbox_addresses").insert({
-        email, username: username.toLowerCase().trim(), domain_id: domainId, user_id: user.id,
+        email, username: localPart, domain_id: dom.id, user_id: user.id,
       });
       if (error) return toast.error(error.message);
     }
