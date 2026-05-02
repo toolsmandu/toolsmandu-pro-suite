@@ -56,6 +56,7 @@ const AdminFamilySharingDetail = () => {
   const [selectedCredentialId, setSelectedCredentialId] = useState<string | null>(null);
   const [selectedVariantMap, setSelectedVariantMap] = useState<Record<string, string>>({});
   const [form, setForm] = useState(emptyForm);
+  const [useInbuiltOtp, setUseInbuiltOtp] = useState(true);
 
   const fetchData = async () => {
     const { data: fp } = await supabase
@@ -106,6 +107,7 @@ const AdminFamilySharingDetail = () => {
     setEditingId(null);
     const maxIndex = credentials.length > 0 ? Math.max(...credentials.map(c => c.index_number)) : 0;
     setForm({ ...emptyForm, index_number: String(maxIndex + 1) });
+    setUseInbuiltOtp(true);
     setDialogOpen(true);
   };
 
@@ -116,6 +118,7 @@ const AdminFamilySharingDetail = () => {
       expiry_date: c.expiry_date || "", max_limit: String(c.max_limit), twofa_link: c.twofa_link || "",
       index_number: String(c.index_number),
     });
+    setUseInbuiltOtp(!c.twofa_link);
     setDialogOpen(true);
   };
 
@@ -134,7 +137,7 @@ const AdminFamilySharingDetail = () => {
       family_product_id: id!,
       username: form.username, password: form.password,
       remarks: form.remarks || null, expiry_date: form.expiry_date || null,
-      max_limit: parseInt(form.max_limit) || 1, twofa_link: form.twofa_link || null,
+      max_limit: parseInt(form.max_limit) || 1, twofa_link: useInbuiltOtp ? null : (form.twofa_link || null),
       index_number: parseInt(form.index_number) || 1,
     };
 
@@ -297,7 +300,26 @@ const AdminFamilySharingDetail = () => {
           <div className="space-y-4">
             <div><Label>Username *</Label><Input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} /></div>
             <div><Label>Password *</Label><Input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
-            <div><Label>2FA Link</Label><Input value={form.twofa_link} onChange={(e) => setForm({ ...form, twofa_link: e.target.value })} /></div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="use-inbuilt-otp-add"
+                  checked={useInbuiltOtp}
+                  onCheckedChange={(checked) => {
+                    const v = !!checked;
+                    setUseInbuiltOtp(v);
+                    if (v) setForm({ ...form, twofa_link: "" });
+                  }}
+                />
+                <Label htmlFor="use-inbuilt-otp-add" className="cursor-pointer">Use Inbuilt OTP Inbox</Label>
+              </div>
+              {!useInbuiltOtp && (
+                <div>
+                  <Label>2FA Link (custom URL)</Label>
+                  <Input value={form.twofa_link} onChange={(e) => setForm({ ...form, twofa_link: e.target.value })} placeholder="https://..." />
+                </div>
+              )}
+            </div>
             <div><Label>Remarks</Label><Input value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-4">
               <div><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} /></div>
