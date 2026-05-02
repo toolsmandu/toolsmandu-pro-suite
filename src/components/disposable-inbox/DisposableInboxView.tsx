@@ -202,7 +202,7 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5" /> Disposable Email Inbox</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5" /> Check OTP for Account Login</CardTitle></CardHeader>
         <CardContent>
           {simpleMode ? (
             <div className="flex flex-wrap gap-3 items-end">
