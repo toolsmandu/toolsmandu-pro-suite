@@ -34,6 +34,7 @@ const copyToClipboard = (text: string) => {
 
 const OrdersPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [statusFilter, setStatusFilter] = useState<string[]>(DEFAULT_STATUSES);
 
