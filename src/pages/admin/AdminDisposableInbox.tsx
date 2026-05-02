@@ -443,7 +443,7 @@ const InboxViewer = () => {
               <CardTitle className="font-mono text-base">{currentEmail}</CardTitle>
               <p className="text-xs text-muted-foreground mt-1">{messages.length} message{messages.length !== 1 ? "s" : ""}</p>
             </div>
-            <Button variant="outline" onClick={() => fetchMail(currentEmail)} disabled={loading}>
+            <Button onClick={() => fetchMail(currentEmail)} disabled={loading} className="bg-success text-success-foreground hover:bg-success/90">
               {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
               Refresh
             </Button>
