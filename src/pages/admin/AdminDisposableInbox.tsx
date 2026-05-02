@@ -171,7 +171,7 @@ const ServersTab = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Username</TableHead><TableHead>Host</TableHead>
-                <TableHead>Encryption</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
+                <TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -179,7 +179,6 @@ const ServersTab = () => {
                 <TableRow key={s.id}>
                   <TableCell>{s.username}</TableCell>
                   <TableCell>{s.host}:{s.port}</TableCell>
-                  <TableCell><Badge variant="outline">{s.encryption}</Badge></TableCell>
                   <TableCell>{s.is_active ? <Badge>Active</Badge> : <Badge variant="secondary">Inactive</Badge>}</TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button size="sm" variant="outline" onClick={() => test(s.id)}>Test</Button>
@@ -188,7 +187,7 @@ const ServersTab = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {servers.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No servers yet</TableCell></TableRow>}
+              {servers.length === 0 && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">No servers yet</TableCell></TableRow>}
             </TableBody>
           </Table>
         )}
