@@ -1721,19 +1721,6 @@ const AdminOrders = () => {
                 />
               </div>
 
-              {/* Payment Method */}
-              <div>
-                <Label>Payment Method</Label>
-                <select
-                  value={newPaymentMethod}
-                  onChange={e => setNewPaymentMethod(e.target.value)}
-                  className={selectClassName.replace('border-input', '')}
-                >
-                  <option value="manual">Manual</option>
-                  <option value="khalti">Khalti</option>
-                </select>
-              </div>
-
               {/* Remarks */}
               <div>
                 <Label>Remarks</Label>
