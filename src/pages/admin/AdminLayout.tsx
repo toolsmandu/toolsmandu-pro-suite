@@ -378,7 +378,18 @@ const AdminLayout = () => {
             <SidebarTrigger className="text-foreground" />
             {isAdmin && <SalesStatsBar />}
             {!isAdmin && isEditor && <EditorTaskStatsBar />}
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              {isAdmin && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/admin/inbox')}
+                  className="justify-center"
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  <span>Inbox</span>
+                </Button>
+              )}
               <Button
                 variant="destructive"
                 size="sm"
