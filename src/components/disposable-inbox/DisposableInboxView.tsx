@@ -308,6 +308,12 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
             {messages.length === 0 && !loading && (
               <p className="text-center text-muted-foreground py-8">No messages yet. Send mail to {currentEmail} and click Refresh.</p>
             )}
+            {messages.length > 0 && (
+              <div className="flex justify-between items-center px-2 py-2 border-b text-xs font-semibold uppercase text-muted-foreground">
+                <span>Email</span>
+                <span>Date</span>
+              </div>
+            )}
             <div className="divide-y">
               {messages.map(m => (
                 <button key={m.uid} onClick={() => setSelected(m)} className="w-full text-left py-3 hover:bg-muted/50 px-2 rounded">
