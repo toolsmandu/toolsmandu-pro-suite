@@ -65,7 +65,7 @@ import AdminCustomerSegment from "./pages/admin/reports/AdminCustomerSegment";
 import AdminKnowledgebase from "./pages/admin/AdminKnowledgebase";
 import AdminDisposableInbox from "./pages/admin/AdminDisposableInbox";
 import DashboardInboxPage from "./pages/dashboard/InboxPage";
-import PublicInboxPage from "./pages/PublicInbox";
+
 import AdminTasksList from "./pages/admin/tasks/AdminTasksList";
 import AdminTaskEditor from "./pages/admin/tasks/AdminTaskEditor";
 import AdminTaskDetail from "./pages/admin/tasks/AdminTaskDetail";
@@ -105,7 +105,7 @@ const App = () => (
                   <Route path="report-problem" element={<ReportProblemPage />} />
                   <Route path="inbox" element={<DashboardInboxPage />} />
               </Route>
-              <Route path="/inbox" element={<PublicInboxPage />} />
+              
               <Route path="/:slug" element={<BlogPost />} />
               <Route path="*" element={<NotFound />} />
             </Route>
