@@ -309,22 +309,24 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
               <p className="text-center text-muted-foreground py-8">No messages yet. Send mail to {currentEmail} and click Refresh.</p>
             )}
             {messages.length > 0 && (
-              <div className="flex justify-between items-center px-2 py-2 border-b text-xs font-semibold uppercase text-muted-foreground">
-                <span>Email</span>
+              <div className="grid grid-cols-[180px_1fr_120px] gap-3 px-2 py-2 border-b text-xs font-semibold uppercase text-muted-foreground">
                 <span>Date</span>
+                <span>Email</span>
+                <span className="text-right">Action</span>
               </div>
             )}
             <div className="divide-y">
               {messages.map(m => (
-                <button key={m.uid} onClick={() => setSelected(m)} className="w-full text-left py-3 hover:bg-muted/50 px-2 rounded">
-                  <div className="flex justify-between items-start gap-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium truncate">{m.subject}</p>
-                      <p className="text-sm text-muted-foreground truncate">{m.from}</p>
-                    </div>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(m.date).toLocaleString()}</span>
+                <div key={m.uid} className="grid grid-cols-[180px_1fr_120px] gap-3 items-center py-3 px-2">
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(m.date).toLocaleString()}</span>
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{m.subject}</p>
+                    <p className="text-sm text-muted-foreground truncate">{m.from}</p>
                   </div>
-                </button>
+                  <div className="text-right">
+                    <Button size="sm" variant="outline" onClick={() => setSelected(m)}>View Email</Button>
+                  </div>
+                </div>
               ))}
             </div>
           </CardContent>
