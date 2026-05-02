@@ -18,6 +18,8 @@ type Message = { uid: number; subject: string; from: string; date: string; text:
 interface Props {
   /** "user" = signed-in (uses user_id); "public" = anon (uses session_id via edge fn) */
   mode: "user" | "public";
+  /** When false, do not save addresses to DB and hide "My inboxes" list. Default true. */
+  persist?: boolean;
 }
 
 const STORAGE_KEY_SESSION = "disposable_inbox_session_id";
