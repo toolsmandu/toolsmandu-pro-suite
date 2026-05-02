@@ -17,7 +17,7 @@ const DashboardLayout = () => {
   const links = [
     { to: '/dashboard', icon: User, label: 'Profile', end: true },
     { to: '/dashboard/orders', icon: Package, label: 'Orders' },
-    { to: '/dashboard/inbox', icon: Mail, label: 'Account OTP' },
+    { to: '/dashboard/inbox', icon: Mail, label: 'Email Inbox' },
     { to: '/dashboard/report-problem', icon: AlertCircle, label: 'Report a Problem' },
   ];
 
