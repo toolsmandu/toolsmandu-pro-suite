@@ -98,16 +98,18 @@ export const DisposableInboxView = ({ mode, persist = true }: Props) => {
     setCreating(true);
     try {
       if (mode === "user") {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error("Not signed in");
-        const { data: existing } = await supabase.from("inbox_addresses").select("*").eq("email", email).maybeSingle();
-        if (existing) {
-          if (existing.user_id !== user.id) throw new Error("Address already taken");
-        } else {
-          const { error } = await supabase.from("inbox_addresses").insert({
-            email, username: cleanUser, domain_id: domainId, user_id: user.id,
-          });
-          if (error) throw error;
+        if (persist) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) throw new Error("Not signed in");
+          const { data: existing } = await supabase.from("inbox_addresses").select("*").eq("email", email).maybeSingle();
+          if (existing) {
+            if (existing.user_id !== user.id) throw new Error("Address already taken");
+          } else {
+            const { error } = await supabase.from("inbox_addresses").insert({
+              email, username: cleanUser, domain_id: domainId, user_id: user.id,
+            });
+            if (error) throw error;
+          }
         }
       } else {
         const sid = getSessionId();
@@ -122,14 +124,18 @@ export const DisposableInboxView = ({ mode, persist = true }: Props) => {
       localStorage.setItem(STORAGE_KEY_CURRENT, email);
       setMessages([]);
       // refresh saved list
-      if (mode === "user") {
-        const { data: { user } } = await supabase.auth.getUser();
-        const { data } = await supabase.from("inbox_addresses").select("*").eq("user_id", user!.id).order("created_at", { ascending: false });
-        setMyAddresses((data || []) as Address[]);
-      } else {
-        const sid = getSessionId();
-        const { data } = await supabase.from("inbox_addresses").select("*").eq("session_id", sid).order("created_at", { ascending: false });
-        setMyAddresses((data || []) as Address[]);
+      if (persist) {
+        if (mode === "user") {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data } = await supabase.from("inbox_addresses").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+            setMyAddresses((data || []) as Address[]);
+          }
+        } else {
+          const sid = getSessionId();
+          const { data } = await supabase.from("inbox_addresses").select("*").eq("session_id", sid).order("created_at", { ascending: false });
+          setMyAddresses((data || []) as Address[]);
+        }
       }
       fetchMail(email);
     } catch (e: any) {
