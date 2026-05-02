@@ -200,7 +200,6 @@ const ServersTab = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div><Label>Username (catch-all mailbox)</Label><Input value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} placeholder="catchall@example.com" /></div>
             <div><Label>Password {editing && <span className="text-xs text-muted-foreground">(leave blank to keep)</span>}</Label>
               <Input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
             </div>
