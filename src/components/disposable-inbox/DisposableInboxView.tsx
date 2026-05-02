@@ -57,15 +57,18 @@ export const DisposableInboxView = ({ mode, persist = true }: Props) => {
   // Load saved addresses
   useEffect(() => {
     const load = async () => {
-      if (mode === "user") {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        const { data } = await supabase.from("inbox_addresses").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
-        setMyAddresses((data || []) as Address[]);
-      } else {
-        const sid = getSessionId();
-        const { data } = await supabase.from("inbox_addresses").select("*").eq("session_id", sid).order("created_at", { ascending: false });
-        setMyAddresses((data || []) as Address[]);
+      if (persist) {
+        if (mode === "user") {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data } = await supabase.from("inbox_addresses").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+            setMyAddresses((data || []) as Address[]);
+          }
+        } else {
+          const sid = getSessionId();
+          const { data } = await supabase.from("inbox_addresses").select("*").eq("session_id", sid).order("created_at", { ascending: false });
+          setMyAddresses((data || []) as Address[]);
+        }
       }
       const saved = localStorage.getItem(STORAGE_KEY_CURRENT);
       if (saved) {
@@ -75,7 +78,7 @@ export const DisposableInboxView = ({ mode, persist = true }: Props) => {
     };
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode]);
+  }, [mode, persist]);
 
   const generateRandom = () => {
     const adj = ["swift","silent","cosmic","hidden","quick","brave","lucky","clever","brisk","mellow"];
