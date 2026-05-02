@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Plus, RefreshCw, Trash2, Mail, Server, Globe, Inbox } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Trash2, Mail, Server, Globe, Inbox, Settings } from "lucide-react";
 
 type ImapServer = {
   id: string;
@@ -51,24 +51,37 @@ type Message = {
 };
 
 const AdminDisposableInbox = () => {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2"><Inbox className="h-6 w-6" /> Disposable Inbox</h1>
-        <p className="text-muted-foreground text-sm">Manage IMAP servers, domains, and view temporary inboxes.</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2"><Inbox className="h-6 w-6" /> Disposable Inbox</h1>
+          <p className="text-muted-foreground text-sm">View temporary inboxes from your catch-all mail server.</p>
+        </div>
+        <Button variant="outline" size="icon" onClick={() => setSettingsOpen(true)} title="Email Settings">
+          <Settings className="h-4 w-4" />
+        </Button>
       </div>
 
-      <Tabs defaultValue="inbox">
-        <TabsList>
-          <TabsTrigger value="inbox"><Mail className="mr-2 h-4 w-4" /> Inbox Viewer</TabsTrigger>
-          <TabsTrigger value="domains"><Globe className="mr-2 h-4 w-4" /> Domains</TabsTrigger>
-          <TabsTrigger value="servers"><Server className="mr-2 h-4 w-4" /> IMAP Servers</TabsTrigger>
-        </TabsList>
+      <InboxViewer />
 
-        <TabsContent value="inbox" className="mt-4"><InboxViewer /></TabsContent>
-        <TabsContent value="domains" className="mt-4"><DomainsTab /></TabsContent>
-        <TabsContent value="servers" className="mt-4"><ServersTab /></TabsContent>
-      </Tabs>
+      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Settings className="h-5 w-5" /> Email Settings</DialogTitle>
+          </DialogHeader>
+          <Tabs defaultValue="domains" className="mt-2">
+            <TabsList>
+              <TabsTrigger value="domains"><Globe className="mr-2 h-4 w-4" /> Domains</TabsTrigger>
+              <TabsTrigger value="servers"><Server className="mr-2 h-4 w-4" /> IMAP Servers</TabsTrigger>
+            </TabsList>
+            <TabsContent value="domains" className="mt-4"><DomainsTab /></TabsContent>
+            <TabsContent value="servers" className="mt-4"><ServersTab /></TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
