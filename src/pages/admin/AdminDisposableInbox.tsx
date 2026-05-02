@@ -185,7 +185,7 @@ const ServersTab = () => {
         <DialogContent>
           <DialogHeader><DialogTitle>{editing ? "Edit" : "Add"} IMAP Server</DialogTitle></DialogHeader>
           <div className="space-y-3">
-            <div><Label>Tag (unique label)</Label><Input value={form.tag} onChange={e => setForm({ ...form, tag: e.target.value })} placeholder="main" /></div>
+            <div><Label>Username (catch-all mailbox)</Label><Input value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} placeholder="catchall@example.com" /></div>
             <div className="grid grid-cols-2 gap-3">
               <div><Label>Host</Label><Input value={form.host} onChange={e => setForm({ ...form, host: e.target.value })} placeholder="mail.example.com" /></div>
               <div><Label>Port</Label><Input type="number" value={form.port} onChange={e => setForm({ ...form, port: parseInt(e.target.value) || 993 })} /></div>
