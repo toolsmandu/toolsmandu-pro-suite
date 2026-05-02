@@ -133,7 +133,7 @@ const App = () => (
                 <Route path="reports/top-selling" element={<AdminTopSelling />} />
                 <Route path="reports/customer-segment" element={<AdminCustomerSegment />} />
                 <Route path="knowledgebase" element={<AdminKnowledgebase />} />
-                <Route path="disposable-inbox" element={<AdminDisposableInbox />} />
+                <Route path="inbox" element={<AdminDisposableInbox />} />
                 <Route path="tasks" element={<AdminTasksList />} />
                 <Route path="tasks/dashboard" element={<AdminTaskDashboard />} />
                 <Route path="tasks/recurring" element={<AdminTaskRecurring />} />

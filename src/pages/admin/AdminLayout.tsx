@@ -280,18 +280,6 @@ const AdminLayout = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
-                  {/* Disposable Inbox (admin only) */}
-                  {isAdmin && (
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild>
-                        <NavLink to="/admin/disposable-inbox" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
-                          <Mail className="mr-2 h-4 w-4" />
-                          <span className="flex-1">Disposable Inbox</span>
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
-
                   {/* Tasks — just below Knowledgebase */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
@@ -302,6 +290,17 @@ const AdminLayout = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
+                  {/* Email Inbox (admin only) — just above Settings */}
+                  {isAdmin && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <NavLink to="/admin/inbox" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                          <Mail className="mr-2 h-4 w-4" />
+                          <span className="flex-1">Email Inbox</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
 
                   {/* Settings sub-menu (admin only) */}
                   {isAdmin && (
@@ -379,7 +378,18 @@ const AdminLayout = () => {
             <SidebarTrigger className="text-foreground" />
             {isAdmin && <SalesStatsBar />}
             {!isAdmin && isEditor && <EditorTaskStatsBar />}
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              {isAdmin && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/admin/inbox')}
+                  className="justify-center"
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  <span>Inbox</span>
+                </Button>
+              )}
               <Button
                 variant="destructive"
                 size="sm"
