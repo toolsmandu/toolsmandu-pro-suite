@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Plus, RefreshCw, Trash2, Mail, Server, Globe, Inbox } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Trash2, Mail, Server, Globe, Inbox, Settings } from "lucide-react";
 
 type ImapServer = {
   id: string;
