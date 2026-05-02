@@ -106,19 +106,21 @@ const ServersTab = () => {
     if (!editing && !form.password) return toast.error("Password required for new server");
     setSaving(true);
     try {
-      const { error } = await supabase.rpc("set_imap_server", {
-        _id: editing?.id ?? null,
-        _tag: form.tag,
-        _host: form.host,
-        _port: form.port,
-        _encryption: form.encryption,
-        _username: form.username,
-        _password: form.password,
-        _validate_cert: form.validate_cert,
-        _is_active: form.is_active,
-        _encryption_key: "__unused_passed_via_secret__", // placeholder; real key from secret in fn? No — RPC needs key.
-      } as any);
+      const { data, error } = await supabase.functions.invoke("inbox-save-server", {
+        body: {
+          id: editing?.id ?? null,
+          tag: form.tag,
+          host: form.host,
+          port: form.port,
+          encryption: form.encryption,
+          username: form.username,
+          password: form.password,
+          validate_cert: form.validate_cert,
+          is_active: form.is_active,
+        },
+      });
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
       toast.success(editing ? "Server updated" : "Server added");
       setOpen(false);
       qc.invalidateQueries({ queryKey: ["inbox_imap_servers"] });
