@@ -22,6 +22,8 @@ interface Props {
   persist?: boolean;
   /** When true, show only a single email input (no username/domain pickers). Default false. */
   simpleMode?: boolean;
+  /** Prefill the email input and auto-open the inbox on mount. */
+  initialEmail?: string;
 }
 
 const STORAGE_KEY_SESSION = "disposable_inbox_session_id";
