@@ -280,7 +280,7 @@ const OrdersPage = () => {
                                     </a>
                                   )}
                                   {remaining !== null ? (
-                                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-destructive text-white text-xs font-semibold">
+                                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs font-medium">
                                       <Clock className="h-3 w-3" /> Remaining: {remaining.value} Days
                                     </span>
                                   ) : (
