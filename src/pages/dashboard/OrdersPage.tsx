@@ -237,7 +237,7 @@ const OrdersPage = () => {
                           className="bg-success text-white border-success/30 cursor-pointer hover:bg-success/80 transition-colors"
                           onClick={() => setSelectedOrder(order)}
                         >
-                          View Admin's Message
+                          View Order Note
                         </Badge>
                       ) : (
                         <span className="text-muted-foreground">-</span>
