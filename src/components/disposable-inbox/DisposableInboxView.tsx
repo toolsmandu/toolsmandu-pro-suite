@@ -20,6 +20,8 @@ interface Props {
   mode: "user" | "public";
   /** When false, do not save addresses to DB and hide "My inboxes" list. Default true. */
   persist?: boolean;
+  /** When true, show only a single email input (no username/domain pickers). Default false. */
+  simpleMode?: boolean;
 }
 
 const STORAGE_KEY_SESSION = "disposable_inbox_session_id";
