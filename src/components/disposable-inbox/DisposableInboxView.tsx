@@ -204,27 +204,46 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5" /> Disposable Email Inbox</CardTitle></CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[200px]">
-              <Label>Choose username</Label>
-              <div className="flex gap-2">
-                <Input value={username} onChange={e => setUsername(e.target.value)} placeholder="myname123" />
-                <Button variant="outline" type="button" onClick={generateRandom}>Random</Button>
+          {simpleMode ? (
+            <div className="flex flex-wrap gap-3 items-end">
+              <div className="flex-1 min-w-[240px]">
+                <Label>Enter Email ID to View OTP</Label>
+                <Input
+                  type="email"
+                  value={emailInput}
+                  onChange={e => setEmailInput(e.target.value)}
+                  placeholder="name@example.com"
+                  onKeyDown={e => { if (e.key === "Enter") openByEmail(); }}
+                />
               </div>
+              <Button onClick={openByEmail} disabled={loading}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Mail className="mr-2 h-4 w-4" />}
+                Open Inbox
+              </Button>
             </div>
-            <div className="min-w-[180px]">
-              <Label>Domain</Label>
-              <Select value={domainId} onValueChange={setDomainId}>
-                <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                <SelectContent>{domains.map(d => <SelectItem key={d.id} value={d.id}>@{d.domain}</SelectItem>)}</SelectContent>
-              </Select>
+          ) : (
+            <div className="flex flex-wrap gap-3 items-end">
+              <div className="flex-1 min-w-[200px]">
+                <Label>Choose username</Label>
+                <div className="flex gap-2">
+                  <Input value={username} onChange={e => setUsername(e.target.value)} placeholder="myname123" />
+                  <Button variant="outline" type="button" onClick={generateRandom}>Random</Button>
+                </div>
+              </div>
+              <div className="min-w-[180px]">
+                <Label>Domain</Label>
+                <Select value={domainId} onValueChange={setDomainId}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>{domains.map(d => <SelectItem key={d.id} value={d.id}>@{d.domain}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <Button onClick={createInbox} disabled={creating}>
+                {creating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Mail className="mr-2 h-4 w-4" />}
+                Open Inbox
+              </Button>
             </div>
-            <Button onClick={createInbox} disabled={creating}>
-              {creating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Mail className="mr-2 h-4 w-4" />}
-              Open Inbox
-            </Button>
-          </div>
-          {domains.length === 0 && <p className="text-sm text-muted-foreground mt-3">No domains available yet.</p>}
+          )}
+          {!simpleMode && domains.length === 0 && <p className="text-sm text-muted-foreground mt-3">No domains available yet.</p>}
         </CardContent>
       </Card>
 
