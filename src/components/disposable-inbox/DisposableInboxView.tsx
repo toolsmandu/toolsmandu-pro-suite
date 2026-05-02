@@ -193,7 +193,7 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
       });
 
       if (!allowed) {
-        return toast.error("This email is not linked to any active family-sharing order on your account.");
+        return toast.error("You are not allowed to View Inbox for this Email because you don't have any active order associated with this email.");
       }
     }
 
