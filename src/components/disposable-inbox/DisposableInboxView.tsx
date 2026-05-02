@@ -22,13 +22,15 @@ interface Props {
   persist?: boolean;
   /** When true, show only a single email input (no username/domain pickers). Default false. */
   simpleMode?: boolean;
+  /** Prefill the email input and auto-open the inbox on mount. */
+  initialEmail?: string;
 }
 
 const STORAGE_KEY_SESSION = "disposable_inbox_session_id";
 const STORAGE_KEY_CURRENT = "disposable_inbox_current_email";
 
-export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }: Props) => {
-  const [emailInput, setEmailInput] = useState("");
+export const DisposableInboxView = ({ mode, persist = true, simpleMode = false, initialEmail }: Props) => {
+  const [emailInput, setEmailInput] = useState(initialEmail || "");
   const { data: domains = [] } = useQuery({
     queryKey: ["inbox_domains_active"],
     queryFn: async () => {
@@ -79,6 +81,14 @@ export const DisposableInboxView = ({ mode, persist = true, simpleMode = false }
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, persist]);
+
+  // Auto-open inbox when an initialEmail is provided (e.g. from Orders "Get OTP Code")
+  useEffect(() => {
+    if (initialEmail) {
+      openByEmail();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialEmail]);
 
   const generateRandom = () => {
     const adj = ["swift","silent","cosmic","hidden","quick","brave","lucky","clever","brisk","mellow"];

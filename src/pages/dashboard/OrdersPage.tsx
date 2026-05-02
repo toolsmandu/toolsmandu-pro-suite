@@ -268,7 +268,7 @@ const OrdersPage = () => {
                                       <RotateCcwKey className="h-3 w-3" /> Get OTP Code
                                     </a>
                                   ) : (
-                                    <button onClick={() => navigate('/dashboard/inbox')}
+                                    <button onClick={() => navigate('/dashboard/inbox', { state: { email: cred?.username } })}
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/30 transition-colors">
                                       <RotateCcwKey className="h-3 w-3" /> Get OTP Code
                                     </button>
