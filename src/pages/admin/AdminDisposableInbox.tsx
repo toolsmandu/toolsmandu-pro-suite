@@ -427,7 +427,7 @@ const InboxViewer = () => {
             <div className="min-w-[180px]">
               <Label>Domain</Label>
               <Select value={domainId} onValueChange={setDomainId}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select a Domain" /></SelectTrigger>
                 <SelectContent>{domains.map(d => <SelectItem key={d.id} value={d.id}>@{d.domain}</SelectItem>)}</SelectContent>
               </Select>
             </div>
