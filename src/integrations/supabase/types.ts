@@ -1945,6 +1945,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      insert_imap_server_with_password: {
+        Args: {
+          _encryption: string
+          _encryption_key: string
+          _host: string
+          _is_active: boolean
+          _password: string
+          _port: number
+          _tag: string
+          _username: string
+          _validate_cert: boolean
+        }
+        Returns: string
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -1962,7 +1976,7 @@ export type Database = {
           read_ct: number
         }[]
       }
-      set_imap_server: {
+      update_imap_server_with_password: {
         Args: {
           _encryption: string
           _encryption_key: string
@@ -1975,7 +1989,7 @@ export type Database = {
           _username: string
           _validate_cert: boolean
         }
-        Returns: string
+        Returns: undefined
       }
     }
     Enums: {
