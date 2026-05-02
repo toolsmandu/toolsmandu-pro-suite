@@ -280,6 +280,18 @@ const AdminLayout = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
+                  {/* Disposable Inbox (admin only) */}
+                  {isAdmin && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <NavLink to="/admin/disposable-inbox" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                          <Mail className="mr-2 h-4 w-4" />
+                          <span className="flex-1">Disposable Inbox</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
+
                   {/* Tasks — just below Knowledgebase */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
