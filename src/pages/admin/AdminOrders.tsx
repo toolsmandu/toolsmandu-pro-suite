@@ -1223,7 +1223,8 @@ const AdminOrders = () => {
                   placeholder="Optional notes about this order (admin-only)"
                   value={newRemarks}
                   onChange={e => setNewRemarks(e.target.value)}
-                  rows={2}
+                  rows={1}
+                  className="min-h-10 h-10 py-2 resize-y"
                 />
               </div>
 
