@@ -257,7 +257,7 @@ const Signup = () => {
                   <Label>WhatsApp Number</Label>
                   <div className="flex gap-2">
                     <Select value={countryCode} onValueChange={setCountryCode}>
-                      <SelectTrigger className="w-[120px]">
+                      <SelectTrigger className="w-[140px]">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
