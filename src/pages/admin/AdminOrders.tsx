@@ -70,7 +70,7 @@ const AdminOrders = () => {
   const [paymentFilter, setPaymentFilter] = useState('all');
 
   // Add order state
-  const [addingOrder, setAddingOrder] = useState(false);
+  const [addingOrder, setAddingOrder] = useState(true);
   const [newOrderDate, setNewOrderDate] = useState(getKathmanduNowLocal);
   const [customerSearch, setCustomerSearch] = useState('');
   const [customerResults, setCustomerResults] = useState<any[]>([]);
