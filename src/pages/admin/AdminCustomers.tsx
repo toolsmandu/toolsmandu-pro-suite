@@ -194,7 +194,7 @@ const AdminCustomers = () => {
           </Button>
           <div className="relative flex-1 min-w-[240px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by email, phone" className="pl-9" />
+            <Input value={searchTerm} onChange={e => setSearchTerm(sanitizeSearchInput(e.target.value))} placeholder="Search by email, phone" className="pl-9" />
           </div>
           <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={`${selectClassName} w-32`}>
             <option value="all">All Roles</option>
