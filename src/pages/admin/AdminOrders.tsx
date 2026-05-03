@@ -1036,9 +1036,6 @@ const AdminOrders = () => {
       <div className={`${selectedOrder ? 'hidden lg:block lg:flex-1' : 'flex-1'} min-w-0`}>
         <div className="flex items-center gap-3 mb-4">
           <h2 className="text-2xl font-bold text-foreground">Orders</h2>
-          {!addingOrder && (
-            <Button onClick={openAddOrder}><Plus className="h-4 w-4 mr-2" /> Add Order</Button>
-          )}
           <div className="ml-auto">
             <Button variant="outline" onClick={handleExportOrders}>
               <Download className="h-4 w-4 mr-2" /> Export Data
@@ -1046,14 +1043,10 @@ const AdminOrders = () => {
           </div>
         </div>
 
-        {/* Add Order Card (inline) */}
-        {addingOrder && (
-          <div className="mb-4 rounded-xl border border-border bg-muted/20 p-5 shadow-sm">
+        {/* Add Order Card (always visible) */}
+        <div className="mb-4 rounded-xl border border-border bg-muted/20 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-foreground">Add Order</h3>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setAddingOrder(false)}>
-                <X className="h-4 w-4" />
-              </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
