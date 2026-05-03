@@ -134,7 +134,14 @@ const Signup = () => {
     });
 
     if (error) {
-      toast.error(error.message);
+      const msg = (error.message || '').toLowerCase();
+      if (msg.includes('phone')) {
+        toast.error(
+          `Invalid phone number "${countryCode}${phone}". Please double-check the country code and the digits you entered — make sure it is your real WhatsApp number without any spaces or special characters.`
+        );
+      } else {
+        toast.error(error.message);
+      }
       setLoading(false);
       return;
     }
