@@ -115,11 +115,11 @@ const AdminSheetDetail = () => {
           <TableHeader>
             <TableRow className="bg-muted/60 hover:bg-muted/60">
               {COLUMNS.map((c) => (
-                <TableHead key={c.key} className="whitespace-nowrap">
+                <TableHead key={c.key} className="whitespace-nowrap border-r border-border last:border-r-0">
                   {c.label}
                 </TableHead>
               ))}
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right border-r border-border last:border-r-0">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -139,7 +139,7 @@ const AdminSheetDetail = () => {
                   className={idx % 2 === 1 ? "bg-muted/40" : ""}
                 >
                   {COLUMNS.map((c) => (
-                    <TableCell key={c.key} className="p-1 align-top">
+                    <TableCell key={c.key} className="p-1 align-top border-r border-border">
                       <Input
                         type={c.type || "text"}
                         value={row[c.key] as string}
