@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import CategoryNavbar from './CategoryNavbar';
 import Footer from './Footer';
 import BackToTop from './BackToTop';
+import WhatsAppButton from './WhatsAppButton';
 
 const MainLayout = () => (
   <div className="min-h-screen flex flex-col">
@@ -13,6 +14,7 @@ const MainLayout = () => (
     </main>
     <Footer />
     <BackToTop />
+    <WhatsAppButton />
   </div>
 );
 
