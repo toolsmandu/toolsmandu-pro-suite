@@ -116,3 +116,19 @@
 .admin-light .admin-active-link {
   color: rgb(249, 112, 21) !important;
 }
+
+/* Admin responsive helpers: make wide tables scroll horizontally on mobile */
+.admin-light main table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 1024px) {
+  .admin-light main table {
+    display: table;
+    white-space: normal;
+  }
+}
+
