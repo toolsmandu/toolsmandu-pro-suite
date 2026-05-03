@@ -895,7 +895,7 @@ const AdminOrders = () => {
       const term = searchTerm.trim().toLowerCase();
       if (term) {
         const email = order.profiles?.email?.toLowerCase() || '';
-        const phone = order.profiles?.phone?.toLowerCase() || '';
+        const phone = order.profiles?.phone || '';
         const orderNum = (order.order_number || '').toLowerCase();
         const inputMatch = (order.order_items || []).some((it: any) => {
           const responses = Array.isArray(it.input_field_responses) ? it.input_field_responses : [];
@@ -907,7 +907,7 @@ const AdminOrders = () => {
             return String(v).toLowerCase().includes(term);
           });
         });
-        if (!email.includes(term) && !phone.includes(term) && !orderNum.includes(term) && !inputMatch) return false;
+        if (!email.includes(term) && !phoneMatches(phone, term) && !orderNum.includes(term) && !inputMatch) return false;
       }
       if (productFilter !== 'all') {
         if (productFilter.startsWith('variation:')) {
