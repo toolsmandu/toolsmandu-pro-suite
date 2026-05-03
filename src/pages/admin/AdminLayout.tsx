@@ -25,6 +25,15 @@ const MenuTrigger = () => {
   );
 };
 
+const MobileAutoClose = () => {
+  const { isMobile, setOpenMobile } = useSidebar();
+  const location = useLocation();
+  useEffect(() => {
+    if (isMobile) setOpenMobile(false);
+  }, [location.pathname, isMobile, setOpenMobile]);
+  return null;
+};
+
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
