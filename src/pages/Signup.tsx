@@ -136,9 +136,7 @@ const Signup = () => {
     if (error) {
       const msg = (error.message || '').toLowerCase();
       if (msg.includes('phone')) {
-        toast.error(
-          `Invalid phone number "${countryCode}${phone}". Please double-check the country code and the digits you entered — make sure it is your real WhatsApp number without any spaces or special characters.`
-        );
+        toast.error('Invalid Phone Number. Do not include country code, spaces and special characters. Only type Digits.');
       } else {
         toast.error(error.message);
       }
