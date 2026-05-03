@@ -15,6 +15,7 @@ interface FamilyProduct {
   id: string;
   product_id: string;
   login_link: string | null;
+  give_otp_access: boolean;
   created_at: string;
   products: { name: string } | null;
 }
