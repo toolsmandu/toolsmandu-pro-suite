@@ -93,6 +93,7 @@ const AdminFamilySharing = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [editingFp, setEditingFp] = useState<FamilyProduct | null>(null);
   const [editLoginLink, setEditLoginLink] = useState("");
+  const [editGiveOtpAccess, setEditGiveOtpAccess] = useState(true);
   const [editVariants, setEditVariants] = useState<ProductVariant[]>([]);
   const [editSelectedVariantIds, setEditSelectedVariantIds] = useState<string[]>([]);
   const [familyProductVariants, setFamilyProductVariants] = useState<Record<string, string[]>>({});
@@ -101,7 +102,7 @@ const AdminFamilySharing = () => {
   const fetchFamilyProducts = async () => {
     const { data } = await supabase
       .from("family_sharing_products")
-      .select("id, product_id, login_link, created_at, products(name)")
+      .select("id, product_id, login_link, give_otp_access, created_at, products(name)")
       .order("created_at", { ascending: true });
     if (data) setFamilyProducts(data as unknown as FamilyProduct[]);
 
