@@ -1089,13 +1089,29 @@ const AdminOrders = () => {
 
               <div className="relative md:col-span-4">
                 <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Phone Number / Email</Label>
-                <Input
-                  placeholder="Search by email or phone..."
-                  value={customerSearch}
-                  onChange={e => handleCustomerSearch(e.target.value)}
-                />
-                {customerSearching && <p className="text-xs text-muted-foreground mt-1">Searching...</p>}
-                {customerError && <p className="text-xs text-destructive mt-1">{customerError}</p>}
+                {selectedCustomer ? (
+                  <div className="flex items-center justify-between h-10 rounded-md border border-input bg-background px-3 text-sm">
+                    <span className="text-foreground truncate">
+                      {(selectedCustomer.email || '—')} | {(selectedCustomer.phone || '—')}
+                    </span>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-6 w-6 shrink-0 ml-2"
+                      onClick={() => { setSelectedCustomer(null); setCustomerSearch(''); }}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Input
+                    placeholder="Search by email or phone..."
+                    value={customerSearch}
+                    onChange={e => handleCustomerSearch(e.target.value)}
+                  />
+                )}
+                {!selectedCustomer && customerSearching && <p className="text-xs text-muted-foreground mt-1">Searching...</p>}
+                {!selectedCustomer && customerError && <p className="text-xs text-destructive mt-1">{customerError}</p>}
                 {customerResults.length > 0 && !selectedCustomer && (
                   <div className="absolute z-50 left-0 right-0 mt-1 border border-border rounded-md bg-popover shadow-lg max-h-40 overflow-y-auto">
                     {customerResults.map(c => (
@@ -1113,14 +1129,6 @@ const AdminOrders = () => {
                         <span className="text-xs text-muted-foreground">{c.email} · {c.phone || 'No phone'}</span>
                       </button>
                     ))}
-                  </div>
-                )}
-                {selectedCustomer && (
-                  <div className="bg-background border border-border rounded-md p-2 mt-1 text-xs flex items-center justify-between">
-                    <span className="text-foreground truncate">{selectedCustomer.name || selectedCustomer.email}</span>
-                    <Button size="icon" variant="ghost" className="h-5 w-5 shrink-0" onClick={() => { setSelectedCustomer(null); setCustomerSearch(''); }}>
-                      <X className="h-3 w-3" />
-                    </Button>
                   </div>
                 )}
               </div>
