@@ -1228,7 +1228,7 @@ const AdminOrders = () => {
                       className="flex-1 min-h-10 resize-y"
                     />
                   </div>
-                  <div className="flex items-end">
+                  <div className="flex items-start pt-[26px]">
                     <Button
                       onClick={handleCreateOrder}
                       disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
