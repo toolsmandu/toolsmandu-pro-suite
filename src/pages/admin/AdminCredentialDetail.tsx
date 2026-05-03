@@ -409,6 +409,14 @@ const AdminCredentialDetail = () => {
               </div>
             )}
           </div>
+          <div className="md:col-span-2 flex items-center gap-2">
+            <Checkbox
+              id="give-otp-access"
+              checked={giveOtpAccess}
+              onCheckedChange={(checked) => setGiveOtpAccess(!!checked)}
+            />
+            <Label htmlFor="give-otp-access" className="cursor-pointer">Give OTP Access to Customer</Label>
+          </div>
           <div><Label>Remarks</Label><Input value={form.remarks} onChange={e => setForm({ ...form, remarks: e.target.value })} /></div>
           <div><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={e => setForm({ ...form, expiry_date: e.target.value })} /></div>
           <div><Label>Limit (max assignments)</Label><Input type="number" min="1" value={form.max_limit} onChange={e => setForm({ ...form, max_limit: e.target.value })} /></div>
