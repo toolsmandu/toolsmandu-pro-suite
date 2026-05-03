@@ -1485,6 +1485,39 @@ export type Database = {
         }
         Relationships: []
       }
+      sheets: {
+        Row: {
+          cols_count: number
+          created_at: string
+          created_by: string | null
+          data: Json
+          id: string
+          name: string
+          rows_count: number
+          updated_at: string
+        }
+        Insert: {
+          cols_count?: number
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          id?: string
+          name: string
+          rows_count?: number
+          updated_at?: string
+        }
+        Update: {
+          cols_count?: number
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          id?: string
+          name?: string
+          rows_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       single_product_tags: {
         Row: {
           created_at: string
