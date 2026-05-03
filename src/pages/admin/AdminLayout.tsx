@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem,
-  SidebarMenuSubButton, SidebarProvider, SidebarTrigger,
+  SidebarMenuSubButton, SidebarProvider, useSidebar,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
   import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut, Wrench } from 'lucide-react';
@@ -15,6 +15,15 @@ import ChatbotWidget from '@/components/admin/ChatbotWidget';
 import SalesStatsBar from '@/components/admin/SalesStatsBar';
 import EditorTaskStatsBar from '@/components/admin/EditorTaskStatsBar';
 import { Button } from '@/components/ui/button';
+
+const MenuTrigger = () => {
+  const { toggleSidebar } = useSidebar();
+  return (
+    <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-foreground shrink-0 h-8 w-8" aria-label="Toggle menu">
+      <Menu className="h-5 w-5" />
+    </Button>
+  );
+};
 
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor, signOut } = useAuth();
@@ -383,7 +392,7 @@ const AdminLayout = () => {
         </Sidebar>
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 flex items-center border-b border-border px-2 sm:px-4 gap-2 sm:gap-4 bg-background sticky top-0 z-30 shrink-0 w-full overflow-hidden">
-            <SidebarTrigger className="text-foreground shrink-0" />
+            <MenuTrigger />
             {isAdmin && <SalesStatsBar />}
             {!isAdmin && isEditor && <EditorTaskStatsBar />}
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
