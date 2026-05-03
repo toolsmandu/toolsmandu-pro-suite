@@ -383,7 +383,7 @@ const AdminLayout = () => {
         </Sidebar>
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 flex items-center border-b border-border px-2 sm:px-4 gap-2 sm:gap-4 bg-background sticky top-0 z-30 shrink-0 w-full overflow-hidden">
-            <SidebarTrigger className="text-foreground shrink-0" />
+            <MenuTrigger />
             {isAdmin && <SalesStatsBar />}
             {!isAdmin && isEditor && <EditorTaskStatsBar />}
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
