@@ -55,7 +55,7 @@ const OrdersPage = () => {
 
       const { data } = await supabase
         .from('credential_assignments')
-        .select('id, assigned_at, credential_id, order_id, validity_days, family_sharing_credentials(username, password, twofa_link, family_product_id, family_sharing_products(login_link, products(name)))')
+        .select('id, assigned_at, credential_id, order_id, validity_days, family_sharing_credentials(username, password, twofa_link, give_otp_access, family_product_id, family_sharing_products(login_link, products(name)))')
         .eq('user_id', user!.id);
       return (data || []) as any[];
     },
@@ -262,7 +262,7 @@ const OrdersPage = () => {
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/30 transition-colors">
                                     <KeyRound className="h-3 w-3" /> Password: {cred?.password} <Copy className="h-3 w-3" />
                                   </button>
-                                  {cred?.twofa_link ? (
+                                  {cred?.give_otp_access && (cred?.twofa_link ? (
                                     <a href={cred.twofa_link} target="_blank" rel="noopener noreferrer"
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/30 transition-colors">
                                       <RotateCcwKey className="h-3 w-3" /> Get OTP Code
@@ -272,7 +272,7 @@ const OrdersPage = () => {
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/30 transition-colors">
                                       <RotateCcwKey className="h-3 w-3" /> Get OTP Code
                                     </button>
-                                  )}
+                                  ))}
                                   {cred?.family_sharing_products?.login_link && (
                                     <a href={cred.family_sharing_products.login_link} target="_blank" rel="noopener noreferrer"
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-500/20 text-blue-400 text-xs font-medium hover:bg-blue-500/30 transition-colors">

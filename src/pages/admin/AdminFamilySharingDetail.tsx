@@ -36,7 +36,7 @@ interface Variant {
   expiry_days: number | null;
 }
 
-const emptyForm = { username: "", password: "", remarks: "", expiry_date: "", max_limit: "1", twofa_link: "", index_number: "" };
+const emptyForm = { username: "", password: "", remarks: "", expiry_date: "", max_limit: "1", twofa_link: "", index_number: "", give_otp_access: true };
 
 const AdminFamilySharingDetail = () => {
   const { id } = useParams();
@@ -117,6 +117,7 @@ const AdminFamilySharingDetail = () => {
       username: c.username, password: c.password, remarks: c.remarks || "",
       expiry_date: c.expiry_date || "", max_limit: String(c.max_limit), twofa_link: c.twofa_link || "",
       index_number: String(c.index_number),
+      give_otp_access: (c as any).give_otp_access ?? true,
     });
     setUseInbuiltOtp(!c.twofa_link);
     setDialogOpen(true);
@@ -133,12 +134,13 @@ const AdminFamilySharingDetail = () => {
 
   const handleSave = async () => {
     if (!form.username || !form.password) { toast.error("Username and password are required"); return; }
-    const payload = {
+    const payload: any = {
       family_product_id: id!,
       username: form.username, password: form.password,
       remarks: form.remarks || null, expiry_date: form.expiry_date || null,
       max_limit: parseInt(form.max_limit) || 1, twofa_link: useInbuiltOtp ? null : (form.twofa_link || null),
       index_number: parseInt(form.index_number) || 1,
+      give_otp_access: form.give_otp_access,
     };
 
     if (editingId) {
@@ -319,6 +321,14 @@ const AdminFamilySharingDetail = () => {
                   <Input value={form.twofa_link} onChange={(e) => setForm({ ...form, twofa_link: e.target.value })} placeholder="https://..." />
                 </div>
               )}
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="give-otp-access-add"
+                checked={form.give_otp_access}
+                onCheckedChange={(checked) => setForm({ ...form, give_otp_access: !!checked })}
+              />
+              <Label htmlFor="give-otp-access-add" className="cursor-pointer">Give OTP Access to Customer</Label>
             </div>
             <div><Label>Remarks</Label><Input value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-4">

@@ -51,6 +51,7 @@ const AdminCredentialDetail = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [useInbuiltOtp, setUseInbuiltOtp] = useState(true);
+  const [giveOtpAccess, setGiveOtpAccess] = useState(true);
   const [form, setForm] = useState({
     username: "",
     password: "",
@@ -83,6 +84,7 @@ const AdminCredentialDetail = () => {
         index_number: String(cred.index_number),
       });
       setUseInbuiltOtp(!cred.twofa_link);
+      setGiveOtpAccess((cred as any).give_otp_access ?? true);
     }
 
     // Fetch assigned customers
@@ -172,8 +174,9 @@ const AdminCredentialDetail = () => {
         expiry_date: form.expiry_date || null,
         max_limit: parseInt(form.max_limit) || 1,
         twofa_link: useInbuiltOtp ? null : (form.twofa_link || null),
+        give_otp_access: giveOtpAccess,
         index_number: parseInt(form.index_number) || 1,
-      })
+      } as any)
       .eq("id", credentialId);
 
     setSaving(false);
@@ -405,6 +408,14 @@ const AdminCredentialDetail = () => {
                 <Input value={form.twofa_link} onChange={e => setForm({ ...form, twofa_link: e.target.value })} placeholder="https://..." />
               </div>
             )}
+          </div>
+          <div className="md:col-span-2 flex items-center gap-2">
+            <Checkbox
+              id="give-otp-access"
+              checked={giveOtpAccess}
+              onCheckedChange={(checked) => setGiveOtpAccess(!!checked)}
+            />
+            <Label htmlFor="give-otp-access" className="cursor-pointer">Give OTP Access to Customer</Label>
           </div>
           <div><Label>Remarks</Label><Input value={form.remarks} onChange={e => setForm({ ...form, remarks: e.target.value })} /></div>
           <div><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={e => setForm({ ...form, expiry_date: e.target.value })} /></div>
