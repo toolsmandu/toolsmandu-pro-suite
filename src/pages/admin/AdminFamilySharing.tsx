@@ -15,6 +15,7 @@ interface FamilyProduct {
   id: string;
   product_id: string;
   login_link: string | null;
+  give_otp_access: boolean;
   created_at: string;
   products: { name: string } | null;
 }
@@ -92,6 +93,7 @@ const AdminFamilySharing = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [editingFp, setEditingFp] = useState<FamilyProduct | null>(null);
   const [editLoginLink, setEditLoginLink] = useState("");
+  const [editGiveOtpAccess, setEditGiveOtpAccess] = useState(true);
   const [editVariants, setEditVariants] = useState<ProductVariant[]>([]);
   const [editSelectedVariantIds, setEditSelectedVariantIds] = useState<string[]>([]);
   const [familyProductVariants, setFamilyProductVariants] = useState<Record<string, string[]>>({});
@@ -100,7 +102,7 @@ const AdminFamilySharing = () => {
   const fetchFamilyProducts = async () => {
     const { data } = await supabase
       .from("family_sharing_products")
-      .select("id, product_id, login_link, created_at, products(name)")
+      .select("id, product_id, login_link, give_otp_access, created_at, products(name)")
       .order("created_at", { ascending: true });
     if (data) setFamilyProducts(data as unknown as FamilyProduct[]);
 
@@ -222,6 +224,7 @@ const AdminFamilySharing = () => {
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={async () => {
                     setEditingFp(fp);
                     setEditLoginLink(fp.login_link || "");
+                    setEditGiveOtpAccess(fp.give_otp_access ?? true);
                     const { data: vars } = await supabase
                       .from("product_variations")
                       .select("id, name, price, expiry_days")
@@ -306,6 +309,14 @@ const AdminFamilySharing = () => {
               <Label htmlFor="edit_login_link">Login Link</Label>
               <Input id="edit_login_link" placeholder="https://example.com/login" value={editLoginLink} onChange={(e) => setEditLoginLink(e.target.value)} />
             </div>
+            <div className="flex items-center gap-2 p-2 border border-border rounded-lg">
+              <Checkbox
+                id="edit_give_otp_access"
+                checked={editGiveOtpAccess}
+                onCheckedChange={(c) => setEditGiveOtpAccess(!!c)}
+              />
+              <Label htmlFor="edit_give_otp_access" className="cursor-pointer">Give OTP Access to Customer</Label>
+            </div>
             {editVariants.length > 0 && (
               <div>
                 <Label>Linked Variants</Label>
@@ -335,7 +346,7 @@ const AdminFamilySharing = () => {
             <Button className="w-full" onClick={async () => {
               if (!editingFp) return;
               if (editSelectedVariantIds.length === 0) { toast.error("Select at least one variant"); return; }
-              const { error } = await supabase.from("family_sharing_products").update({ login_link: editLoginLink || null }).eq("id", editingFp.id);
+              const { error } = await supabase.from("family_sharing_products").update({ login_link: editLoginLink || null, give_otp_access: editGiveOtpAccess } as any).eq("id", editingFp.id);
               if (error) { toast.error(error.message); return; }
               await supabase.from("family_sharing_product_variants").delete().eq("family_product_id", editingFp.id);
               const variantInserts = editSelectedVariantIds.map(vid => ({
