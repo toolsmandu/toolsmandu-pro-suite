@@ -112,12 +112,12 @@ const Signup = () => {
       toast.error('Phone number can only contain digits (0–9)');
       return;
     }
-    if (phone.length < 6) {
-      toast.error(`Phone number is too short (${phone.length} digits). It must be at least 6 digits.`);
-      return;
-    }
-    if (phone.length > 15) {
-      toast.error(`Phone number is too long (${phone.length} digits). It must be at most 15 digits.`);
+    const cc = countryCodes.find(c => c.code === countryCode);
+    const min = cc?.min ?? 6;
+    const max = cc?.max ?? 15;
+    if (phone.length < min || phone.length > max) {
+      const expected = min === max ? `${min} digits` : `${min}–${max} digits`;
+      toast.error(`Phone number for ${countryCode} must be ${expected}. You entered ${phone.length} digits.`);
       return;
     }
 
