@@ -1060,13 +1060,13 @@ const AdminOrders = () => {
               <h3 className="text-lg font-bold text-foreground">Add Order</h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+              <div className="md:col-span-3">
                 <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Purchase Date</Label>
                 <Input type="datetime-local" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} />
               </div>
 
-              <div className="relative">
+              <div className="relative md:col-span-6">
                 <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Phone Number / Email</Label>
                 <Input
                   placeholder="Search by email or phone..."
@@ -1104,7 +1104,7 @@ const AdminOrders = () => {
                 )}
               </div>
 
-              <div>
+              <div className="md:col-span-3">
                 <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Payment Method</Label>
                 <select
                   value={newPaymentMethod}
