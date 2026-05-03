@@ -110,10 +110,10 @@ const AdminSheetDetail = () => {
         </Button>
       </div>
 
-      <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
+      <div className="border border-border rounded-lg bg-white text-slate-900 overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/60 hover:bg-muted/60">
+            <TableRow className="bg-slate-100 hover:bg-slate-100"></TableRow>
               {COLUMNS.map((c) => (
                 <TableHead key={c.key} className="whitespace-nowrap">
                   {c.label}
