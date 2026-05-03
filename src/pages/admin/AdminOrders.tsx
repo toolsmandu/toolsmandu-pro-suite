@@ -1692,7 +1692,187 @@ const AdminOrders = () => {
                     </div>
                   );
                 })()}
+        </div>
+
+        {/* Add Order Card (inline) */}
+        {addingOrder && (
+          <div className="mb-4 rounded-xl border border-border bg-muted/20 p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-foreground">Add Order</h3>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setAddingOrder(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Purchase Date</Label>
+                <Input type="datetime-local" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} />
               </div>
+
+              <div className="relative">
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Phone Number / Email</Label>
+                <Input
+                  placeholder="Search by email or phone..."
+                  value={customerSearch}
+                  onChange={e => handleCustomerSearch(e.target.value)}
+                />
+                {customerSearching && <p className="text-xs text-muted-foreground mt-1">Searching...</p>}
+                {customerError && <p className="text-xs text-destructive mt-1">{customerError}</p>}
+                {customerResults.length > 0 && !selectedCustomer && (
+                  <div className="absolute z-50 left-0 right-0 mt-1 border border-border rounded-md bg-popover shadow-lg max-h-40 overflow-y-auto">
+                    {customerResults.map(c => (
+                      <button
+                        key={c.user_id}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-muted flex flex-col"
+                        onClick={() => {
+                          setSelectedCustomer(c);
+                          setCustomerSearch(c.email || c.phone || '');
+                          setCustomerResults([]);
+                          setCustomerError('');
+                        }}
+                      >
+                        <span className="text-foreground">{c.name || c.email}</span>
+                        <span className="text-xs text-muted-foreground">{c.email} · {c.phone || 'No phone'}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {selectedCustomer && (
+                  <div className="bg-background border border-border rounded-md p-2 mt-1 text-xs flex items-center justify-between">
+                    <span className="text-foreground truncate">{selectedCustomer.name || selectedCustomer.email}</span>
+                    <Button size="icon" variant="ghost" className="h-5 w-5 shrink-0" onClick={() => { setSelectedCustomer(null); setCustomerSearch(''); }}>
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Payment Method</Label>
+                <select
+                  value={newPaymentMethod}
+                  onChange={e => setNewPaymentMethod(e.target.value)}
+                  className={selectClassName}
+                >
+                  <option value="manual">Manual</option>
+                  <option value="khalti">Khalti</option>
+                  <option value="esewa">eSewa</option>
+                  <option value="bank">Bank Transfer</option>
+                  <option value="cash">Cash</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+              <div className="md:col-span-6">
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Product</Label>
+                {(() => {
+                  const options: { productId: string; variationId: string; label: string; price: number }[] = [];
+                  (products || []).forEach((p: any) => {
+                    const vars = (p.product_variations || []).filter((v: any) => v.is_active !== false);
+                    if (vars.length > 0) {
+                      vars.forEach((v: any) => options.push({
+                        productId: p.id,
+                        variationId: v.id,
+                        label: `${p.name} — ${v.name}`,
+                        price: Number(v.price) || 0,
+                      }));
+                    } else {
+                      options.push({ productId: p.id, variationId: '', label: p.name, price: Number(p.price) || 0 });
+                    }
+                  });
+                  const q = productPickerSearch.trim().toLowerCase();
+                  const filtered = q ? options.filter(o => o.label.toLowerCase().includes(q)) : options;
+                  const selected = options.find(o => o.productId === newProductId && (o.variationId || '') === (newVariationId || ''));
+                  return (
+                    <div className="relative">
+                      <Input
+                        placeholder="Choose one (optional)"
+                        value={productPickerOpen ? productPickerSearch : (selected?.label || '')}
+                        onFocus={() => { setProductPickerOpen(true); setProductPickerSearch(''); }}
+                        onChange={(e) => { setProductPickerSearch(e.target.value); setProductPickerOpen(true); }}
+                        onBlur={() => setTimeout(() => setProductPickerOpen(false), 150)}
+                      />
+                      {productPickerOpen && (
+                        <div className="absolute z-50 mt-1 w-full max-h-64 overflow-y-auto rounded-md border border-border bg-popover shadow-lg">
+                          {filtered.length === 0 && (
+                            <div className="px-3 py-2 text-sm text-muted-foreground">No products found</div>
+                          )}
+                          {filtered.map((o) => (
+                            <button
+                              key={`${o.productId}-${o.variationId}`}
+                              type="button"
+                              className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex justify-between gap-2"
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                setNewProductId(o.productId);
+                                setNewVariationId(o.variationId);
+                                setNewAmount(String(o.price));
+                                setProductPickerOpen(false);
+                                setProductPickerSearch('');
+                              }}
+                            >
+                              <span className="truncate">{o.label}</span>
+                              <span className="text-muted-foreground shrink-0">NPR {o.price}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              <div className="md:col-span-3">
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Amount</Label>
+                <Input
+                  type="number"
+                  placeholder="Rs."
+                  value={newAmount}
+                  onChange={e => setNewAmount(e.target.value)}
+                />
+              </div>
+
+              <div className="md:col-span-3">
+                <Button
+                  className="w-full"
+                  onClick={handleCreateOrder}
+                  disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
+                >
+                  {creatingOrder ? 'Creating...' : 'Create Order'}
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-4">
+              {newActiveFields.length > 0 && (
+                <div className="space-y-3 rounded-lg border border-border bg-background/50 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Linked input fields (optional for admin-created orders)
+                  </p>
+                  {newActiveFields.map((f) => (
+                    <InputFieldRenderer
+                      key={f.id}
+                      field={f}
+                      value={newFieldValues[f.id]}
+                      onChange={(val) => setNewFieldValues((prev) => ({ ...prev, [f.id]: val }))}
+                    />
+                  ))}
+                </div>
+              )}
+              <div>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
+                <Textarea
+                  placeholder="Optional notes about this order (admin-only)"
+                  value={newRemarks}
+                  onChange={e => setNewRemarks(e.target.value)}
+                  rows={2}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
 
               {/* Input Fields (optional for admin) */}
