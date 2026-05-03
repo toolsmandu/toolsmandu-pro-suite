@@ -586,7 +586,8 @@ const AdminOrders = () => {
   };
 
   // Customer search for add order
-  const handleCustomerSearch = async (term: string) => {
+  const handleCustomerSearch = async (rawTerm: string) => {
+    const term = sanitizeSearchInput(rawTerm);
     setCustomerSearch(term);
     setSelectedCustomer(null);
     setCustomerError('');
@@ -595,7 +596,7 @@ const AdminOrders = () => {
     const searchTerm = term.trim().toLowerCase();
     const { data } = await supabase.from('profiles').select('user_id, name, email, phone');
     const filtered = (data || []).filter(p =>
-      p.email?.toLowerCase().includes(searchTerm) || p.phone?.toLowerCase().includes(searchTerm)
+      p.email?.toLowerCase().includes(searchTerm) || phoneMatches(p.phone, term)
     );
     setCustomerResults(filtered);
     if (filtered.length === 0) setCustomerError('Not registered yet');
