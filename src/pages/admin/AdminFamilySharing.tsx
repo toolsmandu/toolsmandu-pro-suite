@@ -224,6 +224,7 @@ const AdminFamilySharing = () => {
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={async () => {
                     setEditingFp(fp);
                     setEditLoginLink(fp.login_link || "");
+                    setEditGiveOtpAccess(fp.give_otp_access ?? true);
                     const { data: vars } = await supabase
                       .from("product_variations")
                       .select("id, name, price, expiry_days")
