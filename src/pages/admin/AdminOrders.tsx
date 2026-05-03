@@ -1216,7 +1216,6 @@ const AdminOrders = () => {
               />
             </div>
           </div>
-        )}
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6 mb-4">
           <div className="relative">
