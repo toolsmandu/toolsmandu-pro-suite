@@ -116,3 +116,13 @@
 .admin-light .admin-active-link {
   color: rgb(249, 112, 21) !important;
 }
+
+/* Admin: prevent horizontal page overflow on small screens */
+.admin-light main {
+  max-width: 100%;
+}
+.admin-light main > * {
+  min-width: 0;
+}
+
+

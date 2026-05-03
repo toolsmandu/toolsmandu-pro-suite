@@ -382,34 +382,36 @@ const AdminLayout = () => {
           </SidebarContent>
         </Sidebar>
         <div className="flex-1 flex flex-col">
-          <header className="h-14 flex items-center border-b border-border px-4 gap-4 bg-background">
-            <SidebarTrigger className="text-foreground" />
+          <header className="h-14 flex items-center border-b border-border px-2 sm:px-4 gap-2 sm:gap-4 bg-background sticky top-0 z-30">
+            <SidebarTrigger className="text-foreground shrink-0" />
             {isAdmin && <SalesStatsBar />}
             {!isAdmin && isEditor && <EditorTaskStatsBar />}
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-1 sm:gap-2">
               {isAdmin && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => navigate('/admin/inbox')}
-                  className="justify-center"
+                  className="justify-center px-2 sm:px-3"
+                  aria-label="Inbox"
                 >
-                  <Mail className="h-4 w-4 mr-2" />
-                  <span>Inbox</span>
+                  <Mail className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Inbox</span>
                 </Button>
               )}
               <Button
                 variant="destructive"
                 size="sm"
                 onClick={async () => { await signOut(); navigate('/'); }}
-                className="justify-center"
+                className="justify-center px-2 sm:px-3"
+                aria-label="Logout"
               >
-                <LogOut className="h-4 w-4 mr-2" />
-                <span>Logout</span>
+                <LogOut className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </div>
           </header>
-          <main className="flex-1 p-6 overflow-auto bg-muted/30">
+          <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto bg-muted/30 min-w-0">
             <Outlet />
           </main>
         </div>
