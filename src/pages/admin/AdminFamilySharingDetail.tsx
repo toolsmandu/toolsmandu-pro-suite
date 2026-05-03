@@ -322,6 +322,14 @@ const AdminFamilySharingDetail = () => {
                 </div>
               )}
             </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="give-otp-access-add"
+                checked={form.give_otp_access}
+                onCheckedChange={(checked) => setForm({ ...form, give_otp_access: !!checked })}
+              />
+              <Label htmlFor="give-otp-access-add" className="cursor-pointer">Give OTP Access to Customer</Label>
+            </div>
             <div><Label>Remarks</Label><Input value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-4">
               <div><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} /></div>
