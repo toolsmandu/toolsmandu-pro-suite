@@ -386,7 +386,7 @@ const AdminLayout = () => {
             <SidebarTrigger className="text-foreground shrink-0" />
             {isAdmin && <SalesStatsBar />}
             {!isAdmin && isEditor && <EditorTaskStatsBar />}
-            <div className="ml-auto flex items-center gap-1 sm:gap-2">
+            <div className="ml-auto flex items-center gap-2 sm:gap-3">
               {isAdmin && (
                 <Button
                   variant="outline"
@@ -395,8 +395,8 @@ const AdminLayout = () => {
                   className="justify-center px-2 sm:px-3"
                   aria-label="Inbox"
                 >
-                  <Mail className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Inbox</span>
+                  <Mail className="h-4 w-4 mr-1.5 sm:mr-2" />
+                  <span>Inbox</span>
                 </Button>
               )}
               <Button
@@ -406,8 +406,8 @@ const AdminLayout = () => {
                 className="justify-center px-2 sm:px-3"
                 aria-label="Logout"
               >
-                <LogOut className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Logout</span>
+                <LogOut className="h-4 w-4 mr-1.5 sm:mr-2" />
+                <span>Logout</span>
               </Button>
             </div>
           </header>
