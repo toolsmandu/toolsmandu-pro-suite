@@ -514,6 +514,7 @@ export type Database = {
           created_at: string
           expiry_date: string | null
           family_product_id: string
+          give_otp_access: boolean
           id: string
           index_number: number
           max_limit: number
@@ -528,6 +529,7 @@ export type Database = {
           created_at?: string
           expiry_date?: string | null
           family_product_id: string
+          give_otp_access?: boolean
           id?: string
           index_number?: number
           max_limit?: number
@@ -542,6 +544,7 @@ export type Database = {
           created_at?: string
           expiry_date?: string | null
           family_product_id?: string
+          give_otp_access?: boolean
           id?: string
           index_number?: number
           max_limit?: number
