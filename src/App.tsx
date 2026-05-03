@@ -47,6 +47,7 @@ import AdminOrderMode from "./pages/admin/settings/AdminOrderMode";
 import AdminTopMenu from "./pages/admin/settings/AdminTopMenu";
 import AdminFooter from "./pages/admin/settings/AdminFooter";
 import AdminEmailTemplates from "./pages/admin/settings/AdminEmailTemplates";
+import AdminMaintenance from "./pages/admin/settings/AdminMaintenance";
 import AdminMedia from "./pages/admin/AdminMedia";
 import AdminFAQs from "./pages/admin/AdminFAQs";
 import AdminFamilySharing from "./pages/admin/AdminFamilySharing";
@@ -148,6 +149,7 @@ const App = () => (
                 <Route path="settings/top-menu" element={<AdminTopMenu />} />
                 <Route path="settings/footer" element={<AdminFooter />} />
                 <Route path="settings/email-templates" element={<AdminEmailTemplates />} />
+                <Route path="settings/maintenance" element={<AdminMaintenance />} />
                 <Route path="faqs" element={<AdminFAQs />} />
                 <Route path="family-sharing" element={<AdminFamilySharing />} />
                 <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
