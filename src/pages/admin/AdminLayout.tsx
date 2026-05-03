@@ -16,6 +16,15 @@ import SalesStatsBar from '@/components/admin/SalesStatsBar';
 import EditorTaskStatsBar from '@/components/admin/EditorTaskStatsBar';
 import { Button } from '@/components/ui/button';
 
+const MenuTrigger = () => {
+  const { toggleSidebar } = useSidebar();
+  return (
+    <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-foreground shrink-0 h-8 w-8" aria-label="Toggle menu">
+      <Menu className="h-5 w-5" />
+    </Button>
+  );
+};
+
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
