@@ -78,6 +78,7 @@ const AdminLayout = () => {
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/admin/expired-orders', icon: ShoppingCart, label: 'Expired Orders' },
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
+    { to: '/admin/sheets', icon: FileBarChart, label: 'Sheets' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },
   ];
 

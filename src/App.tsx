@@ -52,6 +52,7 @@ import AdminMedia from "./pages/admin/AdminMedia";
 import AdminFAQs from "./pages/admin/AdminFAQs";
 import AdminFamilySharing from "./pages/admin/AdminFamilySharing";
 import AdminFamilySharingDetail from "./pages/admin/AdminFamilySharingDetail";
+import AdminSheets from "./pages/admin/AdminSheets";
 import AdminCredentialDetail from "./pages/admin/AdminCredentialDetail";
 import AdminFlashSaleLabels from "./pages/admin/AdminFlashSaleLabels";
 import AdminCustomers from "./pages/admin/AdminCustomers";
@@ -154,6 +155,7 @@ const App = () => (
                 <Route path="family-sharing" element={<AdminFamilySharing />} />
                 <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
                 <Route path="family-sharing/:id/credential/:credentialId" element={<AdminCredentialDetail />} />
+                <Route path="sheets" element={<AdminSheets />} />
               </Route>
             </Routes>
           </BrowserRouter>
