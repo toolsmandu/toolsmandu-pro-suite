@@ -11,6 +11,7 @@ import { Search, Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/formatDate';
 import CopyButton from '@/components/admin/CopyButton';
+import { sanitizeSearchInput, phoneMatches } from '@/lib/phoneSearch';
 
 type Filter = 'expired_today' | 'all';
 
