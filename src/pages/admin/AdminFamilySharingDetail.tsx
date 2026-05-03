@@ -134,12 +134,13 @@ const AdminFamilySharingDetail = () => {
 
   const handleSave = async () => {
     if (!form.username || !form.password) { toast.error("Username and password are required"); return; }
-    const payload = {
+    const payload: any = {
       family_product_id: id!,
       username: form.username, password: form.password,
       remarks: form.remarks || null, expiry_date: form.expiry_date || null,
       max_limit: parseInt(form.max_limit) || 1, twofa_link: useInbuiltOtp ? null : (form.twofa_link || null),
       index_number: parseInt(form.index_number) || 1,
+      give_otp_access: form.give_otp_access,
     };
 
     if (editingId) {
