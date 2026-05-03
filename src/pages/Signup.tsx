@@ -12,26 +12,26 @@ import { Eye, EyeOff, Check, Mail, UserPlus, LogIn, Loader2 } from 'lucide-react
 import { useQuery } from '@tanstack/react-query';
 
 const countryCodes = [
-  { code: '+977', label: '🇳🇵 +977' },
-  { code: '+1', label: '🇺🇸 +1' },
-  { code: '+44', label: '🇬🇧 +44' },
-  { code: '+91', label: '🇮🇳 +91' },
-  { code: '+61', label: '🇦🇺 +61' },
-  { code: '+81', label: '🇯🇵 +81' },
-  { code: '+86', label: '🇨🇳 +86' },
-  { code: '+49', label: '🇩🇪 +49' },
-  { code: '+33', label: '🇫🇷 +33' },
-  { code: '+971', label: '🇦🇪 +971' },
-  { code: '+966', label: '🇸🇦 +966' },
-  { code: '+82', label: '🇰🇷 +82' },
-  { code: '+65', label: '🇸🇬 +65' },
-  { code: '+60', label: '🇲🇾 +60' },
-  { code: '+63', label: '🇵🇭 +63' },
-  { code: '+62', label: '🇮🇩 +62' },
-  { code: '+55', label: '🇧🇷 +55' },
-  { code: '+234', label: '🇳🇬 +234' },
-  { code: '+27', label: '🇿🇦 +27' },
-  { code: '+254', label: '🇰🇪 +254' },
+  { code: '+977', label: '🇳🇵 +977', min: 10, max: 10 },
+  { code: '+1', label: '🇺🇸 +1', min: 10, max: 10 },
+  { code: '+44', label: '🇬🇧 +44', min: 10, max: 10 },
+  { code: '+91', label: '🇮🇳 +91', min: 10, max: 10 },
+  { code: '+61', label: '🇦🇺 +61', min: 9, max: 9 },
+  { code: '+81', label: '🇯🇵 +81', min: 10, max: 11 },
+  { code: '+86', label: '🇨🇳 +86', min: 11, max: 11 },
+  { code: '+49', label: '🇩🇪 +49', min: 10, max: 11 },
+  { code: '+33', label: '🇫🇷 +33', min: 9, max: 9 },
+  { code: '+971', label: '🇦🇪 +971', min: 9, max: 9 },
+  { code: '+966', label: '🇸🇦 +966', min: 9, max: 9 },
+  { code: '+82', label: '🇰🇷 +82', min: 9, max: 10 },
+  { code: '+65', label: '🇸🇬 +65', min: 8, max: 8 },
+  { code: '+60', label: '🇲🇾 +60', min: 9, max: 10 },
+  { code: '+63', label: '🇵🇭 +63', min: 10, max: 10 },
+  { code: '+62', label: '🇮🇩 +62', min: 9, max: 12 },
+  { code: '+55', label: '🇧🇷 +55', min: 10, max: 11 },
+  { code: '+234', label: '🇳🇬 +234', min: 10, max: 10 },
+  { code: '+27', label: '🇿🇦 +27', min: 9, max: 9 },
+  { code: '+254', label: '🇰🇪 +254', min: 9, max: 10 },
 ];
 
 const steps = [
@@ -112,12 +112,12 @@ const Signup = () => {
       toast.error('Phone number can only contain digits (0–9)');
       return;
     }
-    if (phone.length < 6) {
-      toast.error(`Phone number is too short (${phone.length} digits). It must be at least 6 digits.`);
-      return;
-    }
-    if (phone.length > 15) {
-      toast.error(`Phone number is too long (${phone.length} digits). It must be at most 15 digits.`);
+    const cc = countryCodes.find(c => c.code === countryCode);
+    const min = cc?.min ?? 6;
+    const max = cc?.max ?? 15;
+    if (phone.length < min || phone.length > max) {
+      const expected = min === max ? `${min} digits` : `${min}–${max} digits`;
+      toast.error(`Phone number for ${countryCode} must be ${expected}. You entered ${phone.length} digits.`);
       return;
     }
 
