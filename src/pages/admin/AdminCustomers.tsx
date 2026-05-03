@@ -63,9 +63,9 @@ const AdminCustomers = () => {
       const term = searchTerm.trim().toLowerCase();
       if (term) {
         const email = u.email?.toLowerCase() || '';
-        const phone = u.phone?.toLowerCase() || '';
+        const phone = u.phone || '';
         const name = u.name?.toLowerCase() || '';
-        if (!email.includes(term) && !phone.includes(term) && !name.includes(term)) return false;
+        if (!email.includes(term) && !phoneMatches(phone, term) && !name.includes(term)) return false;
       }
       if (roleFilter !== 'all') {
         if (!u.roles.includes(roleFilter)) return false;
