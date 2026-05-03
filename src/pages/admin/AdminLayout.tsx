@@ -25,6 +25,15 @@ const MenuTrigger = () => {
   );
 };
 
+const MobileAutoClose = () => {
+  const { isMobile, setOpenMobile } = useSidebar();
+  const location = useLocation();
+  useEffect(() => {
+    if (isMobile) setOpenMobile(false);
+  }, [location.pathname, isMobile, setOpenMobile]);
+  return null;
+};
+
 const AdminLayout = () => {
   const { user, loading, isAdmin, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
@@ -394,6 +403,7 @@ const AdminLayout = () => {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 flex items-center border-b border-border px-2 sm:px-4 gap-2 sm:gap-4 bg-background sticky top-0 z-30 shrink-0 w-full overflow-hidden">
             <MenuTrigger />
+            <MobileAutoClose />
             {isAdmin && <SalesStatsBar />}
             {!isAdmin && isEditor && <EditorTaskStatsBar />}
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
