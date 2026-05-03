@@ -84,13 +84,14 @@ const ProductPage = () => {
   const [bannerImage, setBannerImage] = useState('');
   const [productTopBannerImage, setProductTopBannerImage] = useState('');
   const [productTopBannerOpacity, setProductTopBannerOpacity] = useState(1);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [fieldValues, setFieldValues] = useState<Record<string, string | string[]>>({});
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useQuery({
     queryKey: ['order-mode-settings'],
     queryFn: async () => {
-      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number', 'product_banner_image', 'product_top_banner_image', 'product_top_banner_opacity']);
+      const { data } = await supabase.from('site_settings').select('key, value').in('key', ['order_mode', 'whatsapp_number', 'product_banner_image', 'product_top_banner_image', 'product_top_banner_opacity', 'maintenance_mode']);
       data?.forEach((s: any) => {
         if (s.key === 'order_mode') setOrderMode(s.value);
         if (s.key === 'whatsapp_number') setWhatsappNumber(s.value);
@@ -100,6 +101,7 @@ const ProductPage = () => {
           const n = parseFloat(s.value);
           if (!isNaN(n)) setProductTopBannerOpacity(Math.max(0, Math.min(1, n)));
         }
+        if (s.key === 'maintenance_mode') setMaintenanceMode(s.value === 'true');
       });
       return data;
     },
@@ -402,16 +404,29 @@ const ProductPage = () => {
                   </Button>
                 </div>
               ) : (
-                <Button
-                  size="lg"
-                  className="w-full hover:opacity-90"
-                  style={{ backgroundColor: '#338fe1' }}
-                  onClick={handleAddToCart}
-                  disabled={activeVariations.length > 0 && !selectedVariant}
-                >
-                  <ShoppingCart className="h-5 w-5 mr-2" />
-                  {isVariantInCart ? 'Proceed to Payment' : selectedVariant ? `Add to Cart · NPR ${selectedVariant.price}` : 'Add to Cart'}
-                </Button>
+                <>
+                  <Button
+                    size="lg"
+                    className="w-full hover:opacity-90"
+                    style={{ backgroundColor: '#338fe1' }}
+                    onClick={handleAddToCart}
+                    disabled={maintenanceMode || (activeVariations.length > 0 && !selectedVariant)}
+                  >
+                    <ShoppingCart className="h-5 w-5 mr-2" />
+                    {isVariantInCart ? 'Proceed to Payment' : selectedVariant ? `Add to Cart · NPR ${selectedVariant.price}` : 'Add to Cart'}
+                  </Button>
+                  {maintenanceMode && (
+                    <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 flex flex-col items-center text-center gap-3">
+                      <div className="h-12 w-12 rounded-full bg-amber-500/20 flex items-center justify-center">
+                        <Wrench className="h-6 w-6 text-amber-500" />
+                      </div>
+                      <h3 className="text-base font-bold text-foreground">Payment Temporarily Unavailable</h3>
+                      <p className="text-sm text-muted-foreground">
+                        We're currently performing scheduled maintenance. Please check back later to complete your purchase.
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </Card>
           );
