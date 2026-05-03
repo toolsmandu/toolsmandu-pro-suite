@@ -46,13 +46,7 @@ const AdminMaintenance = () => {
     <div>
       <h2 className="text-2xl font-bold text-foreground mb-6">Maintenance Mode</h2>
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Wrench className="h-5 w-5" />
-            Payment Maintenance
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div className="flex items-center justify-between p-4 rounded-lg border border-border">
             <div>
               <Label className="font-semibold text-foreground">Enable Maintenance Mode</Label>
