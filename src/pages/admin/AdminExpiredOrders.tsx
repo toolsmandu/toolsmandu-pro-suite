@@ -85,7 +85,7 @@ const AdminExpiredOrders = () => {
     if (term) {
       list = list.filter(r =>
         (r.email || '').toLowerCase().includes(term) ||
-        (r.phone || '').toLowerCase().includes(term) ||
+        phoneMatches(r.phone, term) ||
         (r.orderNumber || '').toLowerCase().includes(term) ||
         (r.product || '').toLowerCase().includes(term)
       );
