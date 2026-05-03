@@ -1,0 +1,1 @@
+ALTER TABLE public.family_sharing_products ADD COLUMN IF NOT EXISTS give_otp_access boolean NOT NULL DEFAULT true;

@@ -603,6 +603,7 @@ export type Database = {
       family_sharing_products: {
         Row: {
           created_at: string
+          give_otp_access: boolean
           id: string
           login_link: string | null
           order_note_template: string | null
@@ -610,6 +611,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          give_otp_access?: boolean
           id?: string
           login_link?: string | null
           order_note_template?: string | null
@@ -617,6 +619,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          give_otp_access?: boolean
           id?: string
           login_link?: string | null
           order_note_template?: string | null
