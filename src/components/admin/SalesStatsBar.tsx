@@ -44,7 +44,7 @@ const SalesStatsBar = () => {
   ];
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap min-w-0 scrollbar-thin">
+    <div className="hidden md:flex items-center gap-2 overflow-x-auto whitespace-nowrap min-w-0">
       {items.map(i => (
         <div
           key={i.label}
