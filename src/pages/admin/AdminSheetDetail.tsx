@@ -1,16 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 type Sheet = { id: string; name: string; createdAt: string };
 
@@ -27,6 +19,7 @@ type Row = {
 
 const SHEETS_KEY = "admin_sheets_list";
 const rowsKey = (id: string) => `admin_sheet_rows_${id}`;
+const widthsKey = (id: string) => `admin_sheet_widths_${id}`;
 
 const COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = [
   { key: "orderId", label: "Order ID" },
@@ -37,6 +30,17 @@ const COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = 
   { key: "remaining", label: "Remaining" },
   { key: "remarks", label: "Remarks" },
 ];
+
+const DEFAULT_WIDTHS: Record<string, number> = {
+  orderId: 140,
+  purchaseDate: 160,
+  email: 220,
+  phone: 150,
+  period: 120,
+  remaining: 120,
+  remarks: 240,
+  actions: 90,
+};
 
 const emptyRow = (): Row => ({
   id: crypto.randomUUID(),
@@ -52,6 +56,10 @@ const emptyRow = (): Row => ({
 const AdminSheetDetail = () => {
   const { id = "" } = useParams();
   const [rows, setRows] = useState<Row[]>([]);
+  const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
+  const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(
+    null,
+  );
 
   const sheet = useMemo<Sheet | null>(() => {
     try {
@@ -68,23 +76,61 @@ const AdminSheetDetail = () => {
     try {
       const raw = localStorage.getItem(rowsKey(id));
       setRows(raw ? JSON.parse(raw) : []);
+      const w = localStorage.getItem(widthsKey(id));
+      setWidths({ ...DEFAULT_WIDTHS, ...(w ? JSON.parse(w) : {}) });
     } catch {
       setRows([]);
     }
   }, [id]);
 
-  const persist = (next: Row[]) => {
+  const persistRows = (next: Row[]) => {
     setRows(next);
     localStorage.setItem(rowsKey(id), JSON.stringify(next));
   };
 
-  const updateCell = (rowId: string, key: keyof Row, value: string) => {
-    persist(rows.map((r) => (r.id === rowId ? { ...r, [key]: value } : r)));
+  const persistWidths = (next: Record<string, number>) => {
+    setWidths(next);
+    localStorage.setItem(widthsKey(id), JSON.stringify(next));
   };
 
-  const addRow = () => persist([...rows, emptyRow()]);
+  const updateCell = (rowId: string, key: keyof Row, value: string) => {
+    persistRows(rows.map((r) => (r.id === rowId ? { ...r, [key]: value } : r)));
+  };
+
+  const addRow = () => persistRows([...rows, emptyRow()]);
   const deleteRow = (rowId: string) =>
-    persist(rows.filter((r) => r.id !== rowId));
+    persistRows(rows.filter((r) => r.id !== rowId));
+
+  const startResize = (key: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    dragRef.current = {
+      key,
+      startX: e.clientX,
+      startW: widths[key] ?? 120,
+    };
+    const onMove = (ev: MouseEvent) => {
+      const d = dragRef.current;
+      if (!d) return;
+      const next = Math.max(60, d.startW + (ev.clientX - d.startX));
+      setWidths((prev) => ({ ...prev, [d.key]: next }));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      setWidths((prev) => {
+        localStorage.setItem(widthsKey(id), JSON.stringify(prev));
+        return prev;
+      });
+      dragRef.current = null;
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
+  const allCols = [
+    ...COLUMNS.map((c) => ({ key: c.key as string, label: c.label })),
+    { key: "actions", label: "Actions" },
+  ];
 
   return (
     <div className="space-y-4">
@@ -111,35 +157,49 @@ const AdminSheetDetail = () => {
       </div>
 
       <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/60 hover:bg-muted/60">
-              {COLUMNS.map((c) => (
-                <TableHead key={c.key} className="whitespace-nowrap border-r border-border last:border-r-0">
-                  {c.label}
-                </TableHead>
+        <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
+          <colgroup>
+            {allCols.map((c) => (
+              <col key={c.key} style={{ width: widths[c.key] }} />
+            ))}
+          </colgroup>
+          <thead>
+            <tr className="bg-muted/60">
+              {allCols.map((c) => (
+                <th
+                  key={c.key}
+                  className="relative h-10 px-3 text-left align-middle font-medium text-muted-foreground border-r border-border last:border-r-0 select-none"
+                >
+                  <span className="block truncate">{c.label}</span>
+                  <span
+                    onMouseDown={(e) => startResize(c.key, e)}
+                    className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize hover:bg-primary/40"
+                  />
+                </th>
               ))}
-              <TableHead className="text-right border-r border-border last:border-r-0">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+            </tr>
+          </thead>
+          <tbody>
             {rows.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={COLUMNS.length + 1}
+              <tr>
+                <td
+                  colSpan={allCols.length}
                   className="text-center text-muted-foreground py-8"
                 >
                   No rows yet. Click "Add Row" to start.
-                </TableCell>
-              </TableRow>
+                </td>
+              </tr>
             ) : (
               rows.map((row, idx) => (
-                <TableRow
+                <tr
                   key={row.id}
                   className={idx % 2 === 1 ? "bg-muted/40" : ""}
                 >
                   {COLUMNS.map((c) => (
-                    <TableCell key={c.key} className="p-1 align-top border-r border-border">
+                    <td
+                      key={c.key}
+                      className="p-1 align-top border-r border-border border-t"
+                    >
                       <Input
                         type={c.type || "text"}
                         value={row[c.key] as string}
@@ -148,9 +208,9 @@ const AdminSheetDetail = () => {
                         }
                         className="h-9 border-transparent focus:border-input bg-transparent"
                       />
-                    </TableCell>
+                    </td>
                   ))}
-                  <TableCell className="text-right">
+                  <td className="text-right border-t border-border p-1">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -159,12 +219,12 @@ const AdminSheetDetail = () => {
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))
             )}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
     </div>
   );
