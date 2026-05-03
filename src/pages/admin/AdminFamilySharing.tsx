@@ -309,6 +309,14 @@ const AdminFamilySharing = () => {
               <Label htmlFor="edit_login_link">Login Link</Label>
               <Input id="edit_login_link" placeholder="https://example.com/login" value={editLoginLink} onChange={(e) => setEditLoginLink(e.target.value)} />
             </div>
+            <div className="flex items-center gap-2 p-2 border border-border rounded-lg">
+              <Checkbox
+                id="edit_give_otp_access"
+                checked={editGiveOtpAccess}
+                onCheckedChange={(c) => setEditGiveOtpAccess(!!c)}
+              />
+              <Label htmlFor="edit_give_otp_access" className="cursor-pointer">Give OTP Access to Customer</Label>
+            </div>
             {editVariants.length > 0 && (
               <div>
                 <Label>Linked Variants</Label>
@@ -338,7 +346,7 @@ const AdminFamilySharing = () => {
             <Button className="w-full" onClick={async () => {
               if (!editingFp) return;
               if (editSelectedVariantIds.length === 0) { toast.error("Select at least one variant"); return; }
-              const { error } = await supabase.from("family_sharing_products").update({ login_link: editLoginLink || null }).eq("id", editingFp.id);
+              const { error } = await supabase.from("family_sharing_products").update({ login_link: editLoginLink || null, give_otp_access: editGiveOtpAccess } as any).eq("id", editingFp.id);
               if (error) { toast.error(error.message); return; }
               await supabase.from("family_sharing_product_variants").delete().eq("family_product_id", editingFp.id);
               const variantInserts = editSelectedVariantIds.map(vid => ({
