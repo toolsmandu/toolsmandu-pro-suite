@@ -133,8 +133,11 @@ const AdminSheetDetail = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((row) => (
-                <TableRow key={row.id}>
+              rows.map((row, idx) => (
+                <TableRow
+                  key={row.id}
+                  className={idx % 2 === 1 ? "bg-muted/40" : ""}
+                >
                   {COLUMNS.map((c) => (
                     <TableCell key={c.key} className="p-1 align-top">
                       <Input
