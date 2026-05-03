@@ -110,7 +110,7 @@ const AdminSheetDetail = () => {
         </Button>
       </div>
 
-      <div className="border border-border rounded-lg bg-background overflow-x-auto">
+      <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
