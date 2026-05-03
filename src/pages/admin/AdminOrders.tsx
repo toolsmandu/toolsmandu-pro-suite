@@ -1104,7 +1104,7 @@ const AdminOrders = () => {
                 )}
               </div>
 
-              <div>
+              <div className="md:col-span-3">
                 <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Payment Method</Label>
                 <select
                   value={newPaymentMethod}
