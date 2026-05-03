@@ -292,7 +292,7 @@ const AdminCustomers = () => {
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} />
+              <Input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: sanitizeSearchInput(e.target.value) }))} />
             </div>
             <div>
               <Label>Password <span className="text-muted-foreground text-xs">(min 6 chars, optional)</span></Label>
@@ -397,7 +397,7 @@ const AdminCustomers = () => {
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} />
+              <Input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: sanitizeSearchInput(e.target.value) }))} />
             </div>
             <div>
               <Label>Password <span className="text-muted-foreground text-xs">(leave blank to keep current)</span></Label>
