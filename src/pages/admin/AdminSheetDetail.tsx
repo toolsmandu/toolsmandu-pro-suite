@@ -139,7 +139,7 @@ const AdminSheetDetail = () => {
                   className={idx % 2 === 1 ? "bg-muted/40" : ""}
                 >
                   {COLUMNS.map((c) => (
-                    <TableCell key={c.key} className="p-1 align-top">
+                    <TableCell key={c.key} className="p-1 align-top border-r border-border">
                       <Input
                         type={c.type || "text"}
                         value={row[c.key] as string}
