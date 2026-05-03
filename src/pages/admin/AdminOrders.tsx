@@ -809,7 +809,18 @@ const AdminOrders = () => {
 
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
       toast.success(`Order ${order.order_number} Created Successfully`);
-      setAddingOrder(false);
+      // Reset form for next order
+      setNewOrderDate(getKathmanduNowLocal());
+      setCustomerSearch('');
+      setCustomerResults([]);
+      setSelectedCustomer(null);
+      setCustomerError('');
+      setNewProductId('');
+      setNewVariationId('');
+      setNewAmount('');
+      setNewPaymentMethod('manual');
+      setNewRemarks('');
+      setNewFieldValues({});
     } catch (e: any) {
       toast.error(e.message);
     } finally {
