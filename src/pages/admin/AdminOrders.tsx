@@ -1124,10 +1124,8 @@ const AdminOrders = () => {
                   </div>
                 )}
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-              <div className="md:col-span-6">
+              <div className="md:col-span-4">
                 <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Product</Label>
                 {(() => {
                   const options: { productId: string; variationId: string; label: string; price: number }[] = [];
@@ -1195,8 +1193,10 @@ const AdminOrders = () => {
                   onChange={e => setNewAmount(e.target.value)}
                 />
               </div>
+            </div>
 
-              <div className="md:col-span-3">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+              <div className="md:col-span-3 md:col-start-10">
                 <Button
                   className="w-full"
                   onClick={handleCreateOrder}
