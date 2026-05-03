@@ -1195,8 +1195,31 @@ const AdminOrders = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-              <div className="md:col-span-3 md:col-start-10">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end mt-4">
+              {newActiveFields.length > 0 && (
+                <div className="md:col-span-6 space-y-3">
+                  {newActiveFields.map((f) => (
+                    <InputFieldRenderer
+                      key={f.id}
+                      field={f}
+                      value={newFieldValues[f.id]}
+                      onChange={(val) => setNewFieldValues((prev) => ({ ...prev, [f.id]: val }))}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className={newActiveFields.length > 0 ? 'md:col-span-3' : 'md:col-span-9'}>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
+                <Textarea
+                  placeholder="Optional notes about this order (admin-only)"
+                  value={newRemarks}
+                  onChange={e => setNewRemarks(e.target.value)}
+                  rows={2}
+                />
+              </div>
+
+              <div className="md:col-span-3">
                 <Button
                   className="w-full"
                   onClick={handleCreateOrder}
@@ -1205,32 +1228,6 @@ const AdminOrders = () => {
                   {creatingOrder ? 'Creating...' : 'Create Order'}
                 </Button>
               </div>
-            </div>
-
-            {newActiveFields.length > 0 && (
-              <div className="mt-4 space-y-3 rounded-lg border border-border bg-background/50 p-3">
-                <p className="text-xs text-muted-foreground">
-                  Linked input fields (optional for admin-created orders)
-                </p>
-                {newActiveFields.map((f) => (
-                  <InputFieldRenderer
-                    key={f.id}
-                    field={f}
-                    value={newFieldValues[f.id]}
-                    onChange={(val) => setNewFieldValues((prev) => ({ ...prev, [f.id]: val }))}
-                  />
-                ))}
-              </div>
-            )}
-
-            <div className="mt-4">
-              <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
-              <Textarea
-                placeholder="Optional notes about this order (admin-only)"
-                value={newRemarks}
-                onChange={e => setNewRemarks(e.target.value)}
-                rows={2}
-              />
             </div>
           </div>
 
