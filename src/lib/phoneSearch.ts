@@ -2,7 +2,7 @@
 // Strips formatting characters (space, -, (, ), +) and supports
 // matching phones by the last 4 digits of the entered number.
 
-const STRIP_CHARS_RE = /[\s\-()+]/g;
+const STRIP_CHARS_RE = /[\s\-()]/g;
 
 export function sanitizePhoneInput(value: string): string {
   return (value || '').replace(STRIP_CHARS_RE, '');
