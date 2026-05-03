@@ -117,6 +117,7 @@ const AdminFamilySharingDetail = () => {
       username: c.username, password: c.password, remarks: c.remarks || "",
       expiry_date: c.expiry_date || "", max_limit: String(c.max_limit), twofa_link: c.twofa_link || "",
       index_number: String(c.index_number),
+      give_otp_access: (c as any).give_otp_access ?? true,
     });
     setUseInbuiltOtp(!c.twofa_link);
     setDialogOpen(true);
