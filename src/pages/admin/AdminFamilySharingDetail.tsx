@@ -36,7 +36,7 @@ interface Variant {
   expiry_days: number | null;
 }
 
-const emptyForm = { username: "", password: "", remarks: "", expiry_date: "", max_limit: "1", twofa_link: "", index_number: "", give_otp_access: true };
+const emptyForm = { username: "", password: "", remarks: "", expiry_date: "", max_limit: "1", twofa_link: "", index_number: "" };
 
 const AdminFamilySharingDetail = () => {
   const { id } = useParams();
