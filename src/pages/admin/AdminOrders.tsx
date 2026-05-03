@@ -1218,13 +1218,7 @@ const AdminOrders = () => {
               )}
 
               {newActiveFields.length > 0 ? (
-                <div className="flex flex-col gap-3 h-full">
-                  <Button
-                    onClick={handleCreateOrder}
-                    disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
-                  >
-                    {creatingOrder ? 'Creating...' : 'Create Order'}
-                  </Button>
+                <div className="flex gap-3 h-full">
                   <div className="flex flex-col flex-1 min-h-0">
                     <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
                     <Textarea
@@ -1233,6 +1227,14 @@ const AdminOrders = () => {
                       onChange={e => setNewRemarks(e.target.value)}
                       className="flex-1 min-h-10 resize-y"
                     />
+                  </div>
+                  <div className="flex items-end">
+                    <Button
+                      onClick={handleCreateOrder}
+                      disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
+                    >
+                      {creatingOrder ? 'Creating...' : 'Create Order'}
+                    </Button>
                   </div>
                 </div>
               ) : (
