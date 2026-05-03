@@ -8,6 +8,16 @@ export function sanitizePhoneInput(value: string): string {
   return (value || '').replace(STRIP_CHARS_RE, '');
 }
 
+/**
+ * Sanitize search input — strip phone formatting unless the value looks
+ * like an email (contains '@').
+ */
+export function sanitizeSearchInput(value: string): string {
+  if (!value) return '';
+  if (value.includes('@')) return value;
+  return sanitizePhoneInput(value);
+}
+
 export function digitsOnly(value: string): string {
   return (value || '').replace(/\D/g, '');
 }
