@@ -23,6 +23,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import InputFieldRenderer, { type InputFieldDef, type FieldResponse } from '@/components/InputFieldRenderer';
+import { sanitizeSearchInput, phoneMatches } from '@/lib/phoneSearch';
 
 const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').trim();
 
