@@ -270,8 +270,9 @@ const AdminFamilySharingDetail = () => {
                  <TableCell className="text-xs text-muted-foreground">{formatDateTime(c.updated_at)}</TableCell>
                  <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Assign Variants" onClick={() => openVariantDialog(c.id)}>
+                    <Button variant="outline" size="sm" className="h-8 gap-1" onClick={() => openVariantDialog(c.id)}>
                       <Link2 className="h-4 w-4 text-primary" />
+                      Assign Variation
                     </Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(`/admin/family-sharing/${id}/credential/${c.id}`)}>
                       <Edit className="h-4 w-4" />
