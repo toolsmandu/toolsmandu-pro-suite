@@ -39,7 +39,7 @@ const countryCodes = [
   { code: '+257', label: '🇧🇮 +257 Burundi', min: 8, max: 8 },
   { code: '+855', label: '🇰🇭 +855 Cambodia', min: 8, max: 9 },
   { code: '+237', label: '🇨🇲 +237 Cameroon', min: 9, max: 9 },
-  { code: '+1', label: '🇨🇦 +1 Canada', min: 10, max: 10 },
+  
   { code: '+238', label: '🇨🇻 +238 Cape Verde', min: 7, max: 7 },
   { code: '+236', label: '🇨🇫 +236 Central African Republic', min: 8, max: 8 },
   { code: '+235', label: '🇹🇩 +235 Chad', min: 8, max: 8 },
@@ -90,7 +90,7 @@ const countryCodes = [
   { code: '+39', label: '🇮🇹 +39 Italy', min: 9, max: 11 },
   { code: '+81', label: '🇯🇵 +81 Japan', min: 10, max: 11 },
   { code: '+962', label: '🇯🇴 +962 Jordan', min: 9, max: 9 },
-  { code: '+7', label: '🇰🇿 +7 Kazakhstan', min: 10, max: 10 },
+  
   { code: '+254', label: '🇰🇪 +254 Kenya', min: 9, max: 10 },
   { code: '+965', label: '🇰🇼 +965 Kuwait', min: 8, max: 8 },
   { code: '+996', label: '🇰🇬 +996 Kyrgyzstan', min: 9, max: 9 },
