@@ -1061,9 +1061,30 @@ const AdminOrders = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
-              <div className="md:col-span-3">
-                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Purchase Date</Label>
-                <Input type="datetime-local" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} />
+              <div className="md:col-span-1">
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="icon" type="button" title={newOrderDate ? format(new Date(newOrderDate), 'PPP p') : 'Pick date'}>
+                      <CalendarIcon className="h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={newOrderDate ? new Date(newOrderDate) : undefined}
+                      onSelect={(d) => {
+                        if (!d) return;
+                        const prev = newOrderDate ? new Date(newOrderDate) : new Date();
+                        d.setHours(prev.getHours(), prev.getMinutes(), 0, 0);
+                        const pad = (n: number) => String(n).padStart(2, '0');
+                        setNewOrderDate(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+                      }}
+                      initialFocus
+                      className={cn('p-3 pointer-events-auto')}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div className="relative md:col-span-4">
