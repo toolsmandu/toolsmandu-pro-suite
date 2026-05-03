@@ -139,7 +139,7 @@ const AdminFamilySharingDetail = () => {
       remarks: form.remarks || null, expiry_date: form.expiry_date || null,
       max_limit: parseInt(form.max_limit) || 1, twofa_link: useInbuiltOtp ? null : (form.twofa_link || null),
       index_number: parseInt(form.index_number) || 1,
-      give_otp_access: form.give_otp_access,
+      
     };
 
     if (editingId) {
