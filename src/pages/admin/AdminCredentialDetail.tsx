@@ -174,7 +174,6 @@ const AdminCredentialDetail = () => {
         expiry_date: form.expiry_date || null,
         max_limit: parseInt(form.max_limit) || 1,
         twofa_link: useInbuiltOtp ? null : (form.twofa_link || null),
-        give_otp_access: giveOtpAccess,
         index_number: parseInt(form.index_number) || 1,
       } as any)
       .eq("id", credentialId);
