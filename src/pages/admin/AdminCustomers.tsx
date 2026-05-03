@@ -14,6 +14,7 @@ import { formatDate } from '@/lib/formatDate';
 
 import { toast } from 'sonner';
 import CopyButton from '@/components/admin/CopyButton';
+import { sanitizeSearchInput, phoneMatches } from '@/lib/phoneSearch';
 
 const selectClassName =
   'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2';
@@ -62,9 +63,9 @@ const AdminCustomers = () => {
       const term = searchTerm.trim().toLowerCase();
       if (term) {
         const email = u.email?.toLowerCase() || '';
-        const phone = u.phone?.toLowerCase() || '';
+        const phone = u.phone || '';
         const name = u.name?.toLowerCase() || '';
-        if (!email.includes(term) && !phone.includes(term) && !name.includes(term)) return false;
+        if (!email.includes(term) && !phoneMatches(phone, term) && !name.includes(term)) return false;
       }
       if (roleFilter !== 'all') {
         if (!u.roles.includes(roleFilter)) return false;
@@ -193,7 +194,7 @@ const AdminCustomers = () => {
           </Button>
           <div className="relative flex-1 min-w-[240px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search by email, phone" className="pl-9" />
+            <Input value={searchTerm} onChange={e => setSearchTerm(sanitizeSearchInput(e.target.value))} placeholder="Search by email, phone" className="pl-9" />
           </div>
           <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className={`${selectClassName} w-32`}>
             <option value="all">All Roles</option>

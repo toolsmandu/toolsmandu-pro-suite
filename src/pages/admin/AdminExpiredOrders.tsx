@@ -11,6 +11,7 @@ import { Search, Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/formatDate';
 import CopyButton from '@/components/admin/CopyButton';
+import { sanitizeSearchInput, phoneMatches } from '@/lib/phoneSearch';
 
 type Filter = 'expired_today' | 'all';
 
@@ -84,7 +85,7 @@ const AdminExpiredOrders = () => {
     if (term) {
       list = list.filter(r =>
         (r.email || '').toLowerCase().includes(term) ||
-        (r.phone || '').toLowerCase().includes(term) ||
+        phoneMatches(r.phone, term) ||
         (r.orderNumber || '').toLowerCase().includes(term) ||
         (r.product || '').toLowerCase().includes(term)
       );
@@ -107,7 +108,7 @@ const AdminExpiredOrders = () => {
           <Input
             placeholder="Search by email, phone, order #, product..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setSearch(sanitizeSearchInput(e.target.value))}
             className="pl-9"
           />
         </div>

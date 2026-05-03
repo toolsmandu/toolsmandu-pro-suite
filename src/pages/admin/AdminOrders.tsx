@@ -23,6 +23,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import InputFieldRenderer, { type InputFieldDef, type FieldResponse } from '@/components/InputFieldRenderer';
+import { sanitizeSearchInput, phoneMatches } from '@/lib/phoneSearch';
 
 const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').trim();
 
@@ -586,7 +587,8 @@ const AdminOrders = () => {
   };
 
   // Customer search for add order
-  const handleCustomerSearch = async (term: string) => {
+  const handleCustomerSearch = async (rawTerm: string) => {
+    const term = sanitizeSearchInput(rawTerm);
     setCustomerSearch(term);
     setSelectedCustomer(null);
     setCustomerError('');
@@ -595,7 +597,7 @@ const AdminOrders = () => {
     const searchTerm = term.trim().toLowerCase();
     const { data } = await supabase.from('profiles').select('user_id, name, email, phone');
     const filtered = (data || []).filter(p =>
-      p.email?.toLowerCase().includes(searchTerm) || p.phone?.toLowerCase().includes(searchTerm)
+      p.email?.toLowerCase().includes(searchTerm) || phoneMatches(p.phone, term)
     );
     setCustomerResults(filtered);
     if (filtered.length === 0) setCustomerError('Not registered yet');
@@ -893,7 +895,7 @@ const AdminOrders = () => {
       const term = searchTerm.trim().toLowerCase();
       if (term) {
         const email = order.profiles?.email?.toLowerCase() || '';
-        const phone = order.profiles?.phone?.toLowerCase() || '';
+        const phone = order.profiles?.phone || '';
         const orderNum = (order.order_number || '').toLowerCase();
         const inputMatch = (order.order_items || []).some((it: any) => {
           const responses = Array.isArray(it.input_field_responses) ? it.input_field_responses : [];
@@ -905,7 +907,7 @@ const AdminOrders = () => {
             return String(v).toLowerCase().includes(term);
           });
         });
-        if (!email.includes(term) && !phone.includes(term) && !orderNum.includes(term) && !inputMatch) return false;
+        if (!email.includes(term) && !phoneMatches(phone, term) && !orderNum.includes(term) && !inputMatch) return false;
       }
       if (productFilter !== 'all') {
         if (productFilter.startsWith('variation:')) {
@@ -1266,7 +1268,7 @@ const AdminOrders = () => {
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6 mb-4">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search email, phone, order ID" className="pl-9" />
+            <Input value={searchTerm} onChange={e => setSearchTerm(sanitizeSearchInput(e.target.value))} placeholder="Search email, phone, order ID" className="pl-9" />
           </div>
 
           {/* Searchable Product filter */}
