@@ -1203,9 +1203,9 @@ const AdminOrders = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end mt-4">
+            <div className={`grid grid-cols-1 gap-4 mt-4 ${newActiveFields.length > 0 ? 'md:grid-cols-2 items-stretch' : 'md:grid-cols-12 items-end'}`}>
               {newActiveFields.length > 0 && (
-                <div className="md:col-span-6 space-y-3">
+                <div className="space-y-3">
                   {newActiveFields.map((f) => (
                     <InputFieldRenderer
                       key={f.id}
@@ -1217,26 +1217,47 @@ const AdminOrders = () => {
                 </div>
               )}
 
-              <div className={newActiveFields.length > 0 ? 'md:col-span-3' : 'md:col-span-9'}>
-                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
-                <Textarea
-                  placeholder="Optional notes about this order (admin-only)"
-                  value={newRemarks}
-                  onChange={e => setNewRemarks(e.target.value)}
-                  rows={1}
-                  className="min-h-10 h-10 py-2 resize-y"
-                />
-              </div>
-
-              <div className="md:col-span-3">
-                <Button
-                  className="w-full"
-                  onClick={handleCreateOrder}
-                  disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
-                >
-                  {creatingOrder ? 'Creating...' : 'Create Order'}
-                </Button>
-              </div>
+              {newActiveFields.length > 0 ? (
+                <div className="flex flex-col gap-3 h-full">
+                  <Button
+                    onClick={handleCreateOrder}
+                    disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
+                  >
+                    {creatingOrder ? 'Creating...' : 'Create Order'}
+                  </Button>
+                  <div className="flex flex-col flex-1 min-h-0">
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
+                    <Textarea
+                      placeholder="Optional notes about this order (admin-only)"
+                      value={newRemarks}
+                      onChange={e => setNewRemarks(e.target.value)}
+                      className="flex-1 min-h-10 resize-y"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="md:col-span-9">
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
+                    <Textarea
+                      placeholder="Optional notes about this order (admin-only)"
+                      value={newRemarks}
+                      onChange={e => setNewRemarks(e.target.value)}
+                      rows={1}
+                      className="min-h-10 h-10 py-2 resize-y"
+                    />
+                  </div>
+                  <div className="md:col-span-3">
+                    <Button
+                      className="w-full"
+                      onClick={handleCreateOrder}
+                      disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
+                    >
+                      {creatingOrder ? 'Creating...' : 'Create Order'}
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
