@@ -436,8 +436,8 @@ const AdminProducts = () => {
                   <TableHead>Category</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Amount</TableHead>
-                  <TableHead>Sale Label</TableHead>
-                  <TableHead>Speciality</TableHead>
+                  <TableHead>Home Label</TableHead>
+                  <TableHead>Product Label</TableHead>
                   <TableHead className="w-24">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -457,10 +457,8 @@ const AdminProducts = () => {
                       <TableCell className="text-muted-foreground text-xs">
                         {product.flash_sale_label || '-'}
                       </TableCell>
-                      <TableCell className="text-xs space-x-1">
-                        {product.is_featured && <span className="text-primary">Featured</span>}
-                        {product.is_bestseller && <span className="text-warning">Best</span>}
-                        {product.is_flash_sale && <span className="text-destructive">Sale</span>}
+                      <TableCell className="text-muted-foreground text-xs">
+                        {product.single_product_tag || '-'}
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
