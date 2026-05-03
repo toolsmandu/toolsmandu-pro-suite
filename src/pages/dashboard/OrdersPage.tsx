@@ -55,7 +55,7 @@ const OrdersPage = () => {
 
       const { data } = await supabase
         .from('credential_assignments')
-        .select('id, assigned_at, credential_id, order_id, validity_days, family_sharing_credentials(username, password, twofa_link, family_product_id, family_sharing_products(login_link, products(name)))')
+        .select('id, assigned_at, credential_id, order_id, validity_days, family_sharing_credentials(username, password, twofa_link, give_otp_access, family_product_id, family_sharing_products(login_link, products(name)))')
         .eq('user_id', user!.id);
       return (data || []) as any[];
     },
