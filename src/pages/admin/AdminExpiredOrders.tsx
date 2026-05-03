@@ -108,7 +108,7 @@ const AdminExpiredOrders = () => {
           <Input
             placeholder="Search by email, phone, order #, product..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setSearch(sanitizeSearchInput(e.target.value))}
             className="pl-9"
           />
         </div>
