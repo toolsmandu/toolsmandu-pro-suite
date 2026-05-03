@@ -1066,7 +1066,7 @@ const AdminOrders = () => {
                 <Input type="datetime-local" value={newOrderDate} onChange={e => setNewOrderDate(e.target.value)} />
               </div>
 
-              <div className="relative md:col-span-6">
+              <div className="relative md:col-span-4">
                 <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Phone Number / Email</Label>
                 <Input
                   placeholder="Search by email or phone..."
@@ -1102,21 +1102,6 @@ const AdminOrders = () => {
                     </Button>
                   </div>
                 )}
-              </div>
-
-              <div className="md:col-span-3">
-                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Payment Method</Label>
-                <select
-                  value={newPaymentMethod}
-                  onChange={e => setNewPaymentMethod(e.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="manual">Manual</option>
-                  <option value="khalti">Khalti</option>
-                  <option value="esewa">eSewa</option>
-                  <option value="bank">Bank Transfer</option>
-                  <option value="cash">Cash</option>
-                </select>
               </div>
             </div>
 
