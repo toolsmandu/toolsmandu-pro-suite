@@ -110,10 +110,10 @@ const AdminSheetDetail = () => {
         </Button>
       </div>
 
-      <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
+      <div className="border border-border rounded-lg bg-white text-slate-900 overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/60 hover:bg-muted/60">
+            <TableRow className="bg-slate-100 hover:bg-slate-100">
               {COLUMNS.map((c) => (
                 <TableHead key={c.key} className="whitespace-nowrap">
                   {c.label}
@@ -136,7 +136,7 @@ const AdminSheetDetail = () => {
               rows.map((row, idx) => (
                 <TableRow
                   key={row.id}
-                  className={idx % 2 === 1 ? "bg-muted/40" : ""}
+                  className={idx % 2 === 1 ? "bg-slate-50" : "bg-white"}
                 >
                   {COLUMNS.map((c) => (
                     <TableCell key={c.key} className="p-1 align-top">
