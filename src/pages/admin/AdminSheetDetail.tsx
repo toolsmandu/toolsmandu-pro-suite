@@ -26,8 +26,11 @@ const isoFromDate = (d: Date) => {
 
 type Sheet = { id: string; name: string };
 
+type RowKind = "master" | "normal";
+
 type Row = {
   id: string;
+  kind?: RowKind;
   orderId: string;
   purchaseDate: string;
   email: string;
@@ -36,6 +39,10 @@ type Row = {
   remaining: string;
   remarks: string;
 };
+
+const MASTER_KEYS: (keyof Row)[] = ["email", "phone", "remarks"];
+const isRowEmpty = (r: Row) =>
+  !r.orderId && !r.purchaseDate && !r.email && !r.phone && !r.period && !r.remarks;
 
 const widthsKey = (id: string) => `admin_sheet_widths_${id}`;
 
