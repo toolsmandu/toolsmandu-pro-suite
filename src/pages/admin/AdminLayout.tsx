@@ -242,15 +242,19 @@ const AdminLayout = () => {
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
-                          {sheetsList.map((s) => (
-                            <SidebarMenuSubItem key={s.id}>
-                              <SidebarMenuSubButton asChild>
-                                <NavLink to={`/admin/sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
-                                  <span className="truncate">{s.name}</span>
-                                </NavLink>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
+                          {sheetsList.map((s) => {
+                            const isGemini = /gemini/i.test(s.name);
+                            return (
+                              <SidebarMenuSubItem key={s.id}>
+                                <SidebarMenuSubButton asChild>
+                                  <NavLink to={`/admin/sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                    {isGemini && <GeminiIcon className="mr-2 h-3 w-3 shrink-0" />}
+                                    <span className="truncate">{s.name}</span>
+                                  </NavLink>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>
