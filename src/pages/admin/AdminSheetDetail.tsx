@@ -45,8 +45,7 @@ type MasterRow = {
   remarks: string;
 };
 
-const isRowEmpty = (r: Row) =>
-  !r.orderId && !r.purchaseDate && !r.email && !r.phone && !r.period && !r.remarks;
+const isRowEmpty = (r: Row) => !r.email && !r.phone;
 const isMasterEmpty = (m: MasterRow) =>
   !m.account && !m.password && !m.expiry_date && !m.remarks;
 
