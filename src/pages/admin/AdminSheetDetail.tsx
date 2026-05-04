@@ -308,22 +308,37 @@ const AdminSheetDetail = () => {
             </tr>
           </thead>
           <tbody>
-            {rows.length === 0 ? (
+          {visibleRows.length === 0 ? (
               <tr>
                 <td
                   colSpan={allCols.length}
                   className="text-center text-muted-foreground py-8"
                 >
-                  No rows yet. Click "Add Row" to start.
+                  {rows.length === 0
+                    ? 'No rows yet. Click "Add Row" to start.'
+                    : "All rows are empty. Toggle Show Empty Rows to view them."}
                 </td>
               </tr>
             ) : (
-              rows.map((row, idx) => (
+              visibleRows.map((row, idx) => {
+                const isMaster = row.kind === "master";
+                return (
                 <tr
                   key={row.id}
-                  className={idx % 2 === 1 ? "bg-muted/40" : ""}
+                  className={`${idx % 2 === 1 ? "bg-muted/40" : ""} ${isMaster ? "bg-primary/5" : ""}`}
                 >
                   {COLUMNS.map((c) => {
+                    const isMasterCell = isMaster && (MASTER_KEYS as string[]).includes(c.key as string);
+                    if (isMaster && !isMasterCell) {
+                      return (
+                        <td
+                          key={c.key}
+                          className="p-1 align-top border-r border-border border-t bg-muted/40"
+                        >
+                          <div className="h-9" />
+                        </td>
+                      );
+                    }
                     const isRemaining = c.key === "remaining";
                     const periodNum = parseInt(row.period, 10);
                     let remainingVal = "";
