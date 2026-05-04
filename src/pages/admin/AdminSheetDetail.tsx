@@ -26,7 +26,7 @@ const COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = 
   { key: "purchaseDate", label: "Purchase Date", type: "date" },
   { key: "email", label: "Email", type: "email" },
   { key: "phone", label: "Phone" },
-  { key: "period", label: "Period (days)", type: "number" },
+  { key: "period", label: "Period (days)", type: "numeric" },
   { key: "remaining", label: "Remaining (days)" },
   { key: "remarks", label: "Remarks" },
 ];
@@ -296,13 +296,13 @@ const AdminSheetDetail = () => {
                           </div>
                         ) : (
                           <Input
-                            type={c.type || "text"}
-                            inputMode={c.type === "number" ? "numeric" : undefined}
-                            min={c.type === "number" ? 0 : undefined}
+                            type={c.type === "numeric" ? "text" : c.type || "text"}
+                            inputMode={c.type === "numeric" ? "numeric" : undefined}
+                            pattern={c.type === "numeric" ? "[0-9]*" : undefined}
                             value={row[c.key] as string}
                             onChange={(e) => {
                               let v = e.target.value;
-                              if (c.type === "number") v = v.replace(/[^0-9]/g, "");
+                              if (c.type === "numeric") v = v.replace(/[^0-9]/g, "");
                               updateCell(row.id, c.key, v);
                             }}
                             className="h-9 border-transparent focus:border-input bg-transparent"
