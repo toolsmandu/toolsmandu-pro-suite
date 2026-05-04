@@ -12,6 +12,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
   import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut, Wrench } from 'lucide-react';
 import ChatbotWidget from '@/components/admin/ChatbotWidget';
+import { GeminiIcon } from '@/components/icons/GeminiIcon';
 import SalesStatsBar from '@/components/admin/SalesStatsBar';
 import EditorTaskStatsBar from '@/components/admin/EditorTaskStatsBar';
 import { Button } from '@/components/ui/button';
