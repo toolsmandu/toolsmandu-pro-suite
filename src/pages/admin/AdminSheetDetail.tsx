@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -26,8 +26,11 @@ const isoFromDate = (d: Date) => {
 
 type Sheet = { id: string; name: string };
 
+type RowKind = "master" | "normal";
+
 type Row = {
   id: string;
+  kind?: RowKind;
   orderId: string;
   purchaseDate: string;
   email: string;
@@ -36,6 +39,10 @@ type Row = {
   remaining: string;
   remarks: string;
 };
+
+const MASTER_KEYS: (keyof Row)[] = ["email", "phone", "remarks"];
+const isRowEmpty = (r: Row) =>
+  !r.orderId && !r.purchaseDate && !r.email && !r.phone && !r.period && !r.remarks;
 
 const widthsKey = (id: string) => `admin_sheet_widths_${id}`;
 
@@ -60,8 +67,9 @@ const DEFAULT_WIDTHS: Record<string, number> = {
   actions: 110,
 };
 
-const emptyRow = (): Row => ({
+const emptyRow = (kind: RowKind = "normal"): Row => ({
   id: crypto.randomUUID(),
+  kind,
   orderId: "",
   purchaseDate: "",
   email: "",
@@ -79,6 +87,7 @@ const AdminSheetDetail = () => {
   const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
   const [dirtyRows, setDirtyRows] = useState<Set<string>>(new Set());
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
+  const [showEmpty, setShowEmpty] = useState(true);
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const rowsRef = useRef<Row[]>([]);
 
@@ -164,11 +173,18 @@ const AdminSheetDetail = () => {
   };
 
   const addRow = () => {
-    const r = emptyRow();
-    setRows((prev) => [...prev, r]);
+    const newRows: Row[] = [
+      emptyRow("master"),
+      emptyRow("master"),
+      emptyRow("normal"),
+      emptyRow("normal"),
+      emptyRow("normal"),
+      emptyRow("normal"),
+    ];
+    setRows((prev) => [...prev, ...newRows]);
     setDirtyRows((prev) => {
       const n = new Set(prev);
-      n.add(r.id);
+      newRows.forEach((r) => n.add(r.id));
       return n;
     });
   };
@@ -216,6 +232,17 @@ const AdminSheetDetail = () => {
 
   const unsavedCount = dirtyRows.size;
 
+  const visibleRows = useMemo(() => {
+    if (showEmpty) return rows;
+    const result: Row[] = [];
+    for (let i = 0; i < rows.length; i += 6) {
+      const group = rows.slice(i, i + 6);
+      const allEmpty = group.every(isRowEmpty);
+      if (!allEmpty) result.push(...group);
+    }
+    return result;
+  }, [rows, showEmpty]);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -239,10 +266,16 @@ const AdminSheetDetail = () => {
             </p>
           </div>
         </div>
-        <Button onClick={addRow} disabled={loading}>
-          <Plus className="h-4 w-4" />
-          Add Row
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => setShowEmpty((v) => !v)} disabled={loading}>
+            {showEmpty ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showEmpty ? "Hide Empty Rows" : "Show Empty Rows"}
+          </Button>
+          <Button onClick={addRow} disabled={loading}>
+            <Plus className="h-4 w-4" />
+            Add Row
+          </Button>
+        </div>
       </div>
 
       {loading ? (
@@ -275,22 +308,37 @@ const AdminSheetDetail = () => {
             </tr>
           </thead>
           <tbody>
-            {rows.length === 0 ? (
+          {visibleRows.length === 0 ? (
               <tr>
                 <td
                   colSpan={allCols.length}
                   className="text-center text-muted-foreground py-8"
                 >
-                  No rows yet. Click "Add Row" to start.
+                  {rows.length === 0
+                    ? 'No rows yet. Click "Add Row" to start.'
+                    : "All rows are empty. Toggle Show Empty Rows to view them."}
                 </td>
               </tr>
             ) : (
-              rows.map((row, idx) => (
+              visibleRows.map((row, idx) => {
+                const isMaster = row.kind === "master";
+                return (
                 <tr
                   key={row.id}
-                  className={idx % 2 === 1 ? "bg-muted/40" : ""}
+                  className={`${idx % 2 === 1 ? "bg-muted/40" : ""} ${isMaster ? "bg-primary/5" : ""}`}
                 >
                   {COLUMNS.map((c) => {
+                    const isMasterCell = isMaster && (MASTER_KEYS as string[]).includes(c.key as string);
+                    if (isMaster && !isMasterCell) {
+                      return (
+                        <td
+                          key={c.key}
+                          className="p-1 align-top border-r border-border border-t bg-muted/40"
+                        >
+                          <div className="h-9" />
+                        </td>
+                      );
+                    }
                     const isRemaining = c.key === "remaining";
                     const periodNum = parseInt(row.period, 10);
                     let remainingVal = "";
@@ -386,7 +434,8 @@ const AdminSheetDetail = () => {
                     </div>
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>
