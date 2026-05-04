@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 type Sheet = {
   id: string;
   name: string;
+  slug: string | null;
   created_at: string;
 };
 
