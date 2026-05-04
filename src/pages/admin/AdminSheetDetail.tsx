@@ -1,10 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Loader2, Check, Save } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+
+const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const formatPurchaseDate = (iso: string) => {
+  if (!iso) return "";
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return iso;
+  const month = parseInt(m[2], 10);
+  if (isNaN(month) || month < 1 || month > 12) return iso;
+  return `${m[1]}/${MONTHS_SHORT[month - 1]}/${m[3]}`;
+};
+const isoFromDate = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+};
 
 type Sheet = { id: string; name: string };
 
