@@ -423,6 +423,7 @@ const AdminSheetDetail = () => {
               setShowPassword={(v) => setShowPasswords((p) => ({ ...p, [gi]: v }))}
               dirty={dirtyGroups.has(gi)}
               saving={savingGroups.has(gi)}
+              showEmpty={showEmpty}
               onUpdateMaster={updateMaster}
               onUpdateNormal={updateNormal}
               onSave={() => saveGroup(gi)}
