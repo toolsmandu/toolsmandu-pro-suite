@@ -28,6 +28,7 @@ const AdminSheets = () => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
+  const queryClient = useQueryClient();
 
   const load = async () => {
     setLoading(true);
