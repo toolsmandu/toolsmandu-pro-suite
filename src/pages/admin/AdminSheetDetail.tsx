@@ -39,7 +39,7 @@ const DEFAULT_WIDTHS: Record<string, number> = {
   period: 120,
   remaining: 120,
   remarks: 240,
-  actions: 90,
+  actions: 110,
 };
 
 const emptyRow = (): Row => ({
