@@ -26,11 +26,8 @@ const isoFromDate = (d: Date) => {
 
 type Sheet = { id: string; name: string };
 
-type RowKind = "master" | "normal";
-
 type Row = {
   id: string;
-  kind?: RowKind;
   orderId: string;
   purchaseDate: string;
   email: string;
@@ -40,19 +37,35 @@ type Row = {
   remarks: string;
 };
 
-const MASTER_KEYS: (keyof Row)[] = ["email", "phone", "remarks"];
+type MasterRow = {
+  id?: string;
+  account: string;
+  password: string;
+  expiry_date: string;
+  remarks: string;
+};
+
 const isRowEmpty = (r: Row) =>
   !r.orderId && !r.purchaseDate && !r.email && !r.phone && !r.period && !r.remarks;
+const isMasterEmpty = (m: MasterRow) =>
+  !m.account && !m.password && !m.expiry_date && !m.remarks;
 
 const widthsKey = (id: string) => `admin_sheet_widths_${id}`;
 
-const COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = [
+const NORMAL_COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = [
   { key: "orderId", label: "Order ID" },
   { key: "purchaseDate", label: "Purchase Date", type: "date" },
   { key: "email", label: "Email", type: "email" },
   { key: "phone", label: "Phone" },
   { key: "period", label: "Period (days)", type: "numeric" },
   { key: "remaining", label: "Remaining (days)" },
+  { key: "remarks", label: "Remarks" },
+];
+
+const MASTER_COLUMNS: { key: keyof Omit<MasterRow, "id">; label: string; type?: string }[] = [
+  { key: "account", label: "Family Manager Account" },
+  { key: "password", label: "Password" },
+  { key: "expiry_date", label: "Expiry Date", type: "date" },
   { key: "remarks", label: "Remarks" },
 ];
 
@@ -65,11 +78,13 @@ const DEFAULT_WIDTHS: Record<string, number> = {
   remaining: 120,
   remarks: 240,
   actions: 110,
+  account: 240,
+  password: 200,
+  expiry_date: 160,
 };
 
-const emptyRow = (kind: RowKind = "normal"): Row => ({
+const emptyNormal = (): Row => ({
   id: crypto.randomUUID(),
-  kind,
   orderId: "",
   purchaseDate: "",
   email: "",
@@ -78,28 +93,28 @@ const emptyRow = (kind: RowKind = "normal"): Row => ({
   remaining: "",
   remarks: "",
 });
+const emptyMaster = (): MasterRow => ({ account: "", password: "", expiry_date: "", remarks: "" });
 
 const AdminSheetDetail = () => {
   const { id = "" } = useParams();
   const [sheet, setSheet] = useState<Sheet | null>(null);
-  const [rows, setRows] = useState<Row[]>([]);
+  // groups: each group has 2 master rows + 4 normal rows
+  const [groups, setGroups] = useState<{ master: [MasterRow, MasterRow]; normal: Row[] }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
-  const [dirtyRows, setDirtyRows] = useState<Set<string>>(new Set());
+  const [savingGroups, setSavingGroups] = useState<Set<number>>(new Set());
+  const [dirtyGroups, setDirtyGroups] = useState<Set<number>>(new Set());
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
   const [showEmpty, setShowEmpty] = useState(true);
+  const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
-  const rowsRef = useRef<Row[]>([]);
-
-  useEffect(() => {
-    rowsRef.current = rows;
-  }, [rows]);
+  const groupsRef = useRef(groups);
+  useEffect(() => { groupsRef.current = groups; }, [groups]);
   const [sheetUuid, setSheetUuid] = useState<string>("");
 
   const isUuid = (v: string) =>
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 
-  // Load sheet by id or slug
+  // Load sheet + master rows
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -111,28 +126,91 @@ const AdminSheetDetail = () => {
       if (cancelled) return;
       if (error) {
         toast({ title: "Failed to load sheet", description: error.message, variant: "destructive" });
-      } else if (data) {
-        setSheet({ id: data.id, name: data.name });
-        setSheetUuid(data.id);
-        const arr = Array.isArray(data.data) ? (data.data as unknown as Row[]) : [];
-        setRows(arr.map((r) => ({ ...r, id: r.id || crypto.randomUUID() })));
-        setDirtyRows(new Set());
+        setLoading(false);
+        return;
       }
+      if (!data) { setLoading(false); return; }
+
+      setSheet({ id: data.id, name: data.name });
+      setSheetUuid(data.id);
+
+      // Parse normal rows from sheets.data (legacy: flat array of Row)
+      const arr: any[] = Array.isArray(data.data) ? (data.data as any[]) : [];
+      // Filter only normal-shaped rows (skip legacy "master" kind rows)
+      const normalRows: Row[] = arr
+        .filter((r) => !r.kind || r.kind === "normal")
+        .map((r) => ({
+          id: r.id || crypto.randomUUID(),
+          orderId: r.orderId || "",
+          purchaseDate: r.purchaseDate || "",
+          email: r.email || "",
+          phone: r.phone || "",
+          period: r.period || "",
+          remaining: r.remaining || "",
+          remarks: r.remarks || "",
+        }));
+
+      // Fetch master rows via edge function
+      let masterByGroup: Record<number, MasterRow[]> = {};
+      try {
+        const { data: mres, error: merr } = await supabase.functions.invoke("sheet-master-rows", {
+          body: { action: "list", sheet_id: data.id },
+        });
+        if (merr) throw merr;
+        const rows = (mres?.rows || []) as any[];
+        for (const r of rows) {
+          if (!masterByGroup[r.group_index]) masterByGroup[r.group_index] = [];
+          masterByGroup[r.group_index][r.row_index] = {
+            id: r.id,
+            account: r.account || "",
+            password: r.password || "",
+            expiry_date: r.expiry_date || "",
+            remarks: r.remarks || "",
+          };
+        }
+      } catch (e: any) {
+        toast({ title: "Failed to load master rows", description: e?.message, variant: "destructive" });
+      }
+
+      // Build groups: chunk normalRows into 4
+      const built: { master: [MasterRow, MasterRow]; normal: Row[] }[] = [];
+      for (let i = 0; i < normalRows.length; i += 4) {
+        const gi = built.length;
+        const m = masterByGroup[gi] || [];
+        built.push({
+          master: [m[0] || emptyMaster(), m[1] || emptyMaster()],
+          normal: normalRows.slice(i, i + 4).concat(
+            Array.from({ length: Math.max(0, 4 - (normalRows.length - i)) }, () => emptyNormal())
+          ),
+        });
+      }
+      // If there are master groups beyond normal data, append them as empty normal groups
+      const maxMasterIdx = Math.max(-1, ...Object.keys(masterByGroup).map((k) => parseInt(k, 10)));
+      while (built.length <= maxMasterIdx) {
+        const gi = built.length;
+        const m = masterByGroup[gi] || [];
+        built.push({
+          master: [m[0] || emptyMaster(), m[1] || emptyMaster()],
+          normal: [emptyNormal(), emptyNormal(), emptyNormal(), emptyNormal()],
+        });
+      }
+      setGroups(built);
+      setDirtyGroups(new Set());
+
       try {
         const w = localStorage.getItem(widthsKey(id));
         setWidths({ ...DEFAULT_WIDTHS, ...(w ? JSON.parse(w) : {}) });
       } catch {}
       setLoading(false);
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [id]);
 
-  const persistToDb = async (next: Row[]) => {
+  const persistNormalToDb = async (gs: typeof groups) => {
+    const flatNormals = gs.flatMap((g) => g.normal);
     const { error } = await supabase
       .from("sheets")
-      .update({ data: next as unknown as any, updated_at: new Date().toISOString() })
+      .update({ data: flatNormals as unknown as any, updated_at: new Date().toISOString() })
       .eq("id", sheetUuid || id);
     if (error) {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
@@ -141,63 +219,105 @@ const AdminSheetDetail = () => {
     return true;
   };
 
-  const updateCell = (rowId: string, key: keyof Row, value: string) => {
-    setRows((prev) => prev.map((r) => (r.id === rowId ? { ...r, [key]: value } : r)));
-    setDirtyRows((prev) => {
-      const n = new Set(prev);
-      n.add(rowId);
-      return n;
-    });
+  const markDirty = (gi: number) => setDirtyGroups((p) => { const n = new Set(p); n.add(gi); return n; });
+
+  const updateNormal = (gi: number, rowId: string, key: keyof Row, value: string) => {
+    setGroups((prev) => prev.map((g, i) => i !== gi ? g : {
+      ...g,
+      normal: g.normal.map((r) => r.id === rowId ? { ...r, [key]: value } : r),
+    }));
+    markDirty(gi);
   };
 
-  const saveRow = async (rowId: string) => {
-    setSavingRows((prev) => {
-      const n = new Set(prev);
-      n.add(rowId);
-      return n;
-    });
-    const ok = await persistToDb(rowsRef.current);
-    setSavingRows((prev) => {
-      const n = new Set(prev);
-      n.delete(rowId);
-      return n;
-    });
-    if (ok) {
-      setDirtyRows((prev) => {
-        const n = new Set(prev);
-        n.delete(rowId);
-        return n;
-      });
-      toast({ title: "Changes Saved" });
+  const updateMaster = (gi: number, ri: number, key: keyof MasterRow, value: string) => {
+    setGroups((prev) => prev.map((g, i) => {
+      if (i !== gi) return g;
+      const master = [...g.master] as [MasterRow, MasterRow];
+      master[ri] = { ...master[ri], [key]: value };
+      return { ...g, master };
+    }));
+    markDirty(gi);
+  };
+
+  const saveGroup = async (gi: number) => {
+    setSavingGroups((p) => { const n = new Set(p); n.add(gi); return n; });
+    try {
+      const g = groupsRef.current[gi];
+      // Save normals (whole sheet JSON)
+      const ok = await persistNormalToDb(groupsRef.current);
+      // Save master rows
+      for (let ri = 0; ri < 2; ri++) {
+        const m = g.master[ri];
+        const { error } = await supabase.functions.invoke("sheet-master-rows", {
+          body: {
+            action: "upsert",
+            sheet_id: sheetUuid || id,
+            group_index: gi,
+            row_index: ri,
+            account: m.account,
+            password: m.password,
+            expiry_date: m.expiry_date || null,
+            remarks: m.remarks,
+          },
+        });
+        if (error) throw error;
+      }
+      if (ok) {
+        setDirtyGroups((p) => { const n = new Set(p); n.delete(gi); return n; });
+        toast({ title: "Changes Saved" });
+      }
+    } catch (e: any) {
+      toast({ title: "Save failed", description: e?.message, variant: "destructive" });
+    } finally {
+      setSavingGroups((p) => { const n = new Set(p); n.delete(gi); return n; });
     }
   };
 
   const addRow = () => {
-    const newRows: Row[] = [
-      emptyRow("master"),
-      emptyRow("master"),
-      emptyRow("normal"),
-      emptyRow("normal"),
-      emptyRow("normal"),
-      emptyRow("normal"),
-    ];
-    setRows((prev) => [...prev, ...newRows]);
-    setDirtyRows((prev) => {
-      const n = new Set(prev);
-      newRows.forEach((r) => n.add(r.id));
-      return n;
-    });
+    setGroups((prev) => [
+      ...prev,
+      {
+        master: [emptyMaster(), emptyMaster()],
+        normal: [emptyNormal(), emptyNormal(), emptyNormal(), emptyNormal()],
+      },
+    ]);
+    markDirty(groupsRef.current.length);
   };
 
-  const deleteRow = async (rowId: string) => {
-    const next = rowsRef.current.filter((r) => r.id !== rowId);
-    setRows(next);
-    setDirtyRows((prev) => {
-      const n = new Set(prev);
-      n.delete(rowId);
-      return n;
-    });
-    await persistToDb(next);
+  const deleteGroup = async (gi: number) => {
+    const next = groupsRef.current.filter((_, i) => i !== gi);
+    setGroups(next);
+    setDirtyGroups((p) => { const n = new Set(p); n.delete(gi); return n; });
+    await persistNormalToDb(next);
+    try {
+      await supabase.functions.invoke("sheet-master-rows", {
+        body: { action: "delete_group", sheet_id: sheetUuid || id, group_index: gi },
+      });
+      // Reindex remaining master groups: easiest is to re-upsert all
+      for (let i = 0; i < next.length; i++) {
+        for (let ri = 0; ri < 2; ri++) {
+          const m = next[i].master[ri];
+          await supabase.functions.invoke("sheet-master-rows", {
+            body: {
+              action: "upsert",
+              sheet_id: sheetUuid || id,
+              group_index: i,
+              row_index: ri,
+              account: m.account,
+              password: m.password,
+              expiry_date: m.expiry_date || null,
+              remarks: m.remarks,
+            },
+          });
+        }
+      }
+      // Delete trailing leftover index
+      await supabase.functions.invoke("sheet-master-rows", {
+        body: { action: "delete_group", sheet_id: sheetUuid || id, group_index: next.length },
+      });
+    } catch (e: any) {
+      toast({ title: "Delete failed", description: e?.message, variant: "destructive" });
+    }
   };
 
   const startResize = (key: string, e: React.MouseEvent) => {
@@ -222,26 +342,23 @@ const AdminSheetDetail = () => {
     window.addEventListener("mouseup", onUp);
   };
 
-  const allCols = useMemo(
-    () => [
-      ...COLUMNS.map((c) => ({ key: c.key as string, label: c.label })),
-      { key: "actions", label: "Actions" },
-    ],
+  const normalCols = useMemo(
+    () => [...NORMAL_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
+    [],
+  );
+  const masterCols = useMemo(
+    () => [...MASTER_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
     [],
   );
 
-  const unsavedCount = dirtyRows.size;
+  const visibleGroups = useMemo(() => {
+    return groups
+      .map((g, gi) => ({ g, gi }))
+      .filter(({ g }) => showEmpty || !(g.master.every(isMasterEmpty) && g.normal.every(isRowEmpty)));
+  }, [groups, showEmpty]);
 
-  const visibleRows = useMemo(() => {
-    if (showEmpty) return rows;
-    const result: Row[] = [];
-    for (let i = 0; i < rows.length; i += 6) {
-      const group = rows.slice(i, i + 6);
-      const allEmpty = group.every(isRowEmpty);
-      if (!allEmpty) result.push(...group);
-    }
-    return result;
-  }, [rows, showEmpty]);
+  const totalRows = groups.length * 6;
+  const unsavedCount = dirtyGroups.size;
 
   return (
     <div className="space-y-4">
@@ -253,14 +370,12 @@ const AdminSheetDetail = () => {
             </Link>
           </Button>
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold text-foreground truncate">
-              {sheet?.name || "Sheet"}
-            </h1>
+            <h1 className="text-2xl font-bold text-foreground truncate">{sheet?.name || "Sheet"}</h1>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <span>{rows.length} {rows.length === 1 ? "row" : "rows"}</span>
+              <span>{groups.length} {groups.length === 1 ? "group" : "groups"} · {totalRows} rows</span>
               {unsavedCount > 0 && (
                 <span className="text-xs text-warning">
-                  {unsavedCount} unsaved {unsavedCount === 1 ? "change" : "changes"}
+                  {unsavedCount} unsaved {unsavedCount === 1 ? "group" : "groups"}
                 </span>
               )}
             </p>
@@ -283,164 +398,211 @@ const AdminSheetDetail = () => {
           <Loader2 className="h-4 w-4 animate-spin" />
           Loading...
         </div>
+      ) : visibleGroups.length === 0 ? (
+        <div className="border border-border rounded-lg p-8 text-center text-muted-foreground bg-muted/30">
+          {groups.length === 0
+            ? 'No rows yet. Click "Add Row" to start.'
+            : "All groups are empty. Toggle Show Empty Rows to view them."}
+        </div>
       ) : (
-      <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
-        <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
-          <colgroup>
-            {allCols.map((c) => (
-              <col key={c.key} style={{ width: widths[c.key] }} />
+        <div className="space-y-6">
+          {visibleGroups.map(({ g, gi }) => (
+            <GroupBlock
+              key={gi}
+              gi={gi}
+              group={g}
+              widths={widths}
+              startResize={startResize}
+              normalCols={normalCols}
+              masterCols={masterCols}
+              showPassword={!!showPasswords[gi]}
+              setShowPassword={(v) => setShowPasswords((p) => ({ ...p, [gi]: v }))}
+              dirty={dirtyGroups.has(gi)}
+              saving={savingGroups.has(gi)}
+              onUpdateMaster={updateMaster}
+              onUpdateNormal={updateNormal}
+              onSave={() => saveGroup(gi)}
+              onDelete={() => deleteGroup(gi)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const GroupBlock = ({
+  gi, group, widths, startResize, normalCols, masterCols,
+  showPassword, setShowPassword, dirty, saving, onUpdateMaster, onUpdateNormal, onSave, onDelete,
+}: any) => {
+  return (
+    <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
+      {/* Master section */}
+      <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
+        <colgroup>
+          {masterCols.map((c: any) => (
+            <col key={c.key} style={{ width: widths[c.key] }} />
+          ))}
+        </colgroup>
+        <thead>
+          <tr className="bg-primary/15">
+            {masterCols.map((c: any) => (
+              <th key={c.key} className="relative h-10 px-3 text-left align-middle font-semibold text-foreground border-r border-border last:border-r-0 select-none">
+                <span className="block truncate">{c.label}</span>
+                <span onMouseDown={(e) => startResize(c.key, e)} className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize hover:bg-primary/40" />
+              </th>
             ))}
-          </colgroup>
-          <thead>
-            <tr className="bg-muted/60">
-              {allCols.map((c) => (
-                <th
-                  key={c.key}
-                  className="relative h-10 px-3 text-left align-middle font-medium text-muted-foreground border-r border-border last:border-r-0 select-none"
-                >
-                  <span className="block truncate">{c.label}</span>
-                  <span
-                    onMouseDown={(e) => startResize(c.key, e)}
-                    className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize hover:bg-primary/40"
-                  />
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-          {visibleRows.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={allCols.length}
-                  className="text-center text-muted-foreground py-8"
-                >
-                  {rows.length === 0
-                    ? 'No rows yet. Click "Add Row" to start.'
-                    : "All rows are empty. Toggle Show Empty Rows to view them."}
-                </td>
-              </tr>
-            ) : (
-              visibleRows.map((row, idx) => {
-                const isMaster = row.kind === "master";
-                return (
-                <tr
-                  key={row.id}
-                  className={`${idx % 2 === 1 ? "bg-muted/40" : ""} ${isMaster ? "bg-primary/5" : ""}`}
-                >
-                  {COLUMNS.map((c) => {
-                    const isMasterCell = isMaster && (MASTER_KEYS as string[]).includes(c.key as string);
-                    if (isMaster && !isMasterCell) {
-                      return (
-                        <td
-                          key={c.key}
-                          className="p-1 align-top border-r border-border border-t bg-muted/40"
-                        >
-                          <div className="h-9" />
-                        </td>
-                      );
-                    }
-                    const isRemaining = c.key === "remaining";
-                    const periodNum = parseInt(row.period, 10);
-                    let remainingVal = "";
-                    let remainingClass = "";
-                    if (isRemaining && row.purchaseDate && !isNaN(periodNum)) {
-                      const start = new Date(row.purchaseDate);
-                      if (!isNaN(start.getTime())) {
-                        const expiry = new Date(start);
-                        expiry.setDate(expiry.getDate() + periodNum);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const diff = Math.ceil((expiry.getTime() - today.getTime()) / 86400000);
-                        remainingVal = String(diff);
-                        remainingClass = diff < 0 ? "text-destructive font-medium" : diff <= 7 ? "text-warning font-medium" : "";
-                      }
-                    }
-                    return (
-                      <td
-                        key={c.key}
-                        className="p-1 align-top border-r border-border border-t"
-                      >
-                        {isRemaining ? (
-                          <div className={`h-9 px-3 flex items-center text-sm ${remainingClass}`}>
-                            {remainingVal || "—"}
-                          </div>
-                        ) : c.key === "purchaseDate" ? (
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button
-                                type="button"
-                                className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-transparent hover:border-input bg-transparent text-left"
-                              >
-                                <span className={row.purchaseDate ? "" : "text-muted-foreground"}>
-                                  {row.purchaseDate ? formatPurchaseDate(row.purchaseDate) : "Select date"}
-                                </span>
-                                <CalendarIcon className="h-4 w-4 opacity-50 ml-2 shrink-0" />
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={row.purchaseDate ? new Date(row.purchaseDate) : undefined}
-                                onSelect={(d) => {
-                                  if (d) updateCell(row.id, "purchaseDate", isoFromDate(d));
-                                }}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        ) : (
-                          <Input
-                            type={c.type === "numeric" ? "text" : c.type || "text"}
-                            inputMode={c.type === "numeric" ? "numeric" : undefined}
-                            pattern={c.type === "numeric" ? "[0-9]*" : undefined}
-                            value={row[c.key] as string}
-                            onChange={(e) => {
-                              let v = e.target.value;
-                              if (c.type === "numeric") v = v.replace(/[^0-9]/g, "");
-                              updateCell(row.id, c.key, v);
-                            }}
-                            className="h-9 border-transparent focus:border-input bg-transparent"
+          </tr>
+        </thead>
+        <tbody>
+          {[0, 1].map((ri) => {
+            const m = group.master[ri];
+            return (
+              <tr key={ri} className="bg-primary/5">
+                {MASTER_COLUMNS.map((c) => (
+                  <td key={c.key} className="p-1 align-top border-r border-border border-t">
+                    {c.key === "expiry_date" ? (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button type="button" className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-transparent hover:border-input bg-transparent text-left">
+                            <span className={m.expiry_date ? "" : "text-muted-foreground"}>
+                              {m.expiry_date ? formatPurchaseDate(m.expiry_date) : "Select date"}
+                            </span>
+                            <CalendarIcon className="h-4 w-4 opacity-50 ml-2 shrink-0" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={m.expiry_date ? new Date(m.expiry_date) : undefined}
+                            onSelect={(d) => { if (d) onUpdateMaster(gi, ri, "expiry_date", isoFromDate(d)); }}
+                            initialFocus
                           />
+                        </PopoverContent>
+                      </Popover>
+                    ) : c.key === "password" ? (
+                      <div className="flex items-center gap-1">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          value={m.password}
+                          onChange={(e) => onUpdateMaster(gi, ri, "password", e.target.value)}
+                          className="h-9 border-transparent focus:border-input bg-transparent"
+                        />
+                        {ri === 0 && (
+                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
                         )}
-                      </td>
-                    );
-                  })}
-                  <td className="text-right border-t border-border p-1">
+                      </div>
+                    ) : (
+                      <Input
+                        value={(m as any)[c.key] || ""}
+                        onChange={(e) => onUpdateMaster(gi, ri, c.key as keyof MasterRow, e.target.value)}
+                        className="h-9 border-transparent focus:border-input bg-transparent"
+                      />
+                    )}
+                  </td>
+                ))}
+                <td className="text-right border-t border-border p-1">
+                  {ri === 0 && (
                     <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => saveRow(row.id)}
-                        disabled={!dirtyRows.has(row.id) || savingRows.has(row.id)}
-                        aria-label="Save row"
-                        title={dirtyRows.has(row.id) ? "Save changes" : "No changes"}
-                      >
-                        {savingRows.has(row.id) ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : dirtyRows.has(row.id) ? (
-                          <Save className="h-4 w-4 text-primary" />
-                        ) : (
-                          <Check className="h-4 w-4 text-muted-foreground" />
-                        )}
+                      <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title={dirty ? "Save changes" : "No changes"}>
+                        {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : dirty ? <Save className="h-4 w-4 text-primary" /> : <Check className="h-4 w-4 text-muted-foreground" />}
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => deleteRow(row.id)}
-                        aria-label="Delete row"
-                      >
+                      <Button variant="ghost" size="icon" onClick={onDelete} aria-label="Delete group">
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* Normal section */}
+      <table className="w-full text-sm border-t-2 border-border" style={{ tableLayout: "fixed" }}>
+        <colgroup>
+          {normalCols.map((c: any) => (
+            <col key={c.key} style={{ width: widths[c.key] }} />
+          ))}
+        </colgroup>
+        <thead>
+          <tr className="bg-muted/60">
+            {normalCols.map((c: any) => (
+              <th key={c.key} className="relative h-10 px-3 text-left align-middle font-medium text-muted-foreground border-r border-border last:border-r-0 select-none">
+                <span className="block truncate">{c.label}</span>
+                <span onMouseDown={(e) => startResize(c.key, e)} className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize hover:bg-primary/40" />
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {group.normal.map((row: Row, idx: number) => (
+            <tr key={row.id} className={idx % 2 === 1 ? "bg-muted/40" : ""}>
+              {NORMAL_COLUMNS.map((c) => {
+                const isRemaining = c.key === "remaining";
+                const periodNum = parseInt(row.period, 10);
+                let remainingVal = "";
+                let remainingClass = "";
+                if (isRemaining && row.purchaseDate && !isNaN(periodNum)) {
+                  const start = new Date(row.purchaseDate);
+                  if (!isNaN(start.getTime())) {
+                    const expiry = new Date(start);
+                    expiry.setDate(expiry.getDate() + periodNum);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const diff = Math.ceil((expiry.getTime() - today.getTime()) / 86400000);
+                    remainingVal = String(diff);
+                    remainingClass = diff < 0 ? "text-destructive font-medium" : diff <= 7 ? "text-warning font-medium" : "";
+                  }
+                }
+                return (
+                  <td key={c.key} className="p-1 align-top border-r border-border border-t">
+                    {isRemaining ? (
+                      <div className={`h-9 px-3 flex items-center text-sm ${remainingClass}`}>{remainingVal || "—"}</div>
+                    ) : c.key === "purchaseDate" ? (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button type="button" className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-transparent hover:border-input bg-transparent text-left">
+                            <span className={row.purchaseDate ? "" : "text-muted-foreground"}>
+                              {row.purchaseDate ? formatPurchaseDate(row.purchaseDate) : "Select date"}
+                            </span>
+                            <CalendarIcon className="h-4 w-4 opacity-50 ml-2 shrink-0" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={row.purchaseDate ? new Date(row.purchaseDate) : undefined}
+                            onSelect={(d) => { if (d) onUpdateNormal(gi, row.id, "purchaseDate", isoFromDate(d)); }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <Input
+                        type={c.type === "numeric" ? "text" : c.type || "text"}
+                        inputMode={c.type === "numeric" ? "numeric" : undefined}
+                        pattern={c.type === "numeric" ? "[0-9]*" : undefined}
+                        value={row[c.key] as string}
+                        onChange={(e) => {
+                          let v = e.target.value;
+                          if (c.type === "numeric") v = v.replace(/[^0-9]/g, "");
+                          onUpdateNormal(gi, row.id, c.key, v);
+                        }}
+                        className="h-9 border-transparent focus:border-input bg-transparent"
+                      />
+                    )}
                   </td>
-                </tr>
                 );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
-      )}
+              })}
+              <td className="border-t border-border p-1" />
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
