@@ -26,8 +26,8 @@ const COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = 
   { key: "purchaseDate", label: "Purchase Date", type: "date" },
   { key: "email", label: "Email", type: "email" },
   { key: "phone", label: "Phone" },
-  { key: "period", label: "Period" },
-  { key: "remaining", label: "Remaining" },
+  { key: "period", label: "Period (days)", type: "number" },
+  { key: "remaining", label: "Remaining (days)" },
   { key: "remarks", label: "Remarks" },
 ];
 
@@ -268,21 +268,49 @@ const AdminSheetDetail = () => {
                   key={row.id}
                   className={idx % 2 === 1 ? "bg-muted/40" : ""}
                 >
-                  {COLUMNS.map((c) => (
-                    <td
-                      key={c.key}
-                      className="p-1 align-top border-r border-border border-t"
-                    >
-                      <Input
-                        type={c.type || "text"}
-                        value={row[c.key] as string}
-                        onChange={(e) =>
-                          updateCell(row.id, c.key, e.target.value)
-                        }
-                        className="h-9 border-transparent focus:border-input bg-transparent"
-                      />
-                    </td>
-                  ))}
+                  {COLUMNS.map((c) => {
+                    const isRemaining = c.key === "remaining";
+                    const periodNum = parseInt(row.period, 10);
+                    let remainingVal = "";
+                    let remainingClass = "";
+                    if (isRemaining && row.purchaseDate && !isNaN(periodNum)) {
+                      const start = new Date(row.purchaseDate);
+                      if (!isNaN(start.getTime())) {
+                        const expiry = new Date(start);
+                        expiry.setDate(expiry.getDate() + periodNum);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const diff = Math.ceil((expiry.getTime() - today.getTime()) / 86400000);
+                        remainingVal = String(diff);
+                        remainingClass = diff < 0 ? "text-destructive font-medium" : diff <= 7 ? "text-warning font-medium" : "";
+                      }
+                    }
+                    return (
+                      <td
+                        key={c.key}
+                        className="p-1 align-top border-r border-border border-t"
+                      >
+                        {isRemaining ? (
+                          <div className={`h-9 px-3 flex items-center text-sm ${remainingClass}`}>
+                            {remainingVal || "—"}
+                          </div>
+                        ) : (
+                          <Input
+                            type={c.type || "text"}
+                            inputMode={c.type === "number" ? "numeric" : undefined}
+                            min={c.type === "number" ? 0 : undefined}
+                            value={row[c.key] as string}
+                            onChange={(e) => {
+                              let v = e.target.value;
+                              if (c.type === "number") v = v.replace(/[^0-9]/g, "");
+                              updateCell(row.id, c.key, v);
+                            }}
+                            className="h-9 border-transparent focus:border-input bg-transparent"
+                          />
+                        )}
+                      </td>
+                    );
+                  })}
                   <td className="text-right border-t border-border p-1">
                     <div className="flex items-center justify-end gap-1">
                       <Button
