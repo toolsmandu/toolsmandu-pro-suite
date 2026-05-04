@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Loader2, Check } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Check, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,7 +39,7 @@ const DEFAULT_WIDTHS: Record<string, number> = {
   period: 120,
   remaining: 120,
   remarks: 240,
-  actions: 90,
+  actions: 110,
 };
 
 const emptyRow = (): Row => ({
@@ -58,12 +58,15 @@ const AdminSheetDetail = () => {
   const [sheet, setSheet] = useState<Sheet | null>(null);
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [savedAt, setSavedAt] = useState<number | null>(null);
+  const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
+  const [dirtyRows, setDirtyRows] = useState<Set<string>>(new Set());
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
-  const dirtyRef = useRef(false);
-  const saveTimer = useRef<number | null>(null);
+  const rowsRef = useRef<Row[]>([]);
+
+  useEffect(() => {
+    rowsRef.current = rows;
+  }, [rows]);
 
   // Load sheet
   useEffect(() => {
@@ -82,6 +85,7 @@ const AdminSheetDetail = () => {
         setSheet({ id: data.id, name: data.name });
         const arr = Array.isArray(data.data) ? (data.data as unknown as Row[]) : [];
         setRows(arr.map((r) => ({ ...r, id: r.id || crypto.randomUUID() })));
+        setDirtyRows(new Set());
       }
       try {
         const w = localStorage.getItem(widthsKey(id));
@@ -94,37 +98,69 @@ const AdminSheetDetail = () => {
     };
   }, [id]);
 
-  // Debounced autosave
-  const scheduleSave = (next: Row[]) => {
-    dirtyRef.current = true;
-    if (saveTimer.current) window.clearTimeout(saveTimer.current);
-    saveTimer.current = window.setTimeout(async () => {
-      setSaving(true);
-      const { error } = await supabase
-        .from("sheets")
-        .update({ data: next as unknown as any, updated_at: new Date().toISOString() })
-        .eq("id", id);
-      setSaving(false);
-      if (error) {
-        toast({ title: "Save failed", description: error.message, variant: "destructive" });
-      } else {
-        dirtyRef.current = false;
-        setSavedAt(Date.now());
-      }
-    }, 600);
-  };
-
-  const persistRows = (next: Row[]) => {
-    setRows(next);
-    scheduleSave(next);
+  const persistToDb = async (next: Row[]) => {
+    const { error } = await supabase
+      .from("sheets")
+      .update({ data: next as unknown as any, updated_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) {
+      toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      return false;
+    }
+    return true;
   };
 
   const updateCell = (rowId: string, key: keyof Row, value: string) => {
-    persistRows(rows.map((r) => (r.id === rowId ? { ...r, [key]: value } : r)));
+    setRows((prev) => prev.map((r) => (r.id === rowId ? { ...r, [key]: value } : r)));
+    setDirtyRows((prev) => {
+      const n = new Set(prev);
+      n.add(rowId);
+      return n;
+    });
   };
 
-  const addRow = () => persistRows([...rows, emptyRow()]);
-  const deleteRow = (rowId: string) => persistRows(rows.filter((r) => r.id !== rowId));
+  const saveRow = async (rowId: string) => {
+    setSavingRows((prev) => {
+      const n = new Set(prev);
+      n.add(rowId);
+      return n;
+    });
+    const ok = await persistToDb(rowsRef.current);
+    setSavingRows((prev) => {
+      const n = new Set(prev);
+      n.delete(rowId);
+      return n;
+    });
+    if (ok) {
+      setDirtyRows((prev) => {
+        const n = new Set(prev);
+        n.delete(rowId);
+        return n;
+      });
+      toast({ title: "Row saved" });
+    }
+  };
+
+  const addRow = () => {
+    const r = emptyRow();
+    setRows((prev) => [...prev, r]);
+    setDirtyRows((prev) => {
+      const n = new Set(prev);
+      n.add(r.id);
+      return n;
+    });
+  };
+
+  const deleteRow = async (rowId: string) => {
+    const next = rowsRef.current.filter((r) => r.id !== rowId);
+    setRows(next);
+    setDirtyRows((prev) => {
+      const n = new Set(prev);
+      n.delete(rowId);
+      return n;
+    });
+    await persistToDb(next);
+  };
 
   const startResize = (key: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -156,7 +192,7 @@ const AdminSheetDetail = () => {
     [],
   );
 
-  const statusLabel = saving ? "Saving..." : savedAt ? "Saved" : "";
+  const unsavedCount = dirtyRows.size;
 
   return (
     <div className="space-y-4">
@@ -173,10 +209,9 @@ const AdminSheetDetail = () => {
             </h1>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
               <span>{rows.length} {rows.length === 1 ? "row" : "rows"}</span>
-              {statusLabel && (
-                <span className="flex items-center gap-1 text-xs">
-                  {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                  {statusLabel}
+              {unsavedCount > 0 && (
+                <span className="text-xs text-warning">
+                  {unsavedCount} unsaved {unsavedCount === 1 ? "change" : "changes"}
                 </span>
               )}
             </p>
@@ -249,14 +284,32 @@ const AdminSheetDetail = () => {
                     </td>
                   ))}
                   <td className="text-right border-t border-border p-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => deleteRow(row.id)}
-                      aria-label="Delete row"
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
+                    <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => saveRow(row.id)}
+                        disabled={!dirtyRows.has(row.id) || savingRows.has(row.id)}
+                        aria-label="Save row"
+                        title={dirtyRows.has(row.id) ? "Save changes" : "No changes"}
+                      >
+                        {savingRows.has(row.id) ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : dirtyRows.has(row.id) ? (
+                          <Save className="h-4 w-4 text-primary" />
+                        ) : (
+                          <Check className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => deleteRow(row.id)}
+                        aria-label="Delete row"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))
