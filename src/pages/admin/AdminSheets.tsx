@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, FileSpreadsheet, Trash2 } from "lucide-react";
+import { Plus, FileSpreadsheet, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,57 +12,71 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 type Sheet = {
   id: string;
   name: string;
-  createdAt: string;
-};
-
-const STORAGE_KEY = "admin_sheets_list";
-
-const loadSheets = (): Sheet[] => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+  created_at: string;
 };
 
 const AdminSheets = () => {
   const [sheets, setSheets] = useState<Sheet[]>([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [creating, setCreating] = useState(false);
 
-  useEffect(() => {
-    setSheets(loadSheets());
-  }, []);
-
-  const persist = (next: Sheet[]) => {
-    setSheets(next);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  const load = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("sheets")
+      .select("id, name, created_at")
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Failed to load sheets", description: error.message, variant: "destructive" });
+    } else {
+      setSheets(data || []);
+    }
+    setLoading(false);
   };
 
-  const handleCreate = () => {
+  useEffect(() => {
+    load();
+  }, []);
+
+  const handleCreate = async () => {
     const trimmed = name.trim();
     if (!trimmed) {
       toast({ title: "Name required", variant: "destructive" });
       return;
     }
-    const newSheet: Sheet = {
-      id: crypto.randomUUID(),
-      name: trimmed,
-      createdAt: new Date().toISOString(),
-    };
-    persist([newSheet, ...sheets]);
+    setCreating(true);
+    const { data: userRes } = await supabase.auth.getUser();
+    const { data, error } = await supabase
+      .from("sheets")
+      .insert({ name: trimmed, data: [], created_by: userRes.user?.id })
+      .select("id, name, created_at")
+      .single();
+    setCreating(false);
+    if (error) {
+      toast({ title: "Failed to create", description: error.message, variant: "destructive" });
+      return;
+    }
+    setSheets([data, ...sheets]);
     setName("");
     setOpen(false);
     toast({ title: "Sheet created", description: trimmed });
   };
 
-  const handleDelete = (id: string) => {
-    persist(sheets.filter((s) => s.id !== id));
+  const handleDelete = async (id: string) => {
+    const prev = sheets;
+    setSheets(sheets.filter((s) => s.id !== id));
+    const { error } = await supabase.from("sheets").delete().eq("id", id);
+    if (error) {
+      setSheets(prev);
+      toast({ title: "Failed to delete", description: error.message, variant: "destructive" });
+    }
   };
 
   return (
@@ -98,13 +112,21 @@ const AdminSheets = () => {
               <Button variant="outline" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreate}>Create</Button>
+              <Button onClick={handleCreate} disabled={creating}>
+                {creating && <Loader2 className="h-4 w-4 animate-spin" />}
+                Create
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      {sheets.length === 0 ? (
+      {loading ? (
+        <div className="border border-border rounded-lg p-8 text-center text-muted-foreground bg-background flex items-center justify-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading...
+        </div>
+      ) : sheets.length === 0 ? (
         <div className="border border-border rounded-lg p-8 text-center text-muted-foreground bg-background">
           No sheets yet. Click "New Sheet" to create one.
         </div>
@@ -125,7 +147,7 @@ const AdminSheets = () => {
                     {sheet.name}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Created {new Date(sheet.createdAt).toLocaleString()}
+                    Created {new Date(sheet.created_at).toLocaleString()}
                   </div>
                 </div>
               </Link>
