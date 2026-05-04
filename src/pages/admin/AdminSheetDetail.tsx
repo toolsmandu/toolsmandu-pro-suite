@@ -434,7 +434,8 @@ const AdminSheetDetail = () => {
                     </div>
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>
