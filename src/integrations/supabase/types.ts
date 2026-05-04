@@ -1485,6 +1485,45 @@ export type Database = {
         }
         Relationships: []
       }
+      sheet_master_rows: {
+        Row: {
+          account: string | null
+          created_at: string
+          expiry_date: string | null
+          group_index: number
+          id: string
+          password_encrypted: string | null
+          remarks: string | null
+          row_index: number
+          sheet_id: string
+          updated_at: string
+        }
+        Insert: {
+          account?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          group_index: number
+          id?: string
+          password_encrypted?: string | null
+          remarks?: string | null
+          row_index: number
+          sheet_id: string
+          updated_at?: string
+        }
+        Update: {
+          account?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          group_index?: number
+          id?: string
+          password_encrypted?: string | null
+          remarks?: string | null
+          row_index?: number
+          sheet_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sheets: {
         Row: {
           cols_count: number
@@ -1962,6 +2001,10 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      delete_sheet_master_group: {
+        Args: { _group_index: number; _sheet_id: string }
+        Returns: undefined
+      }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -2001,6 +2044,19 @@ export type Database = {
         }
         Returns: string
       }
+      list_sheet_master_rows: {
+        Args: { _encryption_key: string; _sheet_id: string }
+        Returns: {
+          account: string
+          expiry_date: string
+          group_index: number
+          id: string
+          password: string
+          remarks: string
+          row_index: number
+          sheet_id: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -2033,6 +2089,19 @@ export type Database = {
           _validate_cert: boolean
         }
         Returns: undefined
+      }
+      upsert_sheet_master_row: {
+        Args: {
+          _account: string
+          _encryption_key: string
+          _expiry_date: string
+          _group_index: number
+          _password: string
+          _remarks: string
+          _row_index: number
+          _sheet_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
