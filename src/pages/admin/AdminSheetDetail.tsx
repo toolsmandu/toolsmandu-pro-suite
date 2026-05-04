@@ -173,11 +173,18 @@ const AdminSheetDetail = () => {
   };
 
   const addRow = () => {
-    const r = emptyRow();
-    setRows((prev) => [...prev, r]);
+    const newRows: Row[] = [
+      emptyRow("master"),
+      emptyRow("master"),
+      emptyRow("normal"),
+      emptyRow("normal"),
+      emptyRow("normal"),
+      emptyRow("normal"),
+    ];
+    setRows((prev) => [...prev, ...newRows]);
     setDirtyRows((prev) => {
       const n = new Set(prev);
-      n.add(r.id);
+      newRows.forEach((r) => n.add(r.id));
       return n;
     });
   };
