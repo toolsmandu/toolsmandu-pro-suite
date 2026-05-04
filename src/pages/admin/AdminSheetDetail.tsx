@@ -87,6 +87,7 @@ const AdminSheetDetail = () => {
   const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
   const [dirtyRows, setDirtyRows] = useState<Set<string>>(new Set());
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
+  const [showEmpty, setShowEmpty] = useState(true);
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const rowsRef = useRef<Row[]>([]);
 
