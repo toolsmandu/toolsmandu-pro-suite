@@ -498,9 +498,9 @@ const GroupBlock = ({
                       </Popover>
                     ) : c.key === "password" ? (
                       <div className="flex items-center gap-1">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          value={m.password}
+                         <Input
+                           type="text"
+                           value={m.password}
                           onChange={(e) => onUpdateMaster(gi, ri, "password", e.target.value)}
                           className="h-9 border-transparent focus:border-input bg-transparent"
                         />
