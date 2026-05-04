@@ -103,7 +103,7 @@ const AdminSheetDetail = () => {
   const [savingGroups, setSavingGroups] = useState<Set<number>>(new Set());
   const [dirtyGroups, setDirtyGroups] = useState<Set<number>>(new Set());
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
-  const [showEmpty, setShowEmpty] = useState(true);
+  const [showEmpty, setShowEmpty] = useState(false);
   const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const groupsRef = useRef(groups);
@@ -353,7 +353,12 @@ const AdminSheetDetail = () => {
   const visibleGroups = useMemo(() => {
     return groups
       .map((g, gi) => ({ g, gi }))
-      .filter(({ g }) => showEmpty || !(g.master.every(isMasterEmpty) && g.normal.every(isRowEmpty)));
+      .filter(({ g }) => {
+        if (showEmpty) return true;
+        const anyMaster = g.master.some((m) => !!m.account);
+        const anyNormal = g.normal.some((r) => !!(r.email || r.phone));
+        return anyMaster || anyNormal;
+      });
   }, [groups, showEmpty]);
 
   const totalRows = groups.length * 6;
@@ -418,6 +423,7 @@ const AdminSheetDetail = () => {
               setShowPassword={(v) => setShowPasswords((p) => ({ ...p, [gi]: v }))}
               dirty={dirtyGroups.has(gi)}
               saving={savingGroups.has(gi)}
+              showEmpty={showEmpty}
               onUpdateMaster={updateMaster}
               onUpdateNormal={updateNormal}
               onSave={() => saveGroup(gi)}
@@ -432,8 +438,19 @@ const AdminSheetDetail = () => {
 
 const GroupBlock = ({
   gi, group, widths, startResize, normalCols, masterCols,
-  showPassword, setShowPassword, dirty, saving, onUpdateMaster, onUpdateNormal, onSave, onDelete,
+  showPassword, setShowPassword, dirty, saving, showEmpty, onUpdateMaster, onUpdateNormal, onSave, onDelete,
 }: any) => {
+  let visibleMasterIndices = [0, 1].filter((ri) => showEmpty || !!group.master[ri].account);
+  const visibleNormal = group.normal
+    .map((row: Row, idx: number) => ({ row, idx }))
+    .filter(({ row }) => showEmpty || !!(row.email || row.phone));
+  // Ensure the action buttons (save/delete) remain accessible: if all master rows are
+  // hidden but normal rows are visible, force-show master row 0.
+  if (visibleMasterIndices.length === 0 && visibleNormal.length > 0) {
+    visibleMasterIndices = [0];
+  }
+  const firstActionIdx = visibleMasterIndices[0];
+  if (visibleMasterIndices.length === 0 && visibleNormal.length === 0) return null;
   return (
     <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
       {/* Master section */}
@@ -454,7 +471,7 @@ const GroupBlock = ({
           </tr>
         </thead>
         <tbody>
-          {[0, 1].map((ri) => {
+          {visibleMasterIndices.map((ri) => {
             const m = group.master[ri];
             return (
               <tr key={ri} className="bg-primary/5">
@@ -487,7 +504,7 @@ const GroupBlock = ({
                           onChange={(e) => onUpdateMaster(gi, ri, "password", e.target.value)}
                           className="h-9 border-transparent focus:border-input bg-transparent"
                         />
-                        {ri === 0 && (
+                        {ri === firstActionIdx && (
                           <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </Button>
@@ -503,7 +520,7 @@ const GroupBlock = ({
                   </td>
                 ))}
                 <td className="text-right border-t border-border p-1">
-                  {ri === 0 && (
+                  {ri === firstActionIdx && (
                     <div className="flex items-center justify-end gap-1">
                       <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title={dirty ? "Save changes" : "No changes"}>
                         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : dirty ? <Save className="h-4 w-4 text-primary" /> : <Check className="h-4 w-4 text-muted-foreground" />}
@@ -538,7 +555,7 @@ const GroupBlock = ({
           </tr>
         </thead>
         <tbody>
-          {group.normal.map((row: Row, idx: number) => (
+          {visibleNormal.map(({ row, idx }: { row: Row; idx: number }) => (
             <tr key={row.id} className={idx % 2 === 1 ? "bg-muted/40" : ""}>
               {NORMAL_COLUMNS.map((c) => {
                 const isRemaining = c.key === "remaining";
