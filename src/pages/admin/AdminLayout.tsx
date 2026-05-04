@@ -12,7 +12,6 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
   import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut, Wrench } from 'lucide-react';
 import ChatbotWidget from '@/components/admin/ChatbotWidget';
-import { GeminiIcon } from '@/components/icons/GeminiIcon';
 import SalesStatsBar from '@/components/admin/SalesStatsBar';
 import EditorTaskStatsBar from '@/components/admin/EditorTaskStatsBar';
 import { Button } from '@/components/ui/button';
@@ -243,19 +242,15 @@ const AdminLayout = () => {
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
-                          {sheetsList.map((s) => {
-                            const isGemini = /gemini/i.test(s.name);
-                            return (
-                              <SidebarMenuSubItem key={s.id}>
-                                <SidebarMenuSubButton asChild>
-                                  <NavLink to={`/admin/sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
-                                    {isGemini && <GeminiIcon className="mr-2 h-3 w-3 shrink-0" />}
-                                    <span className="truncate">{s.name}</span>
-                                  </NavLink>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            );
-                          })}
+                          {sheetsList.map((s) => (
+                            <SidebarMenuSubItem key={s.id}>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to={`/admin/sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <span className="truncate">{s.name}</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>
