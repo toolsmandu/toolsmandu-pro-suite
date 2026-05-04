@@ -139,7 +139,7 @@ const AdminSheets = () => {
               className="flex items-center justify-between gap-4 p-4 hover:bg-accent/40 transition-colors"
             >
               <Link
-                to={`/admin/sheets/${sheet.id}`}
+                to={`/admin/sheets/${sheet.slug || sheet.id}`}
                 className="flex items-center gap-3 flex-1 min-w-0"
               >
                 <FileSpreadsheet className="h-5 w-5 text-primary shrink-0" />
