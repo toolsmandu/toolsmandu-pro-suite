@@ -87,9 +87,26 @@ const AdminLayout = () => {
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/admin/expired-orders', icon: ShoppingCart, label: 'Expired Orders' },
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
-    { to: '/admin/sheets', icon: FileBarChart, label: 'Sheets' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },
   ];
+
+  const isSheetsSection = location.pathname.startsWith('/admin/sheets');
+  const [sheetsOpen, setSheetsOpen] = useState(isSheetsSection);
+  useEffect(() => {
+    if (isSheetsSection) setSheetsOpen(true);
+  }, [isSheetsSection]);
+
+  const { data: sheetsList = [] } = useQuery({
+    queryKey: ['admin-sidebar-sheets'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('sheets')
+        .select('id, name, slug')
+        .order('created_at', { ascending: false });
+      return (data || []) as { id: string; name: string; slug: string | null }[];
+    },
+    enabled: !!user && (isAdmin || isEditor),
+  });
 
   const bottomLinksAfterReports = [
     { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
@@ -204,6 +221,41 @@ const AdminLayout = () => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
+
+                  {/* Sheets sub-menu */}
+                  <Collapsible open={sheetsOpen} onOpenChange={setSheetsOpen} className="group/sheets">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="hover:bg-muted/50">
+                          <FileBarChart className="mr-2 h-4 w-4" />
+                          <span>Sheets</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/sheets:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/sheets" end className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <FileBarChart className="mr-2 h-3 w-3" />
+                                <span>All Sheets</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          {sheetsList.map((s) => (
+                            <SidebarMenuSubItem key={s.id}>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to={`/admin/sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <span className="truncate">{s.name}</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
 
                   {/* Reports sub-menu (admin only) — just below Customers */}
                   {isAdmin && (

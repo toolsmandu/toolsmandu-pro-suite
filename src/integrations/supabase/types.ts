@@ -1494,6 +1494,7 @@ export type Database = {
           id: string
           name: string
           rows_count: number
+          slug: string | null
           updated_at: string
         }
         Insert: {
@@ -1504,6 +1505,7 @@ export type Database = {
           id?: string
           name: string
           rows_count?: number
+          slug?: string | null
           updated_at?: string
         }
         Update: {
@@ -1514,6 +1516,7 @@ export type Database = {
           id?: string
           name?: string
           rows_count?: number
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -2015,6 +2018,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      slugify_sheet_name: { Args: { input: string }; Returns: string }
       update_imap_server_with_password: {
         Args: {
           _encryption: string

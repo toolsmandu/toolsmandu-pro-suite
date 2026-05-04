@@ -13,10 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Sheet = {
   id: string;
   name: string;
+  slug: string | null;
   created_at: string;
 };
 
@@ -26,12 +28,13 @@ const AdminSheets = () => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
+  const queryClient = useQueryClient();
 
   const load = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("sheets")
-      .select("id, name, created_at")
+      .select("id, name, slug, created_at")
       .order("created_at", { ascending: false });
     if (error) {
       toast({ title: "Failed to load sheets", description: error.message, variant: "destructive" });
@@ -56,7 +59,7 @@ const AdminSheets = () => {
     const { data, error } = await supabase
       .from("sheets")
       .insert({ name: trimmed, data: [], created_by: userRes.user?.id })
-      .select("id, name, created_at")
+      .select("id, name, slug, created_at")
       .single();
     setCreating(false);
     if (error) {
@@ -66,6 +69,7 @@ const AdminSheets = () => {
     setSheets([data, ...sheets]);
     setName("");
     setOpen(false);
+    queryClient.invalidateQueries({ queryKey: ["admin-sidebar-sheets"] });
     toast({ title: "Sheet created", description: trimmed });
   };
 
@@ -76,6 +80,8 @@ const AdminSheets = () => {
     if (error) {
       setSheets(prev);
       toast({ title: "Failed to delete", description: error.message, variant: "destructive" });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["admin-sidebar-sheets"] });
     }
   };
 
@@ -138,7 +144,7 @@ const AdminSheets = () => {
               className="flex items-center justify-between gap-4 p-4 hover:bg-accent/40 transition-colors"
             >
               <Link
-                to={`/admin/sheets/${sheet.id}`}
+                to={`/admin/sheets/${sheet.slug || sheet.id}`}
                 className="flex items-center gap-3 flex-1 min-w-0"
               >
                 <FileSpreadsheet className="h-5 w-5 text-primary shrink-0" />
