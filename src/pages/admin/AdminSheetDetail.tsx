@@ -466,7 +466,7 @@ const GroupBlock = ({
           </tr>
         </thead>
         <tbody>
-          {[0, 1].map((ri) => {
+          {visibleMasterIndices.map((ri) => {
             const m = group.master[ri];
             return (
               <tr key={ri} className="bg-primary/5">
