@@ -232,6 +232,17 @@ const AdminSheetDetail = () => {
 
   const unsavedCount = dirtyRows.size;
 
+  const visibleRows = useMemo(() => {
+    if (showEmpty) return rows;
+    const result: Row[] = [];
+    for (let i = 0; i < rows.length; i += 6) {
+      const group = rows.slice(i, i + 6);
+      const allEmpty = group.every(isRowEmpty);
+      if (!allEmpty) result.push(...group);
+    }
+    return result;
+  }, [rows, showEmpty]);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
