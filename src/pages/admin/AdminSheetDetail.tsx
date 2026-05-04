@@ -1,10 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Loader2, Check, Save } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+
+const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const formatPurchaseDate = (iso: string) => {
+  if (!iso) return "";
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return iso;
+  const month = parseInt(m[2], 10);
+  if (isNaN(month) || month < 1 || month > 12) return iso;
+  return `${m[1]}/${MONTHS_SHORT[month - 1]}/${m[3]}`;
+};
+const isoFromDate = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+};
 
 type Sheet = { id: string; name: string };
 
@@ -294,6 +312,30 @@ const AdminSheetDetail = () => {
                           <div className={`h-9 px-3 flex items-center text-sm ${remainingClass}`}>
                             {remainingVal || "—"}
                           </div>
+                        ) : c.key === "purchaseDate" ? (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-transparent hover:border-input bg-transparent text-left"
+                              >
+                                <span className={row.purchaseDate ? "" : "text-muted-foreground"}>
+                                  {row.purchaseDate ? formatPurchaseDate(row.purchaseDate) : "Select date"}
+                                </span>
+                                <CalendarIcon className="h-4 w-4 opacity-50 ml-2 shrink-0" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={row.purchaseDate ? new Date(row.purchaseDate) : undefined}
+                                onSelect={(d) => {
+                                  if (d) updateCell(row.id, "purchaseDate", isoFromDate(d));
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
                         ) : (
                           <Input
                             type={c.type === "numeric" ? "text" : c.type || "text"}
