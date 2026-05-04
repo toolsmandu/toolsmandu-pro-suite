@@ -85,22 +85,26 @@ const AdminSheetDetail = () => {
   useEffect(() => {
     rowsRef.current = rows;
   }, [rows]);
+  const [sheetUuid, setSheetUuid] = useState<string>("");
 
-  // Load sheet
+  const isUuid = (v: string) =>
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+
+  // Load sheet by id or slug
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("sheets")
-        .select("id, name, data")
-        .eq("id", id)
-        .maybeSingle();
+      const query = supabase.from("sheets").select("id, name, data");
+      const { data, error } = isUuid(id)
+        ? await query.eq("id", id).maybeSingle()
+        : await query.eq("slug", id).maybeSingle();
       if (cancelled) return;
       if (error) {
         toast({ title: "Failed to load sheet", description: error.message, variant: "destructive" });
       } else if (data) {
         setSheet({ id: data.id, name: data.name });
+        setSheetUuid(data.id);
         const arr = Array.isArray(data.data) ? (data.data as unknown as Row[]) : [];
         setRows(arr.map((r) => ({ ...r, id: r.id || crypto.randomUUID() })));
         setDirtyRows(new Set());
