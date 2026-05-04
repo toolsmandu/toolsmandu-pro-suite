@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
-type Sheet = { id: string; name: string; createdAt: string };
+type Sheet = { id: string; name: string };
 
 type Row = {
   id: string;
@@ -17,8 +19,6 @@ type Row = {
   remarks: string;
 };
 
-const SHEETS_KEY = "admin_sheets_list";
-const rowsKey = (id: string) => `admin_sheet_rows_${id}`;
 const widthsKey = (id: string) => `admin_sheet_widths_${id}`;
 
 const COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = [
@@ -55,42 +55,68 @@ const emptyRow = (): Row => ({
 
 const AdminSheetDetail = () => {
   const { id = "" } = useParams();
+  const [sheet, setSheet] = useState<Sheet | null>(null);
   const [rows, setRows] = useState<Row[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
-  const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(
-    null,
-  );
+  const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
+  const dirtyRef = useRef(false);
+  const saveTimer = useRef<number | null>(null);
 
-  const sheet = useMemo<Sheet | null>(() => {
-    try {
-      const list: Sheet[] = JSON.parse(
-        localStorage.getItem(SHEETS_KEY) || "[]",
-      );
-      return list.find((s) => s.id === id) || null;
-    } catch {
-      return null;
-    }
-  }, [id]);
-
+  // Load sheet
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(rowsKey(id));
-      setRows(raw ? JSON.parse(raw) : []);
-      const w = localStorage.getItem(widthsKey(id));
-      setWidths({ ...DEFAULT_WIDTHS, ...(w ? JSON.parse(w) : {}) });
-    } catch {
-      setRows([]);
-    }
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("sheets")
+        .select("id, name, data")
+        .eq("id", id)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error) {
+        toast({ title: "Failed to load sheet", description: error.message, variant: "destructive" });
+      } else if (data) {
+        setSheet({ id: data.id, name: data.name });
+        const arr = Array.isArray(data.data) ? (data.data as unknown as Row[]) : [];
+        setRows(arr);
+      }
+      try {
+        const w = localStorage.getItem(widthsKey(id));
+        setWidths({ ...DEFAULT_WIDTHS, ...(w ? JSON.parse(w) : {}) });
+      } catch {}
+      setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
+
+  // Debounced autosave
+  const scheduleSave = (next: Row[]) => {
+    dirtyRef.current = true;
+    if (saveTimer.current) window.clearTimeout(saveTimer.current);
+    saveTimer.current = window.setTimeout(async () => {
+      setSaving(true);
+      const { error } = await supabase
+        .from("sheets")
+        .update({ data: next as unknown as any, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      setSaving(false);
+      if (error) {
+        toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      } else {
+        dirtyRef.current = false;
+        setSavedAt(Date.now());
+      }
+    }, 600);
+  };
 
   const persistRows = (next: Row[]) => {
     setRows(next);
-    localStorage.setItem(rowsKey(id), JSON.stringify(next));
-  };
-
-  const persistWidths = (next: Record<string, number>) => {
-    setWidths(next);
-    localStorage.setItem(widthsKey(id), JSON.stringify(next));
+    scheduleSave(next);
   };
 
   const updateCell = (rowId: string, key: keyof Row, value: string) => {
@@ -98,16 +124,11 @@ const AdminSheetDetail = () => {
   };
 
   const addRow = () => persistRows([...rows, emptyRow()]);
-  const deleteRow = (rowId: string) =>
-    persistRows(rows.filter((r) => r.id !== rowId));
+  const deleteRow = (rowId: string) => persistRows(rows.filter((r) => r.id !== rowId));
 
   const startResize = (key: string, e: React.MouseEvent) => {
     e.preventDefault();
-    dragRef.current = {
-      key,
-      startX: e.clientX,
-      startW: widths[key] ?? 120,
-    };
+    dragRef.current = { key, startX: e.clientX, startW: widths[key] ?? 120 };
     const onMove = (ev: MouseEvent) => {
       const d = dragRef.current;
       if (!d) return;
@@ -127,10 +148,15 @@ const AdminSheetDetail = () => {
     window.addEventListener("mouseup", onUp);
   };
 
-  const allCols = [
-    ...COLUMNS.map((c) => ({ key: c.key as string, label: c.label })),
-    { key: "actions", label: "Actions" },
-  ];
+  const allCols = useMemo(
+    () => [
+      ...COLUMNS.map((c) => ({ key: c.key as string, label: c.label })),
+      { key: "actions", label: "Actions" },
+    ],
+    [],
+  );
+
+  const statusLabel = saving ? "Saving..." : savedAt ? "Saved" : "";
 
   return (
     <div className="space-y-4">
@@ -145,17 +171,29 @@ const AdminSheetDetail = () => {
             <h1 className="text-2xl font-bold text-foreground truncate">
               {sheet?.name || "Sheet"}
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {rows.length} {rows.length === 1 ? "row" : "rows"}
+            <p className="text-sm text-muted-foreground flex items-center gap-2">
+              <span>{rows.length} {rows.length === 1 ? "row" : "rows"}</span>
+              {statusLabel && (
+                <span className="flex items-center gap-1 text-xs">
+                  {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+                  {statusLabel}
+                </span>
+              )}
             </p>
           </div>
         </div>
-        <Button onClick={addRow}>
+        <Button onClick={addRow} disabled={loading}>
           <Plus className="h-4 w-4" />
           Add Row
         </Button>
       </div>
 
+      {loading ? (
+        <div className="border border-border rounded-lg p-8 text-center text-muted-foreground bg-muted/30 flex items-center justify-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading...
+        </div>
+      ) : (
       <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
         <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
           <colgroup>
@@ -226,6 +264,7 @@ const AdminSheetDetail = () => {
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 };
