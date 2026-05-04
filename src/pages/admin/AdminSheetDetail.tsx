@@ -353,7 +353,12 @@ const AdminSheetDetail = () => {
   const visibleGroups = useMemo(() => {
     return groups
       .map((g, gi) => ({ g, gi }))
-      .filter(({ g }) => showEmpty || !(g.master.every(isMasterEmpty) && g.normal.every(isRowEmpty)));
+      .filter(({ g }) => {
+        if (showEmpty) return true;
+        const anyMaster = g.master.some((m) => !!m.account);
+        const anyNormal = g.normal.some((r) => !!(r.email || r.phone));
+        return anyMaster || anyNormal;
+      });
   }, [groups, showEmpty]);
 
   const totalRows = groups.length * 6;
