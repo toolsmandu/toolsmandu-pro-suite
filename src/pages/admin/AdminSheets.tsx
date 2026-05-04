@@ -32,7 +32,7 @@ const AdminSheets = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("sheets")
-      .select("id, name, created_at")
+      .select("id, name, slug, created_at")
       .order("created_at", { ascending: false });
     if (error) {
       toast({ title: "Failed to load sheets", description: error.message, variant: "destructive" });
@@ -57,7 +57,7 @@ const AdminSheets = () => {
     const { data, error } = await supabase
       .from("sheets")
       .insert({ name: trimmed, data: [], created_by: userRes.user?.id })
-      .select("id, name, created_at")
+      .select("id, name, slug, created_at")
       .single();
     setCreating(false);
     if (error) {
