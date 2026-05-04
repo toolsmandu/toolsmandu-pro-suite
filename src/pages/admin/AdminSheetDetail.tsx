@@ -137,7 +137,7 @@ const AdminSheetDetail = () => {
         n.delete(rowId);
         return n;
       });
-      toast({ title: "Row saved" });
+      toast({ title: "Changes Saved" });
     }
   };
 
