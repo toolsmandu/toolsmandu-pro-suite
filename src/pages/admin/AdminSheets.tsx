@@ -69,6 +69,7 @@ const AdminSheets = () => {
     setSheets([data, ...sheets]);
     setName("");
     setOpen(false);
+    queryClient.invalidateQueries({ queryKey: ["admin-sidebar-sheets"] });
     toast({ title: "Sheet created", description: trimmed });
   };
 
