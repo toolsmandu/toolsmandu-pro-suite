@@ -255,10 +255,16 @@ const AdminSheetDetail = () => {
             </p>
           </div>
         </div>
-        <Button onClick={addRow} disabled={loading}>
-          <Plus className="h-4 w-4" />
-          Add Row
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => setShowEmpty((v) => !v)} disabled={loading}>
+            {showEmpty ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showEmpty ? "Hide Empty Rows" : "Show Empty Rows"}
+          </Button>
+          <Button onClick={addRow} disabled={loading}>
+            <Plus className="h-4 w-4" />
+            Add Row
+          </Button>
+        </div>
       </div>
 
       {loading ? (
