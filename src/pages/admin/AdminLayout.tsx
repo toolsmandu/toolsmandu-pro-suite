@@ -50,9 +50,27 @@ const AdminLayout = () => {
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs');
   const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides');
   const isReportsSection = location.pathname.startsWith('/admin/reports');
+  const isSheetsSection = location.pathname.startsWith('/admin/sheets');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
   const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
   const [reportsOpen, setReportsOpen] = useState(isReportsSection);
+  const [sheetsOpen, setSheetsOpen] = useState(isSheetsSection);
+
+  useEffect(() => {
+    if (isSheetsSection) setSheetsOpen(true);
+  }, [isSheetsSection]);
+
+  const { data: sheetsList = [] } = useQuery({
+    queryKey: ['admin-sidebar-sheets'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('sheets')
+        .select('id, name, slug')
+        .order('created_at', { ascending: false });
+      return (data || []) as { id: string; name: string; slug: string | null }[];
+    },
+    enabled: !!user && (isAdmin || isEditor),
+  });
 
   useEffect(() => {
     if (isProductsSection) setProductsOpen(true);
@@ -89,24 +107,6 @@ const AdminLayout = () => {
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },
   ];
-
-  const isSheetsSection = location.pathname.startsWith('/admin/sheets');
-  const [sheetsOpen, setSheetsOpen] = useState(isSheetsSection);
-  useEffect(() => {
-    if (isSheetsSection) setSheetsOpen(true);
-  }, [isSheetsSection]);
-
-  const { data: sheetsList = [] } = useQuery({
-    queryKey: ['admin-sidebar-sheets'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('sheets')
-        .select('id, name, slug')
-        .order('created_at', { ascending: false });
-      return (data || []) as { id: string; name: string; slug: string | null }[];
-    },
-    enabled: !!user && (isAdmin || isEditor),
-  });
 
   const bottomLinksAfterReports = [
     { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
