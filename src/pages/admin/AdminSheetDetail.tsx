@@ -499,7 +499,7 @@ const GroupBlock = ({
                           onChange={(e) => onUpdateMaster(gi, ri, "password", e.target.value)}
                           className="h-9 border-transparent focus:border-input bg-transparent"
                         />
-                        {ri === 0 && (
+                        {ri === firstActionIdx && (
                           <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </Button>
