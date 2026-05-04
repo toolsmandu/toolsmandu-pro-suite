@@ -312,6 +312,30 @@ const AdminSheetDetail = () => {
                           <div className={`h-9 px-3 flex items-center text-sm ${remainingClass}`}>
                             {remainingVal || "—"}
                           </div>
+                        ) : c.key === "purchaseDate" ? (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-transparent hover:border-input bg-transparent text-left"
+                              >
+                                <span className={row.purchaseDate ? "" : "text-muted-foreground"}>
+                                  {row.purchaseDate ? formatPurchaseDate(row.purchaseDate) : "Select date"}
+                                </span>
+                                <CalendarIcon className="h-4 w-4 opacity-50 ml-2 shrink-0" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={row.purchaseDate ? new Date(row.purchaseDate) : undefined}
+                                onSelect={(d) => {
+                                  if (d) updateCell(row.id, "purchaseDate", isoFromDate(d));
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
                         ) : (
                           <Input
                             type={c.type === "numeric" ? "text" : c.type || "text"}
