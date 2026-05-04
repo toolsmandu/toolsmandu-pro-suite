@@ -440,11 +440,16 @@ const GroupBlock = ({
   gi, group, widths, startResize, normalCols, masterCols,
   showPassword, setShowPassword, dirty, saving, showEmpty, onUpdateMaster, onUpdateNormal, onSave, onDelete,
 }: any) => {
-  const visibleMasterIndices = [0, 1].filter((ri) => showEmpty || !!group.master[ri].account);
-  const firstActionIdx = visibleMasterIndices[0];
+  let visibleMasterIndices = [0, 1].filter((ri) => showEmpty || !!group.master[ri].account);
   const visibleNormal = group.normal
     .map((row: Row, idx: number) => ({ row, idx }))
     .filter(({ row }) => showEmpty || !!(row.email || row.phone));
+  // Ensure the action buttons (save/delete) remain accessible: if all master rows are
+  // hidden but normal rows are visible, force-show master row 0.
+  if (visibleMasterIndices.length === 0 && visibleNormal.length > 0) {
+    visibleMasterIndices = [0];
+  }
+  const firstActionIdx = visibleMasterIndices[0];
   if (visibleMasterIndices.length === 0 && visibleNormal.length === 0) return null;
   return (
     <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
