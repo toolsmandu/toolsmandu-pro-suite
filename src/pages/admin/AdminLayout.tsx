@@ -87,9 +87,26 @@ const AdminLayout = () => {
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/admin/expired-orders', icon: ShoppingCart, label: 'Expired Orders' },
     { to: '/admin/family-sharing', icon: Share2, label: 'Family Sharing' },
-    { to: '/admin/sheets', icon: FileBarChart, label: 'Sheets' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },
   ];
+
+  const isSheetsSection = location.pathname.startsWith('/admin/sheets');
+  const [sheetsOpen, setSheetsOpen] = useState(isSheetsSection);
+  useEffect(() => {
+    if (isSheetsSection) setSheetsOpen(true);
+  }, [isSheetsSection]);
+
+  const { data: sheetsList = [] } = useQuery({
+    queryKey: ['admin-sidebar-sheets'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('sheets')
+        .select('id, name, slug')
+        .order('created_at', { ascending: false });
+      return (data || []) as { id: string; name: string; slug: string | null }[];
+    },
+    enabled: !!user && (isAdmin || isEditor),
+  });
 
   const bottomLinksAfterReports = [
     { to: '/admin/notes', icon: StickyNote, label: 'Notes' },
