@@ -67,8 +67,9 @@ const DEFAULT_WIDTHS: Record<string, number> = {
   actions: 110,
 };
 
-const emptyRow = (): Row => ({
+const emptyRow = (kind: RowKind = "normal"): Row => ({
   id: crypto.randomUUID(),
+  kind,
   orderId: "",
   purchaseDate: "",
   email: "",
