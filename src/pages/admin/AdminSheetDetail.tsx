@@ -81,7 +81,7 @@ const AdminSheetDetail = () => {
       } else if (data) {
         setSheet({ id: data.id, name: data.name });
         const arr = Array.isArray(data.data) ? (data.data as unknown as Row[]) : [];
-        setRows(arr);
+        setRows(arr.map((r) => ({ ...r, id: r.id || crypto.randomUUID() })));
       }
       try {
         const w = localStorage.getItem(widthsKey(id));
