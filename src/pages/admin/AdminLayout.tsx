@@ -222,6 +222,41 @@ const AdminLayout = () => {
                     </SidebarMenuItem>
                   ))}
 
+                  {/* Sheets sub-menu */}
+                  <Collapsible open={sheetsOpen} onOpenChange={setSheetsOpen} className="group/sheets">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="hover:bg-muted/50">
+                          <FileBarChart className="mr-2 h-4 w-4" />
+                          <span>Sheets</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/sheets:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/sheets" end className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <FileBarChart className="mr-2 h-3 w-3" />
+                                <span>All Sheets</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          {sheetsList.map((s) => (
+                            <SidebarMenuSubItem key={s.id}>
+                              <SidebarMenuSubButton asChild>
+                                <NavLink to={`/admin/sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <span className="truncate">{s.name}</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+
                   {/* Reports sub-menu (admin only) — just below Customers */}
                   {isAdmin && (
                     <Collapsible open={reportsOpen} onOpenChange={setReportsOpen} className="group/reports">
