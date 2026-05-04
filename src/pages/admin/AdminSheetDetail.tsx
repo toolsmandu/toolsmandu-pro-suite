@@ -515,7 +515,7 @@ const GroupBlock = ({
                   </td>
                 ))}
                 <td className="text-right border-t border-border p-1">
-                  {ri === 0 && (
+                  {ri === firstActionIdx && (
                     <div className="flex items-center justify-end gap-1">
                       <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title={dirty ? "Save changes" : "No changes"}>
                         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : dirty ? <Save className="h-4 w-4 text-primary" /> : <Check className="h-4 w-4 text-muted-foreground" />}
