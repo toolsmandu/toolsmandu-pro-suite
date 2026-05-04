@@ -80,6 +80,8 @@ const AdminSheets = () => {
     if (error) {
       setSheets(prev);
       toast({ title: "Failed to delete", description: error.message, variant: "destructive" });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["admin-sidebar-sheets"] });
     }
   };
 
