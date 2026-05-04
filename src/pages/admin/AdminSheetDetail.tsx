@@ -124,7 +124,7 @@ const AdminSheetDetail = () => {
     const { error } = await supabase
       .from("sheets")
       .update({ data: next as unknown as any, updated_at: new Date().toISOString() })
-      .eq("id", id);
+      .eq("id", sheetUuid || id);
     if (error) {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
       return false;
