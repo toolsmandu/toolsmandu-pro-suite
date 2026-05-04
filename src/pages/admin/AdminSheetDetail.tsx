@@ -239,10 +239,16 @@ const AdminSheetDetail = () => {
             </p>
           </div>
         </div>
-        <Button onClick={addRow} disabled={loading}>
-          <Plus className="h-4 w-4" />
-          Add Row
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={addRow} disabled={loading}>
+            <Plus className="h-4 w-4" />
+            Add Gemini Order
+          </Button>
+          <Button onClick={addRow} disabled={loading} variant="secondary">
+            <Plus className="h-4 w-4" />
+            Add Family Manager Account
+          </Button>
+        </div>
       </div>
 
       {loading ? (
