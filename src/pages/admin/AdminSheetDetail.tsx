@@ -550,7 +550,7 @@ const GroupBlock = ({
           </tr>
         </thead>
         <tbody>
-          {group.normal.map((row: Row, idx: number) => (
+          {visibleNormal.map(({ row, idx }: { row: Row; idx: number }) => (
             <tr key={row.id} className={idx % 2 === 1 ? "bg-muted/40" : ""}>
               {NORMAL_COLUMNS.map((c) => {
                 const isRemaining = c.key === "remaining";
