@@ -494,11 +494,8 @@ const AdminSheetDetail = () => {
                     type="number"
                     min={1}
                     max={10}
-                    value={masterCount}
-                    onChange={(e) => {
-                      const v = Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1));
-                      applySizes(v, normalCount);
-                    }}
+                    value={draftMasterCount}
+                    onChange={(e) => setDraftMasterCount(Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1)))}
                   />
                 </div>
                 <div className="space-y-1">
@@ -507,18 +504,24 @@ const AdminSheetDetail = () => {
                     type="number"
                     min={1}
                     max={50}
-                    value={normalCount}
-                    onChange={(e) => {
-                      const v = Math.max(1, Math.min(50, parseInt(e.target.value || "1", 10) || 1));
-                      applySizes(masterCount, v);
-                    }}
+                    value={draftNormalCount}
+                    onChange={(e) => setDraftNormalCount(Math.max(1, Math.min(50, parseInt(e.target.value || "1", 10) || 1)))}
                   />
                 </div>
+                <Button
+                  className="w-full"
+                  onClick={() => applySizes(draftMasterCount, draftNormalCount)}
+                  disabled={savingSettings || (draftMasterCount === masterCount && draftNormalCount === normalCount)}
+                >
+                  {savingSettings ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  Save
+                </Button>
                 <p className="text-xs text-muted-foreground">
-                  Changes apply to all groups. Save each group to persist.
+                  Settings are saved per sheet. Save each group afterwards to persist row data.
                 </p>
               </div>
             </PopoverContent>
+
           </Popover>
         </div>
       </div>
