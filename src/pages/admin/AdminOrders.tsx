@@ -1263,6 +1263,21 @@ const AdminOrders = () => {
                 </div>
               )}
 
+              {newVariationLinkedToSheet && (
+                <div className="flex items-center gap-2 mb-2">
+                  <input
+                    id="manual-sheet-link"
+                    type="checkbox"
+                    checked={newManualSheetLink}
+                    onChange={(e) => setNewManualSheetLink(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  <Label htmlFor="manual-sheet-link" className="text-xs text-muted-foreground cursor-pointer">
+                    Manual Sheet Link
+                  </Label>
+                </div>
+              )}
+
               {newActiveFields.length > 0 ? (
                 <div className="flex gap-3 h-full">
                   <div className="flex flex-col flex-1 min-h-0">
