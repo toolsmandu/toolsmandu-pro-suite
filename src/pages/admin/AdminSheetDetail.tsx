@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff, Search as SearchIcon } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff, Search as SearchIcon, CalendarX2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -429,6 +429,7 @@ const AdminSheetDetail = () => {
             onClick={() => setShowExpiredOnly((v) => !v)}
             disabled={loading}
           >
+            <CalendarX2 className="h-4 w-4" />
             {showExpiredOnly ? "Show All Accounts" : "Show Expired Accounts"}
           </Button>
           <Button onClick={addRow} disabled={loading}>
