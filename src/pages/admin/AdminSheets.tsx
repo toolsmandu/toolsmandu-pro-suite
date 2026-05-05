@@ -178,21 +178,21 @@ const AdminSheets = ({
       />
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Family Sheets</h1>
+          <h1 className="text-2xl font-bold text-foreground">{title}</h1>
           <p className="text-sm text-muted-foreground">
-            Create and manage your family sheets.
+            {description}
           </p>
         </div>
         <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetCreate(); }}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4" />
-              Add New Family Sheet
+              {newButtonLabel}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Family Sheet</DialogTitle>
+              <DialogTitle>{dialogTitle}</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
               <div className="space-y-2">
