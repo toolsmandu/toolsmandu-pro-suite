@@ -344,7 +344,7 @@ const AdminSheetDetail = () => {
   };
 
   const normalCols = useMemo(
-    () => [...NORMAL_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
+    () => NORMAL_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })),
     [],
   );
   const masterCols = useMemo(
