@@ -571,11 +571,12 @@ const GroupBlock = ({
                     today.setHours(0, 0, 0, 0);
                     const diff = Math.ceil((expiry.getTime() - today.getTime()) / 86400000);
                     remainingVal = String(diff);
-                    remainingClass = diff < 0 ? "text-destructive font-medium" : diff <= 7 ? "text-warning font-medium" : "";
+                    remainingClass = diff < 0 ? "text-destructive-foreground font-semibold" : diff <= 7 ? "text-warning font-medium" : "";
                   }
                 }
+                const isNegative = isRemaining && remainingVal !== "" && Number(remainingVal) < 0;
                 return (
-                  <td key={c.key} className="p-1 align-top border-r border-border border-t">
+                  <td key={c.key} className={`p-1 align-top border-r border-border border-t ${isNegative ? "bg-destructive" : ""}`}>
                     {isRemaining ? (
                       <div className={`h-9 px-3 flex items-center text-sm ${remainingClass}`}>{remainingVal || "—"}</div>
                     ) : c.key === "purchaseDate" ? (
