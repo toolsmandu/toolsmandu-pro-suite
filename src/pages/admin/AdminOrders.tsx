@@ -86,6 +86,7 @@ const AdminOrders = () => {
   const [newPaymentMethod, setNewPaymentMethod] = useState('manual');
   
   const [newRemarks, setNewRemarks] = useState('');
+  const [newManualSheetLink, setNewManualSheetLink] = useState(false);
   const [creatingOrder, setCreatingOrder] = useState(false);
   const [newFieldValues, setNewFieldValues] = useState<Record<string, string | string[]>>({});
 
