@@ -511,7 +511,7 @@ const AdminSheetDetail = () => {
                 <Button
                   className="w-full"
                   onClick={() => applySizes(draftMasterCount, draftNormalCount)}
-                  disabled={savingSettings || (draftMasterCount === masterCount && draftNormalCount === normalCount)}
+                  disabled={savingSettings}
                 >
                   {savingSettings ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save
