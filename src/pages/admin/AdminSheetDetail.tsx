@@ -365,7 +365,7 @@ const AdminSheetDetail = () => {
   const normalCols = useMemo(
     () => {
       const base = NORMAL_COLUMNS.map((c) => ({ key: c.key as string, label: c.label }));
-      return isSimple ? [...base, { key: "actions", label: "Actions" }] : base;
+      return isSimple ? [...base, { key: "actions", label: "Action" }] : base;
     },
     [isSimple],
   );
