@@ -50,6 +50,7 @@ const isMasterEmpty = (m: MasterRow) =>
   !m.account && !m.password && !m.expiry_date && !m.remarks;
 
 const widthsKey = (id: string) => `admin_sheet_widths_${id}`;
+const sizesKey = (id: string) => `admin_sheet_sizes_${id}`;
 
 const NORMAL_COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = [
   { key: "orderId", label: "Order ID" },
