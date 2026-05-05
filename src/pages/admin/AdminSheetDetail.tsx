@@ -399,6 +399,15 @@ const AdminSheetDetail = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <div className="relative">
+            <SearchIcon className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search account, email, phone (last 4)"
+              className="pl-8 h-9 w-64"
+            />
+          </div>
           <Button variant="outline" onClick={() => setShowEmpty((v) => !v)} disabled={loading}>
             {showEmpty ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             {showEmpty ? "Hide Empty Rows" : "Show Empty Rows"}
