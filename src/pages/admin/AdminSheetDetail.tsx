@@ -626,6 +626,7 @@ const AdminSheetDetail = () => {
               onUpdateNormal={updateNormal}
               onSave={() => saveGroup(gi)}
               onDelete={() => deleteGroup(gi)}
+              isSimple={isSimple}
             />
           ))}
         </div>
@@ -636,7 +637,7 @@ const AdminSheetDetail = () => {
 
 const GroupBlock = ({
   gi, group, widths, startResize, normalCols, masterCols,
-  showPassword, setShowPassword, dirty, saving, showEmpty, onUpdateMaster, onUpdateNormal, onSave, onDelete,
+  showPassword, setShowPassword, dirty, saving, showEmpty, onUpdateMaster, onUpdateNormal, onSave, onDelete, isSimple,
 }: any) => {
   let visibleMasterIndices = group.master.map((_: any, i: number) => i).filter((ri: number) => showEmpty || !!group.master[ri].account);
   const visibleNormal = group.normal
