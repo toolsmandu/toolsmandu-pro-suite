@@ -1326,23 +1326,8 @@ const AdminOrders = () => {
                 </div>
               )}
 
-              {newVariationLinkedToSheet && (
-                <div className="flex items-center gap-2 mb-2">
-                  <input
-                    id="manual-sheet-link"
-                    type="checkbox"
-                    checked={newManualSheetLink}
-                    onChange={(e) => setNewManualSheetLink(e.target.checked)}
-                    className="h-4 w-4"
-                  />
-                  <Label htmlFor="manual-sheet-link" className="text-xs text-muted-foreground cursor-pointer">
-                    Manual Sheet Link
-                  </Label>
-                </div>
-              )}
-
               {newActiveFields.length > 0 ? (
-                <div className="flex gap-3 h-full">
+                <div className="flex gap-3 h-full items-end">
                   <div className="flex flex-col flex-1 min-h-0">
                     <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
                     <Textarea
@@ -1352,6 +1337,20 @@ const AdminOrders = () => {
                       className="flex-1 min-h-10 resize-y"
                     />
                   </div>
+                  {newVariationLinkedToSheet && (
+                    <div className="flex items-center gap-2 pb-2 whitespace-nowrap">
+                      <input
+                        id="manual-sheet-link"
+                        type="checkbox"
+                        checked={newManualSheetLink}
+                        onChange={(e) => setNewManualSheetLink(e.target.checked)}
+                        className="h-4 w-4"
+                      />
+                      <Label htmlFor="manual-sheet-link" className="text-xs text-muted-foreground cursor-pointer">
+                        Manual Sheet Link
+                      </Label>
+                    </div>
+                  )}
                   <div className="flex items-start pt-[26px]">
                     <Button
                       onClick={handleCreateOrder}
@@ -1362,8 +1361,8 @@ const AdminOrders = () => {
                   </div>
                 </div>
               ) : (
-                <>
-                  <div className="md:col-span-9">
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1">
                     <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
                     <Textarea
                       placeholder="Optional notes about this order (admin-only)"
@@ -1373,16 +1372,29 @@ const AdminOrders = () => {
                       className="min-h-10 h-10 py-2 resize-y"
                     />
                   </div>
-                  <div className="md:col-span-3">
+                  {newVariationLinkedToSheet && (
+                    <div className="flex items-center gap-2 pb-2 whitespace-nowrap">
+                      <input
+                        id="manual-sheet-link"
+                        type="checkbox"
+                        checked={newManualSheetLink}
+                        onChange={(e) => setNewManualSheetLink(e.target.checked)}
+                        className="h-4 w-4"
+                      />
+                      <Label htmlFor="manual-sheet-link" className="text-xs text-muted-foreground cursor-pointer">
+                        Manual Sheet Link
+                      </Label>
+                    </div>
+                  )}
+                  <div>
                     <Button
-                      className="w-full"
                       onClick={handleCreateOrder}
                       disabled={creatingOrder || !selectedCustomer || !newProductId || !newAmount}
                     >
                       {creatingOrder ? 'Creating...' : 'Create Order'}
                     </Button>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>
