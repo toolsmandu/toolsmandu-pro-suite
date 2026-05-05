@@ -57,7 +57,8 @@ const AdminOrders = () => {
   const [editStatus, setEditStatus] = useState('');
   const [refundType, setRefundType] = useState<'full' | 'partial'>('full');
   const [refundAmount, setRefundAmount] = useState('');
-  const [editItems, setEditItems] = useState<EditItem[]>([]);
+   const [editItems, setEditItems] = useState<EditItem[]>([]);
+   const [editManualSheetLink, setEditManualSheetLink] = useState(false);
   const [sending, setSending] = useState(false);
   const [isAdminOnly, setIsAdminOnly] = useState(false);
   const [deletedItemIds, setDeletedItemIds] = useState<string[]>([]);
