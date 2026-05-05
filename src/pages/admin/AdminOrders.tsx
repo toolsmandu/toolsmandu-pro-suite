@@ -440,6 +440,7 @@ const AdminOrders = () => {
         previousStatus: selectedOrder.status,
         userId: selectedOrder.user_id,
         refundAmount: refundAmt,
+        manualSheetLink: editManualSheetLink,
       });
 
       const noteSent = !!stripHtml(orderNote);
