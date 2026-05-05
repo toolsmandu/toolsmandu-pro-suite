@@ -10,7 +10,7 @@ import {
   SidebarMenuSubButton, SidebarProvider, useSidebar,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut, Wrench } from 'lucide-react';
+  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut, Wrench, Table, Network } from 'lucide-react';
 import ChatbotWidget from '@/components/admin/ChatbotWidget';
 import SalesStatsBar from '@/components/admin/SalesStatsBar';
 import EditorTaskStatsBar from '@/components/admin/EditorTaskStatsBar';
@@ -222,21 +222,21 @@ const AdminLayout = () => {
                     </SidebarMenuItem>
                   ))}
 
-                  {/* Family Sheets link */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <NavLink to="/admin/family-sheets" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
-                        <FileBarChart className="mr-2 h-4 w-4" />
-                        <span>Family Sheets</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
                   {/* Sheets link */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <NavLink to="/admin/sheets" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
-                        <FileBarChart className="mr-2 h-4 w-4" />
+                        <Table className="mr-2 h-4 w-4" />
                         <span>Sheets</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  {/* Family Sheets link */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/admin/family-sheets" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                        <Network className="mr-2 h-4 w-4" />
+                        <span>Family Sheets</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
