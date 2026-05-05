@@ -457,6 +457,18 @@ const AdminSheetDetail = () => {
         lines.push(row.map(csvEscape).join(","));
       });
       g.normal.forEach((r) => {
+        let remaining = r.remaining;
+        const periodNum = parseInt(r.period, 10);
+        if (r.purchaseDate && !isNaN(periodNum)) {
+          const start = new Date(r.purchaseDate);
+          if (!isNaN(start.getTime())) {
+            const expiry = new Date(start);
+            expiry.setDate(expiry.getDate() + periodNum);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            remaining = String(Math.ceil((expiry.getTime() - today.getTime()) / 86400000));
+          }
+        }
         const row = [
           String(gi + 1),
           "Member",
@@ -466,7 +478,7 @@ const AdminSheetDetail = () => {
           r.email,
           r.phone,
           r.period,
-          r.remaining,
+          remaining,
           r.remarks,
         ];
         lines.push(row.map(csvEscape).join(","));
