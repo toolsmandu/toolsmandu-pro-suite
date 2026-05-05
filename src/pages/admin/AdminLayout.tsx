@@ -222,38 +222,15 @@ const AdminLayout = () => {
                     </SidebarMenuItem>
                   ))}
 
-                  {/* Sheets sub-menu */}
-                  <Collapsible open={sheetsOpen} onOpenChange={setSheetsOpen} className="group/sheets">
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton className="hover:bg-muted/50">
-                          <FileBarChart className="mr-2 h-4 w-4" />
-                          <span>Family Sheets</span>
-                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/sheets:rotate-90" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          <SidebarMenuSubItem>
-                            <SidebarMenuSubButton asChild>
-                              <NavLink to="/admin/family-sheets" end className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
-                                <span>All Family Sheets</span>
-                              </NavLink>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                          {sheetsList.map((s) => (
-                            <SidebarMenuSubItem key={s.id}>
-                              <SidebarMenuSubButton asChild>
-                                <NavLink to={`/admin/family-sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
-                                  <span className="truncate">{s.name}</span>
-                                </NavLink>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
+                  {/* Family Sheets link */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/admin/family-sheets" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                        <FileBarChart className="mr-2 h-4 w-4" />
+                        <span>Family Sheets</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
 
 
                   {/* Reports sub-menu (admin only) — just below Customers */}
