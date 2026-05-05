@@ -744,7 +744,7 @@ const SimpleRow = ({ row, gi, idx, dirty, saving, onUpdateNormal, onSave, onDele
         );
       })}
       <td className="border-t border-border p-1">
-        <div className="flex items-center justify-end gap-1">
+        <div className="flex items-center justify-start gap-1">
           {(dirty || saving) ? (
             <Button variant="ghost" size="icon" onClick={onSave} disabled={saving} aria-label="Save row" title="Save changes">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 text-primary" />}
@@ -850,9 +850,9 @@ const GroupBlock = ({
                     )}
                   </td>
                 ))}
-                <td className="text-right border-t border-border p-1">
+                <td className="text-left border-t border-border p-1">
                   {ri === firstActionIdx && (
-                    <div className="flex items-center justify-end gap-1">
+                    <div className="flex items-center justify-start gap-1">
                       {(dirty || saving) ? (
                         <Button variant="ghost" size="icon" onClick={onSave} disabled={saving} aria-label="Save group" title="Save changes">
                           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 text-primary" />}
@@ -956,7 +956,7 @@ const GroupBlock = ({
         </tbody>
       </table>
       {isSimple && (
-        <div className="flex items-center justify-end gap-1 p-2 border-t border-border bg-muted/40">
+        <div className="flex items-center justify-start gap-1 p-2 border-t border-border bg-muted/40">
           {(dirty || saving) && (
             <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title="Save changes">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 text-primary" />}
