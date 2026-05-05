@@ -274,7 +274,7 @@ const AdminSheetDetail = () => {
       // Save normals (whole sheet JSON)
       const ok = await persistNormalToDb(groupsRef.current);
       // Save master rows
-      for (let ri = 0; ri < 2; ri++) {
+      for (let ri = 0; ri < g.master.length; ri++) {
         const m = g.master[ri];
         const { error } = await supabase.functions.invoke("sheet-master-rows", {
           body: {
