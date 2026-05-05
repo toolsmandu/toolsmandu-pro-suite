@@ -1723,7 +1723,20 @@ const AdminOrders = () => {
                 </div>
               </div>
 
-              {/* Refund options */}
+              <div className="flex items-center gap-2">
+                <input
+                  id="edit-manual-sheet-link"
+                  type="checkbox"
+                  checked={editManualSheetLink}
+                  onChange={(e) => setEditManualSheetLink(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="edit-manual-sheet-link" className="text-xs text-muted-foreground cursor-pointer">
+                  Manual Sheet Link
+                </Label>
+              </div>
+
+
               {editStatus === 'refunded' && (
                 <div className="border border-border rounded-md p-3 bg-muted/20 space-y-3">
                   <Label className="text-xs text-muted-foreground">Refund Type</Label>
