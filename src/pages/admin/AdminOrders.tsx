@@ -341,6 +341,7 @@ const AdminOrders = () => {
     setSelectedOrder(order);
     setEditTotal(String(order.total));
     setEditStatus(order.status);
+    setEditManualSheetLink(!!(order as any).manual_sheet_link);
     const existingRefund = (order as any).refund_amount;
     if (order.status === 'refunded' && existingRefund != null && Number(existingRefund) > 0 && Number(existingRefund) < Number(order.total)) {
       setRefundType('partial');
