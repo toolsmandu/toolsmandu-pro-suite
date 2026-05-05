@@ -656,6 +656,35 @@ const AdminOrders = () => {
       //  - regular variant → processing + send only new-order email
       const finalStatus: 'processing' | 'completed' = isFamilySharing ? 'completed' : 'processing';
 
+      // Pre-check: if variation is linked to a family sheet, ensure last manager group has free slot
+      if (newVariationId) {
+        const { data: links } = await supabase
+          .from('sheet_variant_links')
+          .select('sheet_id')
+          .eq('variation_id', newVariationId);
+        for (const l of links || []) {
+          const { data: sh } = await supabase
+            .from('sheets')
+            .select('name, master_row_count, normal_row_count, data')
+            .eq('id', (l as any).sheet_id)
+            .maybeSingle();
+          if (!sh) continue;
+          if ((sh.master_row_count || 0) <= 0) continue;
+          const arr: any[] = Array.isArray(sh.data) ? (sh.data as any[]) : [];
+          const normals = arr.filter((r) => (r?.kind || 'normal') === 'normal');
+          const nCount = Math.max(sh.normal_row_count || 1, 1);
+          if (normals.length < nCount) {
+            throw new Error(`Family Sheet Limit is Full for "${sh.name}". Please manage a new account to create new order.`);
+          }
+          const lastStart = Math.floor((normals.length - 1) / nCount) * nCount;
+          const lastGroup = normals.slice(lastStart);
+          const hasEmpty = lastGroup.some((r) => !((r?.orderId || '').toString().trim()));
+          if (!hasEmpty) {
+            throw new Error(`Family Sheet Limit is Full for "${sh.name}". Please manage a new account to create new order.`);
+          }
+        }
+      }
+
       const { data: order, error: orderError } = await supabase.from('orders').insert({
         user_id: selectedCustomer.user_id,
         total: parseFloat(newAmount),
