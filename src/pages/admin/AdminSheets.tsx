@@ -72,16 +72,6 @@ const AdminSheets = ({
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kind]);
-      toast({ title: "Failed to load sheets", description: error.message, variant: "destructive" });
-    } else {
-      setSheets(data || []);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
 
   const uploadImage = async (file: File): Promise<string | null> => {
     setUploading(true);
