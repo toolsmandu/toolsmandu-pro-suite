@@ -828,6 +828,18 @@ const GroupBlock = ({
           ))}
         </tbody>
       </table>
+      {isSimple && (
+        <div className="flex items-center justify-end gap-1 p-2 border-t border-border bg-muted/40">
+          {(dirty || saving) && (
+            <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title="Save changes">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 text-primary" />}
+            </Button>
+          )}
+          <Button variant="ghost" size="icon" onClick={onDelete} aria-label="Delete row">
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
