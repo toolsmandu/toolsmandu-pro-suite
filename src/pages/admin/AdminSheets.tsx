@@ -12,6 +12,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -50,6 +60,7 @@ const AdminSheets = ({
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Sheet | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Sheet | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
@@ -359,7 +370,7 @@ const AdminSheets = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(sheet.id)}
+                    onClick={() => setDeleteTarget(sheet)}
                     aria-label="Delete sheet"
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
@@ -370,6 +381,31 @@ const AdminSheets = ({
           </div>
         </div>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this sheet?</AlertDialogTitle>
+            <AlertDialogDescription>
+              "{deleteTarget?.name}" will be permanently deleted. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (deleteTarget) {
+                  await handleDelete(deleteTarget.id);
+                  setDeleteTarget(null);
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
