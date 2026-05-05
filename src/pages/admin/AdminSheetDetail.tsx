@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff, Search as SearchIcon, CalendarX2, Settings as SettingsIcon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,6 +97,9 @@ const emptyMaster = (): MasterRow => ({ account: "", password: "", expiry_date: 
 
 const AdminSheetDetail = () => {
   const { id = "" } = useParams();
+  const location = useLocation();
+  const isSimple = location.pathname.startsWith("/admin/sheets");
+  const backPath = isSimple ? "/admin/sheets" : "/admin/family-sheets";
   const [sheet, setSheet] = useState<Sheet | null>(null);
   // groups: each group has 2 master rows + 4 normal rows
   const [groups, setGroups] = useState<{ master: MasterRow[]; normal: Row[] }[]>([]);
