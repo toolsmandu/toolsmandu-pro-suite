@@ -1594,6 +1594,15 @@ const AdminOrders = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col items-center gap-1">
+                        {sheetSyncMap?.[order.id] === 'sheet' && (
+                          <span className="text-[10px] text-blue-400">Sheet Sync</span>
+                        )}
+                        {sheetSyncMap?.[order.id] === 'family' && (
+                          <span className="text-[10px] text-blue-400">Family Sync</span>
+                        )}
+                        {sheetSyncMap?.[order.id] === 'error' && (
+                          <span className="text-[10px] text-destructive">Sync Error</span>
+                        )}
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[order.status] || ''}`}>
                           {order.status === 'on_hold' ? 'On Hold' : order.status}
                         </span>
