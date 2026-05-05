@@ -1532,6 +1532,7 @@ export type Database = {
           data: Json
           id: string
           image_url: string | null
+          kind: string
           master_row_count: number
           name: string
           normal_row_count: number
@@ -1546,6 +1547,7 @@ export type Database = {
           data?: Json
           id?: string
           image_url?: string | null
+          kind?: string
           master_row_count?: number
           name: string
           normal_row_count?: number
@@ -1560,6 +1562,7 @@ export type Database = {
           data?: Json
           id?: string
           image_url?: string | null
+          kind?: string
           master_row_count?: number
           name?: string
           normal_row_count?: number

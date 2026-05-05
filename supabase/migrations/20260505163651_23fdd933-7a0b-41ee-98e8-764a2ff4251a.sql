@@ -1,0 +1,1 @@
+ALTER TABLE public.sheets ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT 'family';
