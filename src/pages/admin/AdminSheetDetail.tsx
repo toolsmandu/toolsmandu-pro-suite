@@ -560,18 +560,29 @@ const AdminSheetDetail = () => {
             remaining = String(Math.ceil((expiry.getTime() - today.getTime()) / 86400000));
           }
         }
-        const row = [
-          String(gi + 1),
-          "Member",
-          ...MASTER_COLUMNS.map(() => ""),
-          r.orderId,
-          r.purchaseDate ? formatPurchaseDate(r.purchaseDate) : "",
-          r.email,
-          r.phone,
-          r.period,
-          remaining,
-          r.remarks,
-        ];
+        const row = isSimple
+          ? [
+              String(gi + 1),
+              r.orderId,
+              r.purchaseDate ? formatPurchaseDate(r.purchaseDate) : "",
+              r.email,
+              r.phone,
+              r.period,
+              remaining,
+              r.remarks,
+            ]
+          : [
+              String(gi + 1),
+              "Member",
+              ...MASTER_COLUMNS.map(() => ""),
+              r.orderId,
+              r.purchaseDate ? formatPurchaseDate(r.purchaseDate) : "",
+              r.email,
+              r.phone,
+              r.period,
+              remaining,
+              r.remarks,
+            ];
         lines.push(row.map(csvEscape).join(","));
       });
     });
