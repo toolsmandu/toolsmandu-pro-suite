@@ -504,20 +504,11 @@ const AdminSheetDetail = () => {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
       return;
     }
-    setGroups((prev) => prev.map((g) => {
-      const master = [...g.master];
-      while (master.length < newMaster) master.push(emptyMaster());
-      while (master.length > newMaster) master.pop();
-      const normal = [...g.normal];
-      while (normal.length < newNormal) normal.push(emptyNormal());
-      while (normal.length > newNormal) normal.pop();
-      return { master, normal };
-    }));
+    // Only apply to newly created groups; do not resize existing ones
     setMasterCount(newMaster);
     setNormalCount(newNormal);
-    setDirtyGroups(new Set(groupsRef.current.map((_, i) => i)));
     setSavingSettings(false);
-    toast({ title: "Settings saved" });
+    toast({ title: "Settings saved", description: "Applies to newly created groups only" });
   };
 
   const unsavedCount = dirtyGroups.size;
