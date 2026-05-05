@@ -125,7 +125,7 @@ const AdminSheetDetail = () => {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const query = supabase.from("sheets").select("id, name, data");
+      const query = supabase.from("sheets").select("id, name, data, master_row_count, normal_row_count");
       const { data, error } = isUuid(id)
         ? await query.eq("id", id).maybeSingle()
         : await query.eq("slug", id).maybeSingle();
@@ -140,16 +140,13 @@ const AdminSheetDetail = () => {
       setSheet({ id: data.id, name: data.name });
       setSheetUuid(data.id);
 
-      // Read sizes from storage (state may not be set yet)
-      let mCount = 2, nCount = 4;
-      try {
-        const s = localStorage.getItem(sizesKey(id));
-        if (s) {
-          const parsed = JSON.parse(s);
-          if (parsed.masterCount) mCount = parsed.masterCount;
-          if (parsed.normalCount) nCount = parsed.normalCount;
-        }
-      } catch {}
+      const mCount = (data as any).master_row_count ?? 2;
+      const nCount = (data as any).normal_row_count ?? 4;
+      setMasterCount(mCount);
+      setNormalCount(nCount);
+      setDraftMasterCount(mCount);
+      setDraftNormalCount(nCount);
+
 
       // Parse normal rows from sheets.data (legacy: flat array of Row)
       const arr: any[] = Array.isArray(data.data) ? (data.data as any[]) : [];
