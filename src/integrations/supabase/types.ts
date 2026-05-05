@@ -1531,6 +1531,7 @@ export type Database = {
           created_by: string | null
           data: Json
           id: string
+          image_url: string | null
           master_row_count: number
           name: string
           normal_row_count: number
@@ -1544,6 +1545,7 @@ export type Database = {
           created_by?: string | null
           data?: Json
           id?: string
+          image_url?: string | null
           master_row_count?: number
           name: string
           normal_row_count?: number
@@ -1557,6 +1559,7 @@ export type Database = {
           created_by?: string | null
           data?: Json
           id?: string
+          image_url?: string | null
           master_row_count?: number
           name?: string
           normal_row_count?: number
