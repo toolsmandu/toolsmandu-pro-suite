@@ -60,6 +60,7 @@ const AdminSheets = ({
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Sheet | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Sheet | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
