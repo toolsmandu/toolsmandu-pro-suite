@@ -324,7 +324,7 @@ const AdminSheetDetail = () => {
       });
       // Reindex remaining master groups: easiest is to re-upsert all
       for (let i = 0; i < next.length; i++) {
-        for (let ri = 0; ri < 2; ri++) {
+        for (let ri = 0; ri < next[i].master.length; ri++) {
           const m = next[i].master[ri];
           await supabase.functions.invoke("sheet-master-rows", {
             body: {
