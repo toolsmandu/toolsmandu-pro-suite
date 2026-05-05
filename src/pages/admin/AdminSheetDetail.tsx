@@ -108,6 +108,9 @@ const AdminSheetDetail = () => {
   const [showExpiredOnly, setShowExpiredOnly] = useState(false);
   const [masterCount, setMasterCount] = useState(2);
   const [normalCount, setNormalCount] = useState(4);
+  const [draftMasterCount, setDraftMasterCount] = useState(2);
+  const [draftNormalCount, setDraftNormalCount] = useState(4);
+  const [savingSettings, setSavingSettings] = useState(false);
   const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const groupsRef = useRef(groups);
@@ -116,18 +119,6 @@ const AdminSheetDetail = () => {
 
   const isUuid = (v: string) =>
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
-
-  // Load saved sizes early
-  useEffect(() => {
-    try {
-      const s = localStorage.getItem(sizesKey(id));
-      if (s) {
-        const parsed = JSON.parse(s);
-        if (parsed.masterCount) setMasterCount(parsed.masterCount);
-        if (parsed.normalCount) setNormalCount(parsed.normalCount);
-      }
-    } catch {}
-  }, [id]);
 
   // Load sheet + master rows
   useEffect(() => {
