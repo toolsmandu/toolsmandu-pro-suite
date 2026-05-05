@@ -653,6 +653,7 @@ const GroupBlock = ({
   return (
     <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
       {/* Master section */}
+      {!isSimple && (
       <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
         <colgroup>
           {masterCols.map((c: any) => (
@@ -742,6 +743,7 @@ const GroupBlock = ({
           })}
         </tbody>
       </table>
+      )}
 
       {/* Normal section */}
       <table className="w-full text-sm border-t-2 border-border" style={{ tableLayout: "fixed" }}>
