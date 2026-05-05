@@ -50,7 +50,6 @@ const isMasterEmpty = (m: MasterRow) =>
   !m.account && !m.password && !m.expiry_date && !m.remarks;
 
 const widthsKey = (id: string) => `admin_sheet_widths_${id}`;
-const sizesKey = (id: string) => `admin_sheet_sizes_${id}`;
 
 const NORMAL_COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = [
   { key: "orderId", label: "Order ID" },
@@ -109,6 +108,9 @@ const AdminSheetDetail = () => {
   const [showExpiredOnly, setShowExpiredOnly] = useState(false);
   const [masterCount, setMasterCount] = useState(2);
   const [normalCount, setNormalCount] = useState(4);
+  const [draftMasterCount, setDraftMasterCount] = useState(2);
+  const [draftNormalCount, setDraftNormalCount] = useState(4);
+  const [savingSettings, setSavingSettings] = useState(false);
   const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const groupsRef = useRef(groups);
@@ -118,24 +120,12 @@ const AdminSheetDetail = () => {
   const isUuid = (v: string) =>
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 
-  // Load saved sizes early
-  useEffect(() => {
-    try {
-      const s = localStorage.getItem(sizesKey(id));
-      if (s) {
-        const parsed = JSON.parse(s);
-        if (parsed.masterCount) setMasterCount(parsed.masterCount);
-        if (parsed.normalCount) setNormalCount(parsed.normalCount);
-      }
-    } catch {}
-  }, [id]);
-
   // Load sheet + master rows
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const query = supabase.from("sheets").select("id, name, data");
+      const query = supabase.from("sheets").select("id, name, data, master_row_count, normal_row_count");
       const { data, error } = isUuid(id)
         ? await query.eq("id", id).maybeSingle()
         : await query.eq("slug", id).maybeSingle();
@@ -150,16 +140,13 @@ const AdminSheetDetail = () => {
       setSheet({ id: data.id, name: data.name });
       setSheetUuid(data.id);
 
-      // Read sizes from storage (state may not be set yet)
-      let mCount = 2, nCount = 4;
-      try {
-        const s = localStorage.getItem(sizesKey(id));
-        if (s) {
-          const parsed = JSON.parse(s);
-          if (parsed.masterCount) mCount = parsed.masterCount;
-          if (parsed.normalCount) nCount = parsed.normalCount;
-        }
-      } catch {}
+      const mCount = (data as any).master_row_count ?? 2;
+      const nCount = (data as any).normal_row_count ?? 4;
+      setMasterCount(mCount);
+      setNormalCount(nCount);
+      setDraftMasterCount(mCount);
+      setDraftNormalCount(nCount);
+
 
       // Parse normal rows from sheets.data (legacy: flat array of Row)
       const arr: any[] = Array.isArray(data.data) ? (data.data as any[]) : [];
@@ -420,7 +407,17 @@ const AdminSheetDetail = () => {
   const totalRows = groups.reduce((sum, g) => sum + g.master.length + g.normal.length, 0);
 
   // Apply size changes to existing groups (resize master/normal arrays)
-  const applySizes = (newMaster: number, newNormal: number) => {
+  const applySizes = async (newMaster: number, newNormal: number) => {
+    setSavingSettings(true);
+    const { error } = await supabase
+      .from("sheets")
+      .update({ master_row_count: newMaster, normal_row_count: newNormal })
+      .eq("id", sheetUuid || id);
+    if (error) {
+      setSavingSettings(false);
+      toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      return;
+    }
     setGroups((prev) => prev.map((g) => {
       const master = [...g.master];
       while (master.length < newMaster) master.push(emptyMaster());
@@ -432,12 +429,11 @@ const AdminSheetDetail = () => {
     }));
     setMasterCount(newMaster);
     setNormalCount(newNormal);
-    try {
-      localStorage.setItem(sizesKey(id), JSON.stringify({ masterCount: newMaster, normalCount: newNormal }));
-    } catch {}
-    // Mark all groups dirty so user saves
-    setDirtyGroups(new Set(groups.map((_, i) => i)));
+    setDirtyGroups(new Set(groupsRef.current.map((_, i) => i)));
+    setSavingSettings(false);
+    toast({ title: "Settings saved" });
   };
+
   const unsavedCount = dirtyGroups.size;
 
   return (
@@ -498,11 +494,8 @@ const AdminSheetDetail = () => {
                     type="number"
                     min={1}
                     max={10}
-                    value={masterCount}
-                    onChange={(e) => {
-                      const v = Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1));
-                      applySizes(v, normalCount);
-                    }}
+                    value={draftMasterCount}
+                    onChange={(e) => setDraftMasterCount(Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1)))}
                   />
                 </div>
                 <div className="space-y-1">
@@ -511,18 +504,24 @@ const AdminSheetDetail = () => {
                     type="number"
                     min={1}
                     max={50}
-                    value={normalCount}
-                    onChange={(e) => {
-                      const v = Math.max(1, Math.min(50, parseInt(e.target.value || "1", 10) || 1));
-                      applySizes(masterCount, v);
-                    }}
+                    value={draftNormalCount}
+                    onChange={(e) => setDraftNormalCount(Math.max(1, Math.min(50, parseInt(e.target.value || "1", 10) || 1)))}
                   />
                 </div>
+                <Button
+                  className="w-full"
+                  onClick={() => applySizes(draftMasterCount, draftNormalCount)}
+                  disabled={savingSettings || (draftMasterCount === masterCount && draftNormalCount === normalCount)}
+                >
+                  {savingSettings ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  Save
+                </Button>
                 <p className="text-xs text-muted-foreground">
-                  Changes apply to all groups. Save each group to persist.
+                  Settings are saved per sheet. Save each group afterwards to persist row data.
                 </p>
               </div>
             </PopoverContent>
+
           </Popover>
         </div>
       </div>
