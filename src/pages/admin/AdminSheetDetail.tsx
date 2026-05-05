@@ -104,6 +104,7 @@ const AdminSheetDetail = () => {
   const [dirtyGroups, setDirtyGroups] = useState<Set<number>>(new Set());
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
   const [showEmpty, setShowEmpty] = useState(false);
+  const [search, setSearch] = useState("");
   const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const groupsRef = useRef(groups);
