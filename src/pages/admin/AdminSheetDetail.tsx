@@ -555,7 +555,7 @@ const AdminSheetDetail = () => {
             </PopoverTrigger>
             <PopoverContent align="end" className="w-72">
               <div className="space-y-3">
-                <div className="font-semibold text-sm">Row Settings</div>
+                <div className="font-semibold text-sm">{isSimple ? "Sheet Setting" : "Family Sheet Setting"}</div>
                 {!isSimple && (
                   <div className="space-y-1">
                     <label className="text-xs text-muted-foreground">Family Manager rows per group</label>
