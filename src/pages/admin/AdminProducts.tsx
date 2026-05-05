@@ -692,7 +692,6 @@ const AdminProducts = () => {
                 <Separator className="my-2" />
                 <div className="flex items-center justify-between mb-3">
                   <Label className="text-base font-semibold">Variations</Label>
-                  {renderSaveButton()}
                 </div>
 
                 {variations.length === 0 && (
