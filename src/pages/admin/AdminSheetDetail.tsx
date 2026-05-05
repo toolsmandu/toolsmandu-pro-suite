@@ -366,8 +366,16 @@ const AdminSheetDetail = () => {
         }
         if (showExpiredOnly) {
           const hasNegative = g.normal.some((r) => {
-            const v = parseInt((r.remaining || "").toString().trim(), 10);
-            return !isNaN(v) && v < 0;
+            const periodNum = parseInt(r.period, 10);
+            if (!r.purchaseDate || isNaN(periodNum)) return false;
+            const start = new Date(r.purchaseDate);
+            if (isNaN(start.getTime())) return false;
+            const expiry = new Date(start);
+            expiry.setDate(expiry.getDate() + periodNum);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const diff = Math.ceil((expiry.getTime() - today.getTime()) / 86400000);
+            return diff < 0;
           });
           if (!hasNegative) return false;
         }
