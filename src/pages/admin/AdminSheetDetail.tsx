@@ -296,8 +296,8 @@ const AdminSheetDetail = () => {
     setGroups((prev) => [
       ...prev,
       {
-        master: Array.from({ length: masterCount }, () => emptyMaster()),
-        normal: Array.from({ length: normalCount }, () => emptyNormal()),
+        master: Array.from({ length: isSimple ? 0 : masterCount }, () => emptyMaster()),
+        normal: Array.from({ length: isSimple ? 1 : normalCount }, () => emptyNormal()),
       },
     ]);
     markDirty(groupsRef.current.length);
@@ -506,7 +506,7 @@ const AdminSheetDetail = () => {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="icon" asChild>
-            <Link to="/admin/family-sheets" aria-label="Back to family sheets">
+            <Link to={backPath} aria-label="Back to sheets">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
