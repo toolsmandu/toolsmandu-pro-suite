@@ -853,14 +853,15 @@ const GroupBlock = ({
                 <td className="text-right border-t border-border p-1">
                   {ri === firstActionIdx && (
                     <div className="flex items-center justify-end gap-1">
-                      {(dirty || saving) && (
-                        <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title="Save changes">
+                      {(dirty || saving) ? (
+                        <Button variant="ghost" size="icon" onClick={onSave} disabled={saving} aria-label="Save group" title="Save changes">
                           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 text-primary" />}
                         </Button>
+                      ) : (
+                        <Button variant="ghost" size="icon" onClick={onDelete} aria-label="Delete group">
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
                       )}
-                      <Button variant="ghost" size="icon" onClick={onDelete} aria-label="Delete group">
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
                     </div>
                   )}
                 </td>
