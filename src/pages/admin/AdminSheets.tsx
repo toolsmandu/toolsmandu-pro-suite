@@ -24,7 +24,23 @@ type Sheet = {
   created_at: string;
 };
 
-const AdminSheets = () => {
+type AdminSheetsProps = {
+  kind?: "family" | "simple";
+  title?: string;
+  description?: string;
+  newButtonLabel?: string;
+  dialogTitle?: string;
+  basePath?: string;
+};
+
+const AdminSheets = ({
+  kind = "family",
+  title = "Family Sheets",
+  description = "Create and manage your family sheets.",
+  newButtonLabel = "Add New Family Sheet",
+  dialogTitle = "Add New Family Sheet",
+  basePath = "/admin/family-sheets",
+}: AdminSheetsProps = {}) => {
   const [sheets, setSheets] = useState<Sheet[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -41,9 +57,21 @@ const AdminSheets = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("sheets")
-      .select("id, name, slug, image_url, created_at")
+      .select("id, name, slug, image_url, created_at, kind")
+      .eq("kind", kind)
       .order("created_at", { ascending: false });
     if (error) {
+      toast({ title: "Failed to load sheets", description: error.message, variant: "destructive" });
+    } else {
+      setSheets(data || []);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kind]);
       toast({ title: "Failed to load sheets", description: error.message, variant: "destructive" });
     } else {
       setSheets(data || []);
