@@ -284,6 +284,7 @@ const AdminSheetDetail = () => {
   };
 
   const deleteGroup = async (gi: number) => {
+    if (!window.confirm("Delete this group and all its rows? This cannot be undone.")) return;
     const next = groupsRef.current.filter((_, i) => i !== gi);
     setGroups(next);
     setDirtyGroups((p) => { const n = new Set(p); n.delete(gi); return n; });
