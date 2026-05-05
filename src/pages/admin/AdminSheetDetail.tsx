@@ -57,7 +57,7 @@ const NORMAL_COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string
   { key: "email", label: "Email", type: "email" },
   { key: "phone", label: "Phone" },
   { key: "period", label: "Period (days)", type: "numeric" },
-  { key: "remaining", label: "Remaining (days)" },
+  { key: "remaining", label: "Remaining" },
   { key: "remarks", label: "Remarks" },
 ];
 
