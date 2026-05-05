@@ -503,7 +503,7 @@ const AdminSheetDetail = () => {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="icon" asChild>
-            <Link to="/admin/sheets" aria-label="Back to sheets">
+            <Link to="/admin/family-sheets" aria-label="Back to family sheets">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
