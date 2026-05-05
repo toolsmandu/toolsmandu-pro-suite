@@ -69,6 +69,7 @@ const MASTER_COLUMNS: { key: keyof Omit<MasterRow, "id">; label: string; type?: 
 ];
 
 const DEFAULT_WIDTHS: Record<string, number> = {
+  index: 70,
   orderId: 140,
   purchaseDate: 160,
   email: 220,
