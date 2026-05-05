@@ -407,7 +407,17 @@ const AdminSheetDetail = () => {
   const totalRows = groups.reduce((sum, g) => sum + g.master.length + g.normal.length, 0);
 
   // Apply size changes to existing groups (resize master/normal arrays)
-  const applySizes = (newMaster: number, newNormal: number) => {
+  const applySizes = async (newMaster: number, newNormal: number) => {
+    setSavingSettings(true);
+    const { error } = await supabase
+      .from("sheets")
+      .update({ master_row_count: newMaster, normal_row_count: newNormal })
+      .eq("id", sheetUuid || id);
+    if (error) {
+      setSavingSettings(false);
+      toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      return;
+    }
     setGroups((prev) => prev.map((g) => {
       const master = [...g.master];
       while (master.length < newMaster) master.push(emptyMaster());
@@ -419,12 +429,11 @@ const AdminSheetDetail = () => {
     }));
     setMasterCount(newMaster);
     setNormalCount(newNormal);
-    try {
-      localStorage.setItem(sizesKey(id), JSON.stringify({ masterCount: newMaster, normalCount: newNormal }));
-    } catch {}
-    // Mark all groups dirty so user saves
-    setDirtyGroups(new Set(groups.map((_, i) => i)));
+    setDirtyGroups(new Set(groupsRef.current.map((_, i) => i)));
+    setSavingSettings(false);
+    toast({ title: "Settings saved" });
   };
+
   const unsavedCount = dirtyGroups.size;
 
   return (
