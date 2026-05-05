@@ -1207,7 +1207,7 @@ const AdminOrders = () => {
                   return (
                     <div className="relative">
                       <Input
-                        placeholder="Choose one (optional)"
+                        placeholder="Choose a Product"
                         value={productPickerOpen ? productPickerSearch : (selected?.label || '')}
                         onFocus={() => { setProductPickerOpen(true); setProductPickerSearch(''); }}
                         onChange={(e) => { setProductPickerSearch(e.target.value); setProductPickerOpen(true); }}
