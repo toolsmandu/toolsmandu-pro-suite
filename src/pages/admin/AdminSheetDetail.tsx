@@ -553,16 +553,18 @@ const AdminSheetDetail = () => {
             <PopoverContent align="end" className="w-72">
               <div className="space-y-3">
                 <div className="font-semibold text-sm">Row Settings</div>
-                <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Family Manager rows per group</label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={10}
-                    value={draftMasterCount}
-                    onChange={(e) => setDraftMasterCount(Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1)))}
-                  />
-                </div>
+                {!isSimple && (
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">Family Manager rows per group</label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={10}
+                      value={draftMasterCount}
+                      onChange={(e) => setDraftMasterCount(Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1)))}
+                    />
+                  </div>
+                )}
                 <div className="space-y-1">
                   <label className="text-xs text-muted-foreground">Member rows per group</label>
                   <Input
