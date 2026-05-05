@@ -1531,7 +1531,9 @@ export type Database = {
           created_by: string | null
           data: Json
           id: string
+          master_row_count: number
           name: string
+          normal_row_count: number
           rows_count: number
           slug: string | null
           updated_at: string
@@ -1542,7 +1544,9 @@ export type Database = {
           created_by?: string | null
           data?: Json
           id?: string
+          master_row_count?: number
           name: string
+          normal_row_count?: number
           rows_count?: number
           slug?: string | null
           updated_at?: string
@@ -1553,7 +1557,9 @@ export type Database = {
           created_by?: string | null
           data?: Json
           id?: string
+          master_row_count?: number
           name?: string
+          normal_row_count?: number
           rows_count?: number
           slug?: string | null
           updated_at?: string
