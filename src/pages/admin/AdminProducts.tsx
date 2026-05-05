@@ -692,7 +692,6 @@ const AdminProducts = () => {
                 <Separator className="my-2" />
                 <div className="flex items-center justify-between mb-3">
                   <Label className="text-base font-semibold">Variations</Label>
-                  {renderSaveButton()}
                 </div>
 
                 {variations.length === 0 && (
@@ -806,9 +805,6 @@ const AdminProducts = () => {
                             />
                           </div>
                         )}
-                        <div className="pb-1">
-                          {renderSaveButton()}
-                        </div>
                       </div>
 
                       {variation.has_special_input_fields && variation.input_field_ids.length > 0 && (
