@@ -169,12 +169,12 @@ const AdminSheets = () => {
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4" />
-              New Sheet
+              Add New Family Sheet
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New Sheet</DialogTitle>
+              <DialogTitle>Add New Family Sheet</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
               <div className="space-y-2">
@@ -288,7 +288,7 @@ const AdminSheets = () => {
         </div>
       ) : sheets.length === 0 ? (
         <div className="border border-border rounded-lg p-8 text-center text-muted-foreground bg-background">
-          No sheets yet. Click "New Sheet" to create one.
+          No sheets yet. Click "Add New Family Sheet" to create one.
         </div>
       ) : (
         <div className="border border-border rounded-lg bg-background overflow-hidden">
