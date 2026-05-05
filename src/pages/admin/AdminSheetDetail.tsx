@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff, Search as SearchIcon, CalendarX2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff, Search as SearchIcon, CalendarX2, Settings as SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -50,6 +50,7 @@ const isMasterEmpty = (m: MasterRow) =>
   !m.account && !m.password && !m.expiry_date && !m.remarks;
 
 const widthsKey = (id: string) => `admin_sheet_widths_${id}`;
+const sizesKey = (id: string) => `admin_sheet_sizes_${id}`;
 
 const NORMAL_COLUMNS: { key: keyof Omit<Row, "id">; label: string; type?: string }[] = [
   { key: "orderId", label: "Order ID" },
@@ -98,7 +99,7 @@ const AdminSheetDetail = () => {
   const { id = "" } = useParams();
   const [sheet, setSheet] = useState<Sheet | null>(null);
   // groups: each group has 2 master rows + 4 normal rows
-  const [groups, setGroups] = useState<{ master: [MasterRow, MasterRow]; normal: Row[] }[]>([]);
+  const [groups, setGroups] = useState<{ master: MasterRow[]; normal: Row[] }[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingGroups, setSavingGroups] = useState<Set<number>>(new Set());
   const [dirtyGroups, setDirtyGroups] = useState<Set<number>>(new Set());
@@ -106,6 +107,8 @@ const AdminSheetDetail = () => {
   const showEmpty = true;
   const [search, setSearch] = useState("");
   const [showExpiredOnly, setShowExpiredOnly] = useState(false);
+  const [masterCount, setMasterCount] = useState(2);
+  const [normalCount, setNormalCount] = useState(4);
   const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const groupsRef = useRef(groups);
@@ -114,6 +117,18 @@ const AdminSheetDetail = () => {
 
   const isUuid = (v: string) =>
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+
+  // Load saved sizes early
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem(sizesKey(id));
+      if (s) {
+        const parsed = JSON.parse(s);
+        if (parsed.masterCount) setMasterCount(parsed.masterCount);
+        if (parsed.normalCount) setNormalCount(parsed.normalCount);
+      }
+    } catch {}
+  }, [id]);
 
   // Load sheet + master rows
   useEffect(() => {
@@ -135,9 +150,19 @@ const AdminSheetDetail = () => {
       setSheet({ id: data.id, name: data.name });
       setSheetUuid(data.id);
 
+      // Read sizes from storage (state may not be set yet)
+      let mCount = 2, nCount = 4;
+      try {
+        const s = localStorage.getItem(sizesKey(id));
+        if (s) {
+          const parsed = JSON.parse(s);
+          if (parsed.masterCount) mCount = parsed.masterCount;
+          if (parsed.normalCount) nCount = parsed.normalCount;
+        }
+      } catch {}
+
       // Parse normal rows from sheets.data (legacy: flat array of Row)
       const arr: any[] = Array.isArray(data.data) ? (data.data as any[]) : [];
-      // Filter only normal-shaped rows (skip legacy "master" kind rows)
       const normalRows: Row[] = arr
         .filter((r) => !r.kind || r.kind === "normal")
         .map((r) => ({
@@ -173,26 +198,28 @@ const AdminSheetDetail = () => {
         toast({ title: "Failed to load master rows", description: e?.message, variant: "destructive" });
       }
 
-      // Build groups: chunk normalRows into 4
-      const built: { master: [MasterRow, MasterRow]; normal: Row[] }[] = [];
-      for (let i = 0; i < normalRows.length; i += 4) {
+      const built: { master: MasterRow[]; normal: Row[] }[] = [];
+      for (let i = 0; i < normalRows.length; i += nCount) {
         const gi = built.length;
         const m = masterByGroup[gi] || [];
+        const masterArr: MasterRow[] = [];
+        for (let r = 0; r < mCount; r++) masterArr.push(m[r] || emptyMaster());
         built.push({
-          master: [m[0] || emptyMaster(), m[1] || emptyMaster()],
-          normal: normalRows.slice(i, i + 4).concat(
-            Array.from({ length: Math.max(0, 4 - (normalRows.length - i)) }, () => emptyNormal())
+          master: masterArr,
+          normal: normalRows.slice(i, i + nCount).concat(
+            Array.from({ length: Math.max(0, nCount - (normalRows.length - i)) }, () => emptyNormal())
           ),
         });
       }
-      // If there are master groups beyond normal data, append them as empty normal groups
       const maxMasterIdx = Math.max(-1, ...Object.keys(masterByGroup).map((k) => parseInt(k, 10)));
       while (built.length <= maxMasterIdx) {
         const gi = built.length;
         const m = masterByGroup[gi] || [];
+        const masterArr: MasterRow[] = [];
+        for (let r = 0; r < mCount; r++) masterArr.push(m[r] || emptyMaster());
         built.push({
-          master: [m[0] || emptyMaster(), m[1] || emptyMaster()],
-          normal: [emptyNormal(), emptyNormal(), emptyNormal(), emptyNormal()],
+          master: masterArr,
+          normal: Array.from({ length: nCount }, () => emptyNormal()),
         });
       }
       setGroups(built);
@@ -233,7 +260,7 @@ const AdminSheetDetail = () => {
   const updateMaster = (gi: number, ri: number, key: keyof MasterRow, value: string) => {
     setGroups((prev) => prev.map((g, i) => {
       if (i !== gi) return g;
-      const master = [...g.master] as [MasterRow, MasterRow];
+      const master = [...g.master];
       master[ri] = { ...master[ri], [key]: value };
       return { ...g, master };
     }));
@@ -247,7 +274,7 @@ const AdminSheetDetail = () => {
       // Save normals (whole sheet JSON)
       const ok = await persistNormalToDb(groupsRef.current);
       // Save master rows
-      for (let ri = 0; ri < 2; ri++) {
+      for (let ri = 0; ri < g.master.length; ri++) {
         const m = g.master[ri];
         const { error } = await supabase.functions.invoke("sheet-master-rows", {
           body: {
@@ -278,8 +305,8 @@ const AdminSheetDetail = () => {
     setGroups((prev) => [
       ...prev,
       {
-        master: [emptyMaster(), emptyMaster()],
-        normal: [emptyNormal(), emptyNormal(), emptyNormal(), emptyNormal()],
+        master: Array.from({ length: masterCount }, () => emptyMaster()),
+        normal: Array.from({ length: normalCount }, () => emptyNormal()),
       },
     ]);
     markDirty(groupsRef.current.length);
@@ -297,7 +324,7 @@ const AdminSheetDetail = () => {
       });
       // Reindex remaining master groups: easiest is to re-upsert all
       for (let i = 0; i < next.length; i++) {
-        for (let ri = 0; ri < 2; ri++) {
+        for (let ri = 0; ri < next[i].master.length; ri++) {
           const m = next[i].master[ri];
           await supabase.functions.invoke("sheet-master-rows", {
             body: {
@@ -390,7 +417,27 @@ const AdminSheetDetail = () => {
       });
   }, [groups, showEmpty, search, showExpiredOnly]);
 
-  const totalRows = groups.length * 6;
+  const totalRows = groups.reduce((sum, g) => sum + g.master.length + g.normal.length, 0);
+
+  // Apply size changes to existing groups (resize master/normal arrays)
+  const applySizes = (newMaster: number, newNormal: number) => {
+    setGroups((prev) => prev.map((g) => {
+      const master = [...g.master];
+      while (master.length < newMaster) master.push(emptyMaster());
+      while (master.length > newMaster) master.pop();
+      const normal = [...g.normal];
+      while (normal.length < newNormal) normal.push(emptyNormal());
+      while (normal.length > newNormal) normal.pop();
+      return { master, normal };
+    }));
+    setMasterCount(newMaster);
+    setNormalCount(newNormal);
+    try {
+      localStorage.setItem(sizesKey(id), JSON.stringify({ masterCount: newMaster, normalCount: newNormal }));
+    } catch {}
+    // Mark all groups dirty so user saves
+    setDirtyGroups(new Set(groups.map((_, i) => i)));
+  };
   const unsavedCount = dirtyGroups.size;
 
   return (
@@ -436,6 +483,47 @@ const AdminSheetDetail = () => {
             <Plus className="h-4 w-4" />
             Add Account
           </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon" disabled={loading} aria-label="Row settings" title="Row settings">
+                <SettingsIcon className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-72">
+              <div className="space-y-3">
+                <div className="font-semibold text-sm">Row Settings</div>
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Family Manager rows per group</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={masterCount}
+                    onChange={(e) => {
+                      const v = Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1));
+                      applySizes(v, normalCount);
+                    }}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Member rows per group</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={normalCount}
+                    onChange={(e) => {
+                      const v = Math.max(1, Math.min(50, parseInt(e.target.value || "1", 10) || 1));
+                      applySizes(masterCount, v);
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Changes apply to all groups. Save each group to persist.
+                </p>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
@@ -482,7 +570,7 @@ const GroupBlock = ({
   gi, group, widths, startResize, normalCols, masterCols,
   showPassword, setShowPassword, dirty, saving, showEmpty, onUpdateMaster, onUpdateNormal, onSave, onDelete,
 }: any) => {
-  let visibleMasterIndices = [0, 1].filter((ri) => showEmpty || !!group.master[ri].account);
+  let visibleMasterIndices = group.master.map((_: any, i: number) => i).filter((ri: number) => showEmpty || !!group.master[ri].account);
   const visibleNormal = group.normal
     .map((row: Row, idx: number) => ({ row, idx }))
     .filter(({ row }) => showEmpty || !!(row.email || row.phone));
