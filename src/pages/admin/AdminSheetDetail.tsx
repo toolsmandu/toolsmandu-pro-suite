@@ -611,6 +611,48 @@ const AdminSheetDetail = () => {
             ? 'No rows yet. Click "Add Row" to start.'
             : "All groups are empty. Toggle Show Empty Rows to view them."}
         </div>
+      ) : isSimple ? (
+        <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
+          <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
+            <colgroup>
+              {normalCols.map((c: any) => (
+                <col key={c.key} style={{ width: widths[c.key] }} />
+              ))}
+            </colgroup>
+            <thead>
+              <tr className="bg-muted/60">
+                {normalCols.map((c: any) => (
+                  <th key={c.key} className="relative h-10 px-3 text-left align-middle font-medium text-muted-foreground border-r border-border last:border-r-0 select-none">
+                    <span className="block truncate">{c.label}</span>
+                    {c.key !== "actions" && (
+                      <span onMouseDown={(e) => startResize(c.key, e)} className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize hover:bg-primary/40" />
+                    )}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {visibleGroups.flatMap(({ g, gi }) =>
+                g.normal
+                  .map((row: Row, idx: number) => ({ row, idx }))
+                  .filter(({ row }) => showEmpty || !!(row.email || row.phone))
+                  .map(({ row, idx }: { row: Row; idx: number }) => (
+                    <SimpleRow
+                      key={row.id}
+                      row={row}
+                      gi={gi}
+                      idx={idx}
+                      dirty={dirtyGroups.has(gi)}
+                      saving={savingGroups.has(gi)}
+                      onUpdateNormal={updateNormal}
+                      onSave={() => saveGroup(gi)}
+                      onDelete={() => deleteGroup(gi)}
+                    />
+                  ))
+              )}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <div className="space-y-6">
           {visibleGroups.map(({ g, gi }) => (
@@ -637,6 +679,83 @@ const AdminSheetDetail = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const SimpleRow = ({ row, gi, idx, dirty, saving, onUpdateNormal, onSave, onDelete }: any) => {
+  const periodNum = parseInt(row.period, 10);
+  let remainingVal = "";
+  let remainingClass = "";
+  if (row.purchaseDate && !isNaN(periodNum)) {
+    const start = new Date(row.purchaseDate);
+    if (!isNaN(start.getTime())) {
+      const expiry = new Date(start);
+      expiry.setDate(expiry.getDate() + periodNum);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const diff = Math.ceil((expiry.getTime() - today.getTime()) / 86400000);
+      remainingVal = String(diff);
+      remainingClass = diff < 0 ? "text-destructive-foreground font-semibold" : diff <= 7 ? "text-warning font-medium" : "";
+    }
+  }
+  const isNegative = remainingVal !== "" && Number(remainingVal) < 0;
+  return (
+    <tr className={idx % 2 === 1 ? "bg-muted/40" : ""}>
+      {NORMAL_COLUMNS.map((c) => {
+        const isRemaining = c.key === "remaining";
+        return (
+          <td key={c.key} className={`p-1 align-top border-r border-border border-t ${isRemaining && isNegative ? "bg-destructive" : ""}`}>
+            {isRemaining ? (
+              <div className={`h-9 px-3 flex items-center text-sm ${remainingClass}`}>{remainingVal || "—"}</div>
+            ) : c.key === "purchaseDate" ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button type="button" className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-input bg-background text-left">
+                    <span className={row.purchaseDate ? "" : "text-muted-foreground"}>
+                      {row.purchaseDate ? formatPurchaseDate(row.purchaseDate) : "Select date"}
+                    </span>
+                    <CalendarIcon className="h-4 w-4 opacity-50 ml-2 shrink-0" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={row.purchaseDate ? new Date(row.purchaseDate) : undefined}
+                    onSelect={(d) => { if (d) onUpdateNormal(gi, row.id, "purchaseDate", isoFromDate(d)); }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <Input
+                type={c.type === "numeric" ? "text" : c.type || "text"}
+                inputMode={c.type === "numeric" ? "numeric" : undefined}
+                pattern={c.type === "numeric" ? "[0-9]*" : undefined}
+                value={row[c.key] as string}
+                onChange={(e) => {
+                  let v = e.target.value;
+                  if (c.type === "numeric") v = v.replace(/[^0-9]/g, "");
+                  onUpdateNormal(gi, row.id, c.key, v);
+                }}
+                className="h-9 border-input bg-background"
+              />
+            )}
+          </td>
+        );
+      })}
+      <td className="border-t border-border p-1">
+        <div className="flex items-center justify-end gap-1">
+          {(dirty || saving) && (
+            <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save row" title="Save changes">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 text-primary" />}
+            </Button>
+          )}
+          <Button variant="ghost" size="icon" onClick={onDelete} aria-label="Delete row">
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
+      </td>
+    </tr>
   );
 };
 
