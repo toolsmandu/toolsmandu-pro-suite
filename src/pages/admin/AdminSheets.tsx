@@ -89,9 +89,9 @@ const AdminSheets = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Sheets</h1>
+          <h1 className="text-2xl font-bold text-foreground">Family Sheets</h1>
           <p className="text-sm text-muted-foreground">
-            Create and manage your sheets.
+            Create and manage your family sheets.
           </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -144,7 +144,7 @@ const AdminSheets = () => {
               className="flex items-center justify-between gap-4 p-4 hover:bg-accent/40 transition-colors"
             >
               <Link
-                to={`/admin/sheets/${sheet.slug || sheet.id}`}
+                to={`/admin/family-sheets/${sheet.slug || sheet.id}`}
                 className="flex items-center gap-3 flex-1 min-w-0"
               >
                 <FileSpreadsheet className="h-5 w-5 text-primary shrink-0" />

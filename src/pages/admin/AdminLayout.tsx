@@ -50,7 +50,7 @@ const AdminLayout = () => {
   const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs');
   const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides');
   const isReportsSection = location.pathname.startsWith('/admin/reports');
-  const isSheetsSection = location.pathname.startsWith('/admin/sheets');
+  const isSheetsSection = location.pathname.startsWith('/admin/family-sheets');
   const [productsOpen, setProductsOpen] = useState(isProductsSection);
   const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
   const [reportsOpen, setReportsOpen] = useState(isReportsSection);
@@ -228,7 +228,7 @@ const AdminLayout = () => {
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton className="hover:bg-muted/50">
                           <FileBarChart className="mr-2 h-4 w-4" />
-                          <span>Sheets</span>
+                          <span>Family Sheets</span>
                           <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/sheets:rotate-90" />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
@@ -236,15 +236,15 @@ const AdminLayout = () => {
                         <SidebarMenuSub>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <NavLink to="/admin/sheets" end className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
-                                <span>All Sheets</span>
+                              <NavLink to="/admin/family-sheets" end className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <span>All Family Sheets</span>
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           {sheetsList.map((s) => (
                             <SidebarMenuSubItem key={s.id}>
                               <SidebarMenuSubButton asChild>
-                                <NavLink to={`/admin/sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <NavLink to={`/admin/family-sheets/${s.slug || s.id}`} className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                   <span className="truncate">{s.name}</span>
                                 </NavLink>
                               </SidebarMenuSubButton>

@@ -156,8 +156,8 @@ const App = () => (
                 <Route path="family-sharing" element={<AdminFamilySharing />} />
                 <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
                 <Route path="family-sharing/:id/credential/:credentialId" element={<AdminCredentialDetail />} />
-                <Route path="sheets" element={<AdminSheets />} />
-                <Route path="sheets/:id" element={<AdminSheetDetail />} />
+                <Route path="family-sheets" element={<AdminSheets />} />
+                <Route path="family-sheets/:id" element={<AdminSheetDetail />} />
               </Route>
             </Routes>
           </BrowserRouter>
