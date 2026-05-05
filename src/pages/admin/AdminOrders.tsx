@@ -658,7 +658,7 @@ const AdminOrders = () => {
       const finalStatus: 'processing' | 'completed' = isFamilySharing ? 'completed' : 'processing';
 
       // Pre-check: if variation is linked to a family sheet, ensure last manager group has free slot
-      if (newVariationId) {
+      if (newVariationId && !newManualSheetLink) {
         const { data: links } = await supabase
           .from('sheet_variant_links')
           .select('sheet_id')
@@ -693,6 +693,7 @@ const AdminOrders = () => {
         payment_status: finalStatus === 'completed' ? 'paid' : 'pending',
         payment_method: newPaymentMethod,
         created_at: kathmanduToUTC(newOrderDate),
+        manual_sheet_link: newManualSheetLink,
       } as any).select().single();
       if (orderError) throw orderError;
 
