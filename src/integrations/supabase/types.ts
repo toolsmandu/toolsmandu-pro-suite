@@ -1524,6 +1524,27 @@ export type Database = {
         }
         Relationships: []
       }
+      sheet_variant_links: {
+        Row: {
+          created_at: string
+          id: string
+          sheet_id: string
+          variation_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sheet_id: string
+          variation_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sheet_id?: string
+          variation_id?: string
+        }
+        Relationships: []
+      }
       sheets: {
         Row: {
           cols_count: number
