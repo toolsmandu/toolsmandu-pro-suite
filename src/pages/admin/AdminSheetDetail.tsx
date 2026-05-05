@@ -305,8 +305,8 @@ const AdminSheetDetail = () => {
     setGroups((prev) => [
       ...prev,
       {
-        master: [emptyMaster(), emptyMaster()],
-        normal: [emptyNormal(), emptyNormal(), emptyNormal(), emptyNormal()],
+        master: Array.from({ length: masterCount }, () => emptyMaster()),
+        normal: Array.from({ length: normalCount }, () => emptyNormal()),
       },
     ]);
     markDirty(groupsRef.current.length);
