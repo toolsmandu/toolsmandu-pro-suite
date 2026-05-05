@@ -363,8 +363,11 @@ const AdminSheetDetail = () => {
   };
 
   const normalCols = useMemo(
-    () => NORMAL_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })),
-    [],
+    () => {
+      const base = NORMAL_COLUMNS.map((c) => ({ key: c.key as string, label: c.label }));
+      return isSimple ? [...base, { key: "actions", label: "Actions" }] : base;
+    },
+    [isSimple],
   );
   const masterCols = useMemo(
     () => [{ key: "index", label: "Index" }, ...MASTER_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
