@@ -113,7 +113,7 @@ const AdminSheets = ({
     const { data: userRes } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from("sheets")
-      .insert({ name: trimmed, data: [], image_url: imageUrl, created_by: userRes.user?.id })
+      .insert({ name: trimmed, data: [], image_url: imageUrl, kind, created_by: userRes.user?.id })
       .select("id, name, slug, image_url, created_at")
       .single();
     setCreating(false);
