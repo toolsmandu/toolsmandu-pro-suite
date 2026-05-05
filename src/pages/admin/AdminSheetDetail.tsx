@@ -637,7 +637,7 @@ const GroupBlock = ({
                   </td>
                 );
               })}
-              <td className="border-t border-border p-1" />
+              
             </tr>
           ))}
         </tbody>
