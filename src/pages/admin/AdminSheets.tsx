@@ -319,7 +319,7 @@ const AdminSheets = () => {
                   </div>
                 </div>
               </Link>
-              <div className="flex flex-col items-center gap-1">
+              <div className="flex items-center gap-1">
                 <Button
                   variant="ghost"
                   size="icon"
