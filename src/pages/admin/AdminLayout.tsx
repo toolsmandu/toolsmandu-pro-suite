@@ -222,21 +222,21 @@ const AdminLayout = () => {
                     </SidebarMenuItem>
                   ))}
 
-                  {/* Family Sheets link */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <NavLink to="/admin/family-sheets" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
-                        <FileBarChart className="mr-2 h-4 w-4" />
-                        <span>Family Sheets</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
                   {/* Sheets link */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <NavLink to="/admin/sheets" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
-                        <FileBarChart className="mr-2 h-4 w-4" />
+                        <Table className="mr-2 h-4 w-4" />
                         <span>Sheets</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  {/* Family Sheets link */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/admin/family-sheets" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                        <Network className="mr-2 h-4 w-4" />
+                        <span>Family Sheets</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
