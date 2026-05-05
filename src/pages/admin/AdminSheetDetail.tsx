@@ -434,7 +434,7 @@ const AdminSheetDetail = () => {
           </Button>
           <Button onClick={addRow} disabled={loading}>
             <Plus className="h-4 w-4" />
-            Add Row
+            Add Account
           </Button>
         </div>
       </div>
