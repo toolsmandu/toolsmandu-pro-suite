@@ -1327,14 +1327,14 @@ const AdminOrders = () => {
               )}
 
               {newActiveFields.length > 0 ? (
-                <div className="flex gap-3 h-full items-end">
-                  <div className="flex flex-col flex-1 min-h-0">
+                <div className="flex gap-3 h-full items-end md:col-span-2 w-full">
+                  <div className="flex flex-col flex-1 min-w-0">
                     <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
                     <Textarea
                       placeholder="Optional notes about this order (admin-only)"
                       value={newRemarks}
                       onChange={e => setNewRemarks(e.target.value)}
-                      className="flex-1 min-h-10 resize-y"
+                      className="flex-1 min-h-10 resize-y w-full"
                     />
                   </div>
                   {newVariationLinkedToSheet && (
@@ -1361,7 +1361,7 @@ const AdminOrders = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex gap-3 items-end">
+                <div className="flex gap-3 items-end md:col-span-12 w-full">
                   <div className="flex-1">
                     <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">Remarks</Label>
                     <Textarea
