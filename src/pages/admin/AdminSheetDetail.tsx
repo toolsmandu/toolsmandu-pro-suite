@@ -99,7 +99,7 @@ const AdminSheetDetail = () => {
   const { id = "" } = useParams();
   const [sheet, setSheet] = useState<Sheet | null>(null);
   // groups: each group has 2 master rows + 4 normal rows
-  const [groups, setGroups] = useState<{ master: [MasterRow, MasterRow]; normal: Row[] }[]>([]);
+  const [groups, setGroups] = useState<{ master: MasterRow[]; normal: Row[] }[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingGroups, setSavingGroups] = useState<Set<number>>(new Set());
   const [dirtyGroups, setDirtyGroups] = useState<Set<number>>(new Set());
@@ -107,6 +107,8 @@ const AdminSheetDetail = () => {
   const showEmpty = true;
   const [search, setSearch] = useState("");
   const [showExpiredOnly, setShowExpiredOnly] = useState(false);
+  const [masterCount, setMasterCount] = useState(2);
+  const [normalCount, setNormalCount] = useState(4);
   const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const groupsRef = useRef(groups);
