@@ -237,7 +237,6 @@ const AdminLayout = () => {
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
                               <NavLink to="/admin/sheets" end className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
-                                <FileBarChart className="mr-2 h-3 w-3" />
                                 <span>All Sheets</span>
                               </NavLink>
                             </SidebarMenuSubButton>
