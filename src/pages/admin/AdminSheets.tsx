@@ -294,7 +294,7 @@ const AdminSheets = () => {
         <div className="border border-border rounded-lg bg-background overflow-hidden">
           <div className="grid grid-cols-[1fr_auto] gap-4 px-4 py-2 bg-muted/40 border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <div>Product Name</div>
-            <div className="text-right">Actions</div>
+            <div className="text-center">Actions</div>
           </div>
           <div className="divide-y divide-border">
             {sheets.map((sheet) => (
