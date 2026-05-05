@@ -69,6 +69,7 @@ const MASTER_COLUMNS: { key: keyof Omit<MasterRow, "id">; label: string; type?: 
 ];
 
 const DEFAULT_WIDTHS: Record<string, number> = {
+  index: 70,
   orderId: 140,
   purchaseDate: 160,
   email: 220,
@@ -363,7 +364,7 @@ const AdminSheetDetail = () => {
     [],
   );
   const masterCols = useMemo(
-    () => [...MASTER_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
+    () => [{ key: "index", label: "Index" }, ...MASTER_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
     [],
   );
 
@@ -442,7 +443,7 @@ const AdminSheetDetail = () => {
       return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const lines: string[] = [];
-    lines.push(["Group", "Section", ...MASTER_COLUMNS.map((c) => c.label), ...NORMAL_COLUMNS.map((c) => c.label)].map(csvEscape).join(","));
+    lines.push(["Index", "Section", ...MASTER_COLUMNS.map((c) => c.label), ...NORMAL_COLUMNS.map((c) => c.label)].map(csvEscape).join(","));
     groups.forEach((g, gi) => {
       g.master.forEach((m) => {
         const row = [
@@ -669,6 +670,11 @@ const GroupBlock = ({
             const m = group.master[ri];
             return (
               <tr key={ri} className="bg-primary/5">
+                {ri === firstActionIdx ? (
+                  <td rowSpan={visibleMasterIndices.length} className="p-1 align-middle border-r border-border border-t text-center font-semibold text-foreground">
+                    {gi + 1}
+                  </td>
+                ) : null}
                 {MASTER_COLUMNS.map((c) => (
                   <td key={c.key} className="p-1 align-top border-r border-border border-t">
                     {c.key === "expiry_date" ? (
