@@ -239,7 +239,8 @@ const AdminOrders = () => {
 
   const updateOrder = useMutation({
     mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId, refundAmount }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string; refundAmount: number | null }) => {
-      await supabase.from('orders').update({ total, status: status as any, refund_amount: refundAmount } as any).eq('id', id);
+      const { error: updateOrderErr } = await supabase.from('orders').update({ total, status: status as any, refund_amount: refundAmount } as any).eq('id', id);
+      if (updateOrderErr) throw updateOrderErr;
 
       if (deletedItemIds.length > 0) {
         await supabase.from('order_items').delete().in('id', deletedItemIds);
@@ -546,8 +547,9 @@ const AdminOrders = () => {
 
       toast.success(`Order ${selectedOrder.order_number} Edited Successfully`);
       setSelectedOrder(null);
-    } catch {
-      toast.error('Failed to update order');
+    } catch (err: any) {
+      const msg = err?.message || '';
+      toast.error(msg.includes('Family Sheet Limit is Full') ? msg : (msg || 'Failed to update order'));
     } finally {
       setSending(false);
     }
@@ -653,6 +655,35 @@ const AdminOrders = () => {
       //  - family-sharing variant → completed
       //  - regular variant → processing + send only new-order email
       const finalStatus: 'processing' | 'completed' = isFamilySharing ? 'completed' : 'processing';
+
+      // Pre-check: if variation is linked to a family sheet, ensure last manager group has free slot
+      if (newVariationId) {
+        const { data: links } = await supabase
+          .from('sheet_variant_links')
+          .select('sheet_id')
+          .eq('variation_id', newVariationId);
+        for (const l of links || []) {
+          const { data: sh } = await supabase
+            .from('sheets')
+            .select('name, master_row_count, normal_row_count, data')
+            .eq('id', (l as any).sheet_id)
+            .maybeSingle();
+          if (!sh) continue;
+          if ((sh.master_row_count || 0) <= 0) continue;
+          const arr: any[] = Array.isArray(sh.data) ? (sh.data as any[]) : [];
+          const normals = arr.filter((r) => (r?.kind || 'normal') === 'normal');
+          const nCount = Math.max(sh.normal_row_count || 1, 1);
+          if (normals.length < nCount) {
+            throw new Error(`Family Sheet Limit is Full for "${sh.name}". Please manage a new account to create new order.`);
+          }
+          const lastStart = Math.floor((normals.length - 1) / nCount) * nCount;
+          const lastGroup = normals.slice(lastStart);
+          const hasEmpty = lastGroup.some((r) => !((r?.orderId || '').toString().trim()));
+          if (!hasEmpty) {
+            throw new Error(`Family Sheet Limit is Full for "${sh.name}". Please manage a new account to create new order.`);
+          }
+        }
+      }
 
       const { data: order, error: orderError } = await supabase.from('orders').insert({
         user_id: selectedCustomer.user_id,
