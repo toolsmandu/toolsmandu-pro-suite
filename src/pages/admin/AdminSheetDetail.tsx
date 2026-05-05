@@ -364,7 +364,7 @@ const AdminSheetDetail = () => {
     [],
   );
   const masterCols = useMemo(
-    () => [...MASTER_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
+    () => [{ key: "index", label: "Index" }, ...MASTER_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
     [],
   );
 
