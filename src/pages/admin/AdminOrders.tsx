@@ -547,8 +547,9 @@ const AdminOrders = () => {
 
       toast.success(`Order ${selectedOrder.order_number} Edited Successfully`);
       setSelectedOrder(null);
-    } catch {
-      toast.error('Failed to update order');
+    } catch (err: any) {
+      const msg = err?.message || '';
+      toast.error(msg.includes('Family Sheet Limit is Full') ? msg : (msg || 'Failed to update order'));
     } finally {
       setSending(false);
     }
