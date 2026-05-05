@@ -121,6 +121,13 @@ const AdminSheetDetail = () => {
   useEffect(() => { groupsRef.current = groups; }, [groups]);
   const [sheetUuid, setSheetUuid] = useState<string>("");
 
+  // Linked product variations
+  type VariantOpt = { id: string; name: string; product_id: string; product_name: string };
+  const [allVariants, setAllVariants] = useState<VariantOpt[]>([]);
+  const [linkedVariantIds, setLinkedVariantIds] = useState<Set<string>>(new Set());
+  const [productSearch, setProductSearch] = useState("");
+  const [savingLinks, setSavingLinks] = useState(false);
+
   const isUuid = (v: string) =>
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 
