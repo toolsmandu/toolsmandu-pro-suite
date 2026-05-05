@@ -436,6 +436,55 @@ const AdminSheetDetail = () => {
 
   const unsavedCount = dirtyGroups.size;
 
+  const exportCSV = () => {
+    const csvEscape = (v: string) => {
+      const s = (v ?? "").toString();
+      return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const lines: string[] = [];
+    lines.push(["Group", "Section", ...MASTER_COLUMNS.map((c) => c.label), ...NORMAL_COLUMNS.map((c) => c.label)].map(csvEscape).join(","));
+    groups.forEach((g, gi) => {
+      g.master.forEach((m) => {
+        const row = [
+          String(gi + 1),
+          "Family Manager",
+          m.account,
+          m.password,
+          m.expiry_date ? formatPurchaseDate(m.expiry_date) : "",
+          m.remarks,
+          ...NORMAL_COLUMNS.map(() => ""),
+        ];
+        lines.push(row.map(csvEscape).join(","));
+      });
+      g.normal.forEach((r) => {
+        const row = [
+          String(gi + 1),
+          "Member",
+          ...MASTER_COLUMNS.map(() => ""),
+          r.orderId,
+          r.purchaseDate ? formatPurchaseDate(r.purchaseDate) : "",
+          r.email,
+          r.phone,
+          r.period,
+          r.remaining,
+          r.remarks,
+        ];
+        lines.push(row.map(csvEscape).join(","));
+      });
+    });
+    const csv = lines.join("\n");
+    const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const safeName = (sheet?.name || "sheet").replace(/[^a-z0-9-_]+/gi, "_");
+    a.href = url;
+    a.download = `${safeName}_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
