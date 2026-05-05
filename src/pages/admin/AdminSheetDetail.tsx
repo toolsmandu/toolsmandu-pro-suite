@@ -232,6 +232,78 @@ const AdminSheetDetail = () => {
     return () => { cancelled = true; };
   }, [id]);
 
+  // Load all product variations and existing sheet links
+  useEffect(() => {
+    if (!sheetUuid) return;
+    let cancelled = false;
+    (async () => {
+      const [{ data: vars }, { data: links }] = await Promise.all([
+        supabase
+          .from("product_variations")
+          .select("id, name, product_id, products(name)")
+          .order("name"),
+        supabase
+          .from("sheet_variant_links")
+          .select("variation_id")
+          .eq("sheet_id", sheetUuid),
+      ]);
+      if (cancelled) return;
+      const opts: VariantOpt[] = (vars || []).map((v: any) => ({
+        id: v.id,
+        name: v.name,
+        product_id: v.product_id,
+        product_name: v.products?.name || "",
+      }));
+      setAllVariants(opts);
+      setLinkedVariantIds(new Set((links || []).map((l: any) => l.variation_id)));
+    })();
+    return () => { cancelled = true; };
+  }, [sheetUuid]);
+
+  const toggleLinkedVariant = (variantId: string) => {
+    setLinkedVariantIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(variantId)) next.delete(variantId);
+      else next.add(variantId);
+      return next;
+    });
+  };
+
+  const saveLinkedVariants = async () => {
+    if (!sheetUuid) return;
+    setSavingLinks(true);
+    try {
+      const { data: existing } = await supabase
+        .from("sheet_variant_links")
+        .select("variation_id")
+        .eq("sheet_id", sheetUuid);
+      const existingSet = new Set((existing || []).map((r: any) => r.variation_id));
+      const targetSet = linkedVariantIds;
+      const toAdd = [...targetSet].filter((v) => !existingSet.has(v));
+      const toRemove = [...existingSet].filter((v) => !targetSet.has(v));
+      if (toAdd.length > 0) {
+        const { error: insErr } = await supabase
+          .from("sheet_variant_links")
+          .insert(toAdd.map((variation_id) => ({ sheet_id: sheetUuid, variation_id })));
+        if (insErr) throw insErr;
+      }
+      if (toRemove.length > 0) {
+        const { error: delErr } = await supabase
+          .from("sheet_variant_links")
+          .delete()
+          .eq("sheet_id", sheetUuid)
+          .in("variation_id", toRemove);
+        if (delErr) throw delErr;
+      }
+      toast({ title: "Linked products saved" });
+    } catch (e: any) {
+      toast({ title: "Save failed", description: e?.message, variant: "destructive" });
+    } finally {
+      setSavingLinks(false);
+    }
+  };
+
+
   const persistNormalToDb = async (gs: typeof groups) => {
     const flatNormals = gs.flatMap((g) => g.normal);
     const { error } = await supabase
