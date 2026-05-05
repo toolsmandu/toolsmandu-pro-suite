@@ -144,8 +144,8 @@ const AdminSheetDetail = () => {
       setSheet({ id: data.id, name: data.name });
       setSheetUuid(data.id);
 
-      const mCount = (data as any).master_row_count ?? 2;
-      const nCount = (data as any).normal_row_count ?? 4;
+      const mCount = isSimple ? 0 : ((data as any).master_row_count ?? 2);
+      const nCount = isSimple ? 1 : ((data as any).normal_row_count ?? 4);
       setMasterCount(mCount);
       setNormalCount(nCount);
       setDraftMasterCount(mCount);
