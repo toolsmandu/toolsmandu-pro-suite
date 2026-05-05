@@ -105,6 +105,7 @@ const AdminSheetDetail = () => {
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
   const showEmpty = true;
   const [search, setSearch] = useState("");
+  const [showExpiredOnly, setShowExpiredOnly] = useState(false);
   const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const groupsRef = useRef(groups);
@@ -363,6 +364,13 @@ const AdminSheetDetail = () => {
           const anyNormal = g.normal.some((r) => !!(r.email || r.phone));
           if (!anyMaster && !anyNormal) return false;
         }
+        if (showExpiredOnly) {
+          const hasNegative = g.normal.some((r) => {
+            const v = parseInt((r.remaining || "").toString().trim(), 10);
+            return !isNaN(v) && v < 0;
+          });
+          if (!hasNegative) return false;
+        }
         if (!q) return true;
         const matchAccount = g.master.some((m) => (m.account || "").toLowerCase().includes(q));
         const matchEmail = g.normal.some((r) => (r.email || "").toLowerCase().includes(q));
@@ -372,7 +380,7 @@ const AdminSheetDetail = () => {
         });
         return matchAccount || matchEmail || matchPhone;
       });
-  }, [groups, showEmpty, search]);
+  }, [groups, showEmpty, search, showExpiredOnly]);
 
   const totalRows = groups.length * 6;
   const unsavedCount = dirtyGroups.size;
@@ -408,6 +416,13 @@ const AdminSheetDetail = () => {
               className="pl-8 h-9 w-64"
             />
           </div>
+          <Button
+            variant={showExpiredOnly ? "default" : "outline"}
+            onClick={() => setShowExpiredOnly((v) => !v)}
+            disabled={loading}
+          >
+            {showExpiredOnly ? "Show All Accounts" : "Show Expired Accounts"}
+          </Button>
           <Button onClick={addRow} disabled={loading}>
             <Plus className="h-4 w-4" />
             Add Row
