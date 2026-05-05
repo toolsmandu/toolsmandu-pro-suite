@@ -509,7 +509,7 @@ const GroupBlock = ({
   gi, group, widths, startResize, normalCols, masterCols,
   showPassword, setShowPassword, dirty, saving, showEmpty, onUpdateMaster, onUpdateNormal, onSave, onDelete,
 }: any) => {
-  let visibleMasterIndices = [0, 1].filter((ri) => showEmpty || !!group.master[ri].account);
+  let visibleMasterIndices = group.master.map((_: any, i: number) => i).filter((ri: number) => showEmpty || !!group.master[ri].account);
   const visibleNormal = group.normal
     .map((row: Row, idx: number) => ({ row, idx }))
     .filter(({ row }) => showEmpty || !!(row.email || row.phone));
