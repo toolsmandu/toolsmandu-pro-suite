@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff, Search as SearchIcon, CalendarX2, Settings as SettingsIcon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,6 +97,9 @@ const emptyMaster = (): MasterRow => ({ account: "", password: "", expiry_date: 
 
 const AdminSheetDetail = () => {
   const { id = "" } = useParams();
+  const location = useLocation();
+  const isSimple = location.pathname.startsWith("/admin/sheets");
+  const backPath = isSimple ? "/admin/sheets" : "/admin/family-sheets";
   const [sheet, setSheet] = useState<Sheet | null>(null);
   // groups: each group has 2 master rows + 4 normal rows
   const [groups, setGroups] = useState<{ master: MasterRow[]; normal: Row[] }[]>([]);
@@ -293,8 +296,8 @@ const AdminSheetDetail = () => {
     setGroups((prev) => [
       ...prev,
       {
-        master: Array.from({ length: masterCount }, () => emptyMaster()),
-        normal: Array.from({ length: normalCount }, () => emptyNormal()),
+        master: Array.from({ length: isSimple ? 0 : masterCount }, () => emptyMaster()),
+        normal: Array.from({ length: isSimple ? 1 : normalCount }, () => emptyNormal()),
       },
     ]);
     markDirty(groupsRef.current.length);
@@ -503,7 +506,7 @@ const AdminSheetDetail = () => {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="icon" asChild>
-            <Link to="/admin/family-sheets" aria-label="Back to family sheets">
+            <Link to={backPath} aria-label="Back to sheets">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -550,16 +553,18 @@ const AdminSheetDetail = () => {
             <PopoverContent align="end" className="w-72">
               <div className="space-y-3">
                 <div className="font-semibold text-sm">Row Settings</div>
-                <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Family Manager rows per group</label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={10}
-                    value={draftMasterCount}
-                    onChange={(e) => setDraftMasterCount(Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1)))}
-                  />
-                </div>
+                {!isSimple && (
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">Family Manager rows per group</label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={10}
+                      value={draftMasterCount}
+                      onChange={(e) => setDraftMasterCount(Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1)))}
+                    />
+                  </div>
+                )}
                 <div className="space-y-1">
                   <label className="text-xs text-muted-foreground">Member rows per group</label>
                   <Input
@@ -623,6 +628,7 @@ const AdminSheetDetail = () => {
               onUpdateNormal={updateNormal}
               onSave={() => saveGroup(gi)}
               onDelete={() => deleteGroup(gi)}
+              isSimple={isSimple}
             />
           ))}
         </div>
@@ -633,7 +639,7 @@ const AdminSheetDetail = () => {
 
 const GroupBlock = ({
   gi, group, widths, startResize, normalCols, masterCols,
-  showPassword, setShowPassword, dirty, saving, showEmpty, onUpdateMaster, onUpdateNormal, onSave, onDelete,
+  showPassword, setShowPassword, dirty, saving, showEmpty, onUpdateMaster, onUpdateNormal, onSave, onDelete, isSimple,
 }: any) => {
   let visibleMasterIndices = group.master.map((_: any, i: number) => i).filter((ri: number) => showEmpty || !!group.master[ri].account);
   const visibleNormal = group.normal
@@ -641,14 +647,16 @@ const GroupBlock = ({
     .filter(({ row }) => showEmpty || !!(row.email || row.phone));
   // Ensure the action buttons (save/delete) remain accessible: if all master rows are
   // hidden but normal rows are visible, force-show master row 0.
-  if (visibleMasterIndices.length === 0 && visibleNormal.length > 0) {
+  if (!isSimple && visibleMasterIndices.length === 0 && visibleNormal.length > 0) {
     visibleMasterIndices = [0];
   }
   const firstActionIdx = visibleMasterIndices[0];
-  if (visibleMasterIndices.length === 0 && visibleNormal.length === 0) return null;
+  if (!isSimple && visibleMasterIndices.length === 0 && visibleNormal.length === 0) return null;
+  if (isSimple && visibleNormal.length === 0) return null;
   return (
     <div className="border border-border rounded-lg bg-muted/30 overflow-x-auto">
       {/* Master section */}
+      {!isSimple && (
       <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
         <colgroup>
           {masterCols.map((c: any) => (
@@ -738,6 +746,7 @@ const GroupBlock = ({
           })}
         </tbody>
       </table>
+      )}
 
       {/* Normal section */}
       <table className="w-full text-sm border-t-2 border-border" style={{ tableLayout: "fixed" }}>
@@ -822,6 +831,18 @@ const GroupBlock = ({
           ))}
         </tbody>
       </table>
+      {isSimple && (
+        <div className="flex items-center justify-end gap-1 p-2 border-t border-border bg-muted/40">
+          {(dirty || saving) && (
+            <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title="Save changes">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 text-primary" />}
+            </Button>
+          )}
+          <Button variant="ghost" size="icon" onClick={onDelete} aria-label="Delete row">
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

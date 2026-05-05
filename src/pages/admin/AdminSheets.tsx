@@ -24,7 +24,23 @@ type Sheet = {
   created_at: string;
 };
 
-const AdminSheets = () => {
+type AdminSheetsProps = {
+  kind?: "family" | "simple";
+  title?: string;
+  description?: string;
+  newButtonLabel?: string;
+  dialogTitle?: string;
+  basePath?: string;
+};
+
+const AdminSheets = ({
+  kind = "family",
+  title = "Family Sheets",
+  description = "Create and manage your family sheets.",
+  newButtonLabel = "Add New Family Sheet",
+  dialogTitle = "Add New Family Sheet",
+  basePath = "/admin/family-sheets",
+}: AdminSheetsProps = {}) => {
   const [sheets, setSheets] = useState<Sheet[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -41,7 +57,8 @@ const AdminSheets = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("sheets")
-      .select("id, name, slug, image_url, created_at")
+      .select("id, name, slug, image_url, created_at, kind")
+      .eq("kind", kind)
       .order("created_at", { ascending: false });
     if (error) {
       toast({ title: "Failed to load sheets", description: error.message, variant: "destructive" });
@@ -53,7 +70,8 @@ const AdminSheets = () => {
 
   useEffect(() => {
     load();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kind]);
 
   const uploadImage = async (file: File): Promise<string | null> => {
     setUploading(true);
@@ -95,7 +113,7 @@ const AdminSheets = () => {
     const { data: userRes } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from("sheets")
-      .insert({ name: trimmed, data: [], image_url: imageUrl, created_by: userRes.user?.id })
+      .insert({ name: trimmed, data: [], image_url: imageUrl, kind, created_by: userRes.user?.id })
       .select("id, name, slug, image_url, created_at")
       .single();
     setCreating(false);
@@ -160,21 +178,21 @@ const AdminSheets = () => {
       />
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Family Sheets</h1>
+          <h1 className="text-2xl font-bold text-foreground">{title}</h1>
           <p className="text-sm text-muted-foreground">
-            Create and manage your family sheets.
+            {description}
           </p>
         </div>
         <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetCreate(); }}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4" />
-              Add New Family Sheet
+              {newButtonLabel}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Family Sheet</DialogTitle>
+              <DialogTitle>{dialogTitle}</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
               <div className="space-y-2">
@@ -288,7 +306,7 @@ const AdminSheets = () => {
         </div>
       ) : sheets.length === 0 ? (
         <div className="border border-border rounded-lg p-8 text-center text-muted-foreground bg-background">
-          No sheets yet. Click "Add New Family Sheet" to create one.
+          No sheets yet. Click "{newButtonLabel}" to create one.
         </div>
       ) : (
         <div className="border border-border rounded-lg bg-background overflow-hidden">
@@ -303,7 +321,7 @@ const AdminSheets = () => {
                 className="grid grid-cols-[1fr_auto] items-center gap-4 px-4 py-3 hover:bg-accent/40 transition-colors"
               >
                 <Link
-                  to={`/admin/family-sheets/${sheet.slug || sheet.id}`}
+                  to={`${basePath}/${sheet.slug || sheet.id}`}
                   className="flex items-center gap-3 min-w-0"
                 >
                   {sheet.image_url ? (
@@ -326,7 +344,7 @@ const AdminSheets = () => {
                 </Link>
                 <div className="flex items-center gap-1">
                   <Button asChild variant="outline" size="sm">
-                    <Link to={`/admin/family-sheets/${sheet.slug || sheet.id}`}>
+                    <Link to={`${basePath}/${sheet.slug || sheet.id}`}>
                       Open Sheet
                     </Link>
                   </Button>
