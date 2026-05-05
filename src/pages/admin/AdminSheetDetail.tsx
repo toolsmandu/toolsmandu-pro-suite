@@ -417,7 +417,27 @@ const AdminSheetDetail = () => {
       });
   }, [groups, showEmpty, search, showExpiredOnly]);
 
-  const totalRows = groups.length * 6;
+  const totalRows = groups.reduce((sum, g) => sum + g.master.length + g.normal.length, 0);
+
+  // Apply size changes to existing groups (resize master/normal arrays)
+  const applySizes = (newMaster: number, newNormal: number) => {
+    setGroups((prev) => prev.map((g) => {
+      const master = [...g.master];
+      while (master.length < newMaster) master.push(emptyMaster());
+      while (master.length > newMaster) master.pop();
+      const normal = [...g.normal];
+      while (normal.length < newNormal) normal.push(emptyNormal());
+      while (normal.length > newNormal) normal.pop();
+      return { master, normal };
+    }));
+    setMasterCount(newMaster);
+    setNormalCount(newNormal);
+    try {
+      localStorage.setItem(sizesKey(id), JSON.stringify({ masterCount: newMaster, normalCount: newNormal }));
+    } catch {}
+    // Mark all groups dirty so user saves
+    setDirtyGroups(new Set(groups.map((_, i) => i)));
+  };
   const unsavedCount = dirtyGroups.size;
 
   return (
