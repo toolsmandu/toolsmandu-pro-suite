@@ -321,7 +321,7 @@ const AdminSheets = ({
                 className="grid grid-cols-[1fr_auto] items-center gap-4 px-4 py-3 hover:bg-accent/40 transition-colors"
               >
                 <Link
-                  to={`/admin/family-sheets/${sheet.slug || sheet.id}`}
+                  to={`${basePath}/${sheet.slug || sheet.id}`}
                   className="flex items-center gap-3 min-w-0"
                 >
                   {sheet.image_url ? (
@@ -344,7 +344,7 @@ const AdminSheets = ({
                 </Link>
                 <div className="flex items-center gap-1">
                   <Button asChild variant="outline" size="sm">
-                    <Link to={`/admin/family-sheets/${sheet.slug || sheet.id}`}>
+                    <Link to={`${basePath}/${sheet.slug || sheet.id}`}>
                       Open Sheet
                     </Link>
                   </Button>
