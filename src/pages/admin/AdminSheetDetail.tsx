@@ -260,7 +260,7 @@ const AdminSheetDetail = () => {
   const updateMaster = (gi: number, ri: number, key: keyof MasterRow, value: string) => {
     setGroups((prev) => prev.map((g, i) => {
       if (i !== gi) return g;
-      const master = [...g.master] as [MasterRow, MasterRow];
+      const master = [...g.master];
       master[ri] = { ...master[ri], [key]: value };
       return { ...g, master };
     }));
