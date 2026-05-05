@@ -906,6 +906,18 @@ const AdminOrders = () => {
     },
   });
 
+  const { data: newVariationSheetLinks } = useQuery({
+    queryKey: ['add-order-variation-sheet-links', newVariationId],
+    enabled: !!newVariationId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('sheet_variant_links')
+        .select('sheet_id')
+        .eq('variation_id', newVariationId);
+      return data || [];
+    },
+  });
+  const newVariationLinkedToSheet = (newVariationSheetLinks?.length || 0) > 0;
   const newActiveFields: InputFieldDef[] = useVariationFields
     ? (newVariationFields || [])
     : (newProductFields || []);
