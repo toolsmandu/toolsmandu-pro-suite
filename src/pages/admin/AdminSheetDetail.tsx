@@ -443,7 +443,7 @@ const AdminSheetDetail = () => {
       return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const lines: string[] = [];
-    lines.push(["Group", "Section", ...MASTER_COLUMNS.map((c) => c.label), ...NORMAL_COLUMNS.map((c) => c.label)].map(csvEscape).join(","));
+    lines.push(["Index", "Section", ...MASTER_COLUMNS.map((c) => c.label), ...NORMAL_COLUMNS.map((c) => c.label)].map(csvEscape).join(","));
     groups.forEach((g, gi) => {
       g.master.forEach((m) => {
         const row = [
