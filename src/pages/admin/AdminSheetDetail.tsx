@@ -670,6 +670,11 @@ const GroupBlock = ({
             const m = group.master[ri];
             return (
               <tr key={ri} className="bg-primary/5">
+                {ri === firstActionIdx ? (
+                  <td rowSpan={visibleMasterIndices.length} className="p-1 align-middle border-r border-border border-t text-center font-semibold text-foreground">
+                    {gi + 1}
+                  </td>
+                ) : null}
                 {MASTER_COLUMNS.map((c) => (
                   <td key={c.key} className="p-1 align-top border-r border-border border-t">
                     {c.key === "expiry_date" ? (
