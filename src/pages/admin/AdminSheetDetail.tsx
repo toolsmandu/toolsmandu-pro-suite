@@ -528,20 +528,25 @@ const AdminSheetDetail = () => {
       return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const lines: string[] = [];
-    lines.push(["Index", "Section", ...MASTER_COLUMNS.map((c) => c.label), ...NORMAL_COLUMNS.map((c) => c.label)].map(csvEscape).join(","));
+    const headerCols = isSimple
+      ? ["Index", ...NORMAL_COLUMNS.map((c) => c.label)]
+      : ["Index", "Section", ...MASTER_COLUMNS.map((c) => c.label), ...NORMAL_COLUMNS.map((c) => c.label)];
+    lines.push(headerCols.map(csvEscape).join(","));
     groups.forEach((g, gi) => {
-      g.master.forEach((m) => {
-        const row = [
-          String(gi + 1),
-          "Family Manager",
-          m.account,
-          m.password,
-          m.expiry_date ? formatPurchaseDate(m.expiry_date) : "",
-          m.remarks,
-          ...NORMAL_COLUMNS.map(() => ""),
-        ];
-        lines.push(row.map(csvEscape).join(","));
-      });
+      if (!isSimple) {
+        g.master.forEach((m) => {
+          const row = [
+            String(gi + 1),
+            "Family Manager",
+            m.account,
+            m.password,
+            m.expiry_date ? formatPurchaseDate(m.expiry_date) : "",
+            m.remarks,
+            ...NORMAL_COLUMNS.map(() => ""),
+          ];
+          lines.push(row.map(csvEscape).join(","));
+        });
+      }
       g.normal.forEach((r) => {
         let remaining = r.remaining;
         const periodNum = parseInt(r.period, 10);
@@ -555,18 +560,29 @@ const AdminSheetDetail = () => {
             remaining = String(Math.ceil((expiry.getTime() - today.getTime()) / 86400000));
           }
         }
-        const row = [
-          String(gi + 1),
-          "Member",
-          ...MASTER_COLUMNS.map(() => ""),
-          r.orderId,
-          r.purchaseDate ? formatPurchaseDate(r.purchaseDate) : "",
-          r.email,
-          r.phone,
-          r.period,
-          remaining,
-          r.remarks,
-        ];
+        const row = isSimple
+          ? [
+              String(gi + 1),
+              r.orderId,
+              r.purchaseDate ? formatPurchaseDate(r.purchaseDate) : "",
+              r.email,
+              r.phone,
+              r.period,
+              remaining,
+              r.remarks,
+            ]
+          : [
+              String(gi + 1),
+              "Member",
+              ...MASTER_COLUMNS.map(() => ""),
+              r.orderId,
+              r.purchaseDate ? formatPurchaseDate(r.purchaseDate) : "",
+              r.email,
+              r.phone,
+              r.period,
+              remaining,
+              r.remarks,
+            ];
         lines.push(row.map(csvEscape).join(","));
       });
     });
