@@ -1598,6 +1598,8 @@ const AdminOrders = () => {
                     <span className="text-muted-foreground">Payment Status:</span>{' '}
                     {selectedOrder?.payment_status === 'completed' ? (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success/20 text-success">Success</span>
+                    ) : !selectedOrder?.payment_pidx ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground">Manual</span>
                     ) : (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-destructive/20 text-destructive">
                         {selectedOrder?.payment_status === 'failed' ? 'Failed' : selectedOrder?.payment_status === 'expired' ? 'Failed' : 'Cancelled'}
@@ -1712,8 +1714,8 @@ const AdminOrders = () => {
                 </div>
                 <div>
                   <Label htmlFor="edit-status" className="text-xs text-muted-foreground">Status</Label>
-                  <Select value={editStatus} onValueChange={setEditStatus}>
-                    <SelectTrigger id="edit-status"><SelectValue /></SelectTrigger>
+                   <Select value={editStatus} onValueChange={setEditStatus}>
+                    <SelectTrigger id="edit-status" className="capitalize"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {['pending', 'processing', 'on_hold', 'completed', 'cancelled', 'refunded'].map((s) => (
                         <SelectItem key={s} value={s} className="capitalize">{s === 'on_hold' ? 'On Hold' : s}</SelectItem>
