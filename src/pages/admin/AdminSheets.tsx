@@ -370,7 +370,7 @@ const AdminSheets = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(sheet.id)}
+                    onClick={() => setDeleteTarget(sheet)}
                     aria-label="Delete sheet"
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
@@ -381,6 +381,31 @@ const AdminSheets = ({
           </div>
         </div>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this sheet?</AlertDialogTitle>
+            <AlertDialogDescription>
+              "{deleteTarget?.name}" will be permanently deleted. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (deleteTarget) {
+                  await handleDelete(deleteTarget.id);
+                  setDeleteTarget(null);
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
