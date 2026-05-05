@@ -146,7 +146,65 @@ const AdminOrders = () => {
     enabled: !!selectedOrder,
   });
 
-  // Family-sharing template note for the products/variations in this order
+  // Compute sheet-sync status per order: 'sheet' | 'family' | 'error' | null
+  const { data: sheetSyncMap } = useQuery({
+    queryKey: ['orders-sheet-sync', orders?.length],
+    enabled: !!orders && orders.length > 0,
+    queryFn: async () => {
+      const variationIds = Array.from(new Set(
+        (orders || []).flatMap((o: any) => (o.order_items || []).map((i: any) => i.variation_id).filter(Boolean))
+      ));
+      if (variationIds.length === 0) return {} as Record<string, 'sheet' | 'family' | 'error'>;
+      const { data: links } = await supabase
+        .from('sheet_variant_links')
+        .select('variation_id, sheet_id')
+        .in('variation_id', variationIds);
+      const sheetIds = Array.from(new Set((links || []).map((l: any) => l.sheet_id)));
+      if (sheetIds.length === 0) return {};
+      const { data: sheets } = await supabase
+        .from('sheets')
+        .select('id, kind, data')
+        .in('id', sheetIds);
+      // variation_id -> [{sheet_id, kind, orderIds:Set}]
+      const sheetById = new Map<string, { kind: string; orderIds: Set<string> }>();
+      (sheets || []).forEach((s: any) => {
+        const ids = new Set<string>();
+        (Array.isArray(s.data) ? s.data : []).forEach((r: any) => {
+          if (r?.orderId) ids.add(String(r.orderId));
+        });
+        sheetById.set(s.id, { kind: s.kind || 'family', orderIds: ids });
+      });
+      const variantToSheets = new Map<string, string[]>();
+      (links || []).forEach((l: any) => {
+        const arr = variantToSheets.get(l.variation_id) || [];
+        arr.push(l.sheet_id);
+        variantToSheets.set(l.variation_id, arr);
+      });
+      const result: Record<string, 'sheet' | 'family' | 'error'> = {};
+      (orders || []).forEach((o: any) => {
+        if (o.manual_sheet_link) return;
+        let bestKind: 'sheet' | 'family' | null = null;
+        let hasLink = false;
+        let synced = false;
+        for (const it of (o.order_items || [])) {
+          const sids = variantToSheets.get(it.variation_id) || [];
+          for (const sid of sids) {
+            hasLink = true;
+            const s = sheetById.get(sid);
+            if (!s) continue;
+            if (s.orderIds.has(String(o.order_number))) {
+              synced = true;
+              const k = s.kind === 'family' ? 'family' : 'sheet';
+              if (!bestKind) bestKind = k;
+            }
+          }
+        }
+        if (synced && bestKind) result[o.id] = bestKind;
+        else if (hasLink && !synced) result[o.id] = 'error';
+      });
+      return result;
+    },
+  });
   const { data: familySharingInfo } = useQuery({
     queryKey: ['family-sharing-info-for-order', selectedOrder?.id],
     queryFn: async () => {
