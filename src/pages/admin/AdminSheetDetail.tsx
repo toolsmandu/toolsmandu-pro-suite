@@ -344,7 +344,7 @@ const AdminSheetDetail = () => {
   };
 
   const normalCols = useMemo(
-    () => [...NORMAL_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })), { key: "actions", label: "Actions" }],
+    () => NORMAL_COLUMNS.map((c) => ({ key: c.key as string, label: c.label })),
     [],
   );
   const masterCols = useMemo(
@@ -544,9 +544,11 @@ const GroupBlock = ({
                 <td className="text-right border-t border-border p-1">
                   {ri === firstActionIdx && (
                     <div className="flex items-center justify-end gap-1">
-                      <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title={dirty ? "Save changes" : "No changes"}>
-                        {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : dirty ? <Save className="h-4 w-4 text-primary" /> : <Check className="h-4 w-4 text-muted-foreground" />}
-                      </Button>
+                      {(dirty || saving) && (
+                        <Button variant="ghost" size="icon" onClick={onSave} disabled={!dirty || saving} aria-label="Save group" title="Save changes">
+                          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 text-primary" />}
+                        </Button>
+                      )}
                       <Button variant="ghost" size="icon" onClick={onDelete} aria-label="Delete group">
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -637,7 +639,7 @@ const GroupBlock = ({
                   </td>
                 );
               })}
-              <td className="border-t border-border p-1" />
+              
             </tr>
           ))}
         </tbody>
