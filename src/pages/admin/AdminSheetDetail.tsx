@@ -523,6 +523,10 @@ const AdminSheetDetail = () => {
             </PopoverContent>
 
           </Popover>
+          <Button variant="outline" onClick={exportCSV} disabled={loading} title="Export to CSV">
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
         </div>
       </div>
 
