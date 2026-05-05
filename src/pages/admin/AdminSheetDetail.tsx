@@ -745,6 +745,23 @@ const AdminSheetDetail = () => {
         </div>
       </div>
 
+      {linkedVariantIds.size > 0 && (
+        <div className="flex flex-wrap items-center gap-2 px-1">
+          <span className="text-xs text-muted-foreground">Linked variations:</span>
+          {allVariants
+            .filter((v) => linkedVariantIds.has(v.id))
+            .map((v) => (
+              <span
+                key={v.id}
+                className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs"
+              >
+                <span className="font-medium">{v.product_name}</span>
+                <span className="text-muted-foreground">— {v.name}</span>
+              </span>
+            ))}
+        </div>
+      )}
+
       {loading ? (
         <div className="border border-border rounded-lg p-8 text-center text-muted-foreground bg-muted/30 flex items-center justify-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin" />
