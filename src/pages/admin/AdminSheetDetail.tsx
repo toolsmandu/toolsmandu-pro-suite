@@ -480,7 +480,7 @@ const GroupBlock = ({
                     {c.key === "expiry_date" ? (
                       <Popover>
                         <PopoverTrigger asChild>
-                          <button type="button" className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-transparent hover:border-input bg-transparent text-left">
+                          <button type="button" className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-input bg-background text-left">
                             <span className={m.expiry_date ? "" : "text-muted-foreground"}>
                               {m.expiry_date ? formatPurchaseDate(m.expiry_date) : "Select date"}
                             </span>
@@ -502,7 +502,7 @@ const GroupBlock = ({
                            type="text"
                            value={m.password}
                           onChange={(e) => onUpdateMaster(gi, ri, "password", e.target.value)}
-                          className="h-9 border-transparent focus:border-input bg-transparent"
+                          className="h-9 border-input bg-background"
                         />
                         {ri === firstActionIdx && (
                           <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
@@ -514,7 +514,7 @@ const GroupBlock = ({
                       <Input
                         value={(m as any)[c.key] || ""}
                         onChange={(e) => onUpdateMaster(gi, ri, c.key as keyof MasterRow, e.target.value)}
-                        className="h-9 border-transparent focus:border-input bg-transparent"
+                        className="h-9 border-input bg-background"
                       />
                     )}
                   </td>
@@ -581,7 +581,7 @@ const GroupBlock = ({
                     ) : c.key === "purchaseDate" ? (
                       <Popover>
                         <PopoverTrigger asChild>
-                          <button type="button" className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-transparent hover:border-input bg-transparent text-left">
+                          <button type="button" className="h-9 w-full px-3 flex items-center justify-between text-sm rounded-md border border-input bg-background text-left">
                             <span className={row.purchaseDate ? "" : "text-muted-foreground"}>
                               {row.purchaseDate ? formatPurchaseDate(row.purchaseDate) : "Select date"}
                             </span>
@@ -608,7 +608,7 @@ const GroupBlock = ({
                           if (c.type === "numeric") v = v.replace(/[^0-9]/g, "");
                           onUpdateNormal(gi, row.id, c.key, v);
                         }}
-                        className="h-9 border-transparent focus:border-input bg-transparent"
+                        className="h-9 border-input bg-background"
                       />
                     )}
                   </td>
