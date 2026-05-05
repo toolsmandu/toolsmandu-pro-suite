@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Check, Save, CalendarIcon, Eye, EyeOff, Search as SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -104,6 +104,7 @@ const AdminSheetDetail = () => {
   const [dirtyGroups, setDirtyGroups] = useState<Set<number>>(new Set());
   const [widths, setWidths] = useState<Record<string, number>>(DEFAULT_WIDTHS);
   const [showEmpty, setShowEmpty] = useState(false);
+  const [search, setSearch] = useState("");
   const [showPasswords, setShowPasswords] = useState<Record<number, boolean>>({});
   const dragRef = useRef<{ key: string; startX: number; startW: number } | null>(null);
   const groupsRef = useRef(groups);
@@ -352,15 +353,26 @@ const AdminSheetDetail = () => {
   );
 
   const visibleGroups = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const digits = q.replace(/\D/g, "");
     return groups
       .map((g, gi) => ({ g, gi }))
       .filter(({ g }) => {
-        if (showEmpty) return true;
-        const anyMaster = g.master.some((m) => !!m.account);
-        const anyNormal = g.normal.some((r) => !!(r.email || r.phone));
-        return anyMaster || anyNormal;
+        if (!showEmpty) {
+          const anyMaster = g.master.some((m) => !!m.account);
+          const anyNormal = g.normal.some((r) => !!(r.email || r.phone));
+          if (!anyMaster && !anyNormal) return false;
+        }
+        if (!q) return true;
+        const matchAccount = g.master.some((m) => (m.account || "").toLowerCase().includes(q));
+        const matchEmail = g.normal.some((r) => (r.email || "").toLowerCase().includes(q));
+        const matchPhone = digits.length >= 1 && g.normal.some((r) => {
+          const last4 = (r.phone || "").replace(/\D/g, "").slice(-4);
+          return last4 && last4.includes(digits.slice(-4));
+        });
+        return matchAccount || matchEmail || matchPhone;
       });
-  }, [groups, showEmpty]);
+  }, [groups, showEmpty, search]);
 
   const totalRows = groups.length * 6;
   const unsavedCount = dirtyGroups.size;
@@ -387,6 +399,15 @@ const AdminSheetDetail = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <div className="relative">
+            <SearchIcon className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search account, email, phone (last 4)"
+              className="pl-8 h-9 w-64"
+            />
+          </div>
           <Button variant="outline" onClick={() => setShowEmpty((v) => !v)} disabled={loading}>
             {showEmpty ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             {showEmpty ? "Hide Empty Rows" : "Show Empty Rows"}
