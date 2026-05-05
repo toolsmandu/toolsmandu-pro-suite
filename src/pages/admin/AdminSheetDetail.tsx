@@ -353,15 +353,26 @@ const AdminSheetDetail = () => {
   );
 
   const visibleGroups = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const digits = q.replace(/\D/g, "");
     return groups
       .map((g, gi) => ({ g, gi }))
       .filter(({ g }) => {
-        if (showEmpty) return true;
-        const anyMaster = g.master.some((m) => !!m.account);
-        const anyNormal = g.normal.some((r) => !!(r.email || r.phone));
-        return anyMaster || anyNormal;
+        if (!showEmpty) {
+          const anyMaster = g.master.some((m) => !!m.account);
+          const anyNormal = g.normal.some((r) => !!(r.email || r.phone));
+          if (!anyMaster && !anyNormal) return false;
+        }
+        if (!q) return true;
+        const matchAccount = g.master.some((m) => (m.account || "").toLowerCase().includes(q));
+        const matchEmail = g.normal.some((r) => (r.email || "").toLowerCase().includes(q));
+        const matchPhone = digits.length >= 1 && g.normal.some((r) => {
+          const last4 = (r.phone || "").replace(/\D/g, "").slice(-4);
+          return last4 && last4.includes(digits.slice(-4));
+        });
+        return matchAccount || matchEmail || matchPhone;
       });
-  }, [groups, showEmpty]);
+  }, [groups, showEmpty, search]);
 
   const totalRows = groups.length * 6;
   const unsavedCount = dirtyGroups.size;
