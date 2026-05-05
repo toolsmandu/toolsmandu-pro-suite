@@ -1175,6 +1175,7 @@ export type Database = {
           completed_at: string | null
           created_at: string
           id: string
+          manual_sheet_link: boolean
           order_number: string
           payment_method: string
           payment_pidx: string | null
@@ -1189,6 +1190,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           id?: string
+          manual_sheet_link?: boolean
           order_number?: string
           payment_method?: string
           payment_pidx?: string | null
@@ -1203,6 +1205,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           id?: string
+          manual_sheet_link?: boolean
           order_number?: string
           payment_method?: string
           payment_pidx?: string | null

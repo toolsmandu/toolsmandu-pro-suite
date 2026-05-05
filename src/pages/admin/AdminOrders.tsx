@@ -57,7 +57,8 @@ const AdminOrders = () => {
   const [editStatus, setEditStatus] = useState('');
   const [refundType, setRefundType] = useState<'full' | 'partial'>('full');
   const [refundAmount, setRefundAmount] = useState('');
-  const [editItems, setEditItems] = useState<EditItem[]>([]);
+   const [editItems, setEditItems] = useState<EditItem[]>([]);
+   const [editManualSheetLink, setEditManualSheetLink] = useState(false);
   const [sending, setSending] = useState(false);
   const [isAdminOnly, setIsAdminOnly] = useState(false);
   const [deletedItemIds, setDeletedItemIds] = useState<string[]>([]);
@@ -86,6 +87,7 @@ const AdminOrders = () => {
   const [newPaymentMethod, setNewPaymentMethod] = useState('manual');
   
   const [newRemarks, setNewRemarks] = useState('');
+  const [newManualSheetLink, setNewManualSheetLink] = useState(false);
   const [creatingOrder, setCreatingOrder] = useState(false);
   const [newFieldValues, setNewFieldValues] = useState<Record<string, string | string[]>>({});
 
@@ -238,8 +240,8 @@ const AdminOrders = () => {
   });
 
   const updateOrder = useMutation({
-    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId, refundAmount }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string; refundAmount: number | null }) => {
-      const { error: updateOrderErr } = await supabase.from('orders').update({ total, status: status as any, refund_amount: refundAmount } as any).eq('id', id);
+    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId, refundAmount, manualSheetLink }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string; refundAmount: number | null; manualSheetLink: boolean }) => {
+      const { error: updateOrderErr } = await supabase.from('orders').update({ total, status: status as any, refund_amount: refundAmount, manual_sheet_link: manualSheetLink } as any).eq('id', id);
       if (updateOrderErr) throw updateOrderErr;
 
       if (deletedItemIds.length > 0) {
@@ -339,6 +341,7 @@ const AdminOrders = () => {
     setSelectedOrder(order);
     setEditTotal(String(order.total));
     setEditStatus(order.status);
+    setEditManualSheetLink(!!(order as any).manual_sheet_link);
     const existingRefund = (order as any).refund_amount;
     if (order.status === 'refunded' && existingRefund != null && Number(existingRefund) > 0 && Number(existingRefund) < Number(order.total)) {
       setRefundType('partial');
@@ -437,6 +440,7 @@ const AdminOrders = () => {
         previousStatus: selectedOrder.status,
         userId: selectedOrder.user_id,
         refundAmount: refundAmt,
+        manualSheetLink: editManualSheetLink,
       });
 
       const noteSent = !!stripHtml(orderNote);
@@ -657,7 +661,7 @@ const AdminOrders = () => {
       const finalStatus: 'processing' | 'completed' = isFamilySharing ? 'completed' : 'processing';
 
       // Pre-check: if variation is linked to a family sheet, ensure last manager group has free slot
-      if (newVariationId) {
+      if (newVariationId && !newManualSheetLink) {
         const { data: links } = await supabase
           .from('sheet_variant_links')
           .select('sheet_id')
@@ -692,6 +696,7 @@ const AdminOrders = () => {
         payment_status: finalStatus === 'completed' ? 'paid' : 'pending',
         payment_method: newPaymentMethod,
         created_at: kathmanduToUTC(newOrderDate),
+        manual_sheet_link: newManualSheetLink,
       } as any).select().single();
       if (orderError) throw orderError;
 
@@ -853,6 +858,7 @@ const AdminOrders = () => {
       setNewAmount('');
       setNewPaymentMethod('manual');
       setNewRemarks('');
+      setNewManualSheetLink(false);
       setNewFieldValues({});
     } catch (e: any) {
       toast.error(e.message);
@@ -905,6 +911,18 @@ const AdminOrders = () => {
     },
   });
 
+  const { data: newVariationSheetLinks } = useQuery({
+    queryKey: ['add-order-variation-sheet-links', newVariationId],
+    enabled: !!newVariationId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('sheet_variant_links')
+        .select('sheet_id')
+        .eq('variation_id', newVariationId);
+      return data || [];
+    },
+  });
+  const newVariationLinkedToSheet = (newVariationSheetLinks?.length || 0) > 0;
   const newActiveFields: InputFieldDef[] = useVariationFields
     ? (newVariationFields || [])
     : (newProductFields || []);
@@ -1247,6 +1265,21 @@ const AdminOrders = () => {
                       onChange={(val) => setNewFieldValues((prev) => ({ ...prev, [f.id]: val }))}
                     />
                   ))}
+                </div>
+              )}
+
+              {newVariationLinkedToSheet && (
+                <div className="flex items-center gap-2 mb-2">
+                  <input
+                    id="manual-sheet-link"
+                    type="checkbox"
+                    checked={newManualSheetLink}
+                    onChange={(e) => setNewManualSheetLink(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  <Label htmlFor="manual-sheet-link" className="text-xs text-muted-foreground cursor-pointer">
+                    Manual Sheet Link
+                  </Label>
                 </div>
               )}
 
@@ -1690,7 +1723,20 @@ const AdminOrders = () => {
                 </div>
               </div>
 
-              {/* Refund options */}
+              <div className="flex items-center gap-2">
+                <input
+                  id="edit-manual-sheet-link"
+                  type="checkbox"
+                  checked={editManualSheetLink}
+                  onChange={(e) => setEditManualSheetLink(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="edit-manual-sheet-link" className="text-xs text-muted-foreground cursor-pointer">
+                  Manual Sheet Link
+                </Label>
+              </div>
+
+
               {editStatus === 'refunded' && (
                 <div className="border border-border rounded-md p-3 bg-muted/20 space-y-3">
                   <Label className="text-xs text-muted-foreground">Refund Type</Label>
