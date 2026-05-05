@@ -22,17 +22,33 @@ Deno.serve(async (req) => {
     const encKey = Deno.env.get("IMAP_ENCRYPTION_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // Verify the address exists
-    const { data: addr, error: addrErr } = await supabase
+    // Resolve IMAP server: prefer the saved address record, otherwise look up by domain
+    const lower = email.toLowerCase();
+    const domainPart = lower.split("@")[1];
+    if (!domainPart) return json({ error: "Invalid email" }, 400);
+
+    let serverId: string | null = null;
+
+    const { data: addr } = await supabase
       .from("inbox_addresses")
-      .select("id, email, domain_id, inbox_domains!inner(imap_server_id, is_active)")
-      .eq("email", email.toLowerCase())
+      .select("id, inbox_domains!inner(imap_server_id, is_active)")
+      .eq("email", lower)
       .maybeSingle();
 
-    if (addrErr) throw addrErr;
-    if (!addr) return json({ error: "Address not found" }, 404);
+    if (addr) {
+      serverId = (addr as any).inbox_domains.imap_server_id;
+    } else {
+      const { data: dom, error: domErr } = await supabase
+        .from("inbox_domains")
+        .select("imap_server_id, is_active")
+        .eq("domain", domainPart)
+        .maybeSingle();
+      if (domErr) throw domErr;
+      if (!dom || !dom.is_active) return json({ error: "Domain not configured" }, 404);
+      serverId = dom.imap_server_id;
+    }
 
-    const serverId = (addr as any).inbox_domains.imap_server_id;
+    if (!serverId) return json({ error: "IMAP server not configured for domain" }, 500);
 
     // Decrypt IMAP credentials
     const { data: creds, error: credErr } = await supabase.rpc(
