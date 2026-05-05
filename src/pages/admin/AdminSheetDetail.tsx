@@ -121,6 +121,13 @@ const AdminSheetDetail = () => {
   useEffect(() => { groupsRef.current = groups; }, [groups]);
   const [sheetUuid, setSheetUuid] = useState<string>("");
 
+  // Linked product variations
+  type VariantOpt = { id: string; name: string; product_id: string; product_name: string };
+  const [allVariants, setAllVariants] = useState<VariantOpt[]>([]);
+  const [linkedVariantIds, setLinkedVariantIds] = useState<Set<string>>(new Set());
+  const [productSearch, setProductSearch] = useState("");
+  const [savingLinks, setSavingLinks] = useState(false);
+
   const isUuid = (v: string) =>
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 
@@ -224,6 +231,78 @@ const AdminSheetDetail = () => {
     })();
     return () => { cancelled = true; };
   }, [id]);
+
+  // Load all product variations and existing sheet links
+  useEffect(() => {
+    if (!sheetUuid) return;
+    let cancelled = false;
+    (async () => {
+      const [{ data: vars }, { data: links }] = await Promise.all([
+        supabase
+          .from("product_variations")
+          .select("id, name, product_id, products(name)")
+          .order("name"),
+        supabase
+          .from("sheet_variant_links")
+          .select("variation_id")
+          .eq("sheet_id", sheetUuid),
+      ]);
+      if (cancelled) return;
+      const opts: VariantOpt[] = (vars || []).map((v: any) => ({
+        id: v.id,
+        name: v.name,
+        product_id: v.product_id,
+        product_name: v.products?.name || "",
+      }));
+      setAllVariants(opts);
+      setLinkedVariantIds(new Set((links || []).map((l: any) => l.variation_id)));
+    })();
+    return () => { cancelled = true; };
+  }, [sheetUuid]);
+
+  const toggleLinkedVariant = (variantId: string) => {
+    setLinkedVariantIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(variantId)) next.delete(variantId);
+      else next.add(variantId);
+      return next;
+    });
+  };
+
+  const saveLinkedVariants = async () => {
+    if (!sheetUuid) return;
+    setSavingLinks(true);
+    try {
+      const { data: existing } = await supabase
+        .from("sheet_variant_links")
+        .select("variation_id")
+        .eq("sheet_id", sheetUuid);
+      const existingSet = new Set((existing || []).map((r: any) => r.variation_id));
+      const targetSet = linkedVariantIds;
+      const toAdd = [...targetSet].filter((v) => !existingSet.has(v));
+      const toRemove = [...existingSet].filter((v) => !targetSet.has(v));
+      if (toAdd.length > 0) {
+        const { error: insErr } = await supabase
+          .from("sheet_variant_links")
+          .insert(toAdd.map((variation_id) => ({ sheet_id: sheetUuid, variation_id })));
+        if (insErr) throw insErr;
+      }
+      if (toRemove.length > 0) {
+        const { error: delErr } = await supabase
+          .from("sheet_variant_links")
+          .delete()
+          .eq("sheet_id", sheetUuid)
+          .in("variation_id", toRemove);
+        if (delErr) throw delErr;
+      }
+      toast({ title: "Linked products saved" });
+    } catch (e: any) {
+      toast({ title: "Save failed", description: e?.message, variant: "destructive" });
+    } finally {
+      setSavingLinks(false);
+    }
+  };
+
 
   const persistNormalToDb = async (gs: typeof groups) => {
     const flatNormals = gs.flatMap((g) => g.normal);
@@ -553,8 +632,8 @@ const AdminSheetDetail = () => {
                 <SettingsIcon className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-72">
-              <div className="space-y-3">
+            <PopoverContent align="end" className="w-96">
+              <div className="space-y-4 max-h-[70vh] overflow-y-auto">
                 <div className="font-semibold text-sm">{isSimple ? "Sheet Setting" : "Family Sheet Setting"}</div>
                 {!isSimple && (
                   <div className="space-y-1">
@@ -589,6 +668,66 @@ const AdminSheetDetail = () => {
                 <p className="text-xs text-muted-foreground">
                   Settings are saved per sheet.
                 </p>
+
+                <div className="border-t border-border pt-3 space-y-2">
+                  <div className="font-semibold text-sm">Linked Products</div>
+                  <p className="text-xs text-muted-foreground">
+                    Select one or more product variations to link with this sheet.
+                  </p>
+                  <div className="relative">
+                    <SearchIcon className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      value={productSearch}
+                      onChange={(e) => setProductSearch(e.target.value)}
+                      placeholder="Search product or variation"
+                      className="pl-8 h-9"
+                    />
+                  </div>
+                  <div className="border border-border rounded-md max-h-64 overflow-y-auto divide-y divide-border">
+                    {(() => {
+                      const q = productSearch.trim().toLowerCase();
+                      const filtered = allVariants.filter((v) =>
+                        !q ||
+                        v.name.toLowerCase().includes(q) ||
+                        v.product_name.toLowerCase().includes(q)
+                      );
+                      if (filtered.length === 0) {
+                        return (
+                          <div className="p-3 text-xs text-muted-foreground text-center">
+                            No products found.
+                          </div>
+                        );
+                      }
+                      return filtered.map((v) => {
+                        const checked = linkedVariantIds.has(v.id);
+                        return (
+                          <label
+                            key={v.id}
+                            className="flex items-center gap-2 px-2 py-1.5 text-sm cursor-pointer hover:bg-accent"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => toggleLinkedVariant(v.id)}
+                              className="h-4 w-4"
+                            />
+                            <span className="flex-1 min-w-0 truncate">
+                              <span className="font-medium">{v.product_name}</span>
+                              <span className="text-muted-foreground"> — {v.name}</span>
+                            </span>
+                          </label>
+                        );
+                      });
+                    })()}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {linkedVariantIds.size} selected
+                  </div>
+                  <Button className="w-full" onClick={saveLinkedVariants} disabled={savingLinks}>
+                    {savingLinks ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    Save Linked Products
+                  </Button>
+                </div>
               </div>
             </PopoverContent>
           </Popover>
