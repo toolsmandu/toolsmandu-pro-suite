@@ -118,6 +118,18 @@ const AdminSheetDetail = () => {
   const isUuid = (v: string) =>
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 
+  // Load saved sizes early
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem(sizesKey(id));
+      if (s) {
+        const parsed = JSON.parse(s);
+        if (parsed.masterCount) setMasterCount(parsed.masterCount);
+        if (parsed.normalCount) setNormalCount(parsed.normalCount);
+      }
+    } catch {}
+  }, [id]);
+
   // Load sheet + master rows
   useEffect(() => {
     let cancelled = false;
@@ -138,9 +150,19 @@ const AdminSheetDetail = () => {
       setSheet({ id: data.id, name: data.name });
       setSheetUuid(data.id);
 
+      // Read sizes from storage (state may not be set yet)
+      let mCount = 2, nCount = 4;
+      try {
+        const s = localStorage.getItem(sizesKey(id));
+        if (s) {
+          const parsed = JSON.parse(s);
+          if (parsed.masterCount) mCount = parsed.masterCount;
+          if (parsed.normalCount) nCount = parsed.normalCount;
+        }
+      } catch {}
+
       // Parse normal rows from sheets.data (legacy: flat array of Row)
       const arr: any[] = Array.isArray(data.data) ? (data.data as any[]) : [];
-      // Filter only normal-shaped rows (skip legacy "master" kind rows)
       const normalRows: Row[] = arr
         .filter((r) => !r.kind || r.kind === "normal")
         .map((r) => ({
@@ -176,26 +198,28 @@ const AdminSheetDetail = () => {
         toast({ title: "Failed to load master rows", description: e?.message, variant: "destructive" });
       }
 
-      // Build groups: chunk normalRows into 4
-      const built: { master: [MasterRow, MasterRow]; normal: Row[] }[] = [];
-      for (let i = 0; i < normalRows.length; i += 4) {
+      const built: { master: MasterRow[]; normal: Row[] }[] = [];
+      for (let i = 0; i < normalRows.length; i += nCount) {
         const gi = built.length;
         const m = masterByGroup[gi] || [];
+        const masterArr: MasterRow[] = [];
+        for (let r = 0; r < mCount; r++) masterArr.push(m[r] || emptyMaster());
         built.push({
-          master: [m[0] || emptyMaster(), m[1] || emptyMaster()],
-          normal: normalRows.slice(i, i + 4).concat(
-            Array.from({ length: Math.max(0, 4 - (normalRows.length - i)) }, () => emptyNormal())
+          master: masterArr,
+          normal: normalRows.slice(i, i + nCount).concat(
+            Array.from({ length: Math.max(0, nCount - (normalRows.length - i)) }, () => emptyNormal())
           ),
         });
       }
-      // If there are master groups beyond normal data, append them as empty normal groups
       const maxMasterIdx = Math.max(-1, ...Object.keys(masterByGroup).map((k) => parseInt(k, 10)));
       while (built.length <= maxMasterIdx) {
         const gi = built.length;
         const m = masterByGroup[gi] || [];
+        const masterArr: MasterRow[] = [];
+        for (let r = 0; r < mCount; r++) masterArr.push(m[r] || emptyMaster());
         built.push({
-          master: [m[0] || emptyMaster(), m[1] || emptyMaster()],
-          normal: [emptyNormal(), emptyNormal(), emptyNormal(), emptyNormal()],
+          master: masterArr,
+          normal: Array.from({ length: nCount }, () => emptyNormal()),
         });
       }
       setGroups(built);
