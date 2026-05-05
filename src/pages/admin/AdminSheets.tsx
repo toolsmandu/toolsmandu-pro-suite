@@ -306,7 +306,7 @@ const AdminSheets = ({
         </div>
       ) : sheets.length === 0 ? (
         <div className="border border-border rounded-lg p-8 text-center text-muted-foreground bg-background">
-          No sheets yet. Click "Add New Family Sheet" to create one.
+          No sheets yet. Click "{newButtonLabel}" to create one.
         </div>
       ) : (
         <div className="border border-border rounded-lg bg-background overflow-hidden">
