@@ -483,6 +483,47 @@ const AdminSheetDetail = () => {
             <Plus className="h-4 w-4" />
             Add Account
           </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon" disabled={loading} aria-label="Row settings" title="Row settings">
+                <SettingsIcon className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-72">
+              <div className="space-y-3">
+                <div className="font-semibold text-sm">Row Settings</div>
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Family Manager rows per group</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={masterCount}
+                    onChange={(e) => {
+                      const v = Math.max(1, Math.min(10, parseInt(e.target.value || "1", 10) || 1));
+                      applySizes(v, normalCount);
+                    }}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Member rows per group</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={normalCount}
+                    onChange={(e) => {
+                      const v = Math.max(1, Math.min(50, parseInt(e.target.value || "1", 10) || 1));
+                      applySizes(masterCount, v);
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Changes apply to all groups. Save each group to persist.
+                </p>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
