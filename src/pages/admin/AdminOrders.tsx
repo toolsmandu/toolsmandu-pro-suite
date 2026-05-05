@@ -240,8 +240,8 @@ const AdminOrders = () => {
   });
 
   const updateOrder = useMutation({
-    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId, refundAmount }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string; refundAmount: number | null }) => {
-      const { error: updateOrderErr } = await supabase.from('orders').update({ total, status: status as any, refund_amount: refundAmount } as any).eq('id', id);
+    mutationFn: async ({ id, total, status, items, deletedItemIds, previousStatus, userId, refundAmount, manualSheetLink }: { id: string; total: number; status: string; items: EditItem[]; deletedItemIds: string[]; previousStatus: string; userId: string; refundAmount: number | null; manualSheetLink: boolean }) => {
+      const { error: updateOrderErr } = await supabase.from('orders').update({ total, status: status as any, refund_amount: refundAmount, manual_sheet_link: manualSheetLink } as any).eq('id', id);
       if (updateOrderErr) throw updateOrderErr;
 
       if (deletedItemIds.length > 0) {
