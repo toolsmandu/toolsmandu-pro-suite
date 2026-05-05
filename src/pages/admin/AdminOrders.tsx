@@ -855,6 +855,7 @@ const AdminOrders = () => {
       setNewAmount('');
       setNewPaymentMethod('manual');
       setNewRemarks('');
+      setNewManualSheetLink(false);
       setNewFieldValues({});
     } catch (e: any) {
       toast.error(e.message);
