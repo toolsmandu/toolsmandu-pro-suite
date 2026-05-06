@@ -401,6 +401,15 @@ const AdminProducts = () => {
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex items-center gap-4 flex-wrap">
             <h2 className="text-2xl font-bold text-foreground mr-auto">Products</h2>
+            <div className="relative w-full sm:w-64">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search products"
+                className="pl-9"
+              />
+            </div>
             {(() => {
               const activeCount = [categoryFilter, stockFilter, orderModeFilter, newInStoreFilter, superSavingFilter].filter((v) => v !== 'all').length;
               return (
@@ -481,16 +490,6 @@ const AdminProducts = () => {
               <Plus className="h-4 w-4 mr-2" />
               Add Product
             </Button>
-          </div>
-
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search products"
-              className="pl-9"
-            />
           </div>
         </div>
 
