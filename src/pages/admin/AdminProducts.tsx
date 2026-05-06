@@ -168,10 +168,12 @@ const AdminProducts = () => {
       const matchesCategory = categoryFilter === 'all' || product.category_id === categoryFilter;
       const matchesStock = stockFilter === 'all' || product.stock_status === stockFilter;
       const matchesOrderMode = orderModeFilter === 'all' || product.order_mode === orderModeFilter;
+      const matchesNewInStore = newInStoreFilter === 'all' || (newInStoreFilter === 'yes' ? !!product.show_in_new_in_store : !product.show_in_new_in_store);
+      const matchesSuperSaving = superSavingFilter === 'all' || (superSavingFilter === 'yes' ? !!product.show_in_super_saving_deal : !product.show_in_super_saving_deal);
 
-      return matchesSearch && matchesCategory && matchesStock && matchesOrderMode;
+      return matchesSearch && matchesCategory && matchesStock && matchesOrderMode && matchesNewInStore && matchesSuperSaving;
     });
-  }, [products, searchTerm, categoryFilter, stockFilter, orderModeFilter]);
+  }, [products, searchTerm, categoryFilter, stockFilter, orderModeFilter, newInStoreFilter, superSavingFilter]);
 
   const resetForm = () => {
     setForm(emptyForm());
