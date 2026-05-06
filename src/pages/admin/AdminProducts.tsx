@@ -651,6 +651,13 @@ const AdminProducts = () => {
                   <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
                 </div>
                 <div className="space-y-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
+                      checked={form.show_in_new_in_store}
+                      onCheckedChange={(checked) => setForm({ ...form, show_in_new_in_store: !!checked })}
+                    />
+                    <span className="text-sm">Show in New in Store Section Homepage</span>
+                  </label>
                   <div>
                     <Label>New in Store Offer Text</Label>
                     <Input
