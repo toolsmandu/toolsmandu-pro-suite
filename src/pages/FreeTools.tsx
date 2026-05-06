@@ -32,11 +32,6 @@ const FreeTools = () => {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <Helmet>
-        <title>Free Tools</title>
-        <meta name="description" content="Free tools to help you get more done." />
-      </Helmet>
-
       <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-8">Free Tools</h1>
 
       {loading ? (
