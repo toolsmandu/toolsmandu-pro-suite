@@ -72,6 +72,12 @@ const AdminSettings = () => {
       setFooterGoogleImage(map.footer_google_image?.value || '');
       setFooterGoogleLink(map.footer_google_link?.value || '');
       setFooterPaymentImage(map.footer_payment_image?.value || '');
+      setHomepageAboutContent(map.homepage_about_content?.value || '');
+      setHomepageSeoContent(map.homepage_seo_content?.value || '');
+      setTrustpilotScore(map.trustpilot_score?.value || '4.8');
+      setTrustpilotCount(map.trustpilot_count?.value || '53');
+      setGoogleScore(map.google_score?.value || '4.9');
+      setGoogleCount(map.google_count?.value || '120');
       return map;
     },
   });
@@ -108,6 +114,12 @@ const AdminSettings = () => {
       { key: 'footer_google_image', value: footerGoogleImage },
       { key: 'footer_google_link', value: footerGoogleLink },
       { key: 'footer_payment_image', value: footerPaymentImage },
+      { key: 'homepage_about_content', value: homepageAboutContent },
+      { key: 'homepage_seo_content', value: homepageSeoContent },
+      { key: 'trustpilot_score', value: trustpilotScore },
+      { key: 'trustpilot_count', value: trustpilotCount },
+      { key: 'google_score', value: googleScore },
+      { key: 'google_count', value: googleCount },
     ];
     for (const item of keys) {
       const { data: existing } = await supabase.from('site_settings').select('id').eq('key', item.key).maybeSingle();
@@ -119,6 +131,7 @@ const AdminSettings = () => {
     }
     queryClient.invalidateQueries({ queryKey: ['site-settings'] });
     queryClient.invalidateQueries({ queryKey: ['admin-settings'] });
+    queryClient.invalidateQueries({ queryKey: ['homepage-seo-settings'] });
     toast.success('Settings saved!');
   };
 
