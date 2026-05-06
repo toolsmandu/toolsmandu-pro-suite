@@ -33,7 +33,7 @@ const empty: Partial<FreeTool> = {
 
 const AdminFreeTools = () => {
   const [tools, setTools] = useState<FreeTool[]>([]);
-  const [open, setOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Partial<FreeTool>>(empty);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,8 +46,8 @@ const AdminFreeTools = () => {
 
   useEffect(() => { load(); }, []);
 
-  const openNew = () => { setForm(empty); setEditingId(null); setOpen(true); };
-  const openEdit = (t: FreeTool) => { setForm(t); setEditingId(t.id); setOpen(true); };
+  const openNew = () => { setForm(empty); setEditingId(null); setShowForm(true); };
+  const openEdit = (t: FreeTool) => { setForm(t); setEditingId(t.id); setShowForm(true); };
 
   const setField = (k: keyof FreeTool, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
