@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const NewInStore = () => {
   const { data: products } = useQuery({
-    queryKey: ['new-in-store'],
+    queryKey: ['new-in-store-v2'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const { data } = await supabase
