@@ -399,45 +399,98 @@ const AdminProducts = () => {
     return (
       <div>
         <div className="flex flex-col gap-4 mb-6">
-          <div className="flex items-center gap-4">
-              <h2 className="text-2xl font-bold text-foreground">Products</h2>
+          <div className="flex items-center gap-4 flex-wrap">
+            <h2 className="text-2xl font-bold text-foreground mr-auto">Products</h2>
+            {(() => {
+              const activeCount = [categoryFilter, stockFilter, orderModeFilter, newInStoreFilter, superSavingFilter].filter((v) => v !== 'all').length;
+              return (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline">
+                      <Filter className="h-4 w-4 mr-2" />
+                      Filters
+                      {activeCount > 0 && (
+                        <span className="ml-2 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs h-5 min-w-5 px-1">
+                          {activeCount}
+                        </span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 space-y-3" align="end">
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Category</Label>
+                      <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className={selectClassName}>
+                        <option value="all">All Categories</option>
+                        {categories?.map((category: any) => (
+                          <option key={category.id} value={category.id}>{category.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Stock Status</Label>
+                      <select value={stockFilter} onChange={(e) => setStockFilter(e.target.value)} className={selectClassName}>
+                        <option value="all">All Stock Status</option>
+                        <option value="in_stock">In Stock</option>
+                        <option value="out_of_stock">Out of Stock</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Order Mode</Label>
+                      <select value={orderModeFilter} onChange={(e) => setOrderModeFilter(e.target.value)} className={selectClassName}>
+                        <option value="all">All Order Modes</option>
+                        <option value="cart">Online Order</option>
+                        <option value="whatsapp">WhatsApp</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">New in Store</Label>
+                      <select value={newInStoreFilter} onChange={(e) => setNewInStoreFilter(e.target.value)} className={selectClassName}>
+                        <option value="all">All</option>
+                        <option value="yes">Enabled</option>
+                        <option value="no">Disabled</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Super Saving Deal</Label>
+                      <select value={superSavingFilter} onChange={(e) => setSuperSavingFilter(e.target.value)} className={selectClassName}>
+                        <option value="all">All</option>
+                        <option value="yes">Enabled</option>
+                        <option value="no">Disabled</option>
+                      </select>
+                    </div>
+                    {activeCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCategoryFilter('all');
+                          setStockFilter('all');
+                          setOrderModeFilter('all');
+                          setNewInStoreFilter('all');
+                          setSuperSavingFilter('all');
+                        }}
+                        className="text-xs text-primary hover:underline"
+                      >
+                        Reset filters
+                      </button>
+                    )}
+                  </PopoverContent>
+                </Popover>
+              );
+            })()}
             <Button onClick={openAdd}>
               <Plus className="h-4 w-4 mr-2" />
               Add Product
             </Button>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <div className="relative md:col-span-2 xl:col-span-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search products"
-                className="pl-9"
-              />
-            </div>
-
-            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className={selectClassName}>
-              <option value="all">All Categories</option>
-              {categories?.map((category: any) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-
-            <select value={stockFilter} onChange={(event) => setStockFilter(event.target.value)} className={selectClassName}>
-              <option value="all">All Stock Status</option>
-              <option value="in_stock">In Stock</option>
-              <option value="out_of_stock">Out of Stock</option>
-            </select>
-
-            <select value={orderModeFilter} onChange={(event) => setOrderModeFilter(event.target.value)} className={selectClassName}>
-              <option value="all">All Order Modes</option>
-              <option value="cart">Online Order</option>
-              <option value="whatsapp">WhatsApp</option>
-            </select>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search products"
+              className="pl-9"
+            />
           </div>
         </div>
 
