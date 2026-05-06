@@ -26,6 +26,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAdmin, isEditor, signOut } = useAuth();
   const { itemCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const { data: settings } = useQuery({
