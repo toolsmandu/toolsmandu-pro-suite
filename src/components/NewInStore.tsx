@@ -33,17 +33,20 @@ const NewInStore = () => {
         <h2 className="text-2xl font-bold text-foreground whitespace-nowrap">New in Store</h2>
         <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }} />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-12 pt-10">
         {products.map((p: any) => {
           const startPrice = getStartingPrice(p);
           return (
             <Link
               key={p.id}
               to={`/item/${p.slug}`}
-              className="group flex items-center gap-3 rounded-xl p-3 border border-border hover:border-primary transition-colors"
+              className="group relative flex items-center gap-3 rounded-2xl pl-20 pr-4 py-3 border border-border hover:border-primary transition-colors min-h-[72px]"
               style={{ backgroundColor: '#0a2e5c' }}
             >
-              <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-muted/20">
+              <div
+                className="absolute -top-6 left-3 w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg ring-1 ring-white/10"
+                style={{ backgroundColor: '#1a1a2e' }}
+              >
                 {p.image_url ? (
                   <img
                     src={p.image_url}
@@ -51,10 +54,9 @@ const NewInStore = () => {
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-contain"
-                    style={{ imageRendering: 'auto' }}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-xl">📦</div>
+                  <div className="w-full h-full flex items-center justify-center text-2xl">📦</div>
                 )}
               </div>
               <div className="min-w-0 flex-1 space-y-1">
