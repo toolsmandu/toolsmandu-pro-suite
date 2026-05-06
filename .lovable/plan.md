@@ -1,25 +1,61 @@
-## Goal
-On the customer dashboard inbox (`/dashboard/inbox`), stop persisting inbox addresses to the database and hide the "My inboxes" card entirely. Admin behavior stays unchanged.
+# Convert Case Free Tool
 
-## Changes
+Add a working Convert Case tool at `/free-tools/convert-case`, mirroring the core feature set of convertcase.net. The tool widget renders right after the **Tool Info** section on the page.
 
-**1. `src/components/disposable-inbox/DisposableInboxView.tsx`**
-- Add a new prop `persist?: boolean` (default `true`) OR branch on `mode === "user"` to skip persistence. Cleanest approach: introduce a `persist` prop so admin keeps current behavior.
-- When `persist === false`:
-  - Skip the initial `supabase.from("inbox_addresses").select(...)` load.
-  - In `createInbox`, skip the insert into `inbox_addresses` for `mode === "user"` — just set `currentEmail` locally and call `fetchMail`.
-  - Do not refresh `myAddresses` after creation.
-  - Hide the entire "My inboxes" card (don't render the block).
-- Keep `localStorage` for `current_email` so the inbox persists across page reloads on the same device.
+## What ships
 
-**2. `src/pages/dashboard/InboxPage.tsx`**
-- Pass `persist={false}` to `<DisposableInboxView mode="user" />`.
+A new free tool page with:
+- **Title** (Convert Case) at the top
+- **Tool Info** block (intro paragraph)
+- **The tool itself** (interactive text editor)
+- **Tool Description** (long-form content) below
 
-**3. Admin usage (`AdminDisposableInbox.tsx`) and Account OTP usage in OrdersPage**
-- Leave as-is (default `persist=true`) so admin still sees and manages saved inboxes.
-- Verify Account OTP / OTP redirect flow (which opens the inbox view) — if it's the customer dashboard inbox page, it will inherit `persist={false}` automatically. No change needed unless we want admin-side OTP redirects to also persist (they already use admin route).
+The tool replicates these convertcase.net features:
+- Live editor textarea
+- Live counters: characters, words, lines
+- Action buttons: Copy, Download (.txt), Clear
+- Case conversion buttons:
+  - Sentence case
+  - lower case
+  - UPPER CASE
+  - Capitalized Case
+  - aLtErNaTiNg cAsE
+  - Title Case (smart — keeps minor words like "a/an/the/of/and" lowercase except first/last)
+  - InVeRsE CaSe
 
-## Notes
-- No DB schema changes required. Existing rows remain untouched.
-- `inbox-fetch` edge function works purely from the email string, so no backend impact.
-- Public mode (anonymous visitors) is unaffected — still uses the edge function path.
+(Skipping convertcase.net's extras: settings popover, share, ko-fi, browser-extension/app banners, and other generators — those aren't part of this request.)
+
+## Files
+
+- **Create** `src/components/free-tools/ConvertCaseTool.tsx` — interactive editor component (textarea, counters, action buttons, 7 case-conversion buttons; pure client-side string transforms).
+- **Create** `src/pages/FreeToolDetail.tsx` — dynamic detail page that:
+  - reads `:slug` from the route
+  - fetches the matching `free_tools` row
+  - renders: `Name` → `Tool Info` → tool widget (when slug is `convert-case`) → `Tool Description`
+  - 404s if tool not found / inactive
+- **Edit** `src/App.tsx` — add route `/free-tools/:slug` → `FreeToolDetail`.
+- **Edit** `src/pages/FreeTools.tsx` — turn each tool name on the listing into a link to `/free-tools/{slug}` so the new page is reachable.
+
+## Routing
+
+```
+/free-tools             → list of all active tools
+/free-tools/convert-case → detail page with the live tool
+```
+
+The detail page is generic and keyed off slug, so future tools (added by admin) get the same layout. Only `convert-case` currently has an interactive widget; other tools show a "coming soon" placeholder until their widgets are built.
+
+## Data
+
+The Convert Case row already exists in `free_tools` (slug `convert-case`) with name, tool_info, tool_description, and SEO fields, so no migration or insert needed.
+
+## Technical notes
+
+- All case transforms run client-side — no API calls, no edge function.
+- Title Case implementation: lowercase the string, then capitalize the first letter of every word except a known set of articles/conjunctions/short prepositions, while always capitalizing the first and last word.
+- Inverse case: per-character swap of upper/lower.
+- Alternating case: lower at even indices, upper at odd.
+- Counters use `text.length`, `text.trim().split(/\s+/).length`, and `text.split(/\n/).length`.
+- Copy uses `navigator.clipboard.writeText`; download builds a `Blob` and triggers an anchor click.
+- Styling uses existing semantic tokens (`bg-card`, `border-border`, `bg-muted/30`, `text-foreground`, `text-muted-foreground`) and shadcn `Button` / `Textarea`.
+
