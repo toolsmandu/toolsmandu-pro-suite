@@ -531,6 +531,39 @@ const AdminSettings = () => {
           </Dialog>
         </CardContent>
       </Card>
+
+      {/* Homepage SEO Content */}
+      <Card>
+        <CardHeader><CardTitle>Homepage SEO Content</CardTitle></CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <Label>"What is Toolsmandu? Why Toolsmandu?" Content</Label>
+            <p className="text-xs text-muted-foreground mb-2">Shown below the Blogs section on the homepage.</p>
+            <RichTextEditor value={homepageAboutContent} onChange={setHomepageAboutContent} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="font-semibold">Trustpilot Reviews</Label>
+              <div><Label className="text-xs">Score (out of 5)</Label><Input value={trustpilotScore} onChange={e => setTrustpilotScore(e.target.value)} placeholder="4.8" /></div>
+              <div><Label className="text-xs">Number of Reviews</Label><Input value={trustpilotCount} onChange={e => setTrustpilotCount(e.target.value)} placeholder="53" /></div>
+            </div>
+            <div className="space-y-2">
+              <Label className="font-semibold">Google Reviews</Label>
+              <div><Label className="text-xs">Score (out of 5)</Label><Input value={googleScore} onChange={e => setGoogleScore(e.target.value)} placeholder="4.9" /></div>
+              <div><Label className="text-xs">Number of Reviews</Label><Input value={googleCount} onChange={e => setGoogleCount(e.target.value)} placeholder="120" /></div>
+            </div>
+          </div>
+
+          <div>
+            <Label>Additional SEO Content</Label>
+            <p className="text-xs text-muted-foreground mb-2">Shown below the "What is Toolsmandu?" section. Use for long-form SEO copy, headings, links, etc.</p>
+            <RichTextEditor value={homepageSeoContent} onChange={setHomepageSeoContent} />
+          </div>
+
+          <Button onClick={saveSettings}>Save Homepage SEO Content</Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };
