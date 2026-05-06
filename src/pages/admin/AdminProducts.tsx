@@ -737,16 +737,16 @@ const AdminProducts = () => {
                       />
                     </div>
                   </div>
-                  <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 grid gap-3 sm:grid-cols-2 sm:items-end">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <Checkbox
-                        checked={form.show_in_super_saving_deal}
-                        onCheckedChange={(checked) => setForm({ ...form, show_in_super_saving_deal: !!checked })}
-                      />
-                      <span className="text-sm">Show in Super Saving Deal</span>
-                    </label>
-                    <div>
-                      <Label>Last Price</Label>
+                  <div>
+                    <Label>Last Price</Label>
+                    <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 grid gap-3 sm:grid-cols-2 sm:items-center">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <Checkbox
+                          checked={form.show_in_super_saving_deal}
+                          onCheckedChange={(checked) => setForm({ ...form, show_in_super_saving_deal: !!checked })}
+                        />
+                        <span className="text-sm">Show in Super Saving Deal</span>
+                      </label>
                       <Input
                         type="number"
                         step="0.01"
