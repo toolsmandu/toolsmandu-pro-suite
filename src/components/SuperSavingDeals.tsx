@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, ChevronRight, Flame, Tag, Sparkles } from 'lucide-react';
+import { ShoppingCart, ChevronRight, Flame, Tag, Sparkles, Percent, BadgePercent, PiggyBank, Gift, TicketPercent } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 
