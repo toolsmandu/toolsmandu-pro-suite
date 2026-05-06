@@ -10,8 +10,7 @@ const NewInStore = () => {
       const { data } = await supabase
         .from('products')
         .select('id, name, slug, image_url, new_in_store_offer_text')
-        .not('new_in_store_offer_text', 'is', null)
-        .neq('new_in_store_offer_text', '')
+        .eq('show_in_new_in_store', true)
         .order('created_at', { ascending: false })
         .limit(10);
       return data || [];
