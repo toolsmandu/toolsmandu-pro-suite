@@ -736,26 +736,28 @@ const AdminProducts = () => {
                       <span className="text-sm">Show in Super Saving Deal</span>
                     </label>
                   </div>
-                  <div>
-                    <Label>New in Store Offer Text</Label>
-                    <Input
-                      value={form.new_in_store_offer_text}
-                      onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
-                      placeholder="Shown below product title in the New in Store section"
-                    />
+                  <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <Label>New in Store Offer Text</Label>
+                      <Input
+                        value={form.new_in_store_offer_text}
+                        onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
+                        placeholder="Shown below product title in New in Store"
+                      />
+                    </div>
+                    <div>
+                      <Label>Last Price</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={form.last_price}
+                        onChange={(e) => setForm({ ...form, last_price: e.target.value })}
+                        placeholder="Crossed-out price in Super Saving Deal"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div>
-                    <Label>Last Price</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={form.last_price}
-                      onChange={(e) => setForm({ ...form, last_price: e.target.value })}
-                      placeholder="Previous price shown crossed-out in Super Saving Deal section"
-                    />
-                  </div>
                   <div className="border border-border rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
                       <Label className="text-sm font-semibold">Custom Input Fields (Product-level)</Label>
