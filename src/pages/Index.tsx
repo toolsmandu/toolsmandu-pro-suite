@@ -194,6 +194,7 @@ const Index = () => {
       ) : (
         <>
           <HeroSlider />
+          <NewInStore />
           <div className="container mx-auto px-4 py-12">
             {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
             <HomepageBlogs />
