@@ -66,16 +66,11 @@ const SuperSavingDeals = () => {
         {/* Header */}
         <div className="relative mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 mb-2">
-              <Flame className="h-3.5 w-3.5 text-yellow-200" />
-              <span className="text-[11px] font-bold tracking-widest text-white uppercase">Limited Time</span>
-            </div>
             <Link to="/categories" className="inline-flex items-center gap-2 group">
               <h2 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow-md tracking-tight">
                 Super Saving Deals
               </h2>
               <Sparkles className="h-6 w-6 text-yellow-200" />
-              <ChevronRight className="h-6 w-6 text-white group-hover:translate-x-1 transition-transform" />
             </Link>
             <p className="text-sm text-white/90 mt-1">
               Grab the biggest savings on premium digital subscriptions and software keys!
