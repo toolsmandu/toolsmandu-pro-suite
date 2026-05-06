@@ -642,44 +642,45 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <div>
-                <Label>New in Store Offer Text</Label>
-                <Input
-                  value={form.new_in_store_offer_text}
-                  onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
-                  placeholder="Shown below product title in the New in Store section"
-                />
-              </div>
-
               {/* Product Image + Product-level Input Fields side by side */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
                 </div>
-                <div className="border border-border rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <Label className="text-sm font-semibold">Custom Input Fields (Product-level)</Label>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setFieldPickerIndex('product')}>
-                      <Plus className="h-3 w-3 mr-1" /> Choose Fields
-                    </Button>
+                <div className="space-y-3">
+                  <div>
+                    <Label>New in Store Offer Text</Label>
+                    <Input
+                      value={form.new_in_store_offer_text}
+                      onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
+                      placeholder="Shown below product title in the New in Store section"
+                    />
                   </div>
-                  {productInputFieldIds.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">No fields attached. These show on the product page above Add to Cart unless a selected variation has its own special fields.</p>
-                  ) : (
-                    <div className="flex flex-wrap gap-2">
-                      {productInputFieldIds.map((fid) => {
-                        const f = (allInputFields || []).find((x: any) => x.id === fid);
-                        return (
-                          <span key={fid} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs">
-                            {f?.name || 'Unknown'}
-                            <button type="button" className="text-destructive" onClick={() => setProductInputFieldIds(productInputFieldIds.filter((x) => x !== fid))}>
-                              <X className="h-3 w-3" />
-                            </button>
-                          </span>
-                        );
-                      })}
+                  <div className="border border-border rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-semibold">Custom Input Fields (Product-level)</Label>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setFieldPickerIndex('product')}>
+                        <Plus className="h-3 w-3 mr-1" /> Choose Fields
+                      </Button>
                     </div>
-                  )}
+                    {productInputFieldIds.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">No fields attached. These show on the product page above Add to Cart unless a selected variation has its own special fields.</p>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {productInputFieldIds.map((fid) => {
+                          const f = (allInputFields || []).find((x: any) => x.id === fid);
+                          return (
+                            <span key={fid} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs">
+                              {f?.name || 'Unknown'}
+                              <button type="button" className="text-destructive" onClick={() => setProductInputFieldIds(productInputFieldIds.filter((x) => x !== fid))}>
+                                <X className="h-3 w-3" />
+                              </button>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
