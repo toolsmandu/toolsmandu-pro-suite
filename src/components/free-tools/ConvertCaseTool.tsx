@@ -104,7 +104,7 @@ const ConvertCaseTool = () => {
   const actionBtnStyle = { backgroundColor: '#338fe1', color: '#fff' } as const;
 
   return (
-    <div className="rounded-lg border border-border overflow-hidden" style={{ backgroundColor: '#0a2e5c' }}>
+    <div className="border border-border overflow-hidden" style={{ backgroundColor: '#0a2e5c' }}>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2 text-xs text-muted-foreground" style={{ backgroundColor: '#0a2e5c' }}>
         <div className="flex flex-wrap gap-4">
           <span>Characters: <span className="text-foreground font-medium">{stats.chars}</span></span>
@@ -122,7 +122,7 @@ const ConvertCaseTool = () => {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Type or paste your content here"
-        className="min-h-[280px] resize-y rounded-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
+        className="focus-visible:ring-ring flex w-full bg-background px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 min-h-[280px] resize-y rounded-none border-b border-solid focus-visible:ring-0 focus-visible:ring-offset-0 text-base border-white border"
       />
 
       <div className="flex flex-wrap gap-2 border-t border-border p-3" style={{ backgroundColor: '#0a2e5c' }}>
