@@ -73,29 +73,31 @@ const HomepageSeoContent = () => {
   return (
     <section className="mb-12 mt-4">
       <div className="bg-card/40 rounded-lg p-6 md:p-8 border border-border/50">
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-          What is Toolsmandu? Why Toolsmandu?
-        </h2>
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            What is Toolsmandu? Why Toolsmandu?
+          </h2>
+          <div className="flex flex-wrap gap-3 md:flex-nowrap md:shrink-0">
+            <ReviewBadge
+              label="Trustpilot"
+              score={settings?.trustpilot_score || '4.8'}
+              count={settings?.trustpilot_count || '53'}
+              link={settings?.footer_trustpilot_link || 'https://www.trustpilot.com/review/toolsmandu.com'}
+              color="#00b67a"
+            />
+            <ReviewBadge
+              label="Google Reviews"
+              score={settings?.google_score || '4.9'}
+              count={settings?.google_count || '120'}
+              link={settings?.footer_google_link || '#'}
+              color="#fbbc04"
+            />
+          </div>
+        </div>
         <div
           className="prose prose-invert max-w-none text-foreground/90 prose-p:my-3 prose-strong:text-foreground"
           dangerouslySetInnerHTML={{ __html: about }}
         />
-        <div className="flex flex-wrap gap-3 mt-6">
-          <ReviewBadge
-            label="Trustpilot"
-            score={settings?.trustpilot_score || '4.8'}
-            count={settings?.trustpilot_count || '53'}
-            link={settings?.footer_trustpilot_link || 'https://www.trustpilot.com/review/toolsmandu.com'}
-            color="#00b67a"
-          />
-          <ReviewBadge
-            label="Google Reviews"
-            score={settings?.google_score || '4.9'}
-            count={settings?.google_count || '120'}
-            link={settings?.footer_google_link || '#'}
-            color="#fbbc04"
-          />
-        </div>
       </div>
 
       {seo && (
