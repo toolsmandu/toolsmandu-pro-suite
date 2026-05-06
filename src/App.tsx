@@ -78,6 +78,8 @@ import AdminTaskRecurring from "./pages/admin/tasks/AdminTaskRecurring";
 import AdminTaskDashboard from "./pages/admin/tasks/AdminTaskDashboard";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
+import FreeTools from "./pages/FreeTools";
+import AdminFreeTools from "./pages/admin/AdminFreeTools";
 
 const queryClient = new QueryClient();
 
@@ -105,6 +107,7 @@ const App = () => (
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/inbox" element={<PublicInboxPage />} />
                 <Route path="/blog" element={<BlogList />} />
+                <Route path="/free-tools" element={<FreeTools />} />
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
@@ -161,6 +164,7 @@ const App = () => (
                 <Route path="family-sheets/:id" element={<AdminSheetDetail />} />
                 <Route path="sheets" element={<AdminSimpleSheets />} />
                 <Route path="sheets/:id" element={<AdminSheetDetail />} />
+                <Route path="free-tools" element={<AdminFreeTools />} />
               </Route>
             </Routes>
           </BrowserRouter>

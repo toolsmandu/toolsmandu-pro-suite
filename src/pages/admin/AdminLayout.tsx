@@ -432,6 +432,16 @@ const AdminLayout = () => {
                       </SidebarMenuItem>
                     </Collapsible>
                   )}
+
+                  {/* Free Tools — just below Settings */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/admin/free-tools" className="hover:bg-muted/50" activeClassName="bg-muted font-medium admin-active-link">
+                        <Wrench className="mr-2 h-4 w-4" />
+                        <span className="flex-1">Free Tools</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
