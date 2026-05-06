@@ -10,16 +10,16 @@ const DEFAULT_ABOUT = `<p>Your <strong>Reliable partner</strong> for digital pro
 const TrustpilotStars = ({ score }: { score: number }) => {
   const stars = [1, 2, 3, 4, 5];
   return (
-    <div className="flex gap-[2px]">
+    <div className="flex gap-[3px]">
       {stars.map((i) => {
         const fillPct = Math.max(0, Math.min(1, score - (i - 1))) * 100;
         return (
-          <div key={i} className="relative h-5 w-5 bg-[#dcdce6]">
+          <div key={i} className="relative h-6 w-6 bg-[#dcdce6]">
             <div
               className="absolute inset-0 bg-[#00b67a]"
               style={{ width: `${fillPct}%` }}
             />
-            <svg viewBox="0 0 24 24" className="absolute inset-0 h-5 w-5" aria-hidden>
+            <svg viewBox="0 0 24 24" className="absolute inset-0 h-6 w-6" aria-hidden>
               <path
                 d="M12 17.3 6.2 21l1.5-6.6L2.5 9.9l6.7-.6L12 3l2.8 6.3 6.7.6-5.2 4.5L17.8 21z"
                 fill="#fff"
