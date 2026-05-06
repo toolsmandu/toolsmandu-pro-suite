@@ -130,7 +130,7 @@ const AdminFreeTools = () => {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
           <DialogHeader>
             <DialogTitle>{editingId ? 'Edit Tool' : 'Add Tool'}</DialogTitle>
           </DialogHeader>
