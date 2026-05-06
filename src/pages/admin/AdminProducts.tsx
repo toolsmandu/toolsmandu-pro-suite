@@ -758,7 +758,9 @@ const AdminProducts = () => {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div className="border border-border rounded-lg p-3">
+                  <Label className="invisible block" aria-hidden>Spacer</Label>
+                  <div className="border border-border rounded-lg p-3 -mt-1.5">
+
                     <div className="flex items-center justify-between mb-2">
                       <Label className="text-sm font-semibold">Custom Input Fields (Product-level)</Label>
                       <Button type="button" variant="outline" size="sm" onClick={() => setFieldPickerIndex('product')}>
