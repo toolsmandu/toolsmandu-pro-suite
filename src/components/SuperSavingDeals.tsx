@@ -54,7 +54,7 @@ const SuperSavingDeals = () => {
             >
               <Link to={`/item/${p.slug}`} className="shrink-0 w-28 h-28 rounded-xl overflow-hidden bg-background/40 flex items-center justify-center">
                 {p.image_url ? (
-                  <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
+                  <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-contain" />
                 ) : (
                   <span className="text-3xl">📦</span>
                 )}
