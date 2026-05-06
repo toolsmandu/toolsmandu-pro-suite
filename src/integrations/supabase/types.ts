@@ -718,6 +718,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          image_url: string | null
           is_active: boolean
           meta_description: string | null
           meta_keywords: string | null
@@ -733,6 +734,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean
           meta_description?: string | null
           meta_keywords?: string | null
@@ -748,6 +750,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean
           meta_description?: string | null
           meta_keywords?: string | null

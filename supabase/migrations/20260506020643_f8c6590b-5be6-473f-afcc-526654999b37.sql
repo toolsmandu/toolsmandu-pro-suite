@@ -1,0 +1,1 @@
+ALTER TABLE public.free_tools ADD COLUMN IF NOT EXISTS image_url text;

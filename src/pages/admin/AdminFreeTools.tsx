@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 interface FreeTool {
   id: string;
@@ -18,6 +19,7 @@ interface FreeTool {
   meta_title: string | null;
   meta_description: string | null;
   meta_keywords: string | null;
+  image_url: string | null;
   is_active: boolean;
   sort_order: number;
 }
@@ -27,7 +29,7 @@ const slugify = (s: string) =>
 
 const empty: Partial<FreeTool> = {
   name: '', slug: '', description: '', tool_info: '', tool_description: '',
-  meta_title: '', meta_description: '', meta_keywords: '',
+  meta_title: '', meta_description: '', meta_keywords: '', image_url: '',
 };
 
 const AdminFreeTools = () => {
@@ -73,6 +75,7 @@ const AdminFreeTools = () => {
       meta_title: form.meta_title || null,
       meta_description: form.meta_description || null,
       meta_keywords: form.meta_keywords || null,
+      image_url: form.image_url || null,
     };
     const { error } = editingId
       ? await supabase.from('free_tools').update(payload).eq('id', editingId)
@@ -142,6 +145,11 @@ const AdminFreeTools = () => {
                 <Input value={form.slug || ''} onChange={(e) => setField('slug', e.target.value)} />
               </div>
             </div>
+            <ImageUpload
+              label="Tool Image"
+              value={form.image_url || ''}
+              onChange={(url) => setField('image_url', url)}
+            />
             <div>
               <Label>Description</Label>
               <Textarea rows={2} value={form.description || ''} onChange={(e) => setField('description', e.target.value)} />
