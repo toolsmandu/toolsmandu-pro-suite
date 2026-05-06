@@ -1403,6 +1403,7 @@ export type Database = {
           is_bestseller: boolean | null
           is_featured: boolean | null
           is_flash_sale: boolean | null
+          last_price: number | null
           meta_description: string | null
           meta_title: string | null
           name: string
@@ -1413,6 +1414,7 @@ export type Database = {
           rating: number | null
           region: string | null
           show_in_new_in_store: boolean
+          show_in_super_saving_deal: boolean
           single_product_tag: string | null
           slug: string
           stock_status: string
@@ -1430,6 +1432,7 @@ export type Database = {
           is_bestseller?: boolean | null
           is_featured?: boolean | null
           is_flash_sale?: boolean | null
+          last_price?: number | null
           meta_description?: string | null
           meta_title?: string | null
           name: string
@@ -1440,6 +1443,7 @@ export type Database = {
           rating?: number | null
           region?: string | null
           show_in_new_in_store?: boolean
+          show_in_super_saving_deal?: boolean
           single_product_tag?: string | null
           slug: string
           stock_status?: string
@@ -1457,6 +1461,7 @@ export type Database = {
           is_bestseller?: boolean | null
           is_featured?: boolean | null
           is_flash_sale?: boolean | null
+          last_price?: number | null
           meta_description?: string | null
           meta_title?: string | null
           name?: string
@@ -1467,6 +1472,7 @@ export type Database = {
           rating?: number | null
           region?: string | null
           show_in_new_in_store?: boolean
+          show_in_super_saving_deal?: boolean
           single_product_tag?: string | null
           slug?: string
           stock_status?: string
