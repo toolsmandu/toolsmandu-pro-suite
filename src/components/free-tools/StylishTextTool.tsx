@@ -63,12 +63,19 @@ const M_MONO = buildMap(0x1d670, 0x1d68a, 0x1d7f6);
 interface Style {
   name: string;
   map: Record<string, string>;
+  transformFn?: (text: string) => string;
 }
+
+// Strikethrough using combining long stroke overlay (U+0336)
+const strike = (text: string) => text.split('').map((c) => c + '\u0336').join('');
+const strikeBold = (text: string) => transform(text, M_BOLD).split('').map((c) => c + '\u0336').join('');
 
 const STYLES: Style[] = [
   { name: 'Bold', map: M_BOLD },
   { name: 'Italic', map: M_ITALIC },
   { name: 'Bold Italic', map: M_BOLD_ITALIC },
+  { name: 'Strikethrough', map: {}, transformFn: strike },
+  { name: 'Strikethrough Bold', map: {}, transformFn: strikeBold },
   { name: 'Sans-serif Bold', map: M_SANS_BOLD },
   { name: 'Sans-serif Italic', map: M_SANS_ITALIC },
   { name: 'Sans-serif Bold Italic', map: M_SANS_BOLD_ITALIC },
@@ -82,10 +89,11 @@ const STYLES: Style[] = [
 ];
 
 const StylishTextTool = () => {
-  const [text, setText] = useState('');
+  const DEFAULT_TEXT = 'The Future Belongs to Those Who Believe in the Beauty of Their Dreams';
+  const [text, setText] = useState(DEFAULT_TEXT);
 
   const placeholder = 'Type or paste your text here…';
-  const sample = useMemo(() => text || 'The quick brown fox jumps over the lazy dog 1234567890', [text]);
+  const sample = useMemo(() => text || DEFAULT_TEXT, [text]);
 
   const onCopy = async (val: string) => {
     if (!val) return;
@@ -105,12 +113,12 @@ const StylishTextTool = () => {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={placeholder}
-        className="min-h-[140px] resize-y rounded-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
+        className="min-h-[140px] resize-y rounded-none border-0 border-b border-white/30 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
       />
 
-      <div className="divide-y divide-border border-t border-border">
+      <div className="divide-y divide-white/15 border-t border-white/30">
         {STYLES.map((s) => {
-          const out = transform(sample, s.map);
+          const out = s.transformFn ? s.transformFn(sample) : transform(sample, s.map);
           return (
             <div key={s.name} className="flex flex-col sm:flex-row sm:items-center gap-3 p-4">
               <div className="sm:w-40 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
