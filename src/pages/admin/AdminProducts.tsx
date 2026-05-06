@@ -792,7 +792,7 @@ const AdminProducts = () => {
                   </div>
                   <div>
                     <Label>Meta Description</Label>
-                    <Input value={form.meta_description} onChange={(event) => setForm({ ...form, meta_description: event.target.value })} />
+                    <Textarea rows={5} value={form.meta_description} onChange={(event) => setForm({ ...form, meta_description: event.target.value })} />
                   </div>
                 </div>
               </div>
