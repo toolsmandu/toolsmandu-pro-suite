@@ -65,6 +65,7 @@ const emptyForm = () => ({
   features: '',
   stock_status: 'in_stock',
   order_mode: 'cart',
+  new_in_store_offer_text: '',
 });
 
 const AdminProducts = () => {
@@ -198,6 +199,7 @@ const AdminProducts = () => {
       features: Array.isArray(product.features) ? product.features.join('\n') : '',
       stock_status: product.stock_status || 'in_stock',
       order_mode: product.order_mode || 'cart',
+      new_in_store_offer_text: product.new_in_store_offer_text || '',
     });
 
     const { data, error } = await supabase
@@ -274,6 +276,7 @@ const AdminProducts = () => {
         features: form.features ? form.features.split('\n').map((item) => item.trim()).filter(Boolean) : [],
         stock_status: form.stock_status,
         order_mode: form.order_mode,
+        new_in_store_offer_text: form.new_in_store_offer_text || null,
       };
 
       let productId = editingId;
@@ -637,6 +640,15 @@ const AdminProducts = () => {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <Label>New in Store Offer Text</Label>
+                <Input
+                  value={form.new_in_store_offer_text}
+                  onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
+                  placeholder="Shown below product title in the New in Store section"
+                />
               </div>
 
               {/* Product Image + Product-level Input Fields side by side */}
