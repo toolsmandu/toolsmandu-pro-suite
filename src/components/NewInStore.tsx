@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const NewInStore = () => {
   const { data: products } = useQuery({
-    queryKey: ['new-in-store'],
+    queryKey: ['new-in-store-v2'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const { data } = await supabase
@@ -60,7 +60,7 @@ const NewInStore = () => {
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-semibold text-foreground line-clamp-1">{p.name}</h3>
                 {startPrice != null && (
-                  <p className="text-xs text-primary font-medium line-clamp-1">
+                  <p className="text-xs font-medium line-clamp-1" style={{ color: '#fbbf24' }}>
                     Starts at Rs {startPrice}/-
                   </p>
                 )}
