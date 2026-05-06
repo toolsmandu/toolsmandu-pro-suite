@@ -204,6 +204,8 @@ const AdminProducts = () => {
       order_mode: product.order_mode || 'cart',
       new_in_store_offer_text: product.new_in_store_offer_text || '',
       show_in_new_in_store: product.show_in_new_in_store || false,
+      show_in_super_saving_deal: product.show_in_super_saving_deal || false,
+      last_price: product.last_price != null ? String(product.last_price) : '',
     });
 
     const { data, error } = await supabase
