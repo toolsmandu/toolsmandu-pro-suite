@@ -130,6 +130,7 @@ const AdminFreeTools = () => {
           <div>
             <Label>Tool Info</Label>
             <Textarea rows={2} value={form.tool_info || ''} onChange={(e) => setField('tool_info', e.target.value)} placeholder="Short info shown below the title" />
+            <p className="text-xs text-muted-foreground mt-1">This text will be displayed just below Tool title.</p>
           </div>
           <div>
             <Label>Tool Description</Label>
