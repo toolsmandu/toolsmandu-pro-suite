@@ -42,7 +42,7 @@ const FreeTools = () => {
       ) : (
         <div className="space-y-12">
           {tools.map((t) => (
-            <section key={t.id} className="rounded-lg border border-border bg-card p-6 md:p-8">
+            <section key={t.id} className="rounded-lg border border-border p-6 md:p-8" style={{ backgroundColor: '#0a2e5c' }}>
               <h2 className="text-2xl font-semibold text-foreground">
                 <Link to={`/free-tools/${t.slug}`} className="hover:underline">{t.name}</Link>
               </h2>
