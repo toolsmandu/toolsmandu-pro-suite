@@ -128,10 +128,6 @@ const AdminFreeTools = () => {
             onChange={(url) => setField('image_url', url)}
           />
           <div>
-            <Label>Description</Label>
-            <Textarea rows={2} value={form.description || ''} onChange={(e) => setField('description', e.target.value)} />
-          </div>
-          <div>
             <Label>Tool Info</Label>
             <Textarea rows={2} value={form.tool_info || ''} onChange={(e) => setField('tool_info', e.target.value)} placeholder="Short info shown below the title" />
           </div>
