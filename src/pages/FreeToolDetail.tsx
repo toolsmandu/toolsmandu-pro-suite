@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import ConvertCaseTool from '@/components/free-tools/ConvertCaseTool';
+import StylishTextTool from '@/components/free-tools/StylishTextTool';
 
 interface FreeTool {
   id: string;
