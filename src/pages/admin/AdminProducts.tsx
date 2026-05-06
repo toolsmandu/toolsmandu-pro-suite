@@ -66,6 +66,7 @@ const emptyForm = () => ({
   stock_status: 'in_stock',
   order_mode: 'cart',
   new_in_store_offer_text: '',
+  show_in_new_in_store: false,
 });
 
 const AdminProducts = () => {
