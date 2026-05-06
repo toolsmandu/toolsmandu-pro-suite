@@ -276,6 +276,7 @@ const AdminProducts = () => {
         features: form.features ? form.features.split('\n').map((item) => item.trim()).filter(Boolean) : [],
         stock_status: form.stock_status,
         order_mode: form.order_mode,
+        new_in_store_offer_text: form.new_in_store_offer_text || null,
       };
 
       let productId = editingId;
