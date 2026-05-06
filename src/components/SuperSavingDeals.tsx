@@ -90,13 +90,14 @@ const SuperSavingDeals = () => {
             return (
               <div
                 key={p.id}
-                className="group relative flex gap-4 pr-4 py-0 rounded-2xl bg-card overflow-hidden border border-white/20 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                className="group relative flex gap-4 pr-4 py-0 rounded-2xl overflow-hidden border border-white/20 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                style={{ backgroundColor: '#0a2e5c' }}
               >
-                {/* Discount ribbon */}
+                {/* Offer ribbon */}
                 {d.discount != null && (
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-red-600 to-orange-500 text-white text-[10px] font-bold shadow-md">
                     <Tag className="h-3 w-3" />
-                    {d.discount}% OFF
+                    Offer
                   </div>
                 )}
 
