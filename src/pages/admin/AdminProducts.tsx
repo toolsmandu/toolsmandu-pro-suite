@@ -653,10 +653,8 @@ const AdminProducts = () => {
 
               {/* Product Image + Product-level Input Fields side by side */}
               <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
-                </div>
                 <div className="space-y-3">
+                  <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
                   <label className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       checked={form.show_in_new_in_store}
@@ -670,6 +668,25 @@ const AdminProducts = () => {
                       value={form.new_in_store_offer_text}
                       onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
                       placeholder="Shown below product title in the New in Store section"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
+                      checked={form.show_in_super_saving_deal}
+                      onCheckedChange={(checked) => setForm({ ...form, show_in_super_saving_deal: !!checked })}
+                    />
+                    <span className="text-sm">Show in Super Saving Deal Section Homepage</span>
+                  </label>
+                  <div>
+                    <Label>Last Price</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={form.last_price}
+                      onChange={(e) => setForm({ ...form, last_price: e.target.value })}
+                      placeholder="Previous price shown crossed-out in Super Saving Deal section"
                     />
                   </div>
                   <div className="border border-border rounded-lg p-3">
@@ -698,7 +715,6 @@ const AdminProducts = () => {
                     )}
                   </div>
                 </div>
-              </div>
 
               {/* Meta Title + Meta Description */}
               <div>
