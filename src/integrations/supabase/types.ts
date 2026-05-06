@@ -713,6 +713,54 @@ export type Database = {
         }
         Relationships: []
       }
+      free_tools: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          meta_description: string | null
+          meta_keywords: string | null
+          meta_title: string | null
+          name: string
+          slug: string
+          sort_order: number
+          tool_description: string | null
+          tool_info: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          meta_description?: string | null
+          meta_keywords?: string | null
+          meta_title?: string | null
+          name: string
+          slug: string
+          sort_order?: number
+          tool_description?: string | null
+          tool_info?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          meta_description?: string | null
+          meta_keywords?: string | null
+          meta_title?: string | null
+          name?: string
+          slug?: string
+          sort_order?: number
+          tool_description?: string | null
+          tool_info?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hero_slides: {
         Row: {
           created_at: string
