@@ -49,17 +49,17 @@ const SuperSavingDeals = () => {
           return (
             <div
               key={p.id}
-              className="flex gap-4 p-4 rounded-2xl border border-border"
+              className="flex gap-4 pr-4 py-0 rounded-2xl border border-border overflow-hidden"
               style={{ backgroundColor: '#0a2e5c' }}
             >
-              <Link to={`/item/${p.slug}`} className="shrink-0 w-28 h-28 rounded-xl overflow-hidden bg-background/40 flex items-center justify-center">
+              <Link to={`/item/${p.slug}`} className="shrink-0 self-stretch w-28 bg-background/40 flex items-center justify-center">
                 {p.image_url ? (
-                  <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-contain" />
+                  <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-3xl">📦</span>
                 )}
               </Link>
-              <div className="flex-1 min-w-0 flex flex-col">
+              <div className="flex-1 min-w-0 flex flex-col py-4">
                 <Link to={`/item/${p.slug}`}>
                   <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug">{p.name}</h3>
                 </Link>
