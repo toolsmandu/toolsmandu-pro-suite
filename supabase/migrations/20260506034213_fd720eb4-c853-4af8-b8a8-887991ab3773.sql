@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN show_in_new_in_store boolean NOT NULL DEFAULT false;

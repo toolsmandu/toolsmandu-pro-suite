@@ -1409,6 +1409,7 @@ export type Database = {
           price: number
           rating: number | null
           region: string | null
+          show_in_new_in_store: boolean
           single_product_tag: string | null
           slug: string
           stock_status: string
@@ -1435,6 +1436,7 @@ export type Database = {
           price: number
           rating?: number | null
           region?: string | null
+          show_in_new_in_store?: boolean
           single_product_tag?: string | null
           slug: string
           stock_status?: string
@@ -1461,6 +1463,7 @@ export type Database = {
           price?: number
           rating?: number | null
           region?: string | null
+          show_in_new_in_store?: boolean
           single_product_tag?: string | null
           slug?: string
           stock_status?: string
