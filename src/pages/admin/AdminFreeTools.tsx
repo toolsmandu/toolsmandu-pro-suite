@@ -145,6 +145,11 @@ const AdminFreeTools = () => {
                 <Input value={form.slug || ''} onChange={(e) => setField('slug', e.target.value)} />
               </div>
             </div>
+            <ImageUpload
+              label="Tool Image"
+              value={form.image_url || ''}
+              onChange={(url) => setField('image_url', url)}
+            />
             <div>
               <Label>Description</Label>
               <Textarea rows={2} value={form.description || ''} onChange={(e) => setField('description', e.target.value)} />
