@@ -183,7 +183,12 @@ const Index = () => {
     },
   });
 
-  const productsByCategory = (catId: string) => allProducts?.filter(p => p.category_id === catId).slice(0, 10) || [];
+  const isInStock = (p: any) => {
+    const vars = (p.product_variations || []).filter((v: any) => v.is_active);
+    if (vars.length > 0) return vars.some((v: any) => v.stock_status !== 'out_of_stock');
+    return p.stock_status !== 'out_of_stock';
+  };
+  const productsByCategory = (catId: string) => allProducts?.filter(p => p.category_id === catId && isInStock(p)).slice(0, 10) || [];
 
   const loading = isLoading || categoriesLoading;
 
