@@ -92,6 +92,10 @@ const AdminCategories = () => {
               <div><Label>Name</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
               <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="auto-generated" /></div>
               <div><Label>Sort Order</Label><Input type="number" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: e.target.value })} /></div>
+              <div>
+                <Label>Category Description</Label>
+                <RichTextEditor value={form.description} onChange={(v) => setForm({ ...form, description: v })} />
+              </div>
               <Button onClick={() => form.name && saveMutation.mutate()} className="w-full" disabled={!form.name || saveMutation.isPending}>
                 {saveMutation.isPending ? 'Saving...' : 'Save'}
               </Button>
