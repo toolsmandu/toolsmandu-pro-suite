@@ -43,7 +43,7 @@ const SuperSavingDeals = () => {
           Grab the biggest savings on premium digital subscriptions and software keys!
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {products.map((p: any) => {
           const d = computeDeal(p);
           return (
@@ -63,7 +63,7 @@ const SuperSavingDeals = () => {
                 <Link to={`/item/${p.slug}`}>
                   <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug">{p.name}</h3>
                 </Link>
-                <div className="mt-auto pt-2">
+                <div className="flex-1 flex flex-col justify-center py-2">
                   {d.last != null && (
                     <p className="text-[11px] text-muted-foreground">
                       LAST PRICE <span className="line-through">Rs {d.last}</span>
@@ -75,13 +75,13 @@ const SuperSavingDeals = () => {
                       Now
                     </span>
                   </div>
-                  <Button asChild size="sm" variant="outline" className="mt-2 h-8 text-xs">
-                    <Link to={`/item/${p.slug}`}>
-                      <ShoppingCart className="h-3.5 w-3.5" />
-                      Buy now
-                    </Link>
-                  </Button>
                 </div>
+                <Button asChild size="sm" variant="outline" className="h-8 text-xs">
+                  <Link to={`/item/${p.slug}`}>
+                    <ShoppingCart className="h-3.5 w-3.5" />
+                    Buy now
+                  </Link>
+                </Button>
               </div>
             </div>
           );
