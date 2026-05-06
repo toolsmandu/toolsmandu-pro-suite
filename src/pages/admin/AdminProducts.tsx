@@ -458,7 +458,16 @@ const AdminProducts = () => {
                   const categoryName = (product.categories as { name?: string } | null)?.name || '-';
                   return (
                     <TableRow key={product.id} className="cursor-pointer" onClick={() => openEdit(product)}>
-                      <TableCell className="font-medium text-foreground">{product.name}</TableCell>
+                      <TableCell className="font-medium text-foreground">
+                        <div className="flex items-center gap-2">
+                          {product.image_url ? (
+                            <img src={product.image_url} alt="" className="w-9 h-9 rounded object-cover bg-secondary flex-shrink-0" />
+                          ) : (
+                            <div className="w-9 h-9 rounded bg-secondary flex items-center justify-center text-sm flex-shrink-0">📦</div>
+                          )}
+                          <span>{product.name}</span>
+                        </div>
+                      </TableCell>
                       <TableCell className="text-muted-foreground">{categoryName}</TableCell>
                       <TableCell>
                         <span className={`text-xs font-medium ${product.stock_status === 'out_of_stock' ? 'text-destructive' : 'text-success'}`}>
