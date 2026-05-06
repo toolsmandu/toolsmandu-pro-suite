@@ -65,10 +65,16 @@ interface Style {
   map: Record<string, string>;
 }
 
+// Strikethrough using combining long stroke overlay (U+0336)
+const strike = (text: string) => text.split('').map((c) => c + '\u0336').join('');
+const strikeBold = (text: string) => transform(text, M_BOLD).split('').map((c) => c + '\u0336').join('');
+
 const STYLES: Style[] = [
   { name: 'Bold', map: M_BOLD },
   { name: 'Italic', map: M_ITALIC },
   { name: 'Bold Italic', map: M_BOLD_ITALIC },
+  { name: 'Strikethrough', map: {}, transformFn: strike },
+  { name: 'Strikethrough Bold', map: {}, transformFn: strikeBold },
   { name: 'Sans-serif Bold', map: M_SANS_BOLD },
   { name: 'Sans-serif Italic', map: M_SANS_ITALIC },
   { name: 'Sans-serif Bold Italic', map: M_SANS_BOLD_ITALIC },
