@@ -642,6 +642,15 @@ const AdminProducts = () => {
                 </div>
               </div>
 
+              <div>
+                <Label>New in Store Offer Text</Label>
+                <Input
+                  value={form.new_in_store_offer_text}
+                  onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
+                  placeholder="Shown below product title in the New in Store section"
+                />
+              </div>
+
               {/* Product Image + Product-level Input Fields side by side */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
