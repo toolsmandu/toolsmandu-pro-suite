@@ -9,6 +9,7 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import { toast } from 'sonner';
 
 const KEYS = [
+  'homepage_seo_title',
   'homepage_about_content',
   'homepage_seo_content',
   'trustpilot_score',
