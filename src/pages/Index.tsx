@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
 import NewInStore from '@/components/NewInStore';
+import SuperSavingDeals from '@/components/SuperSavingDeals';
 import HomepageBlogs from '@/components/HomepageBlogs';
 import HomepageSeoContent from '@/components/HomepageSeoContent';
 import { Loader2 } from 'lucide-react';
@@ -197,6 +198,7 @@ const Index = () => {
           <HeroSlider />
           <NewInStore />
           <div className="container mx-auto px-4 pb-12">
+            <SuperSavingDeals />
             {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
             <HomepageBlogs />
             <HomepageSeoContent />
