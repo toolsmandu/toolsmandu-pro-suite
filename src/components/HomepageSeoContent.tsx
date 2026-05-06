@@ -48,12 +48,12 @@ const GoldStars = ({ score }: { score: number }) => (
     {[1, 2, 3, 4, 5].map((i) => {
       const fillPct = Math.max(0, Math.min(1, score - (i - 1))) * 100;
       return (
-        <div key={i} className="relative h-4 w-4">
-          <svg viewBox="0 0 24 24" className="absolute inset-0 h-4 w-4 text-[#e0e0e0]" fill="currentColor" aria-hidden>
+        <div key={i} className="relative h-5 w-5">
+          <svg viewBox="0 0 24 24" className="absolute inset-0 h-5 w-5 text-[#e0e0e0]" fill="currentColor" aria-hidden>
             <path d="M12 17.3 6.2 21l1.5-6.6L2.5 9.9l6.7-.6L12 3l2.8 6.3 6.7.6-5.2 4.5L17.8 21z"/>
           </svg>
           <div className="absolute inset-0 overflow-hidden" style={{ width: `${fillPct}%` }}>
-            <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#fbbc04]" fill="currentColor" aria-hidden>
+            <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#fbbc04]" fill="currentColor" aria-hidden>
               <path d="M12 17.3 6.2 21l1.5-6.6L2.5 9.9l6.7-.6L12 3l2.8 6.3 6.7.6-5.2 4.5L17.8 21z"/>
             </svg>
           </div>
