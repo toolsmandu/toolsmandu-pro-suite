@@ -199,6 +199,7 @@ const AdminProducts = () => {
       features: Array.isArray(product.features) ? product.features.join('\n') : '',
       stock_status: product.stock_status || 'in_stock',
       order_mode: product.order_mode || 'cart',
+      new_in_store_offer_text: product.new_in_store_offer_text || '',
     });
 
     const { data, error } = await supabase
