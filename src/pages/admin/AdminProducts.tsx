@@ -738,7 +738,7 @@ const AdminProducts = () => {
                     </div>
                   </div>
                   <div>
-                    <Label>Last Price</Label>
+                    <Label>Super Saving Deal Offer</Label>
                     <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 grid gap-3 sm:grid-cols-2 sm:items-center">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <Checkbox
