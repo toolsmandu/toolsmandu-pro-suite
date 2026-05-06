@@ -141,6 +141,9 @@ const Navbar = () => {
 
             {/* Desktop actions */}
             <div className="hidden md:flex items-center gap-3">
+              <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
               <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')} aria-label="Cart">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
