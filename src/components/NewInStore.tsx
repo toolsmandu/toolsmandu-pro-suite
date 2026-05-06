@@ -50,7 +50,7 @@ const NewInStore = () => {
                     alt={p.name}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-contain rounded-[25px] drop-shadow-lg"
+                    className="w-full h-full object-contain rounded-[12px] drop-shadow-lg"
                   />
                 ) : (
                   <div className="text-2xl">📦</div>
