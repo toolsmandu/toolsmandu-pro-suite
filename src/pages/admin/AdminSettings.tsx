@@ -38,6 +38,14 @@ const AdminSettings = () => {
   const [footerGoogleLink, setFooterGoogleLink] = useState('');
   const [footerPaymentImage, setFooterPaymentImage] = useState('');
 
+  // Homepage SEO Content
+  const [homepageAboutContent, setHomepageAboutContent] = useState('');
+  const [homepageSeoContent, setHomepageSeoContent] = useState('');
+  const [trustpilotScore, setTrustpilotScore] = useState('4.8');
+  const [trustpilotCount, setTrustpilotCount] = useState('53');
+  const [googleScore, setGoogleScore] = useState('4.9');
+  const [googleCount, setGoogleCount] = useState('120');
+
   // Nav menu state
   const [navDialogOpen, setNavDialogOpen] = useState(false);
   const [editNavDialogOpen, setEditNavDialogOpen] = useState(false);
@@ -64,6 +72,12 @@ const AdminSettings = () => {
       setFooterGoogleImage(map.footer_google_image?.value || '');
       setFooterGoogleLink(map.footer_google_link?.value || '');
       setFooterPaymentImage(map.footer_payment_image?.value || '');
+      setHomepageAboutContent(map.homepage_about_content?.value || '');
+      setHomepageSeoContent(map.homepage_seo_content?.value || '');
+      setTrustpilotScore(map.trustpilot_score?.value || '4.8');
+      setTrustpilotCount(map.trustpilot_count?.value || '53');
+      setGoogleScore(map.google_score?.value || '4.9');
+      setGoogleCount(map.google_count?.value || '120');
       return map;
     },
   });
@@ -100,6 +114,12 @@ const AdminSettings = () => {
       { key: 'footer_google_image', value: footerGoogleImage },
       { key: 'footer_google_link', value: footerGoogleLink },
       { key: 'footer_payment_image', value: footerPaymentImage },
+      { key: 'homepage_about_content', value: homepageAboutContent },
+      { key: 'homepage_seo_content', value: homepageSeoContent },
+      { key: 'trustpilot_score', value: trustpilotScore },
+      { key: 'trustpilot_count', value: trustpilotCount },
+      { key: 'google_score', value: googleScore },
+      { key: 'google_count', value: googleCount },
     ];
     for (const item of keys) {
       const { data: existing } = await supabase.from('site_settings').select('id').eq('key', item.key).maybeSingle();
@@ -111,6 +131,7 @@ const AdminSettings = () => {
     }
     queryClient.invalidateQueries({ queryKey: ['site-settings'] });
     queryClient.invalidateQueries({ queryKey: ['admin-settings'] });
+    queryClient.invalidateQueries({ queryKey: ['homepage-seo-settings'] });
     toast.success('Settings saved!');
   };
 
@@ -508,6 +529,39 @@ const AdminSettings = () => {
               </div>
             </DialogContent>
           </Dialog>
+        </CardContent>
+      </Card>
+
+      {/* Homepage SEO Content */}
+      <Card>
+        <CardHeader><CardTitle>Homepage SEO Content</CardTitle></CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <Label>"What is Toolsmandu? Why Toolsmandu?" Content</Label>
+            <p className="text-xs text-muted-foreground mb-2">Shown below the Blogs section on the homepage.</p>
+            <RichTextEditor value={homepageAboutContent} onChange={setHomepageAboutContent} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="font-semibold">Trustpilot Reviews</Label>
+              <div><Label className="text-xs">Score (out of 5)</Label><Input value={trustpilotScore} onChange={e => setTrustpilotScore(e.target.value)} placeholder="4.8" /></div>
+              <div><Label className="text-xs">Number of Reviews</Label><Input value={trustpilotCount} onChange={e => setTrustpilotCount(e.target.value)} placeholder="53" /></div>
+            </div>
+            <div className="space-y-2">
+              <Label className="font-semibold">Google Reviews</Label>
+              <div><Label className="text-xs">Score (out of 5)</Label><Input value={googleScore} onChange={e => setGoogleScore(e.target.value)} placeholder="4.9" /></div>
+              <div><Label className="text-xs">Number of Reviews</Label><Input value={googleCount} onChange={e => setGoogleCount(e.target.value)} placeholder="120" /></div>
+            </div>
+          </div>
+
+          <div>
+            <Label>Additional SEO Content</Label>
+            <p className="text-xs text-muted-foreground mb-2">Shown below the "What is Toolsmandu?" section. Use for long-form SEO copy, headings, links, etc.</p>
+            <RichTextEditor value={homepageSeoContent} onChange={setHomepageSeoContent} />
+          </div>
+
+          <Button onClick={saveSettings}>Save Homepage SEO Content</Button>
         </CardContent>
       </Card>
     </div>
