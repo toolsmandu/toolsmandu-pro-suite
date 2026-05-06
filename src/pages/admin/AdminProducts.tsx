@@ -720,16 +720,16 @@ const AdminProducts = () => {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
                   <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
-                  <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 grid gap-3 sm:grid-cols-2 sm:items-end">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <Checkbox
-                        checked={form.show_in_new_in_store}
-                        onCheckedChange={(checked) => setForm({ ...form, show_in_new_in_store: !!checked })}
-                      />
-                      <span className="text-sm">Show in New in Store</span>
-                    </label>
-                    <div>
-                      <Label>New in Store Offer Text</Label>
+                  <div>
+                    <Label>New in Store Offer Text</Label>
+                    <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 grid gap-3 sm:grid-cols-2 sm:items-center">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <Checkbox
+                          checked={form.show_in_new_in_store}
+                          onCheckedChange={(checked) => setForm({ ...form, show_in_new_in_store: !!checked })}
+                        />
+                        <span className="text-sm">Show in New in Store</span>
+                      </label>
                       <Input
                         value={form.new_in_store_offer_text}
                         onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
