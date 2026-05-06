@@ -108,7 +108,7 @@ const StylishTextTool = () => {
   const btnStyle = { backgroundColor: '#338fe1', color: '#fff' } as const;
 
   return (
-    <div className="rounded-lg border border-border overflow-hidden" style={{ backgroundColor: '#0a2e5c' }}>
+    <div className="border border-border overflow-hidden" style={{ backgroundColor: '#0a2e5c' }}>
       <Textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
