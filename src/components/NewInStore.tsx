@@ -30,7 +30,7 @@ const NewInStore = () => {
   return (
     <section className="container mx-auto px-4 pt-7 pb-8">
       <div className="flex items-center gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-foreground whitespace-nowrap">New in Store</h2>
+        <h2 className="text-2xl font-bold text-foreground whitespace-nowrap">Recently Added Items</h2>
         <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-1.5 gap-y-6 lg:gap-x-3 lg:gap-y-12 pt-3">
