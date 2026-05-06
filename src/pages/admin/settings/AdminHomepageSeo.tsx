@@ -20,6 +20,7 @@ const KEYS = [
 
 const AdminHomepageSeo = () => {
   const queryClient = useQueryClient();
+  const [title, setTitle] = useState('What is Toolsmandu? Why Toolsmandu?');
   const [aboutContent, setAboutContent] = useState('');
   const [seoContent, setSeoContent] = useState('');
   const [tpScore, setTpScore] = useState('4.8');
@@ -32,6 +33,7 @@ const AdminHomepageSeo = () => {
     queryFn: async () => {
       const { data } = await supabase.from('site_settings').select('key,value').in('key', KEYS as unknown as string[]);
       const map = data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string>) || {};
+      setTitle(map.homepage_seo_title || 'What is Toolsmandu? Why Toolsmandu?');
       setAboutContent(map.homepage_about_content || '');
       setSeoContent(map.homepage_seo_content || '');
       setTpScore(map.trustpilot_score || '4.8');
