@@ -6,41 +6,31 @@ import { Button } from '@/components/ui/button';
 
 const SuperSavingDeals = () => {
   const { data: products } = useQuery({
-    queryKey: ['super-saving-deals'],
+    queryKey: ['super-saving-deals-v2'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const { data } = await supabase
         .from('products')
-        .select('id, name, slug, image_url, price, original_price, stock_status, product_variations(price, original_price, is_active, stock_status)')
-        .order('created_at', { ascending: false });
+        .select('id, name, slug, image_url, price, last_price, stock_status, product_variations(price, is_active, stock_status)')
+        .eq('show_in_super_saving_deal', true)
+        .order('created_at', { ascending: false })
+        .limit(6);
       return data || [];
     },
   });
 
   const computeDeal = (p: any) => {
     const activeVars = (p.product_variations || []).filter((v: any) => v.is_active && v.stock_status !== 'out_of_stock');
-    let price: number;
-    let original: number | null;
-    if (activeVars.length) {
-      price = Math.min(...activeVars.map((v: any) => Number(v.price)));
-      const origs = activeVars.filter((v: any) => v.original_price).map((v: any) => Number(v.original_price));
-      original = origs.length ? Math.max(...origs) : null;
-    } else {
-      price = Number(p.price);
-      original = p.original_price ? Number(p.original_price) : null;
-    }
-    if (!original || original <= price) return null;
-    const discount = Math.round(((original - price) / original) * 100);
-    return { price, original, discount };
+    const price = activeVars.length
+      ? Math.min(...activeVars.map((v: any) => Number(v.price)))
+      : Number(p.price);
+    const last = p.last_price ? Number(p.last_price) : null;
+    if (!last || last <= price) return { price, last: null, discount: null };
+    const discount = Math.round(((last - price) / last) * 100);
+    return { price, last, discount };
   };
 
-  const deals = (products || [])
-    .map((p: any) => ({ p, d: computeDeal(p) }))
-    .filter((x) => x.d)
-    .sort((a, b) => b.d!.discount - a.d!.discount)
-    .slice(0, 6);
-
-  if (!deals.length) return null;
+  if (!products?.length) return null;
 
   return (
     <section className="mb-12">
@@ -54,43 +44,48 @@ const SuperSavingDeals = () => {
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {deals.map(({ p, d }) => (
-          <div
-            key={p.id}
-            className="flex gap-4 p-4 rounded-2xl border border-border"
-            style={{ backgroundColor: '#0a2e5c' }}
-          >
-            <Link to={`/item/${p.slug}`} className="shrink-0 w-28 h-28 rounded-xl overflow-hidden bg-background/40 flex items-center justify-center">
-              {p.image_url ? (
-                <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-3xl">📦</span>
-              )}
-            </Link>
-            <div className="flex-1 min-w-0 flex flex-col">
-              <Link to={`/item/${p.slug}`}>
-                <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug">{p.name}</h3>
+        {products.map((p: any) => {
+          const d = computeDeal(p);
+          return (
+            <div
+              key={p.id}
+              className="flex gap-4 p-4 rounded-2xl border border-border"
+              style={{ backgroundColor: '#0a2e5c' }}
+            >
+              <Link to={`/item/${p.slug}`} className="shrink-0 w-28 h-28 rounded-xl overflow-hidden bg-background/40 flex items-center justify-center">
+                {p.image_url ? (
+                  <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-3xl">📦</span>
+                )}
               </Link>
-              <div className="mt-auto pt-2">
-                <p className="text-[11px] text-muted-foreground">
-                  FROM <span className="line-through">Rs {d!.original}</span>
-                </p>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-foreground text-lg">Rs {d!.price}</span>
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-success text-success-foreground">
-                    -{d!.discount}%
-                  </span>
+              <div className="flex-1 min-w-0 flex flex-col">
+                <Link to={`/item/${p.slug}`}>
+                  <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug">{p.name}</h3>
+                </Link>
+                <div className="mt-auto pt-2">
+                  {d.last != null && (
+                    <p className="text-[11px] text-muted-foreground">
+                      LAST PRICE <span className="line-through">Rs {d.last}</span>
+                    </p>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-foreground text-lg">Rs {d.price}</span>
+                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-success text-success-foreground">
+                      Now
+                    </span>
+                  </div>
+                  <Button asChild size="sm" variant="outline" className="mt-2 h-8 text-xs">
+                    <Link to={`/item/${p.slug}`}>
+                      <ShoppingCart className="h-3.5 w-3.5" />
+                      Buy now
+                    </Link>
+                  </Button>
                 </div>
-                <Button asChild size="sm" variant="outline" className="mt-2 h-8 text-xs">
-                  <Link to={`/item/${p.slug}`}>
-                    <ShoppingCart className="h-3.5 w-3.5" />
-                    Buy now
-                  </Link>
-                </Button>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
