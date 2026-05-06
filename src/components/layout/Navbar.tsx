@@ -185,6 +185,9 @@ const Navbar = () => {
               <Button variant="ghost" size="icon" onClick={() => setMobileSearchOpen(!mobileSearchOpen)}>
                 <Search className="h-5 w-5" />
               </Button>
+              <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
               <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')}>
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
