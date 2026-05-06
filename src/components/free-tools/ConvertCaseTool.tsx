@@ -101,18 +101,20 @@ const ConvertCaseTool = () => {
 
   const onClear = () => setText('');
 
+  const actionBtnStyle = { backgroundColor: '#338fe1', color: '#fff' } as const;
+
   return (
-    <div className="rounded-lg border border-border bg-card overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/30 px-4 py-2 text-xs text-muted-foreground">
+    <div className="rounded-lg border border-border overflow-hidden" style={{ backgroundColor: '#0a2e5c' }}>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2 text-xs text-muted-foreground" style={{ backgroundColor: '#0a2e5c' }}>
         <div className="flex flex-wrap gap-4">
           <span>Characters: <span className="text-foreground font-medium">{stats.chars}</span></span>
           <span>Words: <span className="text-foreground font-medium">{stats.words}</span></span>
           <span>Lines: <span className="text-foreground font-medium">{stats.lines}</span></span>
         </div>
         <div className="flex gap-1">
-          <Button size="sm" variant="ghost" onClick={onCopy} disabled={!text}><Copy className="h-4 w-4" /> Copy</Button>
-          <Button size="sm" variant="ghost" onClick={onDownload} disabled={!text}><Download className="h-4 w-4" /> Download</Button>
-          <Button size="sm" variant="ghost" onClick={onClear} disabled={!text}><Trash2 className="h-4 w-4" /> Clear</Button>
+          <Button size="sm" onClick={onCopy} disabled={!text} style={actionBtnStyle} className="hover:opacity-90"><Copy className="h-4 w-4" /> Copy</Button>
+          <Button size="sm" onClick={onDownload} disabled={!text} style={actionBtnStyle} className="hover:opacity-90"><Download className="h-4 w-4" /> Download</Button>
+          <Button size="sm" onClick={onClear} disabled={!text} style={actionBtnStyle} className="hover:opacity-90"><Trash2 className="h-4 w-4" /> Clear</Button>
         </div>
       </div>
 
@@ -123,9 +125,9 @@ const ConvertCaseTool = () => {
         className="min-h-[280px] resize-y rounded-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
       />
 
-      <div className="flex flex-wrap gap-2 border-t border-border bg-muted/30 p-3">
+      <div className="flex flex-wrap gap-2 border-t border-border p-3" style={{ backgroundColor: '#0a2e5c' }}>
         {BUTTONS.map((b) => (
-          <Button key={b.type} variant="secondary" size="sm" onClick={() => apply(b.type)}>
+          <Button key={b.type} size="sm" onClick={() => apply(b.type)} style={actionBtnStyle} className="hover:opacity-90">
             {b.label}
           </Button>
         ))}
