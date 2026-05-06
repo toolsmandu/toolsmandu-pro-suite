@@ -72,15 +72,15 @@ const TrustpilotCard = ({ score, count, link }: { score: string; count: string; 
       rel="noopener noreferrer"
       className="flex flex-col gap-2 px-4 py-3 rounded-lg bg-white text-[#191919] border border-[#dcdce6] hover:shadow-md transition-shadow min-w-[200px]"
     >
-      <TrustpilotStars score={s} />
-      <div className="flex items-center gap-1.5 text-[12px] text-[#191919]">
-        <span>Based on <strong>{count}</strong> reviews</span>
-      </div>
       <div className="flex items-center gap-1">
         <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
           <path d="M12 .5 14.7 8.5 23 8.5l-6.7 4.9 2.6 8.1L12 16.6 5.1 21.5l2.6-8.1L1 8.5l8.3 0z" fill="#00b67a"/>
         </svg>
         <span className="text-[12px] font-bold text-[#191919]">Trustpilot</span>
+      </div>
+      <TrustpilotStars score={s} />
+      <div className="flex items-center gap-1.5 text-[12px] text-[#191919]">
+        <span>Based on <strong>{count}</strong> reviews</span>
       </div>
     </a>
   );
