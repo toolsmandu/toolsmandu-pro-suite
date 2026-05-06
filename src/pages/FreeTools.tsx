@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { Wrench } from 'lucide-react';
 
 interface FreeTool {
   id: string;
   name: string;
   slug: string;
   description: string | null;
-  tool_info: string | null;
-  tool_description: string | null;
-  meta_title: string | null;
-  meta_description: string | null;
-  meta_keywords: string | null;
+  image_url: string | null;
 }
 
 const FreeTools = () => {
@@ -22,7 +19,7 @@ const FreeTools = () => {
     (async () => {
       const { data } = await supabase
         .from('free_tools')
-        .select('*')
+        .select('id, name, slug, description, image_url')
         .eq('is_active', true)
         .order('sort_order')
         .order('created_at', { ascending: false });
@@ -40,27 +37,30 @@ const FreeTools = () => {
       ) : tools.length === 0 ? (
         <p className="text-muted-foreground">Free tools coming soon.</p>
       ) : (
-        <div className="space-y-12">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {tools.map((t) => (
-            <section key={t.id} className="rounded-lg border border-border p-6 md:p-8" style={{ backgroundColor: '#0a2e5c' }}>
-              <h2 className="text-2xl font-semibold text-foreground">
-                <Link to={`/free-tools/${t.slug}`} className="hover:underline">{t.name}</Link>
-              </h2>
-
-              {t.tool_info && (
-                <p className="mt-2 text-sm text-muted-foreground">{t.tool_info}</p>
-              )}
-
-              <div className="my-6 rounded-md border border-dashed border-border bg-muted/30 p-8 text-center text-sm text-muted-foreground">
-                Tool coming soon.
+            <Link
+              key={t.id}
+              to={`/free-tools/${t.slug}`}
+              className="group flex flex-col rounded-2xl overflow-hidden border border-border hover:border-primary transition-colors"
+              style={{ backgroundColor: '#0a2e5c' }}
+            >
+              <div className="relative w-full aspect-square overflow-hidden bg-muted/20 flex items-center justify-center">
+                {t.image_url ? (
+                  <img
+                    src={t.image_url}
+                    alt={t.name}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-300"
+                  />
+                ) : (
+                  <Wrench className="h-12 w-12 text-muted-foreground" />
+                )}
               </div>
-
-              {t.tool_description && (
-                <div className="prose prose-invert max-w-none text-foreground/90 whitespace-pre-wrap">
-                  {t.tool_description}
-                </div>
-              )}
-            </section>
+              <div className="p-3 text-center">
+                <h3 className="font-semibold text-foreground line-clamp-2 text-sm">{t.name}</h3>
+              </div>
+            </Link>
           ))}
         </div>
       )}
