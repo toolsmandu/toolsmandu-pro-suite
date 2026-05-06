@@ -284,6 +284,8 @@ const AdminProducts = () => {
         order_mode: form.order_mode,
         new_in_store_offer_text: form.new_in_store_offer_text || null,
         show_in_new_in_store: form.show_in_new_in_store,
+        show_in_super_saving_deal: form.show_in_super_saving_deal,
+        last_price: form.last_price ? Number.parseFloat(form.last_price) : null,
       };
 
       let productId = editingId;
