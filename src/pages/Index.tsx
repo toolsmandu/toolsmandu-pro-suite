@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
 import NewInStore from '@/components/NewInStore';
 import HomepageBlogs from '@/components/HomepageBlogs';
+import HomepageSeoContent from '@/components/HomepageSeoContent';
 import { Loader2 } from 'lucide-react';
 
 const HeroSlider = () => {
@@ -198,6 +199,7 @@ const Index = () => {
           <div className="container mx-auto px-4 py-12">
             {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
             <HomepageBlogs />
+            <HomepageSeoContent />
           </div>
         </>
       )}
