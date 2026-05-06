@@ -38,6 +38,14 @@ const AdminSettings = () => {
   const [footerGoogleLink, setFooterGoogleLink] = useState('');
   const [footerPaymentImage, setFooterPaymentImage] = useState('');
 
+  // Homepage SEO Content
+  const [homepageAboutContent, setHomepageAboutContent] = useState('');
+  const [homepageSeoContent, setHomepageSeoContent] = useState('');
+  const [trustpilotScore, setTrustpilotScore] = useState('4.8');
+  const [trustpilotCount, setTrustpilotCount] = useState('53');
+  const [googleScore, setGoogleScore] = useState('4.9');
+  const [googleCount, setGoogleCount] = useState('120');
+
   // Nav menu state
   const [navDialogOpen, setNavDialogOpen] = useState(false);
   const [editNavDialogOpen, setEditNavDialogOpen] = useState(false);
