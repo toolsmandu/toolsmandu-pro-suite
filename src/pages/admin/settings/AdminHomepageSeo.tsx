@@ -9,6 +9,7 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import { toast } from 'sonner';
 
 const KEYS = [
+  'homepage_seo_title',
   'homepage_about_content',
   'homepage_seo_content',
   'trustpilot_score',
@@ -19,6 +20,7 @@ const KEYS = [
 
 const AdminHomepageSeo = () => {
   const queryClient = useQueryClient();
+  const [title, setTitle] = useState('What is Toolsmandu? Why Toolsmandu?');
   const [aboutContent, setAboutContent] = useState('');
   const [seoContent, setSeoContent] = useState('');
   const [tpScore, setTpScore] = useState('4.8');
@@ -31,6 +33,7 @@ const AdminHomepageSeo = () => {
     queryFn: async () => {
       const { data } = await supabase.from('site_settings').select('key,value').in('key', KEYS as unknown as string[]);
       const map = data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string>) || {};
+      setTitle(map.homepage_seo_title || 'What is Toolsmandu? Why Toolsmandu?');
       setAboutContent(map.homepage_about_content || '');
       setSeoContent(map.homepage_seo_content || '');
       setTpScore(map.trustpilot_score || '4.8');
@@ -43,6 +46,7 @@ const AdminHomepageSeo = () => {
 
   const save = async () => {
     const items = [
+      { key: 'homepage_seo_title', value: title },
       { key: 'homepage_about_content', value: aboutContent },
       { key: 'homepage_seo_content', value: seoContent },
       { key: 'trustpilot_score', value: tpScore },
@@ -66,6 +70,11 @@ const AdminHomepageSeo = () => {
       <Card>
         <CardHeader><CardTitle>"What is Toolsmandu? Why Toolsmandu?"</CardTitle></CardHeader>
         <CardContent className="space-y-6">
+          <div>
+            <Label>Section Title (H2)</Label>
+            <p className="text-xs text-muted-foreground mb-2">Heading shown above the about content on the homepage.</p>
+            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="What is Toolsmandu? Why Toolsmandu?" />
+          </div>
           <div>
             <Label>About Content</Label>
             <p className="text-xs text-muted-foreground mb-2">Shown below the Blogs section on the homepage.</p>

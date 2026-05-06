@@ -119,6 +119,7 @@ const HomepageSeoContent = () => {
         .from('site_settings')
         .select('key,value')
         .in('key', [
+          'homepage_seo_title',
           'homepage_about_content',
           'homepage_seo_content',
           'footer_trustpilot_link',
@@ -132,6 +133,7 @@ const HomepageSeoContent = () => {
     },
   });
 
+  const title = settings?.homepage_seo_title || 'What is Toolsmandu? Why Toolsmandu?';
   const about = settings?.homepage_about_content || DEFAULT_ABOUT;
   const seo = settings?.homepage_seo_content || '';
 
@@ -151,7 +153,7 @@ const HomepageSeoContent = () => {
           />
         </div>
         <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-          What is Toolsmandu? Why Toolsmandu?
+          {title}
         </h2>
         {seo && (
           <div
