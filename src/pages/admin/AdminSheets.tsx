@@ -335,63 +335,73 @@ const AdminSheets = ({
         </div>
       ) : (
         <div className="border border-border rounded-lg bg-background overflow-hidden">
-          <div className="grid grid-cols-[1fr_auto] gap-4 px-4 py-2 bg-muted/40 border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <div className="grid grid-cols-[1fr_180px_auto] gap-4 px-4 py-2 bg-muted/40 border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <div>Product Name</div>
+            <div>Link Status</div>
             <div className="text-center">Actions</div>
           </div>
           <div className="divide-y divide-border">
-            {sheets.map((sheet) => (
-              <div
-                key={sheet.id}
-                className="grid grid-cols-[1fr_auto] items-center gap-4 px-4 py-3 hover:bg-accent/40 transition-colors"
-              >
-                <Link
-                  to={`${basePath}/${sheet.slug || sheet.id}`}
-                  className="flex items-center gap-3 min-w-0"
+            {sheets.map((sheet) => {
+              const count = sheet.link_count || 0;
+              const linkLabel = count === 0
+                ? "No Link"
+                : `${count} Variation${count > 1 ? "s" : ""} Linked`;
+              return (
+                <div
+                  key={sheet.id}
+                  className="grid grid-cols-[1fr_180px_auto] items-center gap-4 px-4 py-3 hover:bg-accent/40 transition-colors"
                 >
-                  {sheet.image_url ? (
-                    <img
-                      src={sheet.image_url}
-                      alt={sheet.name}
-                      className="h-10 w-10 rounded object-cover shrink-0 border border-border"
-                    />
-                  ) : (
-                    <FileSpreadsheet className="h-5 w-5 text-primary shrink-0" />
-                  )}
-                  <div className="min-w-0">
-                    <div className="font-medium text-foreground truncate">
-                      {sheet.name}
+                  <Link
+                    to={`${basePath}/${sheet.slug || sheet.id}`}
+                    className="flex items-center gap-3 min-w-0"
+                  >
+                    {sheet.image_url ? (
+                      <img
+                        src={sheet.image_url}
+                        alt={sheet.name}
+                        className="h-10 w-10 rounded object-cover shrink-0 border border-border"
+                      />
+                    ) : (
+                      <FileSpreadsheet className="h-5 w-5 text-primary shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <div className="font-medium text-foreground truncate">
+                        {sheet.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Created {new Date(sheet.created_at).toLocaleString()}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      Created {new Date(sheet.created_at).toLocaleString()}
-                    </div>
+                  </Link>
+                  <div className={`text-sm ${count === 0 ? "text-muted-foreground" : "text-foreground font-medium"}`}>
+                    {linkLabel}
                   </div>
-                </Link>
-                <div className="flex items-center gap-1">
-                  <Button asChild variant="outline" size="sm">
-                    <Link to={`${basePath}/${sheet.slug || sheet.id}`}>
-                      Open Sheet
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setEditing(sheet)}
-                    aria-label="Edit sheet"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setDeleteTarget(sheet)}
-                    aria-label="Delete sheet"
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button asChild variant="outline" size="sm">
+                      <Link to={`${basePath}/${sheet.slug || sheet.id}`}>
+                        Open Sheet
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setEditing(sheet)}
+                      aria-label="Edit sheet"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setDeleteTarget(sheet)}
+                      aria-label="Delete sheet"
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
