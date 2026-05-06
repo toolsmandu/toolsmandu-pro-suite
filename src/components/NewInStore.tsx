@@ -33,7 +33,7 @@ const NewInStore = () => {
         <h2 className="text-2xl font-bold text-foreground whitespace-nowrap">New in Store</h2>
         <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }} />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-1.5 gap-y-6 lg:gap-x-3 lg:gap-y-12 pt-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-1.5 gap-y-6 lg:gap-x-3 lg:gap-y-12 pt-7">
         {products.map((p: any) => {
           const startPrice = getStartingPrice(p);
           return (
