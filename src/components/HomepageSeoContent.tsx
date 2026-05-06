@@ -155,18 +155,17 @@ const HomepageSeoContent = () => {
             />
           </div>
         </div>
+        {seo && (
+          <div
+            className="prose prose-invert max-w-none text-foreground/90 mb-6 prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary"
+            dangerouslySetInnerHTML={{ __html: seo }}
+          />
+        )}
         <div
           className="prose prose-invert max-w-none text-foreground/90 prose-p:my-3 prose-strong:text-foreground"
           dangerouslySetInnerHTML={{ __html: about }}
         />
       </div>
-
-      {seo && (
-        <div
-          className="prose prose-invert max-w-none text-foreground/90 mt-8 prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary"
-          dangerouslySetInnerHTML={{ __html: seo }}
-        />
-      )}
     </section>
   );
 };
