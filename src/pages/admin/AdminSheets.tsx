@@ -74,9 +74,22 @@ const AdminSheets = ({
       .order("created_at", { ascending: false });
     if (error) {
       toast({ title: "Failed to load sheets", description: error.message, variant: "destructive" });
-    } else {
-      setSheets(data || []);
+      setLoading(false);
+      return;
     }
+    const list = data || [];
+    const ids = list.map((s) => s.id);
+    const counts: Record<string, number> = {};
+    if (ids.length) {
+      const { data: links } = await supabase
+        .from("sheet_variant_links")
+        .select("sheet_id")
+        .in("sheet_id", ids);
+      (links || []).forEach((l: { sheet_id: string }) => {
+        counts[l.sheet_id] = (counts[l.sheet_id] || 0) + 1;
+      });
+    }
+    setSheets(list.map((s) => ({ ...s, link_count: counts[s.id] || 0 })));
     setLoading(false);
   };
 
