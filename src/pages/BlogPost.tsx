@@ -70,7 +70,7 @@ const BlogPost = () => {
           </span>
         )}
         {categoryName && (
-          <Badge variant="secondary" className="gap-1">
+          <Badge className="gap-1 bg-white/5 border border-white/10 text-foreground hover:bg-white/10">
             <Tag className="h-3 w-3" /> {categoryName}
           </Badge>
         )}
