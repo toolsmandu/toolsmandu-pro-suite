@@ -81,6 +81,8 @@ const AdminProducts = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [stockFilter, setStockFilter] = useState('all');
   const [orderModeFilter, setOrderModeFilter] = useState('all');
+  const [newInStoreFilter, setNewInStoreFilter] = useState('all');
+  const [superSavingFilter, setSuperSavingFilter] = useState('all');
   const [form, setForm] = useState(emptyForm());
   const [productInputFieldIds, setProductInputFieldIds] = useState<string[]>([]);
   const [infoEditorIndex, setInfoEditorIndex] = useState<number | null>(null);
