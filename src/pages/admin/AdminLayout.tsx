@@ -421,6 +421,14 @@ const AdminLayout = () => {
                             </SidebarMenuSubItem>
                             <SidebarMenuSubItem>
                               <SidebarMenuSubButton asChild>
+                                <NavLink to="/admin/settings/homepage-seo" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                  <FileBarChart className="mr-2 h-3 w-3" />
+                                  <span>Homepage SEO Content</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild>
                                 <NavLink to="/admin/settings/email-templates" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                   <Mail className="mr-2 h-3 w-3" />
                                   <span>Email Templates</span>
