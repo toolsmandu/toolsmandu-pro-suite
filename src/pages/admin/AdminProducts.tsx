@@ -154,6 +154,49 @@ const AdminProducts = () => {
     },
   });
 
+  const handleExportCsv = async () => {
+    try {
+      const { data: vars, error } = await supabase
+        .from('product_variations')
+        .select('name, price, original_price, expiry_days, stock_status, product_id, sort_order')
+        .order('sort_order');
+      if (error) throw error;
+      const varsByProduct = new Map<string, any[]>();
+      (vars || []).forEach((v: any) => {
+        const arr = varsByProduct.get(v.product_id) || [];
+        arr.push(v);
+        varsByProduct.set(v.product_id, arr);
+      });
+      const headers = ['Product', 'Variation', 'Selling Price', 'Full Price', 'Expiry Days', 'Stock Status', 'Category'];
+      const rows: string[][] = [headers];
+      (products || []).forEach((p: any) => {
+        const cat = p.categories?.name || '';
+        const list = varsByProduct.get(p.id) || [];
+        if (list.length === 0) {
+          rows.push([p.name, '', p.price ?? '', p.original_price ?? '', '', p.stock_status || '', cat]);
+        } else {
+          list.forEach((v: any) => {
+            rows.push([p.name, v.name || '', v.price ?? '', v.original_price ?? '', v.expiry_days ?? '', v.stock_status || '', cat]);
+          });
+        }
+      });
+      const csv = rows.map(r => r.map(c => {
+        const s = String(c ?? '');
+        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      }).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `products-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Exported!');
+    } catch (e: any) {
+      toast.error(e.message || 'Export failed');
+    }
+  };
+
   const filteredProducts = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
