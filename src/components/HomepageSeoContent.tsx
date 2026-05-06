@@ -65,8 +65,6 @@ const GoldStars = ({ score }: { score: number }) => (
 
 const TrustpilotCard = ({ score, count, link }: { score: string; count: string; link: string }) => {
   const s = parseFloat(score) || 0;
-  const word =
-    s >= 4.5 ? 'Excellent' : s >= 4 ? 'Great' : s >= 3 ? 'Average' : s >= 2 ? 'Poor' : 'Bad';
   return (
     <a
       href={link || '#'}
@@ -74,9 +72,6 @@ const TrustpilotCard = ({ score, count, link }: { score: string; count: string; 
       rel="noopener noreferrer"
       className="flex flex-col gap-2 px-4 py-3 rounded-lg bg-white text-[#191919] border border-[#dcdce6] hover:shadow-md transition-shadow min-w-[200px]"
     >
-      <div className="flex items-center gap-1.5 text-[13px] font-medium">
-        <span className="text-[#00b67a] font-bold">{word}</span>
-      </div>
       <TrustpilotStars score={s} />
       <div className="flex items-center gap-1.5 text-[12px] text-[#191919]">
         <span>Based on <strong>{count}</strong> reviews</span>
