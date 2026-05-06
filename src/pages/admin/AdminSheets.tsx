@@ -255,6 +255,11 @@ const AdminSheets = ({
                     {imageUrl ? "Change" : "Upload"}
                   </Button>
                 </div>
+                <Input
+                  placeholder="Or paste image URL"
+                  value={imageUrl || ""}
+                  onChange={(e) => setImageUrl(e.target.value || null)}
+                />
               </div>
             </div>
             <DialogFooter>
