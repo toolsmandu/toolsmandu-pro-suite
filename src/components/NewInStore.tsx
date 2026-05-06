@@ -43,20 +43,17 @@ const NewInStore = () => {
               className="group relative flex items-center gap-3 rounded-2xl pl-20 pr-4 py-3 border border-border hover:border-primary transition-colors min-h-[72px]"
               style={{ backgroundColor: '#0a2e5c' }}
             >
-              <div
-                className="absolute -top-6 left-3 w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg ring-1 ring-white/10"
-                style={{ backgroundColor: '#1a1a2e' }}
-              >
+              <div className="absolute -top-8 left-2 w-16 h-[calc(100%+2rem)] flex items-end justify-center pointer-events-none">
                 {p.image_url ? (
                   <img
                     src={p.image_url}
                     alt={p.name}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain drop-shadow-lg"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-2xl">📦</div>
+                  <div className="text-2xl">📦</div>
                 )}
               </div>
               <div className="min-w-0 flex-1 space-y-1">
