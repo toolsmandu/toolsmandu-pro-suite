@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface FreeTool {
@@ -42,7 +43,9 @@ const FreeTools = () => {
         <div className="space-y-12">
           {tools.map((t) => (
             <section key={t.id} className="rounded-lg border border-border bg-card p-6 md:p-8">
-              <h2 className="text-2xl font-semibold text-foreground">{t.name}</h2>
+              <h2 className="text-2xl font-semibold text-foreground">
+                <Link to={`/free-tools/${t.slug}`} className="hover:underline">{t.name}</Link>
+              </h2>
 
               {t.tool_info && (
                 <p className="mt-2 text-sm text-muted-foreground">{t.tool_info}</p>
