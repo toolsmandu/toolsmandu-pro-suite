@@ -138,23 +138,21 @@ const HomepageSeoContent = () => {
   return (
     <section className="mb-12 mt-4">
       <div className="bg-card/40 rounded-lg p-6 md:p-8 border border-border/50">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            What is Toolsmandu? Why Toolsmandu?
-          </h2>
-          <div className="flex flex-wrap gap-3 md:flex-nowrap md:shrink-0">
-            <TrustpilotCard
-              score={settings?.trustpilot_score || '4.8'}
-              count={settings?.trustpilot_count || '53'}
-              link={settings?.footer_trustpilot_link || 'https://www.trustpilot.com/review/toolsmandu.com'}
-            />
-            <GoogleCard
-              score={settings?.google_score || '4.9'}
-              count={settings?.google_count || '120'}
-              link={settings?.footer_google_link || '#'}
-            />
-          </div>
+        <div className="md:float-right md:ml-6 mb-4 flex flex-wrap gap-3 md:flex-nowrap">
+          <TrustpilotCard
+            score={settings?.trustpilot_score || '4.8'}
+            count={settings?.trustpilot_count || '53'}
+            link={settings?.footer_trustpilot_link || 'https://www.trustpilot.com/review/toolsmandu.com'}
+          />
+          <GoogleCard
+            score={settings?.google_score || '4.9'}
+            count={settings?.google_count || '120'}
+            link={settings?.footer_google_link || '#'}
+          />
         </div>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+          What is Toolsmandu? Why Toolsmandu?
+        </h2>
         {seo && (
           <div
             className="prose prose-invert max-w-none text-foreground/90 mb-6 prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary"
@@ -165,6 +163,7 @@ const HomepageSeoContent = () => {
           className="prose prose-invert max-w-none text-foreground/90 prose-p:my-3 prose-strong:text-foreground"
           dangerouslySetInnerHTML={{ __html: about }}
         />
+        <div className="clear-both" />
       </div>
     </section>
   );
