@@ -4,9 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, ArrowLeft } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
 
 interface FreeTool {
@@ -34,7 +33,7 @@ const empty: Partial<FreeTool> = {
 
 const AdminFreeTools = () => {
   const [tools, setTools] = useState<FreeTool[]>([]);
-  const [open, setOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Partial<FreeTool>>(empty);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,8 +46,8 @@ const AdminFreeTools = () => {
 
   useEffect(() => { load(); }, []);
 
-  const openNew = () => { setForm(empty); setEditingId(null); setOpen(true); };
-  const openEdit = (t: FreeTool) => { setForm(t); setEditingId(t.id); setOpen(true); };
+  const openNew = () => { setForm(empty); setEditingId(null); setShowForm(true); };
+  const openEdit = (t: FreeTool) => { setForm(t); setEditingId(t.id); setShowForm(true); };
 
   const setField = (k: keyof FreeTool, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -86,7 +85,7 @@ const AdminFreeTools = () => {
       return;
     }
     toast({ title: editingId ? 'Tool updated' : 'Tool created' });
-    setOpen(false);
+    setShowForm(false);
     load();
   };
 
@@ -96,6 +95,76 @@ const AdminFreeTools = () => {
     if (error) toast({ title: 'Error', description: error.message, variant: 'destructive' });
     else { toast({ title: 'Deleted' }); load(); }
   };
+
+  if (showForm) {
+    return (
+      <div>
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={() => setShowForm(false)}>
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Button>
+            <h2 className="text-2xl font-bold text-foreground">{editingId ? 'Edit Tool' : 'Add Tool'}</h2>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+            <Button onClick={save} disabled={loading}>{editingId ? 'Update' : 'Create'}</Button>
+          </div>
+        </div>
+        <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Tool Name *</Label>
+              <Input value={form.name || ''} onChange={(e) => onNameChange(e.target.value)} />
+            </div>
+            <div>
+              <Label>Slug *</Label>
+              <Input value={form.slug || ''} onChange={(e) => setField('slug', e.target.value)} />
+            </div>
+          </div>
+          <ImageUpload
+            label="Tool Image"
+            value={form.image_url || ''}
+            onChange={(url) => setField('image_url', url)}
+          />
+          <div>
+            <Label>Description</Label>
+            <Textarea rows={2} value={form.description || ''} onChange={(e) => setField('description', e.target.value)} />
+          </div>
+          <div>
+            <Label>Tool Info</Label>
+            <Textarea rows={2} value={form.tool_info || ''} onChange={(e) => setField('tool_info', e.target.value)} placeholder="Short info shown below the title" />
+          </div>
+          <div>
+            <Label>Tool Description</Label>
+            <Textarea rows={4} value={form.tool_description || ''} onChange={(e) => setField('tool_description', e.target.value)} placeholder="Full description shown below the tool" />
+          </div>
+          <div className="pt-2 border-t border-border">
+            <p className="text-sm font-semibold mb-2 text-foreground">SEO</p>
+            <div className="space-y-3">
+              <div>
+                <Label>Meta Title</Label>
+                <Input value={form.meta_title || ''} onChange={(e) => setField('meta_title', e.target.value)} />
+              </div>
+              <div>
+                <Label>Meta Description</Label>
+                <Textarea rows={2} value={form.meta_description || ''} onChange={(e) => setField('meta_description', e.target.value)} />
+              </div>
+              <div>
+                <Label>Keywords</Label>
+                <Input value={form.meta_keywords || ''} onChange={(e) => setField('meta_keywords', e.target.value)} placeholder="comma, separated, keywords" />
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground italic">Tool's script will be generated by Lovable later.</p>
+          <div className="flex justify-end gap-2 pt-4 border-t border-border">
+            <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+            <Button onClick={save} disabled={loading}>{editingId ? 'Update' : 'Create'}</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -128,65 +197,6 @@ const AdminFreeTools = () => {
           ))}
         </div>
       )}
-
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
-          <DialogHeader>
-            <DialogTitle>{editingId ? 'Edit Tool' : 'Add Tool'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Tool Name *</Label>
-                <Input value={form.name || ''} onChange={(e) => onNameChange(e.target.value)} />
-              </div>
-              <div>
-                <Label>Slug *</Label>
-                <Input value={form.slug || ''} onChange={(e) => setField('slug', e.target.value)} />
-              </div>
-            </div>
-            <ImageUpload
-              label="Tool Image"
-              value={form.image_url || ''}
-              onChange={(url) => setField('image_url', url)}
-            />
-            <div>
-              <Label>Description</Label>
-              <Textarea rows={2} value={form.description || ''} onChange={(e) => setField('description', e.target.value)} />
-            </div>
-            <div>
-              <Label>Tool Info</Label>
-              <Textarea rows={2} value={form.tool_info || ''} onChange={(e) => setField('tool_info', e.target.value)} placeholder="Short info shown below the title" />
-            </div>
-            <div>
-              <Label>Tool Description</Label>
-              <Textarea rows={4} value={form.tool_description || ''} onChange={(e) => setField('tool_description', e.target.value)} placeholder="Full description shown below the tool" />
-            </div>
-            <div className="pt-2 border-t border-border">
-              <p className="text-sm font-semibold mb-2 text-foreground">SEO</p>
-              <div className="space-y-3">
-                <div>
-                  <Label>Meta Title</Label>
-                  <Input value={form.meta_title || ''} onChange={(e) => setField('meta_title', e.target.value)} />
-                </div>
-                <div>
-                  <Label>Meta Description</Label>
-                  <Textarea rows={2} value={form.meta_description || ''} onChange={(e) => setField('meta_description', e.target.value)} />
-                </div>
-                <div>
-                  <Label>Keywords</Label>
-                  <Input value={form.meta_keywords || ''} onChange={(e) => setField('meta_keywords', e.target.value)} placeholder="comma, separated, keywords" />
-                </div>
-              </div>
-            </div>
-            <p className="text-xs text-muted-foreground italic">Tool's script will be generated by Lovable later.</p>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={save} disabled={loading}>{editingId ? 'Update' : 'Create'}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
