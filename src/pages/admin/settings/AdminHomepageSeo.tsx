@@ -71,6 +71,11 @@ const AdminHomepageSeo = () => {
         <CardHeader><CardTitle>"What is Toolsmandu? Why Toolsmandu?"</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           <div>
+            <Label>Section Title (H2)</Label>
+            <p className="text-xs text-muted-foreground mb-2">Heading shown above the about content on the homepage.</p>
+            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="What is Toolsmandu? Why Toolsmandu?" />
+          </div>
+          <div>
             <Label>About Content</Label>
             <p className="text-xs text-muted-foreground mb-2">Shown below the Blogs section on the homepage.</p>
             <RichTextEditor value={aboutContent} onChange={setAboutContent} />
