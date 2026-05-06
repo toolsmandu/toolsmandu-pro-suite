@@ -75,7 +75,7 @@ const STYLES: Style[] = [
   { name: 'Italic', map: M_ITALIC },
   { name: 'Bold Italic', map: M_BOLD_ITALIC },
   { name: 'Strikethrough', map: {}, transformFn: strike },
-  { name: 'Strikethrough Bold', map: {}, transformFn: strikeBold },
+  
   { name: 'Sans-serif Bold', map: M_SANS_BOLD },
   { name: 'Sans-serif Italic', map: M_SANS_ITALIC },
   { name: 'Sans-serif Bold Italic', map: M_SANS_BOLD_ITALIC },
