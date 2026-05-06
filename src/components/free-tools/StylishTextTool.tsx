@@ -63,6 +63,7 @@ const M_MONO = buildMap(0x1d670, 0x1d68a, 0x1d7f6);
 interface Style {
   name: string;
   map: Record<string, string>;
+  transformFn?: (text: string) => string;
 }
 
 // Strikethrough using combining long stroke overlay (U+0336)
