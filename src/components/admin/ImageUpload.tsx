@@ -69,7 +69,7 @@ const ImageUpload = ({ value, onChange, label = 'Image' }: ImageUploadProps) => 
   return (
     <div>
       <Label className="text-sm font-semibold">{label}</Label>
-      <div className="mt-1.5">
+      <div className="mt-1.5 rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3">
         <input
           ref={fileInputRef}
           type="file"
@@ -81,7 +81,7 @@ const ImageUpload = ({ value, onChange, label = 'Image' }: ImageUploadProps) => 
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="group relative w-full rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 hover:bg-primary/10 hover:border-primary transition-colors flex flex-col items-center justify-center gap-2 p-6 cursor-pointer disabled:opacity-60"
+          className="group relative w-full rounded-md hover:bg-primary/10 transition-colors flex flex-col items-center justify-center gap-2 p-3 cursor-pointer disabled:opacity-60"
         >
           {value ? (
             <div className="flex items-center gap-3 w-full">
