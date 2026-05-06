@@ -13,7 +13,7 @@ const AdminCategories = () => {
   const queryClient = useQueryClient();
   const [panelOpen, setPanelOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: '', slug: '', icon: '', sort_order: '0' });
+  const [form, setForm] = useState({ name: '', slug: '', icon: '', sort_order: '0', description: '' });
 
   const { data: categories } = useQuery({
     queryKey: ['admin-categories'],
