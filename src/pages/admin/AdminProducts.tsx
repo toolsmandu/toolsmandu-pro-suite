@@ -279,6 +279,7 @@ const AdminProducts = () => {
         stock_status: form.stock_status,
         order_mode: form.order_mode,
         new_in_store_offer_text: form.new_in_store_offer_text || null,
+        show_in_new_in_store: form.show_in_new_in_store,
       };
 
       let productId = editingId;
