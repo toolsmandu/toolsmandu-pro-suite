@@ -783,18 +783,15 @@ const AdminProducts = () => {
                       </div>
                     )}
                   </div>
+                  <div>
+                    <Label>Meta Title</Label>
+                    <Input value={form.meta_title} onChange={(event) => setForm({ ...form, meta_title: event.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Meta Description</Label>
+                    <Input value={form.meta_description} onChange={(event) => setForm({ ...form, meta_description: event.target.value })} />
+                  </div>
                 </div>
-              </div>
-
-
-              {/* Meta Title + Meta Description */}
-              <div>
-                <Label>Meta Title</Label>
-                <Input value={form.meta_title} onChange={(event) => setForm({ ...form, meta_title: event.target.value })} />
-              </div>
-              <div>
-                <Label>Meta Description</Label>
-                <Input value={form.meta_description} onChange={(event) => setForm({ ...form, meta_description: event.target.value })} />
               </div>
 
               {/* Description */}
