@@ -720,42 +720,40 @@ const AdminProducts = () => {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
                   <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
-                  <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 space-y-3">
-                    <div className="grid gap-3 sm:grid-cols-2 sm:items-end">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <Checkbox
-                          checked={form.show_in_new_in_store}
-                          onCheckedChange={(checked) => setForm({ ...form, show_in_new_in_store: !!checked })}
-                        />
-                        <span className="text-sm">Show in New in Store</span>
-                      </label>
-                      <div>
-                        <Label>New in Store Offer Text</Label>
-                        <Input
-                          value={form.new_in_store_offer_text}
-                          onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
-                          placeholder="Shown below product title in New in Store"
-                        />
-                      </div>
+                  <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 grid gap-3 sm:grid-cols-2 sm:items-end">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={form.show_in_new_in_store}
+                        onCheckedChange={(checked) => setForm({ ...form, show_in_new_in_store: !!checked })}
+                      />
+                      <span className="text-sm">Show in New in Store</span>
+                    </label>
+                    <div>
+                      <Label>New in Store Offer Text</Label>
+                      <Input
+                        value={form.new_in_store_offer_text}
+                        onChange={(e) => setForm({ ...form, new_in_store_offer_text: e.target.value })}
+                        placeholder="Shown below product title in New in Store"
+                      />
                     </div>
-                    <div className="grid gap-3 sm:grid-cols-2 sm:items-end">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <Checkbox
-                          checked={form.show_in_super_saving_deal}
-                          onCheckedChange={(checked) => setForm({ ...form, show_in_super_saving_deal: !!checked })}
-                        />
-                        <span className="text-sm">Show in Super Saving Deal</span>
-                      </label>
-                      <div>
-                        <Label>Last Price</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={form.last_price}
-                          onChange={(e) => setForm({ ...form, last_price: e.target.value })}
-                          placeholder="Crossed-out price in Super Saving Deal"
-                        />
-                      </div>
+                  </div>
+                  <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 grid gap-3 sm:grid-cols-2 sm:items-end">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={form.show_in_super_saving_deal}
+                        onCheckedChange={(checked) => setForm({ ...form, show_in_super_saving_deal: !!checked })}
+                      />
+                      <span className="text-sm">Show in Super Saving Deal</span>
+                    </label>
+                    <div>
+                      <Label>Last Price</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={form.last_price}
+                        onChange={(e) => setForm({ ...form, last_price: e.target.value })}
+                        placeholder="Crossed-out price in Super Saving Deal"
+                      />
                     </div>
                   </div>
                 </div>
