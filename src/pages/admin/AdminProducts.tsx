@@ -491,6 +491,10 @@ const AdminProducts = () => {
               <Plus className="h-4 w-4 mr-2" />
               Add Product
             </Button>
+            <Button variant="outline" onClick={handleExportCsv}>
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
           </div>
         </div>
 
