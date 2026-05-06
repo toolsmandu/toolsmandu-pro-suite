@@ -23,11 +23,11 @@ const AdminCategories = () => {
     },
   });
 
-  const resetForm = () => { setForm({ name: '', slug: '', icon: '', sort_order: '0' }); setEditingId(null); };
+  const resetForm = () => { setForm({ name: '', slug: '', icon: '', sort_order: '0', description: '' }); setEditingId(null); };
 
   const openAdd = () => { resetForm(); setPanelOpen(true); };
   const openEdit = (c: any) => {
-    setForm({ name: c.name, slug: c.slug, icon: c.icon || '', sort_order: String(c.sort_order) });
+    setForm({ name: c.name, slug: c.slug, icon: c.icon || '', sort_order: String(c.sort_order), description: c.description || '' });
     setEditingId(c.id);
     setPanelOpen(true);
   };
@@ -35,7 +35,7 @@ const AdminCategories = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const payload = { name: form.name, slug: form.slug || form.name.toLowerCase().replace(/\s+/g, '-'), icon: form.icon || null, sort_order: parseInt(form.sort_order) || 0 };
+      const payload = { name: form.name, slug: form.slug || form.name.toLowerCase().replace(/\s+/g, '-'), icon: form.icon || null, sort_order: parseInt(form.sort_order) || 0, description: form.description || null };
       if (editingId) await supabase.from('categories').update(payload).eq('id', editingId);
       else await supabase.from('categories').insert(payload);
     },
