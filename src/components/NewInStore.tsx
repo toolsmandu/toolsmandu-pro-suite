@@ -56,7 +56,7 @@ const NewInStore = () => {
                   <div className="text-2xl">📦</div>
                 )}
               </div>
-              <div className="min-w-0 flex-1 space-y-1">
+              <div className="min-w-0 flex-1 space-y-0.5">
                 <h3 className="text-sm font-semibold text-foreground line-clamp-1">{p.name}</h3>
                 {startPrice != null && (
                   <p className="text-xs font-medium line-clamp-1" style={{ color: '#fbbf24' }}>
