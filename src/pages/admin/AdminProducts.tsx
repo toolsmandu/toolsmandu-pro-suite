@@ -65,6 +65,7 @@ const emptyForm = () => ({
   features: '',
   stock_status: 'in_stock',
   order_mode: 'cart',
+  new_in_store_offer_text: '',
 });
 
 const AdminProducts = () => {
