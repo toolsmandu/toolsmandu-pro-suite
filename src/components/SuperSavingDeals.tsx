@@ -14,7 +14,7 @@ const SuperSavingDeals = () => {
         .select('id, name, slug, image_url, price, last_price, stock_status, product_variations(price, is_active, stock_status)')
         .eq('show_in_super_saving_deal', true)
         .order('created_at', { ascending: false })
-        .limit(6);
+        .limit(8);
       return data || [];
     },
   });
