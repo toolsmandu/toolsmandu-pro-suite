@@ -25,7 +25,7 @@ const NewInStore = () => {
         <h2 className="text-2xl font-bold text-foreground whitespace-nowrap">New in Store</h2>
         <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }} />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {products.map((p: any) => (
           <Link
             key={p.id}
