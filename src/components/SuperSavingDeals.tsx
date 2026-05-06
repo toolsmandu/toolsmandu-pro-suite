@@ -59,7 +59,7 @@ const SuperSavingDeals = () => {
                   <span className="text-3xl">📦</span>
                 )}
               </Link>
-              <div className="flex-1 min-w-0 flex flex-col">
+              <div className="flex-1 min-w-0 flex flex-col py-4">
                 <Link to={`/item/${p.slug}`}>
                   <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug">{p.name}</h3>
                 </Link>
