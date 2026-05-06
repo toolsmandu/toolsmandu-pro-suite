@@ -1403,6 +1403,7 @@ export type Database = {
           meta_description: string | null
           meta_title: string | null
           name: string
+          new_in_store_offer_text: string | null
           order_mode: string
           original_price: number | null
           price: number
@@ -1428,6 +1429,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           name: string
+          new_in_store_offer_text?: string | null
           order_mode?: string
           original_price?: number | null
           price: number
@@ -1453,6 +1455,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           name?: string
+          new_in_store_offer_text?: string | null
           order_mode?: string
           original_price?: number | null
           price?: number
