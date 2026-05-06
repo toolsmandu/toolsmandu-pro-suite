@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, ChevronRight, Flame, Tag, Sparkles } from 'lucide-react';
+import { ShoppingCart, ChevronRight, Flame, Tag, Sparkles, Percent, BadgePercent, PiggyBank, Gift, TicketPercent } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 
@@ -50,6 +50,18 @@ const SuperSavingDeals = () => {
               'repeating-linear-gradient(45deg, rgba(255,255,255,0.6) 0 2px, transparent 2px 14px)',
           }}
         />
+
+        {/* Floating savings icons in background */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden text-white/10">
+          <Percent className="absolute top-6 left-[8%] h-16 w-16 -rotate-12" />
+          <BadgePercent className="absolute top-1/3 left-[28%] h-20 w-20 rotate-6" />
+          <PiggyBank className="absolute bottom-8 left-[14%] h-14 w-14 -rotate-6" />
+          <Gift className="absolute top-10 right-[10%] h-16 w-16 rotate-12" />
+          <TicketPercent className="absolute bottom-10 right-[25%] h-20 w-20 -rotate-3" />
+          <Tag className="absolute top-1/2 right-[6%] h-14 w-14 rotate-45" />
+          <Percent className="absolute bottom-4 right-[45%] h-12 w-12 rotate-12" />
+          <Sparkles className="absolute top-4 left-[48%] h-10 w-10" />
+        </div>
 
         {/* Header */}
         <div className="relative mb-6 flex flex-wrap items-end justify-between gap-3">
