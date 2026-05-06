@@ -79,6 +79,7 @@ import AdminTaskDashboard from "./pages/admin/tasks/AdminTaskDashboard";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 import FreeTools from "./pages/FreeTools";
+import FreeToolDetail from "./pages/FreeToolDetail";
 import AdminFreeTools from "./pages/admin/AdminFreeTools";
 
 const queryClient = new QueryClient();
@@ -108,6 +109,7 @@ const App = () => (
                 <Route path="/inbox" element={<PublicInboxPage />} />
                 <Route path="/blog" element={<BlogList />} />
                 <Route path="/free-tools" element={<FreeTools />} />
+                <Route path="/free-tools/:slug" element={<FreeToolDetail />} />
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} />
                   <Route path="orders" element={<OrdersPage />} />
