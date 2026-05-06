@@ -43,7 +43,7 @@ const NewInStore = () => {
               className="group relative flex items-center gap-3 rounded-2xl pl-20 pr-4 py-3 border border-border hover:border-primary transition-colors min-h-[72px]"
               style={{ backgroundColor: '#0a2e5c' }}
             >
-              <div className="absolute -top-8 left-2 w-16 h-[calc(100%+2rem)] flex items-end justify-center pointer-events-none">
+              <div className="absolute -top-8 left-2 w-[54px] h-[calc(100%+2rem)] flex items-end justify-center pointer-events-none">
                 {p.image_url ? (
                   <img
                     src={p.image_url}
