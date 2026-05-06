@@ -113,7 +113,7 @@ const StylishTextTool = () => {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={placeholder}
-        className="min-h-[140px] resize-y rounded-none border-0 border-b border-white/30 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
+        className="flex w-full bg-background px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[140px] resize-y rounded-none border-b focus-visible:ring-0 focus-visible:ring-offset-0 text-base border-amber-200 border border-solid"
       />
 
       <div className="divide-y divide-white/15 border-t border-white/30">
