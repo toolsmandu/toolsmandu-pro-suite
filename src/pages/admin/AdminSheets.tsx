@@ -335,7 +335,7 @@ const AdminSheets = ({
         </div>
       ) : (
         <div className="border border-border rounded-lg bg-background overflow-hidden">
-          <div className="grid grid-cols-[1fr_180px_auto] gap-4 px-4 py-2 bg-muted/40 border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <div className="grid grid-cols-[1fr_180px_220px] gap-4 px-4 py-2 bg-muted/40 border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <div>Product Name</div>
             <div>Link Status</div>
             <div className="text-center">Actions</div>
@@ -349,7 +349,7 @@ const AdminSheets = ({
               return (
                 <div
                   key={sheet.id}
-                  className="grid grid-cols-[1fr_180px_auto] items-center gap-4 px-4 py-3 hover:bg-accent/40 transition-colors"
+                  className="grid grid-cols-[1fr_180px_220px] items-center gap-4 px-4 py-3 hover:bg-accent/40 transition-colors"
                 >
                   <Link
                     to={`${basePath}/${sheet.slug || sheet.id}`}
