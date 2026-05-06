@@ -20,6 +20,7 @@ interface FreeTool {
 const TOOL_WIDGETS: Record<string, () => JSX.Element> = {
   'convert-case': () => <ConvertCaseTool />,
   'stylish-text-generator': () => <StylishTextTool />,
+  'facebook-symbols': () => <FacebookSymbolsTool />,
 };
 
 const FreeToolDetail = () => {
