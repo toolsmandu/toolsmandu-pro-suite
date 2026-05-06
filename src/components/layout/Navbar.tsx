@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 const trustpilotImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494880317-8uue9fe7kpp.webp';
 const googleReviewsImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494878578-cse3wn6nvgm.webp';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, Menu, X, Sun, Moon, icons } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, icons } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
-import { useTheme } from '@/contexts/ThemeContext';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,7 +25,6 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAdmin, isEditor, signOut } = useAuth();
   const { itemCount } = useCart();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const { data: settings } = useQuery({
@@ -141,9 +139,6 @@ const Navbar = () => {
 
             {/* Desktop actions */}
             <div className="hidden md:flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
               <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')} aria-label="Cart">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -184,9 +179,6 @@ const Navbar = () => {
             <div className="flex md:hidden items-center gap-1">
               <Button variant="ghost" size="icon" onClick={() => setMobileSearchOpen(!mobileSearchOpen)}>
                 <Search className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
               <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')}>
                 <ShoppingCart className="h-5 w-5" />
