@@ -6,20 +6,20 @@ const DEFAULT_ABOUT = `<p>Your <strong>Reliable partner</strong> for digital pro
 <p>In a world full of online risks, Toolsmandu is your trusted partner for absolute security and convenience with service warranty on sold products.</p>
 <p>As Toolsmandu, we keep growing by adding new products and services in our platform. By providing trustworthy service and years of experience in the industry, we have grown into one of the most reliable digital subscription platform in Nepal.</p>`;
 
-// Trustpilot-style star: filled green square with white star cutout (large)
+// Trustpilot-style star: filled green square with white star cutout
 const TrustpilotStars = ({ score }: { score: number }) => {
   const stars = [1, 2, 3, 4, 5];
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-[3px]">
       {stars.map((i) => {
         const fillPct = Math.max(0, Math.min(1, score - (i - 1))) * 100;
         return (
-          <div key={i} className="relative h-12 w-12 bg-[#dcdce6]">
+          <div key={i} className="relative h-6 w-6 bg-[#dcdce6]">
             <div
               className="absolute inset-0 bg-[#00b67a]"
               style={{ width: `${fillPct}%` }}
             />
-            <svg viewBox="0 0 24 24" className="absolute inset-0 h-12 w-12" aria-hidden>
+            <svg viewBox="0 0 24 24" className="absolute inset-0 h-6 w-6" aria-hidden>
               <path
                 d="M12 17.3 6.2 21l1.5-6.6L2.5 9.9l6.7-.6L12 3l2.8 6.3 6.7.6-5.2 4.5L17.8 21z"
                 fill="#fff"
@@ -33,8 +33,8 @@ const TrustpilotStars = ({ score }: { score: number }) => {
 };
 
 // Google "G" logo
-const GoogleG = ({ className = 'h-6 w-6' }: { className?: string }) => (
-  <svg viewBox="0 0 48 48" className={className} aria-hidden>
+const GoogleG = () => (
+  <svg viewBox="0 0 48 48" className="h-6 w-6" aria-hidden>
     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
     <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
     <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
@@ -42,20 +42,21 @@ const GoogleG = ({ className = 'h-6 w-6' }: { className?: string }) => (
   </svg>
 );
 
-// Google-style large gold/grey filled squares with star cutout
-const GoogleSquareStars = ({ score }: { score: number }) => (
-  <div className="flex gap-1">
+// Generic gold star (Google)
+const GoldStars = ({ score }: { score: number }) => (
+  <div className="flex gap-[1px]">
     {[1, 2, 3, 4, 5].map((i) => {
       const fillPct = Math.max(0, Math.min(1, score - (i - 1))) * 100;
       return (
-        <div key={i} className="relative h-12 w-12 bg-[#dcdce6]">
-          <div className="absolute inset-0 bg-[#fbbc04]" style={{ width: `${fillPct}%` }} />
-          <svg viewBox="0 0 24 24" className="absolute inset-0 h-12 w-12" aria-hidden>
-            <path
-              d="M12 17.3 6.2 21l1.5-6.6L2.5 9.9l6.7-.6L12 3l2.8 6.3 6.7.6-5.2 4.5L17.8 21z"
-              fill="#fff"
-            />
+        <div key={i} className="relative h-5 w-5">
+          <svg viewBox="0 0 24 24" className="absolute inset-0 h-5 w-5 text-[#e0e0e0]" fill="currentColor" aria-hidden>
+            <path d="M12 17.3 6.2 21l1.5-6.6L2.5 9.9l6.7-.6L12 3l2.8 6.3 6.7.6-5.2 4.5L17.8 21z"/>
           </svg>
+          <div className="absolute inset-0 overflow-hidden" style={{ width: `${fillPct}%` }}>
+            <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#fbbc04]" fill="currentColor" aria-hidden>
+              <path d="M12 17.3 6.2 21l1.5-6.6L2.5 9.9l6.7-.6L12 3l2.8 6.3 6.7.6-5.2 4.5L17.8 21z"/>
+            </svg>
+          </div>
         </div>
       );
     })}
@@ -69,17 +70,17 @@ const TrustpilotCard = ({ score, count, link }: { score: string; count: string; 
       href={link || '#'}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-col gap-3 px-6 py-5 rounded-xl bg-[#0c1a3a] text-white border border-white/10 hover:border-white/20 transition-colors min-w-[280px]"
+      className="flex flex-col gap-2.5 px-5 py-4 rounded-lg bg-white text-[#191919] border border-[#dcdce6] hover:shadow-md transition-shadow min-w-[250px]"
     >
-      <div className="flex items-center gap-2">
-        <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+      <div className="flex items-center gap-1.5">
+        <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" aria-hidden>
           <path d="M12 .5 14.7 8.5 23 8.5l-6.7 4.9 2.6 8.1L12 16.6 5.1 21.5l2.6-8.1L1 8.5l8.3 0z" fill="#00b67a"/>
         </svg>
-        <span className="text-[16px] font-semibold">Trustpilot</span>
+        <span className="text-[15px] font-bold text-[#191919]">Trustpilot</span>
       </div>
       <TrustpilotStars score={s} />
-      <div className="text-[15px] text-white/90">
-        TrustScore <strong>{score}</strong> | <strong>{count}</strong> reviews
+      <div className="flex items-center gap-1.5 text-[15px] text-[#191919]">
+        <span>Based on <strong>{count}</strong> reviews</span>
       </div>
     </a>
   );
@@ -92,15 +93,18 @@ const GoogleCard = ({ score, count, link }: { score: string; count: string; link
       href={link || '#'}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-col gap-3 px-6 py-5 rounded-xl bg-[#0c1a3a] text-white border border-white/10 hover:border-white/20 transition-colors min-w-[280px]"
+      className="flex flex-col gap-2.5 px-5 py-4 rounded-lg bg-white text-[#191919] border border-[#dcdce6] hover:shadow-md transition-shadow min-w-[250px]"
     >
       <div className="flex items-center gap-2">
-        <GoogleG className="h-5 w-5" />
-        <span className="text-[16px] font-semibold">Google Reviews</span>
+        <GoogleG />
+        <span className="text-[15px] font-medium text-[#5f6368]">Google Reviews</span>
       </div>
-      <GoogleSquareStars score={s} />
-      <div className="text-[15px] text-white/90">
-        Rating <strong>{score}</strong> | <strong>{count}</strong> reviews
+      <div className="flex items-center gap-2.5">
+        <span className="text-2xl font-bold text-[#191919] leading-none">{score}</span>
+        <GoldStars score={s} />
+      </div>
+      <div className="text-[15px] text-[#5f6368]">
+        Based on <strong className="text-[#191919]">{count}</strong> reviews
       </div>
     </a>
   );
