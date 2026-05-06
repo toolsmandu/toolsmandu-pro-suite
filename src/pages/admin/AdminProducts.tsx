@@ -720,13 +720,22 @@ const AdminProducts = () => {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
                   <ImageUpload value={form.image_url} onChange={(value) => setForm({ ...form, image_url: value })} label="Product Image" />
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      checked={form.show_in_new_in_store}
-                      onCheckedChange={(checked) => setForm({ ...form, show_in_new_in_store: !!checked })}
-                    />
-                    <span className="text-sm">Show in New in Store Section Homepage</span>
-                  </label>
+                  <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3 flex flex-wrap gap-x-6 gap-y-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={form.show_in_new_in_store}
+                        onCheckedChange={(checked) => setForm({ ...form, show_in_new_in_store: !!checked })}
+                      />
+                      <span className="text-sm">Show in New in Store</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={form.show_in_super_saving_deal}
+                        onCheckedChange={(checked) => setForm({ ...form, show_in_super_saving_deal: !!checked })}
+                      />
+                      <span className="text-sm">Show in Super Saving Deal</span>
+                    </label>
+                  </div>
                   <div>
                     <Label>New in Store Offer Text</Label>
                     <Input
@@ -737,13 +746,6 @@ const AdminProducts = () => {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      checked={form.show_in_super_saving_deal}
-                      onCheckedChange={(checked) => setForm({ ...form, show_in_super_saving_deal: !!checked })}
-                    />
-                    <span className="text-sm">Show in Super Saving Deal Section Homepage</span>
-                  </label>
                   <div>
                     <Label>Last Price</Label>
                     <Input
