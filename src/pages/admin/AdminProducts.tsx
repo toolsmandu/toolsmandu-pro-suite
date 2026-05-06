@@ -715,6 +715,8 @@ const AdminProducts = () => {
                     )}
                   </div>
                 </div>
+              </div>
+
 
               {/* Meta Title + Meta Description */}
               <div>
