@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
 import NewInStore from '@/components/NewInStore';
+import SuperSavingDeals from '@/components/SuperSavingDeals';
 import HomepageBlogs from '@/components/HomepageBlogs';
 import HomepageSeoContent from '@/components/HomepageSeoContent';
 import { Loader2 } from 'lucide-react';
