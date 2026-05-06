@@ -67,6 +67,8 @@ const emptyForm = () => ({
   order_mode: 'cart',
   new_in_store_offer_text: '',
   show_in_new_in_store: false,
+  show_in_super_saving_deal: false,
+  last_price: '',
 });
 
 const AdminProducts = () => {
