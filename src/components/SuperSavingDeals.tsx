@@ -51,6 +51,18 @@ const SuperSavingDeals = () => {
           }}
         />
 
+        {/* Floating savings icons in background */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden text-white/10">
+          <Percent className="absolute top-6 left-[8%] h-16 w-16 -rotate-12" />
+          <BadgePercent className="absolute top-1/3 left-[28%] h-20 w-20 rotate-6" />
+          <PiggyBank className="absolute bottom-8 left-[14%] h-14 w-14 -rotate-6" />
+          <Gift className="absolute top-10 right-[10%] h-16 w-16 rotate-12" />
+          <TicketPercent className="absolute bottom-10 right-[25%] h-20 w-20 -rotate-3" />
+          <Tag className="absolute top-1/2 right-[6%] h-14 w-14 rotate-45" />
+          <Percent className="absolute bottom-4 right-[45%] h-12 w-12 rotate-12" />
+          <Sparkles className="absolute top-4 left-[48%] h-10 w-10" />
+        </div>
+
         {/* Header */}
         <div className="relative mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
