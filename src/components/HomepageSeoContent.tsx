@@ -93,17 +93,17 @@ const GoogleCard = ({ score, count, link }: { score: string; count: string; link
       href={link || '#'}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-col gap-2 px-4 py-3 rounded-lg bg-white text-[#191919] border border-[#dcdce6] hover:shadow-md transition-shadow min-w-[200px]"
+      className="flex flex-col gap-2.5 px-5 py-4 rounded-lg bg-white text-[#191919] border border-[#dcdce6] hover:shadow-md transition-shadow min-w-[250px]"
     >
-      <div className="flex items-center gap-1.5">
-        <GoogleG />
-        <span className="text-[13px] font-medium text-[#5f6368]">Google Reviews</span>
-      </div>
       <div className="flex items-center gap-2">
-        <span className="text-xl font-bold text-[#191919] leading-none">{score}</span>
+        <GoogleG />
+        <span className="text-[15px] font-medium text-[#5f6368]">Google Reviews</span>
+      </div>
+      <div className="flex items-center gap-2.5">
+        <span className="text-2xl font-bold text-[#191919] leading-none">{score}</span>
         <GoldStars score={s} />
       </div>
-      <div className="text-[12px] text-[#5f6368]">
+      <div className="text-[15px] text-[#5f6368]">
         Based on <strong className="text-[#191919]">{count}</strong> reviews
       </div>
     </a>
