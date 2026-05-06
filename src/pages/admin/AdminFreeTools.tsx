@@ -75,6 +75,7 @@ const AdminFreeTools = () => {
       meta_title: form.meta_title || null,
       meta_description: form.meta_description || null,
       meta_keywords: form.meta_keywords || null,
+      image_url: form.image_url || null,
     };
     const { error } = editingId
       ? await supabase.from('free_tools').update(payload).eq('id', editingId)
