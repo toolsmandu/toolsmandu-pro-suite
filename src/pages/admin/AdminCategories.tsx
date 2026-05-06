@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, Eye, X } from 'lucide-react';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 const AdminCategories = () => {
   const queryClient = useQueryClient();
