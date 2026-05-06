@@ -7,12 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, Eye, X } from 'lucide-react';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 const AdminCategories = () => {
   const queryClient = useQueryClient();
   const [panelOpen, setPanelOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: '', slug: '', icon: '', sort_order: '0' });
+  const [form, setForm] = useState({ name: '', slug: '', icon: '', sort_order: '0', description: '' });
 
   const { data: categories } = useQuery({
     queryKey: ['admin-categories'],
@@ -22,11 +23,11 @@ const AdminCategories = () => {
     },
   });
 
-  const resetForm = () => { setForm({ name: '', slug: '', icon: '', sort_order: '0' }); setEditingId(null); };
+  const resetForm = () => { setForm({ name: '', slug: '', icon: '', sort_order: '0', description: '' }); setEditingId(null); };
 
   const openAdd = () => { resetForm(); setPanelOpen(true); };
   const openEdit = (c: any) => {
-    setForm({ name: c.name, slug: c.slug, icon: c.icon || '', sort_order: String(c.sort_order) });
+    setForm({ name: c.name, slug: c.slug, icon: c.icon || '', sort_order: String(c.sort_order), description: c.description || '' });
     setEditingId(c.id);
     setPanelOpen(true);
   };
@@ -34,7 +35,7 @@ const AdminCategories = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const payload = { name: form.name, slug: form.slug || form.name.toLowerCase().replace(/\s+/g, '-'), icon: form.icon || null, sort_order: parseInt(form.sort_order) || 0 };
+      const payload = { name: form.name, slug: form.slug || form.name.toLowerCase().replace(/\s+/g, '-'), icon: form.icon || null, sort_order: parseInt(form.sort_order) || 0, description: form.description || null };
       if (editingId) await supabase.from('categories').update(payload).eq('id', editingId);
       else await supabase.from('categories').insert(payload);
     },
@@ -91,6 +92,10 @@ const AdminCategories = () => {
               <div><Label>Name</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
               <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="auto-generated" /></div>
               <div><Label>Sort Order</Label><Input type="number" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: e.target.value })} /></div>
+              <div>
+                <Label>Category Description</Label>
+                <RichTextEditor value={form.description} onChange={(v) => setForm({ ...form, description: v })} />
+              </div>
               <Button onClick={() => form.name && saveMutation.mutate()} className="w-full" disabled={!form.name || saveMutation.isPending}>
                 {saveMutation.isPending ? 'Saving...' : 'Save'}
               </Button>

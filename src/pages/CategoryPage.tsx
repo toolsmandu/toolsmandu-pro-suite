@@ -41,6 +41,12 @@ const CategoryPage = () => {
           <p className="text-xl text-muted-foreground">No products in this category yet.</p>
         </div>
       )}
+      {category?.description && (
+        <div
+          className="prose prose-invert max-w-none mt-12 text-foreground"
+          dangerouslySetInnerHTML={{ __html: category.description }}
+        />
+      )}
     </div>
   );
 };
