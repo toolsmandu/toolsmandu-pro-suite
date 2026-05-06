@@ -32,6 +32,7 @@ type Sheet = {
   slug: string | null;
   image_url: string | null;
   created_at: string;
+  link_count?: number;
 };
 
 type AdminSheetsProps = {
