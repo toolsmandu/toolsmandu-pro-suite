@@ -12,7 +12,7 @@ const NewInStore = () => {
         .select('id, name, slug, image_url, new_in_store_offer_text')
         .eq('show_in_new_in_store', true)
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(8);
       return data || [];
     },
   });
