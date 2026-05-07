@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import ConvertCaseTool from '@/components/free-tools/ConvertCaseTool';
 import StylishTextTool from '@/components/free-tools/StylishTextTool';
 import FacebookSymbolsTool from '@/components/free-tools/FacebookSymbolsTool';
+import ProratedRefundTool from '@/components/free-tools/ProratedRefundTool';
 
 interface FreeTool {
   id: string;
@@ -21,6 +22,7 @@ const TOOL_WIDGETS: Record<string, () => JSX.Element> = {
   'convert-case': () => <ConvertCaseTool />,
   'stylish-text-generator': () => <StylishTextTool />,
   'facebook-symbols': () => <FacebookSymbolsTool />,
+  'refund-calculator': () => <ProratedRefundTool />,
 };
 
 const FreeToolDetail = () => {
