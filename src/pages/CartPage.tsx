@@ -161,6 +161,43 @@ const CartPage = () => {
     setPlacing(true);
     try {
       const websiteUrl = window.location.origin;
+
+      if (paymentMethod === 'nps') {
+        const { data, error } = await supabase.functions.invoke('nps-initiate', {
+          body: {
+            items: items.map(item => ({
+              id: item.id, price: item.price, quantity: item.quantity,
+              variantId: item.variantId, variantName: item.variantName,
+              inputFieldResponses: item.inputFieldResponses || [],
+            })),
+            coupon_id: appliedCoupon?.id || null,
+            discount_amount: appliedCoupon?.discountAmount || 0,
+            return_url: `${websiteUrl}/payment/verify?gw=nps`,
+            website_url: websiteUrl,
+          },
+        });
+
+        if (error || !data?.gateway_url || !data?.fields) {
+          toast.error('Failed to initiate Nepal Payment Solution. Please try again.');
+          setPlacing(false); return;
+        }
+
+        // Auto-submit hidden form to OnePG gateway
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = data.gateway_url;
+        Object.entries(data.fields).forEach(([k, v]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = k;
+          input.value = String(v ?? '');
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('khalti-initiate', {
         body: {
           items: items.map(item => ({
@@ -179,7 +216,6 @@ const CartPage = () => {
         toast.error('Failed to initiate payment. Please try again.');
         setPlacing(false); return;
       }
-      // Don't clear cart here — it will be cleared after successful payment verification
       window.location.href = data.payment_url;
     } catch {
       toast.error('Failed to initiate payment');
