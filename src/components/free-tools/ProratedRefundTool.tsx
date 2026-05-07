@@ -99,8 +99,7 @@ const ProratedRefundTool = () => {
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          placeholder="YY/MM/DD"
-          className="date-yy"
+          className={`date-yy ${startDate ? 'has-value' : ''}`}
         />
       </div>
 
@@ -110,8 +109,7 @@ const ProratedRefundTool = () => {
           type="date"
           value={prorationDate}
           onChange={(e) => setProrationDate(e.target.value)}
-          placeholder="YY/MM/DD"
-          className="date-yy"
+          className={`date-yy ${prorationDate ? 'has-value' : ''}`}
         />
       </div>
 
