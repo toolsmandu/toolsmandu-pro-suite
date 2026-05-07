@@ -279,10 +279,39 @@ const CartPage = () => {
             )}
             <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground"><span>Total</span><span>NPR {finalTotal.toFixed(2)}</span></div>
           </div>
+
+          {npsEnabled && (
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-foreground">Payment Method</div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('khalti')}
+                  className={`rounded-md border px-3 py-2 text-sm font-medium transition ${paymentMethod === 'khalti' ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:border-primary/50'}`}
+                >
+                  Khalti
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('nps')}
+                  className={`rounded-md border px-3 py-2 text-sm font-medium transition ${paymentMethod === 'nps' ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:border-primary/50'}`}
+                >
+                  Nepal Payment Solution
+                </button>
+              </div>
+            </div>
+          )}
+
           <Button className="w-full" size="lg" onClick={handlePlaceOrder} disabled={placing}>
-            {placing ? 'Redirecting to Khalti...' : 'Pay with Khalti'}
+            {placing
+              ? (paymentMethod === 'nps' ? 'Redirecting to Nepal Payment Solution...' : 'Redirecting to Khalti...')
+              : (paymentMethod === 'nps' ? 'Pay with Nepal Payment Solution' : 'Pay with Khalti')}
           </Button>
-          <p className="text-xs text-muted-foreground text-center">You will be redirected to Khalti to complete payment</p>
+          <p className="text-xs text-muted-foreground text-center">
+            {paymentMethod === 'nps'
+              ? 'You will be redirected to Nepal Payment Solution to complete payment'
+              : 'You will be redirected to Khalti to complete payment'}
+          </p>
         </div>
       </div>
     </div>
