@@ -125,4 +125,16 @@
   min-width: 0;
 }
 
+/* Custom placeholder for empty date inputs (YY/MM/DD) */
+input.date-yy[type="date"]:not(.has-value)::-webkit-datetime-edit {
+  color: transparent;
+  position: relative;
+}
+input.date-yy[type="date"]:not(.has-value)::-webkit-datetime-edit::before {
+  content: "YY/MM/DD";
+  color: hsl(var(--muted-foreground));
+  position: absolute;
+  left: 0;
+  top: 0;
+}
 
