@@ -76,7 +76,7 @@ const ProratedRefundTool = () => {
     n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
-    <div className="rounded-lg border border-border bg-card p-6 space-y-5">
+    <div className="rounded-lg border border-border p-6 space-y-5" style={{ backgroundColor: '#0a2e5c' }}>
       <div className="space-y-1.5">
         <Label className="text-sm font-semibold">1) Enter full amount to prorate</Label>
         <div className="relative">
@@ -132,7 +132,7 @@ const ProratedRefundTool = () => {
         )}
       </div>
 
-      <div className="rounded-md border border-border bg-muted/30 p-4">
+      <div className="rounded-md border border-border p-4" style={{ backgroundColor: '#0a1e3d' }}>
         <div className="text-sm text-muted-foreground">The prorated refund amount is</div>
         <div className="text-3xl font-bold text-foreground mt-1">
           Rs{result ? fmtMoney(result.refund) : ' 0.00'}
