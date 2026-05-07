@@ -22,6 +22,14 @@ const addDays = (d: Date, days: number) => {
 const diffDays = (a: Date, b: Date) =>
   Math.round((b.getTime() - a.getTime()) / 86400000);
 
+const fmtDate = (d: Date) => {
+  const y = d.getFullYear();
+  const m = d.toLocaleString('en-US', { month: 'short' });
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}/${m}/${dd}`;
+};
+
+
 const ProratedRefundTool = () => {
   const [fullAmount, setFullAmount] = useState('');
   const [startDate, setStartDate] = useState('');
