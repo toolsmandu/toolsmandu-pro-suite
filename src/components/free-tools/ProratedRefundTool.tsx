@@ -23,8 +23,8 @@ const diffDays = (a: Date, b: Date) =>
   Math.round((b.getTime() - a.getTime()) / 86400000);
 
 const fmtDate = (d: Date) => {
-  const y = d.getFullYear();
-  const m = d.toLocaleString('en-US', { month: 'short' });
+  const y = String(d.getFullYear()).slice(-2);
+  const m = String(d.getMonth() + 1).padStart(2, '0');
   const dd = String(d.getDate()).padStart(2, '0');
   return `${y}/${m}/${dd}`;
 };
@@ -78,7 +78,7 @@ const ProratedRefundTool = () => {
   return (
     <div className="rounded-lg border border-border p-6 space-y-5" style={{ backgroundColor: '#0a2e5c' }}>
       <div className="space-y-1.5">
-        <Label className="text-sm font-semibold">1) Enter full amount to prorate</Label>
+        <Label className="text-sm font-semibold">1) Enter full amount paid</Label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">Rs</span>
           <Input
