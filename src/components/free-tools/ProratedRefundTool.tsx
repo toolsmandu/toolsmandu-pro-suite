@@ -79,7 +79,7 @@ const ProratedRefundTool = () => {
             min="0"
             value={fullAmount}
             onChange={(e) => setFullAmount(e.target.value)}
-            className="pl-7"
+            className="pl-11"
             placeholder="0.00"
           />
         </div>
