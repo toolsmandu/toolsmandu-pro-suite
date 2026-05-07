@@ -22,6 +22,8 @@ const CartPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [placing, setPlacing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'khalti' | 'nps'>('khalti');
+  const [npsEnabled, setNpsEnabled] = useState(false);
 
   // Reset placing state when user navigates back from payment page
   useEffect(() => {
@@ -32,6 +34,17 @@ const CartPage = () => {
     setPlacing(false);
     return () => window.removeEventListener('pageshow', handlePageShow);
   }, []);
+
+  // Load NPS enabled flag
+  useEffect(() => {
+    supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'nps_enabled')
+      .maybeSingle()
+      .then(({ data }) => setNpsEnabled(data?.value === 'true'));
+  }, []);
+
   const [couponCode, setCouponCode] = useState('');
   const [applying, setApplying] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
