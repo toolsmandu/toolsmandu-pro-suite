@@ -167,6 +167,7 @@ const ProratedRefundTool = () => {
             id="annual"
             checked={annual}
             onCheckedChange={(c) => setAnnual(!!c)}
+            className="border-white data-[state=unchecked]:bg-white"
           />
           <Label htmlFor="annual" className="text-sm cursor-pointer">
             Annual subscription (adds 1 year to start date)
