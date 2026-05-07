@@ -127,7 +127,7 @@ const ProratedRefundTool = () => {
           <div className="mt-2 text-xs text-muted-foreground space-y-0.5">
             <div>Full term: {result.fullTerm} days</div>
             <div>Remaining (refund) period: {result.prorationPeriod} days</div>
-            <div>End date used: {result.end.toISOString().slice(0, 10)}</div>
+            <div>End date used: {fmtDate(result.end)}</div>
           </div>
         )}
       </div>
