@@ -12,6 +12,50 @@ const PaymentVerify = () => {
   const [message, setMessage] = useState('Verifying your payment...');
 
   useEffect(() => {
+    const gw = searchParams.get('gw');
+
+    // Nepal Payment Solution flow
+    if (gw === 'nps') {
+      const merchantTxnId =
+        searchParams.get('MerchantTxnId') ||
+        searchParams.get('merchant_txn_id') ||
+        searchParams.get('MerchantTxnID');
+      if (!merchantTxnId) {
+        setStatus('failed');
+        setMessage('Missing transaction reference.');
+        return;
+      }
+      const verifyNps = async () => {
+        try {
+          const { data, error } = await supabase.functions.invoke('nps-verify', {
+            body: { merchant_txn_id: merchantTxnId },
+          });
+          if (error) {
+            setStatus('failed');
+            setMessage('Payment verification failed. Please contact support.');
+            return;
+          }
+          if (data.status === 'completed') {
+            setStatus('completed');
+            setMessage('Payment successful! Your order has been placed.');
+            clearCart();
+          } else if (data.status === 'pending') {
+            setStatus('failed');
+            setMessage('Payment is still pending. Please refresh in a moment or contact support.');
+          } else {
+            setStatus('failed');
+            setMessage(`Payment ${data.status || 'failed'}. Please try again or contact support.`);
+          }
+        } catch {
+          setStatus('failed');
+          setMessage('Something went wrong. Please contact support.');
+        }
+      };
+      verifyNps();
+      return;
+    }
+
+    // Khalti flow
     const pidx = searchParams.get('pidx');
     if (!pidx) {
       setStatus('failed');
