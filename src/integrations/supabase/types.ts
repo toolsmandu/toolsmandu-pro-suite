@@ -1230,6 +1230,9 @@ export type Database = {
           created_at: string
           id: string
           manual_sheet_link: boolean
+          nps_gateway_ref: string | null
+          nps_merchant_txn_id: string | null
+          nps_process_id: string | null
           order_number: string
           payment_method: string
           payment_pidx: string | null
@@ -1245,6 +1248,9 @@ export type Database = {
           created_at?: string
           id?: string
           manual_sheet_link?: boolean
+          nps_gateway_ref?: string | null
+          nps_merchant_txn_id?: string | null
+          nps_process_id?: string | null
           order_number?: string
           payment_method?: string
           payment_pidx?: string | null
@@ -1260,6 +1266,9 @@ export type Database = {
           created_at?: string
           id?: string
           manual_sheet_link?: boolean
+          nps_gateway_ref?: string | null
+          nps_merchant_txn_id?: string | null
+          nps_process_id?: string | null
           order_number?: string
           payment_method?: string
           payment_pidx?: string | null

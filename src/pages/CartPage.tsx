@@ -22,6 +22,8 @@ const CartPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [placing, setPlacing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'khalti' | 'nps'>('khalti');
+  const [npsEnabled, setNpsEnabled] = useState(false);
 
   // Reset placing state when user navigates back from payment page
   useEffect(() => {
@@ -32,6 +34,17 @@ const CartPage = () => {
     setPlacing(false);
     return () => window.removeEventListener('pageshow', handlePageShow);
   }, []);
+
+  // Load NPS enabled flag
+  useEffect(() => {
+    supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'nps_enabled')
+      .maybeSingle()
+      .then(({ data }) => setNpsEnabled(data?.value === 'true'));
+  }, []);
+
   const [couponCode, setCouponCode] = useState('');
   const [applying, setApplying] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
@@ -148,6 +161,43 @@ const CartPage = () => {
     setPlacing(true);
     try {
       const websiteUrl = window.location.origin;
+
+      if (paymentMethod === 'nps') {
+        const { data, error } = await supabase.functions.invoke('nps-initiate', {
+          body: {
+            items: items.map(item => ({
+              id: item.id, price: item.price, quantity: item.quantity,
+              variantId: item.variantId, variantName: item.variantName,
+              inputFieldResponses: item.inputFieldResponses || [],
+            })),
+            coupon_id: appliedCoupon?.id || null,
+            discount_amount: appliedCoupon?.discountAmount || 0,
+            return_url: `${websiteUrl}/payment/verify?gw=nps`,
+            website_url: websiteUrl,
+          },
+        });
+
+        if (error || !data?.gateway_url || !data?.fields) {
+          toast.error('Failed to initiate Nepal Payment Solution. Please try again.');
+          setPlacing(false); return;
+        }
+
+        // Auto-submit hidden form to OnePG gateway
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = data.gateway_url;
+        Object.entries(data.fields).forEach(([k, v]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = k;
+          input.value = String(v ?? '');
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('khalti-initiate', {
         body: {
           items: items.map(item => ({
@@ -166,7 +216,6 @@ const CartPage = () => {
         toast.error('Failed to initiate payment. Please try again.');
         setPlacing(false); return;
       }
-      // Don't clear cart here — it will be cleared after successful payment verification
       window.location.href = data.payment_url;
     } catch {
       toast.error('Failed to initiate payment');
@@ -230,10 +279,39 @@ const CartPage = () => {
             )}
             <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground"><span>Total</span><span>NPR {finalTotal.toFixed(2)}</span></div>
           </div>
+
+          {npsEnabled && (
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-foreground">Payment Method</div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('khalti')}
+                  className={`rounded-md border px-3 py-2 text-sm font-medium transition ${paymentMethod === 'khalti' ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:border-primary/50'}`}
+                >
+                  Khalti
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('nps')}
+                  className={`rounded-md border px-3 py-2 text-sm font-medium transition ${paymentMethod === 'nps' ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:border-primary/50'}`}
+                >
+                  Nepal Payment Solution
+                </button>
+              </div>
+            </div>
+          )}
+
           <Button className="w-full" size="lg" onClick={handlePlaceOrder} disabled={placing}>
-            {placing ? 'Redirecting to Khalti...' : 'Pay with Khalti'}
+            {placing
+              ? (paymentMethod === 'nps' ? 'Redirecting to Nepal Payment Solution...' : 'Redirecting to Khalti...')
+              : (paymentMethod === 'nps' ? 'Pay with Nepal Payment Solution' : 'Pay with Khalti')}
           </Button>
-          <p className="text-xs text-muted-foreground text-center">You will be redirected to Khalti to complete payment</p>
+          <p className="text-xs text-muted-foreground text-center">
+            {paymentMethod === 'nps'
+              ? 'You will be redirected to Nepal Payment Solution to complete payment'
+              : 'You will be redirected to Khalti to complete payment'}
+          </p>
         </div>
       </div>
     </div>
