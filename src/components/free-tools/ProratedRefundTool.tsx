@@ -113,22 +113,52 @@ const ProratedRefundTool = () => {
 
       <div className="space-y-1.5">
         <Label className="text-sm font-semibold">2) Service start date</Label>
-        <Input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className={`date-yy ${startDate ? 'has-value' : ''}`}
-        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              className={cn('w-full justify-start text-left font-normal', !startDate && 'text-muted-foreground')}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {startDate ? fmtYMD(toDate(startDate)!) : <span>YYYY/MM/DD</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={toDate(startDate) ?? undefined}
+              onSelect={(d) => setStartDate(d ? toIsoStr(d) : '')}
+              initialFocus
+              className={cn('p-3 pointer-events-auto')}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="space-y-1.5">
         <Label className="text-sm font-semibold">3) Date of Partial refund Issue</Label>
-        <Input
-          type="date"
-          value={prorationDate}
-          onChange={(e) => setProrationDate(e.target.value)}
-          className={`date-yy ${prorationDate ? 'has-value' : ''}`}
-        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              className={cn('w-full justify-start text-left font-normal', !prorationDate && 'text-muted-foreground')}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {prorationDate ? fmtYMD(toDate(prorationDate)!) : <span>YYYY/MM/DD</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={toDate(prorationDate) ?? undefined}
+              onSelect={(d) => setProrationDate(d ? toIsoStr(d) : '')}
+              initialFocus
+              className={cn('p-3 pointer-events-auto')}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="space-y-2">
@@ -145,7 +175,27 @@ const ProratedRefundTool = () => {
         {!annual && (
           <div className="space-y-1.5">
             <Label className="text-sm font-semibold">4) Subscription end date</Label>
-            <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={cn('w-full justify-start text-left font-normal', !endDate && 'text-muted-foreground')}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {endDate ? fmtYMD(toDate(endDate)!) : <span>YYYY/MM/DD</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={toDate(endDate) ?? undefined}
+                  onSelect={(d) => setEndDate(d ? toIsoStr(d) : '')}
+                  initialFocus
+                  className={cn('p-3 pointer-events-auto')}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         )}
       </div>
