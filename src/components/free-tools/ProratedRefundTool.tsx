@@ -96,9 +96,6 @@ const ProratedRefundTool = () => {
       <div className="space-y-1.5">
         <Label className="text-sm font-semibold">2) Service start date</Label>
         <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-        {toDate(startDate) && (
-          <div className="text-xs text-muted-foreground">{fmtDate(toDate(startDate)!)}</div>
-        )}
       </div>
 
       <div className="space-y-1.5">
@@ -108,9 +105,6 @@ const ProratedRefundTool = () => {
           value={prorationDate}
           onChange={(e) => setProrationDate(e.target.value)}
         />
-        {toDate(prorationDate) && (
-          <div className="text-xs text-muted-foreground">{fmtDate(toDate(prorationDate)!)}</div>
-        )}
       </div>
 
       <div className="space-y-2">
