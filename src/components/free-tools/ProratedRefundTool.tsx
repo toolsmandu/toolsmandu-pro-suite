@@ -95,17 +95,23 @@ const ProratedRefundTool = () => {
 
       <div className="space-y-1.5">
         <Label className="text-sm font-semibold">2) Service start date</Label>
-        <p className="text-xs text-muted-foreground">Format: YY/MM/DD</p>
-        <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        <Input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          placeholder="YY/MM/DD"
+          className="date-yy"
+        />
       </div>
 
       <div className="space-y-1.5">
         <Label className="text-sm font-semibold">3) Date of Partial refund Issue</Label>
-        <p className="text-xs text-muted-foreground">Format: YY/MM/DD</p>
         <Input
           type="date"
           value={prorationDate}
           onChange={(e) => setProrationDate(e.target.value)}
+          placeholder="YY/MM/DD"
+          className="date-yy"
         />
       </div>
 
