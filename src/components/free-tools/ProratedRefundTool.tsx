@@ -22,6 +22,14 @@ const addDays = (d: Date, days: number) => {
 const diffDays = (a: Date, b: Date) =>
   Math.round((b.getTime() - a.getTime()) / 86400000);
 
+const fmtDate = (d: Date) => {
+  const y = d.getFullYear();
+  const m = d.toLocaleString('en-US', { month: 'short' });
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}/${m}/${dd}`;
+};
+
+
 const ProratedRefundTool = () => {
   const [fullAmount, setFullAmount] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -64,14 +72,14 @@ const ProratedRefundTool = () => {
       <div className="space-y-1.5">
         <Label className="text-sm font-semibold">1) Enter full amount to prorate</Label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">Rs</span>
           <Input
             type="number"
             step="0.01"
             min="0"
             value={fullAmount}
             onChange={(e) => setFullAmount(e.target.value)}
-            className="pl-7"
+            className="pl-11"
             placeholder="0.00"
           />
         </div>
@@ -113,13 +121,13 @@ const ProratedRefundTool = () => {
       <div className="rounded-md border border-border bg-muted/30 p-4">
         <div className="text-sm text-muted-foreground">The prorated refund amount is</div>
         <div className="text-3xl font-bold text-foreground mt-1">
-          ${result ? fmtMoney(result.refund) : '0.00'}
+          Rs{result ? fmtMoney(result.refund) : ' 0.00'}
         </div>
         {result && (
           <div className="mt-2 text-xs text-muted-foreground space-y-0.5">
             <div>Full term: {result.fullTerm} days</div>
             <div>Remaining (refund) period: {result.prorationPeriod} days</div>
-            <div>End date used: {result.end.toISOString().slice(0, 10)}</div>
+            <div>End date used: {fmtDate(result.end)}</div>
           </div>
         )}
       </div>
