@@ -30,10 +30,18 @@ const fmtDate = (d: Date) => {
 };
 
 
+const todayStr = () => {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+};
+
 const ProratedRefundTool = () => {
   const [fullAmount, setFullAmount] = useState('');
   const [startDate, setStartDate] = useState('');
-  const [prorationDate, setProrationDate] = useState('');
+  const [prorationDate, setProrationDate] = useState(todayStr());
   const [annual, setAnnual] = useState(true);
   const [endDate, setEndDate] = useState('');
 
