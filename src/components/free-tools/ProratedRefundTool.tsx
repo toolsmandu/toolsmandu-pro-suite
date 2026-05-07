@@ -121,7 +121,7 @@ const ProratedRefundTool = () => {
       <div className="rounded-md border border-border bg-muted/30 p-4">
         <div className="text-sm text-muted-foreground">The prorated refund amount is</div>
         <div className="text-3xl font-bold text-foreground mt-1">
-          ${result ? fmtMoney(result.refund) : '0.00'}
+          Rs{result ? fmtMoney(result.refund) : ' 0.00'}
         </div>
         {result && (
           <div className="mt-2 text-xs text-muted-foreground space-y-0.5">
