@@ -301,6 +301,17 @@ const CartPage = () => {
                   Nepal Payment Solution
                 </button>
               </div>
+              {paymentMethod === 'nps' && (
+                <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={npsSandbox}
+                    onChange={e => setNpsSandbox(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded border-border bg-background text-primary focus:ring-primary"
+                  />
+                  Use Sandbox (Test Mode)
+                </label>
+              )}
             </div>
           )}
 
