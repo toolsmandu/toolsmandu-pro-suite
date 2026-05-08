@@ -24,6 +24,7 @@ const CartPage = () => {
   const [placing, setPlacing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'khalti' | 'nps'>('khalti');
   const [npsEnabled, setNpsEnabled] = useState(false);
+  const [npsSandbox, setNpsSandbox] = useState(false);
 
   // Reset placing state when user navigates back from payment page
   useEffect(() => {
