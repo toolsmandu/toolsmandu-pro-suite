@@ -1,7 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 
-const NPS_BASE = "https://api.nepalpayment.com";
+const NPS_BASE_PROD = "https://api.nepalpayment.com";
+const NPS_BASE_SANDBOX = "https://apisandbox.nepalpayment.com";
 
 async function hmacSha512(message: string, secret: string): Promise<string> {
   const enc = new TextEncoder();
