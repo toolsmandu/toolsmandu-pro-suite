@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { items, return_url, website_url } = await req.json();
+    const { items, return_url, website_url, mode } = await req.json();
     if (!items?.length) {
       return new Response(JSON.stringify({ error: "No items" }), {
         status: 400,
