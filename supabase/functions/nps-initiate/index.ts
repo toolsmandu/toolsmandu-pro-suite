@@ -201,10 +201,11 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        gateway_url: NPS_GATEWAY_URL,
+        gateway_url: npsGateway,
         fields: { ...redirectFields, Signature: redirectSignature, InstrumentCode: "" },
         order_id: order.id,
         merchant_txn_id: merchantTxnId,
+        mode: isSandbox ? 'sandbox' : 'production',
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
