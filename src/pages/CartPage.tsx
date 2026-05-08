@@ -173,7 +173,7 @@ const CartPage = () => {
             })),
             coupon_id: appliedCoupon?.id || null,
             discount_amount: appliedCoupon?.discountAmount || 0,
-            return_url: `${websiteUrl}/payment/verify?gw=nps`,
+            return_url: `${websiteUrl}/payment/verify?gw=nps&mode=${npsSandbox ? 'sandbox' : 'production'}`,
             website_url: websiteUrl,
             mode: npsSandbox ? 'sandbox' : 'production',
           },
