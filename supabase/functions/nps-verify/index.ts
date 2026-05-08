@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
     };
     const signature = await signPayload(fields, secret);
 
-    const res = await fetch(`${NPS_BASE}/CheckTransactionStatus`, {
+    const res = await fetch(`${npsBase}/CheckTransactionStatus`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
