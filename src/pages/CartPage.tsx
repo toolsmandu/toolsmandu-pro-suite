@@ -175,6 +175,7 @@ const CartPage = () => {
             discount_amount: appliedCoupon?.discountAmount || 0,
             return_url: `${websiteUrl}/payment/verify?gw=nps`,
             website_url: websiteUrl,
+            mode: npsSandbox ? 'sandbox' : 'production',
           },
         });
 
