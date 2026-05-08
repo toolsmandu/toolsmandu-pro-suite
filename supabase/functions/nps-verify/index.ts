@@ -28,13 +28,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { merchant_txn_id } = await req.json();
+    const { merchant_txn_id, mode } = await req.json();
     if (!merchant_txn_id) {
       return new Response(JSON.stringify({ error: "Missing merchant_txn_id" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const isSandbox = mode === 'sandbox';
+    const npsBase = isSandbox ? NPS_BASE_SANDBOX : NPS_BASE_PROD;
 
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
