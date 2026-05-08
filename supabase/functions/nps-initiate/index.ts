@@ -1,8 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 
-const NPS_BASE = "https://api.nepalpayment.com";
-const NPS_GATEWAY_URL = "https://gateway.nepalpayment.com/Payment/Index";
+const NPS_BASE_PROD = "https://api.nepalpayment.com";
+const NPS_GATEWAY_PROD = "https://gateway.nepalpayment.com/Payment/Index";
+const NPS_BASE_SANDBOX = "https://apisandbox.nepalpayment.com";
+const NPS_GATEWAY_SANDBOX = "https://testgateway.nepalpayment.com/Payment/Index";
 
 async function hmacSha512(message: string, secret: string): Promise<string> {
   const enc = new TextEncoder();
@@ -51,7 +53,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { items, return_url, website_url } = await req.json();
+    const { items, return_url, website_url, mode } = await req.json();
     if (!items?.length) {
       return new Response(JSON.stringify({ error: "No items" }), {
         status: 400,
@@ -123,6 +125,10 @@ Deno.serve(async (req) => {
     }));
     await admin.from("order_items").insert(orderItems);
 
+    const isSandbox = mode === 'sandbox';
+    const npsBase = isSandbox ? NPS_BASE_SANDBOX : NPS_BASE_PROD;
+    const npsGateway = isSandbox ? NPS_GATEWAY_SANDBOX : NPS_GATEWAY_PROD;
+
     const merchantId = Deno.env.get("NPS_MERCHANT_ID")!;
     const merchantName = Deno.env.get("NPS_MERCHANT_NAME")!;
     const username = Deno.env.get("NPS_API_USERNAME")!;
@@ -142,7 +148,7 @@ Deno.serve(async (req) => {
 
     const basicAuth = btoa(`${username}:${password}`);
 
-    const processRes = await fetch(`${NPS_BASE}/GetProcessId`, {
+    const processRes = await fetch(`${npsBase}/GetProcessId`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -195,10 +201,11 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        gateway_url: NPS_GATEWAY_URL,
+        gateway_url: npsGateway,
         fields: { ...redirectFields, Signature: redirectSignature, InstrumentCode: "" },
         order_id: order.id,
         merchant_txn_id: merchantTxnId,
+        mode: isSandbox ? 'sandbox' : 'production',
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

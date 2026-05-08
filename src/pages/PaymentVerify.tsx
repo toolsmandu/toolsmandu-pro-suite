@@ -20,6 +20,7 @@ const PaymentVerify = () => {
         searchParams.get('MerchantTxnId') ||
         searchParams.get('merchant_txn_id') ||
         searchParams.get('MerchantTxnID');
+      const mode = searchParams.get('mode') || 'production';
       if (!merchantTxnId) {
         setStatus('failed');
         setMessage('Missing transaction reference.');
@@ -28,7 +29,7 @@ const PaymentVerify = () => {
       const verifyNps = async () => {
         try {
           const { data, error } = await supabase.functions.invoke('nps-verify', {
-            body: { merchant_txn_id: merchantTxnId },
+            body: { merchant_txn_id: merchantTxnId, mode },
           });
           if (error) {
             setStatus('failed');

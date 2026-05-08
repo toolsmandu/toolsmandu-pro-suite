@@ -24,6 +24,7 @@ const CartPage = () => {
   const [placing, setPlacing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'khalti' | 'nps'>('khalti');
   const [npsEnabled, setNpsEnabled] = useState(false);
+  const [npsSandbox, setNpsSandbox] = useState(false);
 
   // Reset placing state when user navigates back from payment page
   useEffect(() => {
@@ -172,8 +173,9 @@ const CartPage = () => {
             })),
             coupon_id: appliedCoupon?.id || null,
             discount_amount: appliedCoupon?.discountAmount || 0,
-            return_url: `${websiteUrl}/payment/verify?gw=nps`,
+            return_url: `${websiteUrl}/payment/verify?gw=nps&mode=${npsSandbox ? 'sandbox' : 'production'}`,
             website_url: websiteUrl,
+            mode: npsSandbox ? 'sandbox' : 'production',
           },
         });
 
@@ -299,6 +301,17 @@ const CartPage = () => {
                   Nepal Payment Solution
                 </button>
               </div>
+              {paymentMethod === 'nps' && (
+                <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={npsSandbox}
+                    onChange={e => setNpsSandbox(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded border-border bg-background text-primary focus:ring-primary"
+                  />
+                  Use Sandbox (Test Mode)
+                </label>
+              )}
             </div>
           )}
 

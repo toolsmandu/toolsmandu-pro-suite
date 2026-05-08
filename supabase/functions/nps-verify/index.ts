@@ -1,7 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 
-const NPS_BASE = "https://api.nepalpayment.com";
+const NPS_BASE_PROD = "https://api.nepalpayment.com";
+const NPS_BASE_SANDBOX = "https://apisandbox.nepalpayment.com";
 
 async function hmacSha512(message: string, secret: string): Promise<string> {
   const enc = new TextEncoder();
@@ -27,13 +28,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { merchant_txn_id } = await req.json();
+    const { merchant_txn_id, mode } = await req.json();
     if (!merchant_txn_id) {
       return new Response(JSON.stringify({ error: "Missing merchant_txn_id" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const isSandbox = mode === 'sandbox';
+    const npsBase = isSandbox ? NPS_BASE_SANDBOX : NPS_BASE_PROD;
 
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -66,7 +70,7 @@ Deno.serve(async (req) => {
     };
     const signature = await signPayload(fields, secret);
 
-    const res = await fetch(`${NPS_BASE}/CheckTransactionStatus`, {
+    const res = await fetch(`${npsBase}/CheckTransactionStatus`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
