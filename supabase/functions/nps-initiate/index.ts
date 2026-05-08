@@ -125,6 +125,10 @@ Deno.serve(async (req) => {
     }));
     await admin.from("order_items").insert(orderItems);
 
+    const isSandbox = mode === 'sandbox';
+    const npsBase = isSandbox ? NPS_BASE_SANDBOX : NPS_BASE_PROD;
+    const npsGateway = isSandbox ? NPS_GATEWAY_SANDBOX : NPS_GATEWAY_PROD;
+
     const merchantId = Deno.env.get("NPS_MERCHANT_ID")!;
     const merchantName = Deno.env.get("NPS_MERCHANT_NAME")!;
     const username = Deno.env.get("NPS_API_USERNAME")!;
@@ -144,7 +148,7 @@ Deno.serve(async (req) => {
 
     const basicAuth = btoa(`${username}:${password}`);
 
-    const processRes = await fetch(`${NPS_BASE}/GetProcessId`, {
+    const processRes = await fetch(`${npsBase}/GetProcessId`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
