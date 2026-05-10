@@ -13,7 +13,7 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
     queryFn: async () => {
       const { data } = await supabase
         .from('product_layout_items')
-        .select('id, sort_order, template_id, custom_templates(id, name, template_type, data, is_active)')
+        .select('id, sort_order, template_id, data, custom_templates(id, name, template_type, data, is_active)')
         .eq('product_id', productId)
         .order('sort_order');
       return data || [];
