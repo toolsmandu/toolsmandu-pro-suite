@@ -23,7 +23,7 @@ const AdminCustomTemplates = () => {
           return (
             <Link
               key={t}
-              to={`/admin/layout-section/new?type=${t}`}
+              to={`/admin/layout-section/preview/${t}`}
               className="group bg-card border border-border rounded-lg p-4 hover:border-primary hover:bg-muted/30 transition-colors"
             >
               <div className="flex items-center gap-2 mb-2">
