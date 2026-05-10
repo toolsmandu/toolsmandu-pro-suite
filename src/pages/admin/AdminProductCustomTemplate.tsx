@@ -171,9 +171,8 @@ const AdminProductCustomTemplate = () => {
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-2">
+                    <div>
                       <Field label="Name" value={app.name} onChange={(v) => updateApps(sections.app_grid.apps.map((a: any, j: number) => j === i ? { ...a, name: v } : a))} />
-                      <Field label="Description" value={app.description} onChange={(v) => updateApps(sections.app_grid.apps.map((a: any, j: number) => j === i ? { ...a, description: v } : a))} />
                     </div>
                     <div>
                       <Label className="mb-1 block text-xs">Icon</Label>
@@ -181,7 +180,7 @@ const AdminProductCustomTemplate = () => {
                     </div>
                   </div>
                 ))}
-                <Button variant="outline" size="sm" onClick={() => updateApps([...(sections.app_grid.apps || []), { name: '', icon_url: '', description: '' }])}>
+                <Button variant="outline" size="sm" onClick={() => updateApps([...(sections.app_grid.apps || []), { name: '', icon_url: '' }])}>
                   <Plus className="h-4 w-4 mr-1" /> Add app
                 </Button>
               </div>
