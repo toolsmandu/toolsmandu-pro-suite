@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
-import { SingleSectionEditor, buildEmptySection, SECTION_TYPES, SECTION_LABELS, SectionType } from '@/components/admin/TemplateSectionsEditor';
-import SectionPreview from '@/components/admin/SectionPreview';
+import { SECTION_TYPES, SECTION_LABELS, SectionType } from '@/components/admin/TemplateSectionsEditor';
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-+|-+$)/g, '');
