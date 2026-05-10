@@ -228,7 +228,7 @@ const ProductPage = () => {
     </div>
   );
 
-  if ((product as any).custom_template && (product as any).custom_template !== 'default') {
+  if ((product as any).use_custom_layout) {
     return <AdobeTemplate productId={(product as any).id} />;
   }
 
