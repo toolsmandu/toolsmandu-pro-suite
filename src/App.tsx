@@ -33,7 +33,8 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminProductCustomTemplate from "./pages/admin/AdminProductCustomTemplate";
-import AdminProductCustomTemplates from "./pages/admin/AdminProductCustomTemplates";
+import AdminCustomTemplates from "./pages/admin/AdminCustomTemplates";
+import AdminCustomTemplateEditor from "./pages/admin/AdminCustomTemplateEditor";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminProductTypes from "./pages/admin/AdminProductTypes";
 import AdminCoupons from "./pages/admin/AdminCoupons";
@@ -127,7 +128,9 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="products/:id/template" element={<AdminProductCustomTemplate />} />
-<Route path="custom-templates" element={<AdminProductCustomTemplates />} />
+                <Route path="custom-templates" element={<AdminCustomTemplates />} />
+                <Route path="custom-templates/new" element={<AdminCustomTemplateEditor />} />
+                <Route path="custom-templates/:id" element={<AdminCustomTemplateEditor />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="product-types" element={<AdminProductTypes />} />
                 <Route path="coupons" element={<AdminCoupons />} />

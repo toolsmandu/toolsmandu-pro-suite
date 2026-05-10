@@ -71,6 +71,7 @@ const emptyForm = () => ({
   show_in_new_in_store: false,
   show_in_super_saving_deal: false,
   last_price: '',
+  use_custom_layout: false,
 });
 
 const AdminProducts = () => {
@@ -255,6 +256,7 @@ const AdminProducts = () => {
       show_in_new_in_store: product.show_in_new_in_store || false,
       show_in_super_saving_deal: product.show_in_super_saving_deal || false,
       last_price: product.last_price != null ? String(product.last_price) : '',
+      use_custom_layout: !!product.use_custom_layout,
     });
 
     const { data, error } = await supabase
@@ -335,6 +337,7 @@ const AdminProducts = () => {
         show_in_new_in_store: form.show_in_new_in_store,
         show_in_super_saving_deal: form.show_in_super_saving_deal,
         last_price: form.last_price ? Number.parseFloat(form.last_price) : null,
+        use_custom_layout: form.use_custom_layout,
       };
 
       let productId = editingId;
@@ -599,18 +602,20 @@ const AdminProducts = () => {
                           >
                             <Pencil className="h-3 w-3" />
                           </Button>
-                          <Button
-                            asChild
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            title="Custom template"
-                            onClick={(event) => event.stopPropagation()}
-                          >
-                            <RouterLink to={`/admin/products/${product.id}/template`}>
-                              <Layout className="h-3 w-3" />
-                            </RouterLink>
-                          </Button>
+                          {product.use_custom_layout && (
+                            <Button
+                              asChild
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              title="Custom layout"
+                              onClick={(event) => event.stopPropagation()}
+                            >
+                              <RouterLink to={`/admin/products/${product.id}/template`}>
+                                <Layout className="h-3 w-3" />
+                              </RouterLink>
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="icon"
@@ -845,6 +850,22 @@ const AdminProducts = () => {
                         })}
                       </div>
                     )}
+                  </div>
+                  <div className="flex items-start gap-2 border border-border rounded-lg p-3">
+                    <Checkbox
+                      id="use_custom_layout"
+                      checked={form.use_custom_layout}
+                      onCheckedChange={(c) => setForm({ ...form, use_custom_layout: !!c })}
+                      className="mt-0.5"
+                    />
+                    <div>
+                      <Label htmlFor="use_custom_layout" className="text-sm font-medium cursor-pointer">
+                        Use Custom Layout on Frontend
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        If enabled, the configured custom template is shown on the product page instead of the default layout. Configure it via the layout icon on the products list.
+                      </p>
+                    </div>
                   </div>
                   <div>
                     <Label>Meta Title</Label>

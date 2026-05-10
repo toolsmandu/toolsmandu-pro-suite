@@ -376,6 +376,39 @@ export type Database = {
           },
         ]
       }
+      custom_templates: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          template_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          template_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          template_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       customer_logins: {
         Row: {
           id: string
@@ -1462,6 +1495,7 @@ export type Database = {
           slug: string
           stock_status: string
           updated_at: string
+          use_custom_layout: boolean
         }
         Insert: {
           category_id?: string | null
@@ -1492,6 +1526,7 @@ export type Database = {
           slug: string
           stock_status?: string
           updated_at?: string
+          use_custom_layout?: boolean
         }
         Update: {
           category_id?: string | null
@@ -1522,6 +1557,7 @@ export type Database = {
           slug?: string
           stock_status?: string
           updated_at?: string
+          use_custom_layout?: boolean
         }
         Relationships: [
           {
