@@ -75,7 +75,7 @@ const AdminProductCustomTemplate = () => {
             name: r.custom_templates.name,
             template_type: t,
             data: { ...buildEmptySection(t), ...itemData },
-            open: false,
+            open: true,
           };
         })
     );

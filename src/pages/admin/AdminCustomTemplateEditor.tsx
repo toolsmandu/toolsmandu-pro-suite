@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
-import { SingleSectionEditor, buildEmptySection, SECTION_TYPES, SECTION_LABELS, SectionType } from '@/components/admin/TemplateSectionsEditor';
-import SectionPreview from '@/components/admin/SectionPreview';
+import { SECTION_TYPES, SECTION_LABELS, SectionType } from '@/components/admin/TemplateSectionsEditor';
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-+|-+$)/g, '');
@@ -26,7 +25,6 @@ const AdminCustomTemplateEditor = () => {
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [sectionType, setSectionType] = useState<SectionType>(initialType);
-  const [data, setData] = useState<any>(buildEmptySection(initialType));
   const [saving, setSaving] = useState(false);
 
   const { data: row } = useQuery({
@@ -45,13 +43,11 @@ const AdminCustomTemplateEditor = () => {
       setSlug(row.slug || '');
       const t = (SECTION_TYPES.includes(row.template_type as SectionType) ? row.template_type : 'hero') as SectionType;
       setSectionType(t);
-      setData({ ...buildEmptySection(t), ...((row.data as any) || {}) });
     }
   }, [row]);
 
   const onTypeChange = (t: SectionType) => {
     setSectionType(t);
-    setData(buildEmptySection(t));
   };
 
   const save = async () => {
@@ -59,7 +55,7 @@ const AdminCustomTemplateEditor = () => {
     setSaving(true);
     try {
       const finalSlug = slug.trim() || slugify(name);
-      const payload = { name: name.trim(), slug: finalSlug, template_type: sectionType, data, is_active: true };
+      const payload = { name: name.trim(), slug: finalSlug, template_type: sectionType, data: {}, is_active: true };
 
       if (isNew) {
         const { data: ins, error } = await supabase.from('custom_templates').insert(payload).select('id').single();
@@ -124,14 +120,8 @@ const AdminCustomTemplateEditor = () => {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-5">
-        <div className="bg-card border border-border rounded-lg p-5">
-          <h2 className="text-base font-semibold mb-3">{SECTION_LABELS[sectionType]} content</h2>
-          <SingleSectionEditor type={sectionType} value={data} onChange={setData} />
-        </div>
-        <div className="lg:sticky lg:top-4 self-start">
-          <SectionPreview type={sectionType} data={data} />
-        </div>
+      <div className="bg-muted/30 border border-border rounded-lg p-4 text-sm text-muted-foreground">
+        Sections only define a name and a type here. The actual content (headings, images, plans, etc.) is written separately for each product from the product layout editor.
       </div>
     </div>
   );
