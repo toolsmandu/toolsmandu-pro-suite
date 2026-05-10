@@ -4,6 +4,8 @@ import AdobeHero from './AdobeHero';
 import AdobeAppGrid from './AdobeAppGrid';
 import AdobeFeatures from './AdobeFeatures';
 import AdobePlans from './AdobePlans';
+import AdobeFAQs from './AdobeFAQs';
+import AdobeRelated from './AdobeRelated';
 
 const AdobeTemplate = ({ productId }: { productId: string }) => {
   const { data: sections, isLoading } = useQuery({
