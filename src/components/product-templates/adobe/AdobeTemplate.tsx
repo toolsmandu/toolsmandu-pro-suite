@@ -19,6 +19,18 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
     },
   });
 
+  const { data: product } = useQuery({
+    queryKey: ['adobe-template-product', productId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('products')
+        .select('*, product_variations(*)')
+        .eq('id', productId)
+        .single();
+      return data;
+    },
+  });
+
   if (isLoading) return null;
 
   const get = (type: string) =>
@@ -26,7 +38,7 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
 
   return (
     <div className="min-h-screen">
-      <AdobeHero data={get('hero')} />
+      <AdobeHero data={get('hero')} product={product} />
       <AdobeAppGrid data={get('app_grid')} />
       <AdobeFeatures data={get('features')} />
       <AdobePlans data={get('plans')} />
