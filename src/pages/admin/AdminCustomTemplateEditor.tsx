@@ -124,9 +124,14 @@ const AdminCustomTemplateEditor = () => {
         </div>
       </div>
 
-      <div className="bg-card border border-border rounded-lg p-5">
-        <h2 className="text-base font-semibold mb-3">{SECTION_LABELS[sectionType]} content</h2>
-        <SingleSectionEditor type={sectionType} value={data} onChange={setData} />
+      <div className="grid lg:grid-cols-2 gap-5">
+        <div className="bg-card border border-border rounded-lg p-5">
+          <h2 className="text-base font-semibold mb-3">{SECTION_LABELS[sectionType]} content</h2>
+          <SingleSectionEditor type={sectionType} value={data} onChange={setData} />
+        </div>
+        <div className="lg:sticky lg:top-4 self-start">
+          <SectionPreview type={sectionType} data={data} />
+        </div>
       </div>
     </div>
   );
