@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import AdobeVariationCard from './AdobeVariationCard';
 
 interface HeroData {
   eyebrow?: string;
@@ -13,7 +14,7 @@ interface HeroData {
   bg_color?: string;
 }
 
-const AdobeHero = ({ data }: { data: HeroData }) => {
+const AdobeHero = ({ data, product }: { data: HeroData; product?: any }) => {
   return (
     <section
       className="relative overflow-hidden"
@@ -47,16 +48,18 @@ const AdobeHero = ({ data }: { data: HeroData }) => {
             )}
           </div>
         </div>
-        {data.image_url && (
-          <div className="relative">
+        <div className="relative">
+          {product ? (
+            <AdobeVariationCard product={product} />
+          ) : data.image_url ? (
             <img
               src={data.image_url}
               alt={data.heading || 'hero'}
               loading="eager"
               className="w-full h-auto rounded-2xl shadow-2xl"
             />
-          </div>
-        )}
+          ) : null}
+        </div>
       </div>
     </section>
   );
