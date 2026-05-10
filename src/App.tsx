@@ -128,9 +128,8 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="products/:id/template" element={<AdminProductCustomTemplate />} />
-                <Route path="layout-section" element={<AdminCustomTemplates />} />
-                <Route path="layout-section/new" element={<AdminCustomTemplateEditor />} />
-                <Route path="layout-section/:id" element={<AdminCustomTemplateEditor />} />
+               <Route path="layout-section" element={<AdminCustomTemplates />} />
+               <Route path="layout-section/preview/:type" element={<AdminLayoutSectionPreview />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="product-types" element={<AdminProductTypes />} />
                 <Route path="coupons" element={<AdminCoupons />} />
