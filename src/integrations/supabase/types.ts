@@ -1394,6 +1394,30 @@ export type Database = {
           },
         ]
       }
+      product_layout_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          sort_order: number
+          template_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          sort_order?: number
+          template_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          sort_order?: number
+          template_id?: string
+        }
+        Relationships: []
+      }
       product_types: {
         Row: {
           created_at: string
