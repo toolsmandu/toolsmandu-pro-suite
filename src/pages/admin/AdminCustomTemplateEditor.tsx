@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { SingleSectionEditor, buildEmptySection, SECTION_TYPES, SECTION_LABELS, SectionType } from '@/components/admin/TemplateSectionsEditor';
+import SectionPreview from '@/components/admin/SectionPreview';
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-+|-+$)/g, '');
@@ -123,9 +124,14 @@ const AdminCustomTemplateEditor = () => {
         </div>
       </div>
 
-      <div className="bg-card border border-border rounded-lg p-5">
-        <h2 className="text-base font-semibold mb-3">{SECTION_LABELS[sectionType]} content</h2>
-        <SingleSectionEditor type={sectionType} value={data} onChange={setData} />
+      <div className="grid lg:grid-cols-2 gap-5">
+        <div className="bg-card border border-border rounded-lg p-5">
+          <h2 className="text-base font-semibold mb-3">{SECTION_LABELS[sectionType]} content</h2>
+          <SingleSectionEditor type={sectionType} value={data} onChange={setData} />
+        </div>
+        <div className="lg:sticky lg:top-4 self-start">
+          <SectionPreview type={sectionType} data={data} />
+        </div>
       </div>
     </div>
   );

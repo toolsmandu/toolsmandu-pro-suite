@@ -1397,6 +1397,7 @@ export type Database = {
       product_layout_items: {
         Row: {
           created_at: string
+          data: Json
           id: string
           product_id: string
           sort_order: number
@@ -1404,6 +1405,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          data?: Json
           id?: string
           product_id: string
           sort_order?: number
@@ -1411,6 +1413,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          data?: Json
           id?: string
           product_id?: string
           sort_order?: number
