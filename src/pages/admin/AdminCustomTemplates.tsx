@@ -58,9 +58,6 @@ const AdminCustomTemplates = () => {
           <h1 className="text-2xl font-bold text-foreground">Layout Section</h1>
           <p className="text-sm text-muted-foreground">Reusable building blocks. Pick one or more for any product with custom layout enabled.</p>
         </div>
-        <Button asChild>
-          <Link to="/admin/layout-section/new"><Plus className="h-4 w-4 mr-1" /> New section</Link>
-        </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
