@@ -171,10 +171,10 @@ const AdminProductCustomTemplate = () => {
             onChange={(e) => setPicker(e.target.value)}
             className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 text-sm"
           >
-            <option value="">Pick a section from your library…</option>
+            <option value="">Pick a section type…</option>
             {(sections || []).map((s: any) => (
               <option key={s.id} value={s.id}>
-                {s.name} — {SECTION_LABELS[s.template_type as SectionType] || s.template_type}
+                {SECTION_LABELS[s.template_type as SectionType] || s.template_type}
               </option>
             ))}
           </select>
