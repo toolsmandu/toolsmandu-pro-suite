@@ -602,18 +602,20 @@ const AdminProducts = () => {
                           >
                             <Pencil className="h-3 w-3" />
                           </Button>
-                          <Button
-                            asChild
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            title="Custom template"
-                            onClick={(event) => event.stopPropagation()}
-                          >
-                            <RouterLink to={`/admin/products/${product.id}/template`}>
-                              <Layout className="h-3 w-3" />
-                            </RouterLink>
-                          </Button>
+                          {product.use_custom_layout && (
+                            <Button
+                              asChild
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              title="Custom layout"
+                              onClick={(event) => event.stopPropagation()}
+                            >
+                              <RouterLink to={`/admin/products/${product.id}/template`}>
+                                <Layout className="h-3 w-3" />
+                              </RouterLink>
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="icon"
@@ -849,6 +851,23 @@ const AdminProducts = () => {
                       </div>
                     )}
                   </div>
+                  <div className="flex items-start gap-2 border border-border rounded-lg p-3">
+                    <Checkbox
+                      id="use_custom_layout"
+                      checked={form.use_custom_layout}
+                      onCheckedChange={(c) => setForm({ ...form, use_custom_layout: !!c })}
+                      className="mt-0.5"
+                    />
+                    <div>
+                      <Label htmlFor="use_custom_layout" className="text-sm font-medium cursor-pointer">
+                        Use Custom Layout on Frontend
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        If enabled, the configured custom template is shown on the product page instead of the default layout. Configure it via the layout icon on the products list.
+                      </p>
+                    </div>
+                  </div>
+                </div>
                   <div>
                     <Label>Meta Title</Label>
                     <Input value={form.meta_title} onChange={(event) => setForm({ ...form, meta_title: event.target.value })} />
