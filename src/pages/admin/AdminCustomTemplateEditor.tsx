@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
-import TemplateSectionsEditor, { buildEmptySections, SectionType } from '@/components/admin/TemplateSectionsEditor';
+import { SingleSectionEditor, buildEmptySection, SECTION_TYPES, SECTION_LABELS, SectionType } from '@/components/admin/TemplateSectionsEditor';
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-+|-+$)/g, '');
@@ -20,12 +20,12 @@ const AdminCustomTemplateEditor = () => {
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
-  const [templateType, setTemplateType] = useState('adobe_style');
-  const [sections, setSections] = useState<Record<SectionType, any>>(buildEmptySections());
+  const [sectionType, setSectionType] = useState<SectionType>('hero');
+  const [data, setData] = useState<any>(buildEmptySection('hero'));
   const [saving, setSaving] = useState(false);
 
-  const { data: template } = useQuery({
-    queryKey: ['admin-custom-template', id],
+  const { data: row } = useQuery({
+    queryKey: ['admin-layout-section', id],
     enabled: !isNew,
     queryFn: async () => {
       const { data, error } = await supabase.from('custom_templates').select('*').eq('id', id!).single();
@@ -35,40 +35,39 @@ const AdminCustomTemplateEditor = () => {
   });
 
   useEffect(() => {
-    if (template) {
-      setName(template.name || '');
-      setSlug(template.slug || '');
-      setTemplateType(template.template_type || 'adobe_style');
-      const data = (template.data || {}) as any;
-      const empty = buildEmptySections();
-      setSections({
-        hero: { ...empty.hero, ...(data.hero || {}) },
-        app_grid: { ...empty.app_grid, ...(data.app_grid || {}) },
-        features: { ...empty.features, ...(data.features || {}) },
-        plans: { ...empty.plans, ...(data.plans || {}) },
-      });
+    if (row) {
+      setName(row.name || '');
+      setSlug(row.slug || '');
+      const t = (SECTION_TYPES.includes(row.template_type as SectionType) ? row.template_type : 'hero') as SectionType;
+      setSectionType(t);
+      setData({ ...buildEmptySection(t), ...((row.data as any) || {}) });
     }
-  }, [template]);
+  }, [row]);
+
+  const onTypeChange = (t: SectionType) => {
+    setSectionType(t);
+    setData(buildEmptySection(t));
+  };
 
   const save = async () => {
     if (!name.trim()) { toast.error('Name is required'); return; }
     setSaving(true);
     try {
       const finalSlug = slug.trim() || slugify(name);
-      const payload = { name: name.trim(), slug: finalSlug, template_type: templateType, data: sections, is_active: true };
+      const payload = { name: name.trim(), slug: finalSlug, template_type: sectionType, data, is_active: true };
 
       if (isNew) {
-        const { data, error } = await supabase.from('custom_templates').insert(payload).select('id').single();
+        const { data: ins, error } = await supabase.from('custom_templates').insert(payload).select('id').single();
         if (error) throw error;
-        toast.success('Template created');
-        queryClient.invalidateQueries({ queryKey: ['admin-custom-templates'] });
-        navigate(`/admin/layout-section/${data.id}`, { replace: true });
+        toast.success('Section created');
+        queryClient.invalidateQueries({ queryKey: ['admin-layout-sections'] });
+        navigate(`/admin/layout-section/${ins.id}`, { replace: true });
       } else {
         const { error } = await supabase.from('custom_templates').update(payload).eq('id', id!);
         if (error) throw error;
-        toast.success('Template saved');
-        queryClient.invalidateQueries({ queryKey: ['admin-custom-templates'] });
-        queryClient.invalidateQueries({ queryKey: ['admin-custom-template', id] });
+        toast.success('Section saved');
+        queryClient.invalidateQueries({ queryKey: ['admin-layout-sections'] });
+        queryClient.invalidateQueries({ queryKey: ['admin-layout-section', id] });
       }
     } catch (e: any) {
       toast.error(e.message || 'Save failed');
@@ -85,7 +84,7 @@ const AdminCustomTemplateEditor = () => {
             <Link to="/admin/layout-section"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{isNew ? 'New custom template' : 'Edit custom template'}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{isNew ? 'New section' : 'Edit section'}</h1>
           </div>
         </div>
         <Button onClick={save} disabled={saving}>
@@ -97,7 +96,7 @@ const AdminCustomTemplateEditor = () => {
         <div className="grid md:grid-cols-2 gap-3">
           <div>
             <Label className="mb-1 block">Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Adobe style v1" />
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Adobe hero v1" />
           </div>
           <div>
             <Label className="mb-1 block">Slug</Label>
@@ -105,18 +104,25 @@ const AdminCustomTemplateEditor = () => {
           </div>
         </div>
         <div>
-          <Label className="mb-1 block">Template type</Label>
+          <Label className="mb-1 block">Section type</Label>
           <select
-            value={templateType}
-            onChange={(e) => setTemplateType(e.target.value)}
-            className="flex h-10 w-full max-w-xs rounded-md border border-input bg-background px-3 py-2 text-sm"
+            value={sectionType}
+            onChange={(e) => onTypeChange(e.target.value as SectionType)}
+            disabled={!isNew}
+            className="flex h-10 w-full max-w-xs rounded-md border border-input bg-background px-3 py-2 text-sm disabled:opacity-70"
           >
-            <option value="adobe_style">Adobe style</option>
+            {SECTION_TYPES.map((t) => (
+              <option key={t} value={t}>{SECTION_LABELS[t]}</option>
+            ))}
           </select>
+          {!isNew && <p className="text-xs text-muted-foreground mt-1">Section type can't be changed after creation.</p>}
         </div>
       </div>
 
-      <TemplateSectionsEditor value={sections} onChange={setSections} />
+      <div className="bg-card border border-border rounded-lg p-5">
+        <h2 className="text-base font-semibold mb-3">{SECTION_LABELS[sectionType]} content</h2>
+        <SingleSectionEditor type={sectionType} value={data} onChange={setData} />
+      </div>
     </div>
   );
 };
