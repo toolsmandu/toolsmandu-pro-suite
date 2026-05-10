@@ -33,7 +33,7 @@ const AdminProductCustomTemplates = () => {
     <div className="container mx-auto px-4 py-6 max-w-5xl">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Product Custom Template</h1>
+          <h1 className="text-2xl font-bold text-foreground">Custom Templates</h1>
           <p className="text-sm text-muted-foreground">Configure a custom layout per product (e.g. Adobe-style page).</p>
         </div>
       </div>
