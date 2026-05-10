@@ -14,7 +14,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   hero: 'Hero',
   app_grid: 'App grid',
   features: 'Feature highlights',
-  plans: 'Plans / pricing',
+  plans: 'Pricing Cards',
 };
 
 export const emptySectionData: Record<SectionType, any> = {
