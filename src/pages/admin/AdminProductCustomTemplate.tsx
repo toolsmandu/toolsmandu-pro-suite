@@ -18,7 +18,7 @@ type SectionType = typeof SECTION_TYPES[number];
 
 const emptyData: Record<SectionType, any> = {
   hero: { eyebrow: '', heading: '', subheading: '', image_url: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
-  app_grid: { heading: '', apps: [] },
+  app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
   plans: { heading: '', plans: [] },
 };
@@ -184,6 +184,10 @@ const AdminProductCustomTemplate = () => {
                 <Button variant="outline" size="sm" onClick={() => updateApps([...(sections.app_grid.apps || []), { name: '', icon_url: '', description: '' }])}>
                   <Plus className="h-4 w-4 mr-1" /> Add app
                 </Button>
+              </div>
+              <div className="pt-2">
+                <Label className="mb-1 block text-xs">Footer text (shown below the grid)</Label>
+                <RichTextEditor value={sections.app_grid.footer_text || ''} onChange={(v) => updateSection('app_grid', { footer_text: v })} />
               </div>
             </AccordionContent>
           </AccordionItem>
