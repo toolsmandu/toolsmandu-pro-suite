@@ -25,7 +25,6 @@ const AdminCustomTemplateEditor = () => {
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [sectionType, setSectionType] = useState<SectionType>(initialType);
-  const [data, setData] = useState<any>(buildEmptySection(initialType));
   const [saving, setSaving] = useState(false);
 
   const { data: row } = useQuery({
@@ -44,13 +43,11 @@ const AdminCustomTemplateEditor = () => {
       setSlug(row.slug || '');
       const t = (SECTION_TYPES.includes(row.template_type as SectionType) ? row.template_type : 'hero') as SectionType;
       setSectionType(t);
-      setData({ ...buildEmptySection(t), ...((row.data as any) || {}) });
     }
   }, [row]);
 
   const onTypeChange = (t: SectionType) => {
     setSectionType(t);
-    setData(buildEmptySection(t));
   };
 
   const save = async () => {
