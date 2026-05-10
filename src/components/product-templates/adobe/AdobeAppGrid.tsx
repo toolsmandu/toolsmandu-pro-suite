@@ -7,7 +7,21 @@ interface App {
 interface AppGridData {
   heading?: string;
   apps?: App[];
+  footer_text?: string;
 }
+
+const decodeHtmlEntities = (str: string): string => {
+  if (typeof document === 'undefined') return str;
+  let decoded = str;
+  for (let i = 0; i < 2; i++) {
+    const ta = document.createElement('textarea');
+    ta.innerHTML = decoded;
+    const next = ta.value;
+    if (next === decoded) break;
+    decoded = next;
+  }
+  return decoded;
+};
 
 const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
   if (!data.apps?.length) return null;
