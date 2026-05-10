@@ -1,7 +1,6 @@
 interface App {
   name: string;
   icon_url?: string;
-  description?: string;
 }
 
 interface AppGridData {
@@ -54,16 +53,13 @@ const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
                   </div>
                 )}
                 <h3 className="font-semibold text-sm text-card-foreground mb-1">{app.name}</h3>
-                {app.description && (
-                  <p className="text-xs text-muted-foreground line-clamp-2">{app.description}</p>
-                )}
               </div>
             ))}
           </div>
         )}
         {data.footer_text && (
           <div
-            className="prose prose-sm md:prose-base dark:prose-invert max-w-3xl mx-auto mt-12 text-center text-muted-foreground"
+            className="prose prose-sm md:prose-base dark:prose-invert max-w-3xl mx-auto mt-12 text-left text-muted-foreground"
             dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(data.footer_text) }}
           />
         )}
