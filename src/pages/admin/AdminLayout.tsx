@@ -47,7 +47,7 @@ const AdminLayout = () => {
     },
   });
 
-  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs');
+  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs') || location.pathname.startsWith('/admin/product-custom-templates');
   const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides');
   const isReportsSection = location.pathname.startsWith('/admin/reports');
   const isSheetsSection = location.pathname.startsWith('/admin/family-sheets');
@@ -203,6 +203,14 @@ const AdminLayout = () => {
                               <NavLink to="/admin/faqs" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                 <HelpCircle className="mr-2 h-3 w-3" />
                                 <span>FAQs</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink to="/admin/product-custom-templates" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                                <HelpCircle className="mr-2 h-3 w-3" />
+                                <span>Product Custom Template</span>
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
