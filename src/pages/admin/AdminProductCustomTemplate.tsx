@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import ImageUpload from '@/components/admin/ImageUpload';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Plus, Trash2, ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
@@ -137,7 +138,10 @@ const AdminProductCustomTemplate = () => {
             <AccordionContent className="space-y-3 pt-2">
               <Field label="Eyebrow" value={sections.hero.eyebrow} onChange={(v) => updateSection('hero', { eyebrow: v })} />
               <Field label="Heading" value={sections.hero.heading} onChange={(v) => updateSection('hero', { heading: v })} />
-              <Field label="Subheading" textarea value={sections.hero.subheading} onChange={(v) => updateSection('hero', { subheading: v })} />
+              <div>
+                <Label className="mb-1 block text-xs">Subheading</Label>
+                <RichTextEditor value={sections.hero.subheading || ''} onChange={(v) => updateSection('hero', { subheading: v })} />
+              </div>
               <div>
                 <Label className="mb-1 block text-sm">Hero image</Label>
                 <ImageUpload value={sections.hero.image_url} onChange={(url) => updateSection('hero', { image_url: url })} />

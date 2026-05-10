@@ -31,9 +31,10 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: any }) => {
             {data.heading || 'Creative Cloud'}
           </h1>
           {data.subheading && (
-            <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-xl leading-relaxed">
-              {data.subheading}
-            </p>
+            <div
+              className="text-lg md:text-xl text-foreground/80 mb-8 max-w-xl leading-relaxed prose prose-invert prose-sm md:prose-base max-w-none"
+              dangerouslySetInnerHTML={{ __html: data.subheading }}
+            />
           )}
           <div className="flex flex-wrap gap-3">
             {data.cta_label && (
