@@ -127,7 +127,7 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="products/:id/template" element={<AdminProductCustomTemplate />} />
-                <Route path="product-custom-templates" element={<AdminProductCustomTemplates />} />
+<Route path="custom-templates" element={<AdminProductCustomTemplates />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="product-types" element={<AdminProductTypes />} />
                 <Route path="coupons" element={<AdminCoupons />} />
