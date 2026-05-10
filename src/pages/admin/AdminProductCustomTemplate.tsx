@@ -18,7 +18,7 @@ type SectionType = typeof SECTION_TYPES[number];
 
 const emptyData: Record<SectionType, any> = {
   hero: { eyebrow: '', heading: '', subheading: '', image_url: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
-  app_grid: { heading: '', apps: [] },
+  app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
   plans: { heading: '', plans: [] },
 };
