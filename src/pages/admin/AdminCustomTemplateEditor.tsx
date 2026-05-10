@@ -55,7 +55,7 @@ const AdminCustomTemplateEditor = () => {
     setSaving(true);
     try {
       const finalSlug = slug.trim() || slugify(name);
-      const payload = { name: name.trim(), slug: finalSlug, template_type: sectionType, data, is_active: true };
+      const payload = { name: name.trim(), slug: finalSlug, template_type: sectionType, data: {}, is_active: true };
 
       if (isNew) {
         const { data: ins, error } = await supabase.from('custom_templates').insert(payload).select('id').single();
