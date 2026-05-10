@@ -32,6 +32,7 @@ import ReportProblemPage from "./pages/dashboard/ReportProblemPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
+import AdminProductCustomTemplate from "./pages/admin/AdminProductCustomTemplate";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminProductTypes from "./pages/admin/AdminProductTypes";
 import AdminCoupons from "./pages/admin/AdminCoupons";
@@ -124,6 +125,7 @@ const App = () => (
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />
+                <Route path="products/:id/template" element={<AdminProductCustomTemplate />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="product-types" element={<AdminProductTypes />} />
                 <Route path="coupons" element={<AdminCoupons />} />
