@@ -4,10 +4,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Search, Trash2, Image as ImageIcon, LayoutGrid, Sparkles, CreditCard } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
-import { SECTION_LABELS, SectionType } from '@/components/admin/TemplateSectionsEditor';
+import { SECTION_LABELS, SECTION_TYPES, SectionType } from '@/components/admin/TemplateSectionsEditor';
+
+const SECTION_META: Record<SectionType, { icon: any; description: string }> = {
+  hero: { icon: ImageIcon, description: 'Top banner with heading, subheading, image and CTAs.' },
+  app_grid: { icon: LayoutGrid, description: 'Grid of apps or icons with names.' },
+  features: { icon: Sparkles, description: 'Alternating feature highlights with images.' },
+  plans: { icon: CreditCard, description: 'Pricing plans / tiers with features.' },
+};
 
 const AdminCustomTemplates = () => {
   const [q, setQ] = useState('');
@@ -54,6 +61,30 @@ const AdminCustomTemplates = () => {
         <Button asChild>
           <Link to="/admin/layout-section/new"><Plus className="h-4 w-4 mr-1" /> New section</Link>
         </Button>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        {SECTION_TYPES.map((t) => {
+          const Icon = SECTION_META[t].icon;
+          return (
+            <Link
+              key={t}
+              to={`/admin/layout-section/new?type=${t}`}
+              className="group bg-card border border-border rounded-lg p-4 hover:border-primary hover:bg-muted/30 transition-colors"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="font-semibold text-sm text-foreground">{SECTION_LABELS[t]}</div>
+              </div>
+              <p className="text-xs text-muted-foreground leading-snug">{SECTION_META[t].description}</p>
+              <div className="text-xs text-primary mt-2 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Plus className="h-3 w-3" /> New {SECTION_LABELS[t].toLowerCase()}
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       <div className="bg-card border border-border rounded-lg p-4 mb-4">
