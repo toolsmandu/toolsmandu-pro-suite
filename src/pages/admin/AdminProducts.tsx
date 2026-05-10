@@ -71,6 +71,7 @@ const emptyForm = () => ({
   show_in_new_in_store: false,
   show_in_super_saving_deal: false,
   last_price: '',
+  use_custom_layout: false,
 });
 
 const AdminProducts = () => {
@@ -255,6 +256,7 @@ const AdminProducts = () => {
       show_in_new_in_store: product.show_in_new_in_store || false,
       show_in_super_saving_deal: product.show_in_super_saving_deal || false,
       last_price: product.last_price != null ? String(product.last_price) : '',
+      use_custom_layout: !!product.use_custom_layout,
     });
 
     const { data, error } = await supabase
@@ -335,6 +337,7 @@ const AdminProducts = () => {
         show_in_new_in_store: form.show_in_new_in_store,
         show_in_super_saving_deal: form.show_in_super_saving_deal,
         last_price: form.last_price ? Number.parseFloat(form.last_price) : null,
+        use_custom_layout: form.use_custom_layout,
       };
 
       let productId = editingId;
