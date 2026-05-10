@@ -62,7 +62,7 @@ const AdminCustomTemplateEditor = () => {
         if (error) throw error;
         toast.success('Template created');
         queryClient.invalidateQueries({ queryKey: ['admin-custom-templates'] });
-        navigate(`/admin/custom-templates/${data.id}`, { replace: true });
+        navigate(`/admin/layout-section/${data.id}`, { replace: true });
       } else {
         const { error } = await supabase.from('custom_templates').update(payload).eq('id', id!);
         if (error) throw error;
@@ -82,7 +82,7 @@ const AdminCustomTemplateEditor = () => {
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/admin/custom-templates"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Link>
+            <Link to="/admin/layout-section"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Link>
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-foreground">{isNew ? 'New custom template' : 'Edit custom template'}</h1>

@@ -47,11 +47,11 @@ const AdminCustomTemplates = () => {
     <div className="container mx-auto px-4 py-6 max-w-5xl">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Custom Templates</h1>
+          <h1 className="text-2xl font-bold text-foreground">Layout Section</h1>
           <p className="text-sm text-muted-foreground">Reusable named layouts you can apply to any product.</p>
         </div>
         <Button asChild>
-          <Link to="/admin/custom-templates/new"><Plus className="h-4 w-4 mr-1" /> New template</Link>
+          <Link to="/admin/layout-section/new"><Plus className="h-4 w-4 mr-1" /> New template</Link>
         </Button>
       </div>
 
@@ -78,7 +78,7 @@ const AdminCustomTemplates = () => {
                 <div className="flex items-center gap-2 shrink-0">
                   <Badge variant="default" className="capitalize">{(t.template_type || '').replace('_', ' ')}</Badge>
                   <Button asChild size="sm" variant="outline">
-                    <Link to={`/admin/custom-templates/${t.id}`}>
+                    <Link to={`/admin/layout-section/${t.id}`}>
                       <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
                     </Link>
                   </Button>
