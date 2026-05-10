@@ -34,7 +34,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminProductCustomTemplate from "./pages/admin/AdminProductCustomTemplate";
 import AdminCustomTemplates from "./pages/admin/AdminCustomTemplates";
-import AdminCustomTemplateEditor from "./pages/admin/AdminCustomTemplateEditor";
+import AdminLayoutSectionPreview from "./pages/admin/AdminLayoutSectionPreview";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminProductTypes from "./pages/admin/AdminProductTypes";
 import AdminCoupons from "./pages/admin/AdminCoupons";
