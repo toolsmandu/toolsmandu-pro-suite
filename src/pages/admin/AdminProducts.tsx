@@ -867,7 +867,6 @@ const AdminProducts = () => {
                       </p>
                     </div>
                   </div>
-                </div>
                   <div>
                     <Label>Meta Title</Label>
                     <Input value={form.meta_title} onChange={(event) => setForm({ ...form, meta_title: event.target.value })} />
