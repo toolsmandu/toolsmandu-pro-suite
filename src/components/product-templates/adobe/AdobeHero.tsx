@@ -14,7 +14,25 @@ interface HeroData {
   bg_color?: string;
 }
 
+const decodeHtmlEntities = (value: string) => {
+  let decoded = value;
+
+  for (let i = 0; i < 2; i++) {
+    if (!/&(?:amp;)?(?:lt|gt|quot|#39|nbsp|amp);/i.test(decoded)) break;
+
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = decoded;
+
+    if (textarea.value === decoded) break;
+    decoded = textarea.value;
+  }
+
+  return decoded;
+};
+
 const AdobeHero = ({ data, product }: { data: HeroData; product?: any }) => {
+  const subheadingHtml = data.subheading ? decodeHtmlEntities(data.subheading) : '';
+
   return (
     <section
       className="relative overflow-hidden"
@@ -30,10 +48,10 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: any }) => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-foreground">
             {data.heading || 'Creative Cloud'}
           </h1>
-          {data.subheading && (
+          {subheadingHtml && (
             <div
               className="text-lg md:text-xl text-foreground/80 mb-8 max-w-xl leading-relaxed prose prose-invert prose-sm md:prose-base max-w-none"
-              dangerouslySetInnerHTML={{ __html: data.subheading }}
+              dangerouslySetInnerHTML={{ __html: subheadingHtml }}
             />
           )}
           <div className="flex flex-wrap gap-3">
