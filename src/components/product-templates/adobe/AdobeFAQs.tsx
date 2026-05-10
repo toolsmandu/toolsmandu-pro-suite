@@ -18,12 +18,12 @@ const AdobeFAQs = ({ productName }: { productName: string }) => {
   const replace = (t: string) => t.replace(/\[product\]/gi, productName);
 
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section className="py-16 md:py-24" style={{ backgroundColor: '#0a1f3d' }}>
       <div className="container mx-auto px-4 max-w-4xl">
         <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-12">
           Frequently asked questions
         </h2>
-        <Card className="overflow-hidden border-border/50 bg-card">
+        <Card className="overflow-hidden border-border/50" style={{ backgroundColor: 'rgba(10, 46, 92, 0.5)' }}>
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq) => (
               <AccordionItem key={faq.id} value={faq.id} className="border-border/40 px-6 last:border-b-0">
