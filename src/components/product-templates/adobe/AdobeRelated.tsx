@@ -28,7 +28,7 @@ const AdobeRelated = ({ productId, categoryId }: Props) => {
     <section className="py-16 md:py-24 bg-muted/20">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10 text-center">
-          Related products
+          Looking for similar items? Check these:
         </h2>
         <div className="grid gap-5 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, 200px)' }}>
           {related.map((p: any) => (
