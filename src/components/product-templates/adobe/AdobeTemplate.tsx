@@ -8,14 +8,13 @@ import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
 const AdobeTemplate = ({ productId }: { productId: string }) => {
-  const { data: sections, isLoading } = useQuery({
-    queryKey: ['product-custom-sections', productId],
+  const { data: items, isLoading } = useQuery({
+    queryKey: ['product-layout-items', productId],
     queryFn: async () => {
       const { data } = await supabase
-        .from('product_custom_sections')
-        .select('*')
+        .from('product_layout_items')
+        .select('id, sort_order, template_id, custom_templates(id, name, template_type, data, is_active)')
         .eq('product_id', productId)
-        .eq('is_active', true)
         .order('sort_order');
       return data || [];
     },
@@ -35,15 +34,28 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
 
   if (isLoading) return null;
 
-  const get = (type: string) =>
-    (sections?.find((s: any) => s.section_type === type)?.data as any) || {};
+  const renderSection = (idx: number, type: string, data: any) => {
+    switch (type) {
+      case 'hero':
+        return <AdobeHero key={idx} data={data} product={product} />;
+      case 'app_grid':
+        return <AdobeAppGrid key={idx} data={data} />;
+      case 'features':
+        return <AdobeFeatures key={idx} data={data} />;
+      case 'plans':
+        return <AdobePlans key={idx} data={data} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen">
-      <AdobeHero data={get('hero')} product={product} />
-      <AdobeAppGrid data={get('app_grid')} />
-      <AdobeFeatures data={get('features')} />
-      <AdobePlans data={get('plans')} />
+      {(items || [])
+        .filter((it: any) => it.custom_templates?.is_active)
+        .map((it: any, idx: number) =>
+          renderSection(idx, it.custom_templates.template_type, it.custom_templates.data || {})
+        )}
       <AdobeFAQs productName={product?.name || ''} />
       <AdobeRelated productId={productId} categoryId={product?.category_id} />
     </div>

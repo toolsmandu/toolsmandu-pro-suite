@@ -3,80 +3,110 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { ArrowLeft, Save } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
-import TemplateSectionsEditor, { buildEmptySections, SECTION_TYPES, SectionType } from '@/components/admin/TemplateSectionsEditor';
+import { SECTION_LABELS, SectionType } from '@/components/admin/TemplateSectionsEditor';
+
+interface LayoutItem {
+  id?: string;
+  template_id: string;
+  name: string;
+  template_type: SectionType;
+}
 
 const AdminProductCustomTemplate = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
-  const [template, setTemplate] = useState('default');
-  const [sections, setSections] = useState<Record<SectionType, any>>(buildEmptySections());
+  const [items, setItems] = useState<LayoutItem[]>([]);
+  const [picker, setPicker] = useState('');
   const [saving, setSaving] = useState(false);
 
   const { data: product } = useQuery({
     queryKey: ['admin-product-template', id],
     enabled: !!id,
     queryFn: async () => {
-      const { data } = await supabase.from('products').select('id, name, custom_template, use_custom_layout').eq('id', id!).single();
+      const { data } = await supabase.from('products').select('id, name, use_custom_layout').eq('id', id!).single();
       return data;
     },
   });
 
-  const { data: existingSections } = useQuery({
-    queryKey: ['admin-product-sections', id],
+  const { data: existing } = useQuery({
+    queryKey: ['admin-product-layout-items', id],
     enabled: !!id,
     queryFn: async () => {
-      const { data } = await supabase.from('product_custom_sections').select('*').eq('product_id', id!);
+      const { data } = await supabase
+        .from('product_layout_items')
+        .select('id, template_id, sort_order, custom_templates(id, name, template_type)')
+        .eq('product_id', id!)
+        .order('sort_order');
       return data || [];
     },
   });
 
-  const { data: masterTemplates } = useQuery({
-    queryKey: ['custom-templates-list'],
+  const { data: sections } = useQuery({
+    queryKey: ['layout-sections-list'],
     queryFn: async () => {
-      const { data } = await supabase.from('custom_templates').select('id, name, data').order('name');
+      const { data } = await supabase
+        .from('custom_templates')
+        .select('id, name, template_type')
+        .eq('is_active', true)
+        .order('name');
       return data || [];
     },
   });
 
   useEffect(() => {
-    if (product?.custom_template) setTemplate(product.custom_template);
-  }, [product]);
+    if (!existing) return;
+    setItems(
+      existing
+        .filter((r: any) => r.custom_templates)
+        .map((r: any) => ({
+          id: r.id,
+          template_id: r.template_id,
+          name: r.custom_templates.name,
+          template_type: r.custom_templates.template_type,
+        }))
+    );
+  }, [existing]);
 
-  useEffect(() => {
-    if (!existingSections) return;
-    const empty = buildEmptySections();
-    const next = { ...empty } as Record<SectionType, any>;
-    for (const t of SECTION_TYPES) {
-      const found = existingSections.find((s: any) => s.section_type === t);
-      next[t] = found?.data ? { ...empty[t], ...(found.data as any) } : { ...empty[t] };
-    }
-    setSections(next);
-  }, [existingSections]);
+  const addSection = () => {
+    if (!picker) return;
+    const sec = (sections || []).find((s: any) => s.id === picker);
+    if (!sec) return;
+    setItems((cur) => [...cur, { template_id: sec.id, name: sec.name, template_type: sec.template_type as SectionType }]);
+    setPicker('');
+  };
+
+  const remove = (idx: number) => setItems((cur) => cur.filter((_, i) => i !== idx));
+  const move = (idx: number, dir: -1 | 1) => {
+    setItems((cur) => {
+      const next = [...cur];
+      const j = idx + dir;
+      if (j < 0 || j >= next.length) return cur;
+      [next[idx], next[j]] = [next[j], next[idx]];
+      return next;
+    });
+  };
 
   const save = async () => {
     if (!id) return;
     setSaving(true);
     try {
-      const { error: pErr } = await supabase.from('products').update({ custom_template: template }).eq('id', id);
-      if (pErr) throw pErr;
-
-      for (let i = 0; i < SECTION_TYPES.length; i++) {
-        const t = SECTION_TYPES[i];
-        const { error } = await supabase
-          .from('product_custom_sections')
-          .upsert(
-            { product_id: id, section_type: t, data: sections[t], sort_order: i, is_active: true },
-            { onConflict: 'product_id,section_type' }
-          );
-        if (error) throw error;
+      const { error: delErr } = await supabase.from('product_layout_items').delete().eq('product_id', id);
+      if (delErr) throw delErr;
+      if (items.length > 0) {
+        const rows = items.map((it, i) => ({
+          product_id: id,
+          template_id: it.template_id,
+          sort_order: i,
+        }));
+        const { error: insErr } = await supabase.from('product_layout_items').insert(rows);
+        if (insErr) throw insErr;
       }
       toast.success('Layout saved');
-      queryClient.invalidateQueries({ queryKey: ['admin-product-template', id] });
-      queryClient.invalidateQueries({ queryKey: ['admin-product-sections', id] });
-      queryClient.invalidateQueries({ queryKey: ['product-custom-sections', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-product-layout-items', id] });
+      queryClient.invalidateQueries({ queryKey: ['product-layout-items', id] });
     } catch (e: any) {
       toast.error(e.message || 'Save failed');
     } finally {
@@ -84,25 +114,8 @@ const AdminProductCustomTemplate = () => {
     }
   };
 
-  const loadFromTemplate = (templateId: string) => {
-    if (!templateId) return;
-    const tpl = (masterTemplates || []).find((t: any) => t.id === templateId);
-    if (!tpl) return;
-    if (!confirm(`Load content from "${tpl.name}"? This will replace your current section content (you still need to save).`)) return;
-    const data = (tpl.data || {}) as any;
-    const empty = buildEmptySections();
-    setSections({
-      hero: { ...empty.hero, ...(data.hero || {}) },
-      app_grid: { ...empty.app_grid, ...(data.app_grid || {}) },
-      features: { ...empty.features, ...(data.features || {}) },
-      plans: { ...empty.plans, ...(data.plans || {}) },
-    });
-    setTemplate('adobe_style');
-    toast.success(`Loaded "${tpl.name}". Click Save to apply.`);
-  };
-
   return (
-    <div className="container mx-auto px-4 py-6 max-w-5xl">
+    <div className="container mx-auto px-4 py-6 max-w-4xl">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <Button asChild variant="ghost" size="sm">
@@ -120,41 +133,63 @@ const AdminProductCustomTemplate = () => {
 
       {!product?.use_custom_layout && (
         <div className="bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 rounded-lg p-3 mb-4 text-sm">
-          "Use Custom Layout on Frontend" is currently disabled for this product. Enable it on the product edit page for this layout to be visible to customers.
+          "Use Custom Layout on Frontend" is currently disabled for this product. Enable it on the product edit page for this layout to be visible.
         </div>
       )}
 
-      <div className="bg-card border border-border rounded-lg p-5 mb-6 grid md:grid-cols-2 gap-4">
-        <div>
-          <Label className="mb-2 block">Template</Label>
+      <div className="bg-card border border-border rounded-lg p-5 mb-6">
+        <h2 className="text-base font-semibold mb-3">Add a section</h2>
+        <div className="flex flex-col sm:flex-row gap-2">
           <select
-            value={template}
-            onChange={(e) => setTemplate(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            value={picker}
+            onChange={(e) => setPicker(e.target.value)}
+            className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 text-sm"
           >
-            <option value="default">Default</option>
-            <option value="adobe_style">Adobe style</option>
-          </select>
-        </div>
-        <div>
-          <Label className="mb-2 block">Load content from a master template</Label>
-          <select
-            onChange={(e) => { loadFromTemplate(e.target.value); e.target.value = ''; }}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            defaultValue=""
-          >
-            <option value="" disabled>Pick a template to copy from…</option>
-            {(masterTemplates || []).map((t: any) => (
-              <option key={t.id} value={t.id}>{t.name}</option>
+            <option value="">Pick a section from your library…</option>
+            {(sections || []).map((s: any) => (
+              <option key={s.id} value={s.id}>
+                {s.name} — {SECTION_LABELS[s.template_type as SectionType] || s.template_type}
+              </option>
             ))}
           </select>
-          <p className="text-xs text-muted-foreground mt-1">Loads content into the editor below. Edits stay product-specific after saving.</p>
+          <Button onClick={addSection} disabled={!picker}>
+            <Plus className="h-4 w-4 mr-1" /> Add
+          </Button>
         </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          Don't see what you need? <Link to="/admin/layout-section" className="underline">Manage sections</Link>.
+        </p>
       </div>
 
-      {template === 'adobe_style' && (
-        <TemplateSectionsEditor value={sections} onChange={setSections} />
-      )}
+      <div className="bg-card border border-border rounded-lg p-5">
+        <h2 className="text-base font-semibold mb-3">Sections on this product</h2>
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No sections yet. Add some from above.</p>
+        ) : (
+          <div className="space-y-2">
+            {items.map((it, i) => (
+              <div key={`${it.template_id}-${i}`} className="flex items-center gap-2 border border-border/60 rounded-lg p-3 bg-background/50">
+                <div className="text-xs font-mono text-muted-foreground w-6">{i + 1}.</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm truncate">{it.name}</div>
+                  <Badge variant="secondary" className="mt-1 text-xs">
+                    {SECTION_LABELS[it.template_type] || it.template_type}
+                  </Badge>
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => move(i, -1)} disabled={i === 0}>
+                  <ArrowUp className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => move(i, 1)} disabled={i === items.length - 1}>
+                  <ArrowDown className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => remove(i)}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
