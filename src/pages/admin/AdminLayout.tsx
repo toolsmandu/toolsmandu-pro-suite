@@ -47,7 +47,7 @@ const AdminLayout = () => {
     },
   });
 
-  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs') || location.pathname.startsWith('/admin/custom-templates');
+  const isProductsSection = location.pathname.startsWith('/admin/products') || location.pathname.startsWith('/admin/categories') || location.pathname.startsWith('/admin/product-types') || location.pathname.startsWith('/admin/coupons') || location.pathname.startsWith('/admin/input-fields') || location.pathname.startsWith('/admin/flash-sale-labels') || location.pathname.startsWith('/admin/faqs') || location.pathname.startsWith('/admin/layout-section');
   const isSettingsSection = location.pathname.startsWith('/admin/settings') || location.pathname.startsWith('/admin/hero-slides');
   const isReportsSection = location.pathname.startsWith('/admin/reports');
   const isSheetsSection = location.pathname.startsWith('/admin/family-sheets');
@@ -208,9 +208,9 @@ const AdminLayout = () => {
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <NavLink to="/admin/custom-templates" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
+                              <NavLink to="/admin/layout-section" className="hover:bg-muted/50" activeClassName="font-medium admin-active-link">
                                 <Layout className="mr-2 h-3 w-3" />
-                                <span>Custom Templates</span>
+                                <span>Layout Section</span>
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
