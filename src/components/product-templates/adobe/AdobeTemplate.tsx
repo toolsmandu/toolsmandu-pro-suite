@@ -53,9 +53,11 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
     <div className="min-h-screen">
       {(items || [])
         .filter((it: any) => it.custom_templates?.is_active)
-        .map((it: any, idx: number) =>
-          renderSection(idx, it.custom_templates.template_type, it.custom_templates.data || {})
-        )}
+        .map((it: any, idx: number) => {
+          const perProduct = it.data && Object.keys(it.data).length > 0 ? it.data : null;
+          const sectionData = perProduct || it.custom_templates.data || {};
+          return renderSection(idx, it.custom_templates.template_type, sectionData);
+        })}
       <AdobeFAQs productName={product?.name || ''} />
       <AdobeRelated productId={productId} categoryId={product?.category_id} />
     </div>
