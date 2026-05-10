@@ -20,8 +20,8 @@ const AdobeFAQs = ({ productName }: { productName: string }) => {
   return (
     <section className="py-16 md:py-24" style={{ backgroundColor: '#0a1f3d' }}>
       <div className="container mx-auto px-4 max-w-4xl">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-12">
-          Frequently asked questions
+        <h2 className="text-xl font-bold text-foreground mb-5">
+          Frequently Asked Questions
         </h2>
         <Card className="overflow-hidden border-border/50" style={{ backgroundColor: 'rgba(10, 46, 92, 0.5)' }}>
           <Accordion type="single" collapsible className="w-full">
