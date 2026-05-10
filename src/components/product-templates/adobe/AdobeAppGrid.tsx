@@ -59,7 +59,8 @@ const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
         )}
         {data.footer_text && (
           <div
-            className="prose prose-sm md:prose-base dark:prose-invert max-w-3xl mx-auto mt-12 text-left text-muted-foreground"
+            className="prose prose-sm md:prose-base dark:prose-invert max-w-3xl mx-auto mt-12 text-left"
+            style={{ color: '#ffffff' }}
             dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(data.footer_text) }}
           />
         )}
