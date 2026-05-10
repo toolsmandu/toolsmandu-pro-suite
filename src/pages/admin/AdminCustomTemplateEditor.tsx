@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -17,11 +17,15 @@ const AdminCustomTemplateEditor = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isNew = !id || id === 'new';
+  const [searchParams] = useSearchParams();
+  const initialType = (SECTION_TYPES.includes(searchParams.get('type') as SectionType)
+    ? (searchParams.get('type') as SectionType)
+    : 'hero');
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
-  const [sectionType, setSectionType] = useState<SectionType>('hero');
-  const [data, setData] = useState<any>(buildEmptySection('hero'));
+  const [sectionType, setSectionType] = useState<SectionType>(initialType);
+  const [data, setData] = useState<any>(buildEmptySection(initialType));
   const [saving, setSaving] = useState(false);
 
   const { data: row } = useQuery({
