@@ -1289,6 +1289,39 @@ export type Database = {
           },
         ]
       }
+      product_custom_sections: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          is_active: boolean
+          product_id: string
+          section_type: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          is_active?: boolean
+          product_id: string
+          section_type: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          is_active?: boolean
+          product_id?: string
+          section_type?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_input_fields: {
         Row: {
           created_at: string
@@ -1403,6 +1436,7 @@ export type Database = {
         Row: {
           category_id: string | null
           created_at: string
+          custom_template: string
           description: string | null
           duration: string | null
           features: Json | null
@@ -1432,6 +1466,7 @@ export type Database = {
         Insert: {
           category_id?: string | null
           created_at?: string
+          custom_template?: string
           description?: string | null
           duration?: string | null
           features?: Json | null
@@ -1461,6 +1496,7 @@ export type Database = {
         Update: {
           category_id?: string | null
           created_at?: string
+          custom_template?: string
           description?: string | null
           duration?: string | null
           features?: Json | null

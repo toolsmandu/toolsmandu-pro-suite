@@ -10,7 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Search, X, ChevronDown, Save, Filter, Download } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, X, ChevronDown, Save, Filter, Download, Layout } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
@@ -597,6 +598,18 @@ const AdminProducts = () => {
                             }}
                           >
                             <Pencil className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            asChild
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            title="Custom template"
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <RouterLink to={`/admin/products/${product.id}/template`}>
+                              <Layout className="h-3 w-3" />
+                            </RouterLink>
                           </Button>
                           <Button
                             variant="ghost"

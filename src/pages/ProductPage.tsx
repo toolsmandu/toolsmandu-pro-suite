@@ -14,6 +14,7 @@ import ProductCard from '@/components/ProductCard';
 import NotifyMe from '@/components/NotifyMe';
 import InputFieldRenderer, { validateField, type InputFieldDef } from '@/components/InputFieldRenderer';
 import { toast } from 'sonner';
+import AdobeTemplate from '@/components/product-templates/adobe/AdobeTemplate';
 
 const ProductFAQs = ({ productName }: { productName: string }) => {
   const { data: faqs } = useQuery({
@@ -226,6 +227,10 @@ const ProductPage = () => {
       <Button asChild><Link to="/">Back to Home</Link></Button>
     </div>
   );
+
+  if ((product as any).custom_template && (product as any).custom_template !== 'default') {
+    return <AdobeTemplate productId={(product as any).id} />;
+  }
 
   return (
     <>
