@@ -47,7 +47,8 @@ const AdobeStyleCards = ({ data }: { data: AdobeStyleCardsData }) => {
           {items.map((it, i) => (
             <div
               key={i}
-              className="group rounded-2xl border border-border/60 bg-card p-6 md:p-7 flex flex-col items-start hover:shadow-lg hover:border-primary/40 hover:-translate-y-1 transition-all"
+              className="group rounded-2xl border border-border/60 p-6 md:p-7 flex flex-col items-start hover:shadow-lg hover:border-primary/40 hover:-translate-y-1 transition-all"
+              style={{ backgroundColor: '#0a2e5c' }}
             >
               {it.icon_url && (
                 <div className="mb-4 h-16 w-16 flex items-center justify-center rounded-2xl bg-primary/5">

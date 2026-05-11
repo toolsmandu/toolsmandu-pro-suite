@@ -40,9 +40,10 @@ const AdobeFeaturesIcon6 = ({ data, showItemNumber = false }: { data: FeaturesIc
             return (
               <div
                 key={i}
-                className={`mb-6 break-inside-avoid rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all ${
+                className={`mb-6 break-inside-avoid rounded-2xl border border-border/60 p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all ${
                   featured ? 'flex flex-col items-center text-center' : 'flex items-center gap-5'
                 }`}
+                style={{ backgroundColor: '#0a2e5c' }}
               >
                 {featured ? (
                   <>
