@@ -43,6 +43,9 @@ const SectionPreview = ({ type, data }: Props) => {
     case 'features_icon_5':
       node = <AdobeFeaturesIcon5 data={data || {}} showItemNumber />;
       break;
+    case 'big_products_cards':
+      node = <AdobeBigProductsCards data={data || {}} />;
+      break;
     case 'comparison_two':
       node = <AdobeComparisonTwo data={data || {}} />;
       break;
