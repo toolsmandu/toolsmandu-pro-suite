@@ -191,8 +191,8 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'plans') node = <AdobePlans data={data} />;
   else if (t === 'pricing_table') node = <AdobePricingTable data={data} />;
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
-  else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} />;
-  else if (t === 'features_icon_5') node = <AdobeFeaturesIcon5 data={data} />;
+  else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} showItemNumber />;
+  else if (t === 'features_icon_5') node = <AdobeFeaturesIcon5 data={data} showItemNumber />;
   else if (t === 'adobe_style_cards') node = <AdobeStyleCards data={data} />;
   else if (t === 'comparison_two') node = <AdobeComparisonTwo data={data} />;
 

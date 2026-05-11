@@ -11,7 +11,7 @@ interface FeaturesIcon6Data {
   columns?: 2 | 3;
 }
 
-const AdobeFeaturesIcon6 = ({ data }: { data: FeaturesIcon6Data }) => {
+const AdobeFeaturesIcon6 = ({ data, showItemNumber = false }: { data: FeaturesIcon6Data; showItemNumber?: boolean }) => {
   const items = data.items || [];
   if (!items.length) return null;
 
@@ -46,9 +46,11 @@ const AdobeFeaturesIcon6 = ({ data }: { data: FeaturesIcon6Data }) => {
               >
                 {featured ? (
                   <>
-                    <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-sm font-bold mb-4">
-                      {i + 1}
-                    </span>
+                    {showItemNumber && (
+                      <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-sm font-bold mb-4">
+                        {i + 1}
+                      </span>
+                    )}
                     {it.icon_url && (
                       <img
                         src={it.icon_url}
@@ -78,9 +80,11 @@ const AdobeFeaturesIcon6 = ({ data }: { data: FeaturesIcon6Data }) => {
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary text-xs font-bold">
-                          {i + 1}
-                        </span>
+                        {showItemNumber && (
+                          <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary text-xs font-bold">
+                            {i + 1}
+                          </span>
+                        )}
                         <h3 className="text-lg md:text-xl font-semibold text-card-foreground">
                           {it.heading}
                         </h3>
