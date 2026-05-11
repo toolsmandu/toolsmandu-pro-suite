@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface PricingTablePlan {
   name: string;
@@ -10,8 +10,7 @@ interface PricingTablePlan {
   currency?: string;
   period?: string;
   note?: string;
-  cta_label?: string;
-  cta_link?: string;
+  variation_id?: string;
 }
 
 interface PricingTableRow {
@@ -52,6 +51,15 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
   const visibleCount = 3;
   const canPrev = start > 0;
   const canNext = start + visibleCount < plans.length;
+
+  const handleSelect = (variationId?: string) => {
+    if (!variationId) {
+      toast.error('No plan linked. Please configure this plan in admin.');
+      return;
+    }
+    window.dispatchEvent(new CustomEvent('adobe:select-variation', { detail: { variationId } }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (!plans.length) return null;
 
@@ -100,11 +108,13 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
                   {p.period && <span className="text-base text-muted-foreground">/{p.period}</span>}
                 </div>
                 {p.note && <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{p.note}</p>}
-                {p.cta_label && (
-                  <Button asChild className="w-full rounded-md bg-foreground text-background hover:bg-foreground/90">
-                    <Link to={p.cta_link || '#'}>{p.cta_label}</Link>
-                  </Button>
-                )}
+                <Button
+                  type="button"
+                  onClick={() => handleSelect(p.variation_id)}
+                  className="w-full rounded-md bg-foreground text-background hover:bg-foreground/90"
+                >
+                  Select Plan
+                </Button>
               </div>
             ))}
 
