@@ -105,6 +105,19 @@ const SAMPLE: Record<SectionType, any> = {
       },
     ],
   },
+  features_icon_6: {
+    heading: 'What\u2019s so Great about our Zoho Mail Service?',
+    subheading: 'Explore these features with every Zoho Mail plan.',
+    columns: 3,
+    items: [
+      { icon_url: '/placeholder.svg', heading: 'Team Collaboration Tools', description: 'Use Streams for email-based discussions.' },
+      { icon_url: '/placeholder.svg', heading: 'Advanced Spam Protection', description: 'Manage emails, events, and tasks from one unified platform.' },
+      { icon_url: '/placeholder.svg', heading: 'Custom Domain Email', description: 'Create professional business email addresses using your domain name.' },
+      { icon_url: '/placeholder.svg', heading: 'Offline Access & Mobile Support', description: 'Stay connected with Zoho Mail\u2019s mobile apps and offline email access.' },
+      { icon_url: '/placeholder.svg', heading: 'Calendar, Tasks & Notes', description: 'Manage emails, events, and tasks from one unified platform.' },
+      { icon_url: '/placeholder.svg', heading: 'Ad-Free & Secure Email', description: 'Manage emails, events, and tasks from one unified platform.' },
+    ],
+  },
 };
 
 const AdminLayoutSectionPreview = () => {
