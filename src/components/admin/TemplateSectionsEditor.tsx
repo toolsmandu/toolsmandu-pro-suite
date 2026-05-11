@@ -166,7 +166,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
               </Button>
             </div>
             <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
-            <Field label="Description" textarea value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+            <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
             <div>
               <Label className="mb-1 block text-xs">Image</Label>
               <ImageUpload value={it.image_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, image_url: url } : a))} />
