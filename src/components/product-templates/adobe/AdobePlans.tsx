@@ -11,6 +11,7 @@ interface Plan {
   features?: string[];
   cta_label?: string;
   cta_link?: string;
+  variation_id?: string;
   highlighted?: boolean;
 }
 
