@@ -578,8 +578,20 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
             <Field label="Price" value={p.price} onChange={(v) => setPlans(plans.map((a, j) => j === i ? { ...a, price: v } : a))} />
             <Field label="Period (e.g. month)" value={p.period} onChange={(v) => setPlans(plans.map((a, j) => j === i ? { ...a, period: v } : a))} />
             <Field label="CTA label" value={p.cta_label} onChange={(v) => setPlans(plans.map((a, j) => j === i ? { ...a, cta_label: v } : a))} />
-            <Field label="CTA link" value={p.cta_link} onChange={(v) => setPlans(plans.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
+            <Field label="CTA link (used if no variation linked)" value={p.cta_link} onChange={(v) => setPlans(plans.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
           </div>
+          <div>
+            <Label className="mb-1 block text-xs">Linked product variation (selected when CTA is clicked)</Label>
+            <select
+              className="w-full h-9 rounded-md border border-input bg-background px-2 text-sm"
+              value={p.variation_id || ''}
+              onChange={(e) => setPlans(plans.map((a, j) => j === i ? { ...a, variation_id: e.target.value } : a))}
+            >
+              <option value="">— None (use CTA link) —</option>
+              {variations.map((v) => (
+                <option key={v.id} value={v.id}>{v.name}</option>
+              ))}
+            </select>
           <Field
             label="Features (one per line)"
             textarea
