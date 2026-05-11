@@ -7,7 +7,7 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { Plus, Trash2 } from 'lucide-react';
 
-export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'plans'] as const;
+export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'plans', 'pricing_table'] as const;
 export type SectionType = typeof SECTION_TYPES[number];
 
 export const SECTION_LABELS: Record<SectionType, string> = {
@@ -15,6 +15,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   app_grid: 'App grid',
   features: 'Feature highlights',
   plans: 'Pricing Cards',
+  pricing_table: 'Pricing & Feature Comparison Table',
 };
 
 export const emptySectionData: Record<SectionType, any> = {
@@ -22,12 +23,14 @@ export const emptySectionData: Record<SectionType, any> = {
   app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
   plans: { heading: '', plans: [] },
+  pricing_table: { heading: '', plans: [], groups: [] },
 };
 
 export const buildEmptySection = (type: SectionType) => {
   if (type === 'app_grid') return { ...emptySectionData.app_grid, apps: [] };
   if (type === 'features') return { ...emptySectionData.features, items: [] };
   if (type === 'plans') return { ...emptySectionData.plans, plans: [] };
+  if (type === 'pricing_table') return { heading: '', plans: [], groups: [] };
   return { ...emptySectionData.hero };
 };
 
