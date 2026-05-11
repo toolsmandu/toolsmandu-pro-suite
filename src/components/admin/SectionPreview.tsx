@@ -6,6 +6,7 @@ import AdobePricingTable from '@/components/product-templates/adobe/AdobePricing
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
 import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
+import AdobeStyleCards from '@/components/product-templates/adobe/AdobeStyleCards';
 import { SectionType } from './TemplateSectionsEditor';
 
 interface Props {
