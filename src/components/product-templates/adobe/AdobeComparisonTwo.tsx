@@ -68,7 +68,7 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
 
 const AdobeComparisonTwo = ({ data }: { data: ComparisonTwoData }) => {
   if (!data.left && !data.right && !data.heading) return null;
-  const highlight = data.highlight_side || 'right';
+  const highlight = 'right';
 
   return (
     <section className="py-16 md:py-24 bg-background">
