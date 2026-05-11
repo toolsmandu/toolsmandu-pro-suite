@@ -95,6 +95,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'app_grid') node = <AdobeAppGrid data={data} />;
   else if (t === 'features') node = <AdobeFeatures data={data} />;
   else if (t === 'plans') node = <AdobePlans data={data} />;
+  else if (t === 'pricing_table') node = <AdobePricingTable data={data} />;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
