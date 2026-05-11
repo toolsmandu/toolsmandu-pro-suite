@@ -43,14 +43,14 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
                     stacked ? 'flex flex-col gap-6 flex-[2]' : 'flex items-center gap-6 flex-1'
                   }`}
                 >
-                  {stacked && (
+                  {stacked && showItemNumber && (
                     <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-sm font-bold self-start">
                       {globalIdx + 1}
                     </span>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      {!stacked && (
+                      {!stacked && showItemNumber && (
                         <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary text-xs font-bold shrink-0">
                           {globalIdx + 1}
                         </span>
