@@ -592,6 +592,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
                 <option key={v.id} value={v.id}>{v.name}</option>
               ))}
             </select>
+          </div>
           <Field
             label="Features (one per line)"
             textarea
