@@ -2,6 +2,7 @@ import AdobeHero from '@/components/product-templates/adobe/AdobeHero';
 import AdobeAppGrid from '@/components/product-templates/adobe/AdobeAppGrid';
 import AdobeFeatures from '@/components/product-templates/adobe/AdobeFeatures';
 import AdobePlans from '@/components/product-templates/adobe/AdobePlans';
+import AdobePricingTable from '@/components/product-templates/adobe/AdobePricingTable';
 import { SectionType } from './TemplateSectionsEditor';
 
 interface Props {
@@ -23,6 +24,9 @@ const SectionPreview = ({ type, data }: Props) => {
       break;
     case 'plans':
       node = <AdobePlans data={data || {}} />;
+      break;
+    case 'pricing_table':
+      node = <AdobePricingTable data={data || {}} />;
       break;
   }
 

@@ -4,6 +4,7 @@ import AdobeHero from './AdobeHero';
 import AdobeAppGrid from './AdobeAppGrid';
 import AdobeFeatures from './AdobeFeatures';
 import AdobePlans from './AdobePlans';
+import AdobePricingTable from './AdobePricingTable';
 import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
@@ -44,6 +45,8 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         return <AdobeFeatures key={idx} data={data} />;
       case 'plans':
         return <AdobePlans key={idx} data={data} />;
+      case 'pricing_table':
+        return <AdobePricingTable key={idx} data={data} />;
       default:
         return null;
     }

@@ -7,7 +7,7 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { Plus, Trash2 } from 'lucide-react';
 
-export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'plans'] as const;
+export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'plans', 'pricing_table'] as const;
 export type SectionType = typeof SECTION_TYPES[number];
 
 export const SECTION_LABELS: Record<SectionType, string> = {
@@ -15,6 +15,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   app_grid: 'App grid',
   features: 'Feature highlights',
   plans: 'Pricing Cards',
+  pricing_table: 'Pricing & Feature Comparison Table',
 };
 
 export const emptySectionData: Record<SectionType, any> = {
@@ -22,12 +23,14 @@ export const emptySectionData: Record<SectionType, any> = {
   app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
   plans: { heading: '', plans: [] },
+  pricing_table: { heading: '', plans: [], groups: [] },
 };
 
 export const buildEmptySection = (type: SectionType) => {
   if (type === 'app_grid') return { ...emptySectionData.app_grid, apps: [] };
   if (type === 'features') return { ...emptySectionData.features, items: [] };
   if (type === 'plans') return { ...emptySectionData.plans, plans: [] };
+  if (type === 'pricing_table') return { heading: '', plans: [], groups: [] };
   return { ...emptySectionData.hero };
 };
 
@@ -147,6 +150,115 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
         <Button variant="outline" size="sm" onClick={() => setItems([...items, { heading: '', description: '', image_url: '', image_side: 'right' }])}>
           <Plus className="h-4 w-4 mr-1" /> Add feature
         </Button>
+      </div>
+    );
+  }
+
+  if (type === 'pricing_table') {
+    const ptPlans: any[] = data.plans || [];
+    const setPtPlans = (next: any[]) => patch({ plans: next });
+    const groups: any[] = data.groups || [];
+    const setGroups = (next: any[]) => patch({ groups: next });
+
+    return (
+      <div className="space-y-4">
+        <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+
+        <div className="space-y-3">
+          <div className="text-xs font-semibold text-muted-foreground">Plan columns</div>
+          {ptPlans.map((p, i) => (
+            <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-muted-foreground">Plan #{i + 1}</span>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                  onClick={() => {
+                    setPtPlans(ptPlans.filter((_, j) => j !== i));
+                    setGroups(groups.map((g) => ({ ...g, rows: (g.rows || []).map((r: any) => ({ ...r, values: (r.values || []).filter((_: any, k: number) => k !== i) })) })));
+                  }}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div className="grid md:grid-cols-2 gap-2">
+                <Field label="Name" value={p.name} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, name: v } : a))} />
+                <Field label="Currency prefix (e.g. रू.)" value={p.currency} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, currency: v } : a))} />
+                <Field label="Price" value={p.price} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, price: v } : a))} />
+                <Field label="Period (e.g. mo)" value={p.period} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, period: v } : a))} />
+                <Field label="CTA label" value={p.cta_label} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, cta_label: v } : a))} />
+                <Field label="CTA link" value={p.cta_link} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
+              </div>
+              <Field label="Note (e.g. You pay Rs. X today...)" textarea value={p.note} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, note: v } : a))} />
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => {
+            setPtPlans([...ptPlans, { name: '', currency: '', price: '', period: 'mo', cta_label: 'Select Plan', cta_link: '/cart', note: '' }]);
+            setGroups(groups.map((g) => ({ ...g, rows: (g.rows || []).map((r: any) => ({ ...r, values: [...(r.values || []), ''] })) })));
+          }}>
+            <Plus className="h-4 w-4 mr-1" /> Add plan column
+          </Button>
+        </div>
+
+        <div className="space-y-3">
+          <div className="text-xs font-semibold text-muted-foreground">
+            Feature groups — use "✓" for a check mark, leave blank for "—".
+          </div>
+          {groups.map((g, gi) => (
+            <div key={gi} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
+              <div className="flex justify-between items-center gap-2">
+                <Input
+                  value={g.title || ''}
+                  onChange={(e) => setGroups(groups.map((x, j) => j === gi ? { ...x, title: e.target.value } : x))}
+                  placeholder="Group title (e.g. Features, Security)"
+                />
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive shrink-0"
+                  onClick={() => setGroups(groups.filter((_, j) => j !== gi))}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {(g.rows || []).map((row: any, ri: number) => (
+                  <div key={ri} className="space-y-1 border border-dashed border-border/60 rounded p-2">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={row.label || ''}
+                        placeholder="Feature label (e.g. Cloud Storage)"
+                        onChange={(e) => setGroups(groups.map((x, j) => j === gi ? { ...x, rows: x.rows.map((r: any, k: number) => k === ri ? { ...r, label: e.target.value } : r) } : x))}
+                      />
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive shrink-0"
+                        onClick={() => setGroups(groups.map((x, j) => j === gi ? { ...x, rows: x.rows.filter((_: any, k: number) => k !== ri) } : x))}>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                    <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.max(1, ptPlans.length)}, minmax(0, 1fr))` }}>
+                      {ptPlans.map((p, pi) => (
+                        <Input
+                          key={pi}
+                          value={(row.values || [])[pi] || ''}
+                          placeholder={p.name || `Plan ${pi + 1}`}
+                          onChange={(e) => setGroups(groups.map((x, j) => j === gi ? {
+                            ...x,
+                            rows: x.rows.map((r: any, k: number) => {
+                              if (k !== ri) return r;
+                              const vals = [...(r.values || [])];
+                              while (vals.length < ptPlans.length) vals.push('');
+                              vals[pi] = e.target.value;
+                              return { ...r, values: vals };
+                            })
+                          } : x))}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" onClick={() => setGroups(groups.map((x, j) => j === gi ? { ...x, rows: [...(x.rows || []), { label: '', values: ptPlans.map(() => '') }] } : x))}>
+                  <Plus className="h-4 w-4 mr-1" /> Add row
+                </Button>
+              </div>
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => setGroups([...groups, { title: 'Features', rows: [] }])}>
+            <Plus className="h-4 w-4 mr-1" /> Add group
+          </Button>
+        </div>
       </div>
     );
   }
