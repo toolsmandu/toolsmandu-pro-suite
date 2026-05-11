@@ -212,6 +212,42 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
     );
   }
 
+  if (type === 'features_icon_5') {
+    const items: any[] = data.items || [];
+    const setItems = (next: any[]) => patch({ items: next });
+    return (
+      <div className="space-y-3">
+        <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
+        <div className="space-y-3 pt-2">
+          <div className="text-xs font-semibold text-muted-foreground">Feature cards (first card is featured/wider — up to 5 cards)</div>
+          {items.map((it, i) => (
+            <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-muted-foreground">Card #{i + 1}{i === 0 ? ' (featured)' : ''}</span>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                  onClick={() => setItems(items.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Icon</Label>
+                <ImageUpload value={it.icon_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, icon_url: url } : a))} />
+              </div>
+              <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
+              <Field label="Description" textarea value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+            </div>
+          ))}
+          {items.length < 5 && (
+            <Button variant="outline" size="sm" onClick={() => setItems([...items, { icon_url: '', heading: '', description: '' }])}>
+              <Plus className="h-4 w-4 mr-1" /> Add card
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (type === 'features_icon_6') {
     const items: any[] = data.items || [];
     const setItems = (next: any[]) => patch({ items: next });
