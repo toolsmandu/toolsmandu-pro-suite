@@ -445,17 +445,15 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
               </div>
               <div className="grid md:grid-cols-2 gap-2">
                 <Field label="Name" value={p.name} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, name: v } : a))} />
-                <Field label="Currency prefix (e.g. रू.)" value={p.currency} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, currency: v } : a))} />
+                <Field label="Currency prefix (e.g. Rs)" value={p.currency} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, currency: v } : a))} />
                 <Field label="Price" value={p.price} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, price: v } : a))} />
                 <Field label="Period (e.g. mo)" value={p.period} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, period: v } : a))} />
-                <Field label="CTA label" value={p.cta_label} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, cta_label: v } : a))} />
-                <Field label="CTA link" value={p.cta_link} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
               </div>
               <Field label="Note (e.g. You pay Rs. X today...)" textarea value={p.note} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, note: v } : a))} />
             </div>
           ))}
           <Button variant="outline" size="sm" onClick={() => patch({
-            plans: [...ptPlans, { name: '', currency: '', price: '', period: 'mo', cta_label: 'Select Plan', cta_link: '/cart', note: '' }],
+            plans: [...ptPlans, { name: '', currency: 'Rs', price: '', period: 'mo', note: '' }],
             groups: groups.map((g) => ({ ...g, rows: (g.rows || []).map((r: any) => ({ ...r, values: [...(r.values || []), ''] })) })),
           })}>
             <Plus className="h-4 w-4 mr-1" /> Add plan column
