@@ -20,51 +20,75 @@ interface ComparisonTwoData {
   highlight_side?: 'left' | 'right';
 }
 
-const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean }) => (
-  <div
-    className={`rounded-2xl border p-6 md:p-8 ${
-      highlight
-        ? 'border-[#8aae88] shadow-xl text-white'
-        : 'border-border/60 bg-card'
-    }`}
-    style={highlight ? { backgroundColor: '#8aae88', color: '#ffffff' } : undefined}
-  >
-    <div className={`flex items-center gap-3 mb-6 pb-4 border-b ${highlight ? 'border-white/30' : 'border-border/60'}`}>
-      {side.logo_url && (
-        <img
-          src={side.logo_url}
-          alt={side.label || ''}
-          loading="lazy"
-          className="h-12 w-12 object-contain"
-        />
-      )}
-      {side.label && (
-        <div className={`text-xl md:text-2xl font-bold ${highlight ? 'text-white' : 'text-card-foreground'}`}>
-          {side.label}
+const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean }) => {
+  const accent = highlight ? '#2563eb' : 'hsl(var(--border))';
+  return (
+    <div className="flex flex-col">
+      {/* Image card with arch */}
+      <div className="relative rounded-2xl bg-muted/60 aspect-[16/10] flex items-end justify-center overflow-hidden">
+        <div className="relative w-2/5 aspect-[2/1] rounded-t-full bg-background flex items-center justify-center pt-4">
+          {side.logo_url ? (
+            <img
+              src={side.logo_url}
+              alt={side.label || ''}
+              loading="lazy"
+              className={`h-16 w-16 md:h-20 md:w-20 object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
+            />
+          ) : (
+            <div className={`h-16 w-16 md:h-20 md:w-20 rounded-full ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
+          )}
         </div>
+      </div>
+
+      {/* Label connector */}
+      <div className="flex items-center gap-2 mt-6">
+        <div className="flex-1 h-px" style={{ background: accent }} />
+        <span
+          className="h-2 w-2 rounded-full"
+          style={{ background: accent }}
+          aria-hidden
+        />
+        <div
+          className={`rounded-full border px-5 py-2 text-sm md:text-base font-semibold whitespace-nowrap ${
+            highlight ? 'text-primary' : 'text-muted-foreground'
+          }`}
+          style={{ borderColor: accent }}
+        >
+          {side.label || ''}
+        </div>
+        <span
+          className="h-2 w-2 rounded-full"
+          style={{ background: accent }}
+          aria-hidden
+        />
+        <div className="flex-1 h-px" style={{ background: accent }} />
+      </div>
+
+      {/* Items */}
+      {(side.items || []).length > 0 && (
+        <ul className="space-y-4 mt-6">
+          {(side.items || []).map((it, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <span
+                className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
+                  it.included
+                    ? (highlight ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground')
+                    : 'bg-destructive/15 text-destructive'
+                }`}
+                aria-hidden
+              >
+                {it.included ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+              </span>
+              <span className="text-sm md:text-base text-foreground/85 leading-relaxed">
+                {it.text}
+              </span>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
-    <ul className="space-y-4">
-      {(side.items || []).map((it, i) => (
-        <li key={i} className="flex items-start gap-3">
-          <span
-            className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
-              it.included
-                ? (highlight ? 'bg-white/20 text-white' : 'bg-primary/15 text-primary')
-                : (highlight ? 'bg-white/10 text-white' : 'bg-destructive/15 text-destructive')
-            }`}
-            aria-hidden
-          >
-            {it.included ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-          </span>
-          <span className={`text-sm md:text-base leading-relaxed ${highlight ? 'text-white' : 'text-card-foreground/85'}`}>
-            {it.text}
-          </span>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+  );
+};
 
 const AdobeComparisonTwo = ({ data }: { data: ComparisonTwoData }) => {
   if (!data.left && !data.right && !data.heading) return null;
