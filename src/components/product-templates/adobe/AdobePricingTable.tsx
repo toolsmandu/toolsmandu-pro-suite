@@ -47,15 +47,13 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
   const plans = data.plans || [];
   const groups = data.groups || [];
   const [start, setStart] = useState(0);
+  const [mobileIdx, setMobileIdx] = useState(0);
   // On mobile we show 1 plan at a time, on desktop up to 3.
   const visibleCount = 3;
   const canPrev = start > 0;
   const canNext = start + visibleCount < plans.length;
 
   if (!plans.length) return null;
-
-  // For mobile we display only one plan at index `mobileIdx`.
-  const [mobileIdx, setMobileIdx] = useState(0);
 
   return (
     <section className="py-16 md:py-24 bg-background">
