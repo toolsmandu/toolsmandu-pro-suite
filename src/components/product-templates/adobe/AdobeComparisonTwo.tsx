@@ -32,7 +32,7 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
               src={side.logo_url}
               alt={side.label || ''}
               loading="lazy"
-              className={`w-[90%] h-[90%] object-contain mb-[5%] ${highlight ? '' : 'opacity-40 grayscale'}`}
+              className={`w-[150%] h-[150%] object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
             />
           ) : (
             <div className={`w-[55%] aspect-square rounded-full mb-[10%] ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
