@@ -63,7 +63,7 @@ const AdobePlans = ({ data }: { data: PlansData }) => {
                 <ul className="space-y-3 mb-7 flex-1">
                   {plan.features.map((f, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-card-foreground/85">
-                      <Check className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
+                      <Check className="h-4 w-4 mt-0.5 shrink-0 text-white" />
                       <span>{f}</span>
                     </li>
                   ))}
