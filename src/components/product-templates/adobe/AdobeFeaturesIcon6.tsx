@@ -46,9 +46,11 @@ const AdobeFeaturesIcon6 = ({ data, showItemNumber = false }: { data: FeaturesIc
               >
                 {featured ? (
                   <>
-                    <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-sm font-bold mb-4">
-                      {i + 1}
-                    </span>
+                    {showItemNumber && (
+                      <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-sm font-bold mb-4">
+                        {i + 1}
+                      </span>
+                    )}
                     {it.icon_url && (
                       <img
                         src={it.icon_url}
