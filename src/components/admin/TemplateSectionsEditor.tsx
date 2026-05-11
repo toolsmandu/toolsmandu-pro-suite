@@ -75,7 +75,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
 
   const [variations, setVariations] = useState<Array<{ id: string; name: string }>>([]);
   useEffect(() => {
-    if (!productId || type !== 'pricing_table') return;
+    if (!productId || (type !== 'pricing_table' && type !== 'plans')) return;
     supabase
       .from('product_variations')
       .select('id, name')
