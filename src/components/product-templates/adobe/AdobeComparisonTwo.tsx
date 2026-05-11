@@ -26,13 +26,13 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
     <div className="flex flex-col">
       {/* Image card with arch */}
       <div className="relative rounded-2xl bg-muted/60 flex items-end justify-center overflow-hidden pt-12 md:pt-16">
-        <div className="relative w-3/5 aspect-[2/1] rounded-t-full bg-background flex items-end justify-center overflow-hidden">
+        <div className="relative w-3/5 aspect-[2/1] rounded-t-full bg-background flex items-start justify-center overflow-hidden">
           {side.logo_url ? (
             <img
               src={side.logo_url}
               alt={side.label || ''}
               loading="lazy"
-              className={`w-[85%] h-[85%] object-contain translate-y-[12%] ${highlight ? '' : 'opacity-40 grayscale'}`}
+              className={`w-[85%] h-[85%] object-contain mt-[8%] ${highlight ? '' : 'opacity-40 grayscale'}`}
             />
           ) : (
             <div className={`w-[55%] aspect-square rounded-full mb-[10%] ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
