@@ -45,6 +45,9 @@ const SectionPreview = ({ type, data }: Props) => {
     case 'adobe_style_cards':
       node = <AdobeStyleCards data={data || {}} />;
       break;
+    case 'comparison_two':
+      node = <AdobeComparisonTwo data={data || {}} />;
+      break;
   }
 
   return (
