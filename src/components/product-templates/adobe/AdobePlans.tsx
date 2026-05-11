@@ -11,6 +11,7 @@ interface Plan {
   features?: string[];
   cta_label?: string;
   cta_link?: string;
+  variation_id?: string;
   highlighted?: boolean;
 }
 
@@ -69,13 +70,25 @@ const AdobePlans = ({ data }: { data: PlansData }) => {
                 </ul>
               )}
               {plan.cta_label && (
-                <Button
-                  asChild
-                  className={cn('w-full rounded-full', !plan.highlighted && 'bg-foreground text-background hover:bg-foreground/90')}
-                  variant={plan.highlighted ? 'default' : 'default'}
-                >
-                  <Link to={plan.cta_link || '#'}>{plan.cta_label}</Link>
-                </Button>
+                plan.variation_id ? (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent('adobe:select-variation', { detail: { variationId: plan.variation_id } }));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className={cn('w-full rounded-full', !plan.highlighted && 'bg-foreground text-background hover:bg-foreground/90')}
+                  >
+                    {plan.cta_label}
+                  </Button>
+                ) : (
+                  <Button
+                    asChild
+                    className={cn('w-full rounded-full', !plan.highlighted && 'bg-foreground text-background hover:bg-foreground/90')}
+                  >
+                    <Link to={plan.cta_link || '#'}>{plan.cta_label}</Link>
+                  </Button>
+                )
               )}
             </div>
           ))}
