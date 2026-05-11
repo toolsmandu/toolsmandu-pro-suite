@@ -46,6 +46,40 @@ const SAMPLE: Record<SectionType, any> = {
       { name: 'Enterprise', price: 'Custom', period: '', features: ['Unlimited users', 'Custom integrations', 'Dedicated manager'], cta_label: 'Contact sales', cta_link: '#' },
     ],
   },
+  pricing_table: {
+    heading: 'Detailed Pricing and Features',
+    plans: [
+      { name: 'Business Starter', currency: 'रू.', price: '499', period: 'mo', cta_label: 'Select Plan', cta_link: '#', note: 'You pay Rs. 5988 today. Renews at different price on 11 May, 2027.' },
+      { name: 'Business Standard', currency: 'रू.', price: '1899', period: 'mo', cta_label: 'Select Plan', cta_link: '#', note: 'You pay Rs. 22788.00 today. Renews at different price on 11 May, 2027.' },
+      { name: 'Business Plus', currency: 'रू.', price: '3099', period: 'mo', cta_label: 'Select Plan', cta_link: '#', note: 'You pay Rs. 37188.00 today. Renews at different price on 11 May, 2027.' },
+    ],
+    groups: [
+      {
+        title: 'Features',
+        rows: [
+          { label: 'Cloud Storage', values: ['30 GB', '2 TB', '5 TB'] },
+          { label: 'Google Mail', values: ['✓', '✓', '✓'] },
+          { label: 'Google Calendar', values: ['✓', '✓', '✓'] },
+          { label: 'Google Meet', values: ['100 Users', '150 Users', '250 Users'] },
+          { label: 'Google Chat', values: ['✓', '✓', '✓'] },
+          { label: 'Google Docs', values: ['✓', '✓', '✓'] },
+          { label: 'Google Sheets', values: ['✓', '✓', '✓'] },
+          { label: 'Google Slides', values: ['✓', '✓', '✓'] },
+          { label: 'Google Forms', values: ['✓', '✓', '✓'] },
+          { label: 'Google Sites', values: ['✓', '✓', '✓'] },
+          { label: 'Google Keep', values: ['✓', '✓', '✓'] },
+        ],
+      },
+      {
+        title: 'Security & Management',
+        rows: [
+          { label: '2-Step Verification', values: ['✓', '✓', '✓'] },
+          { label: 'Group-based policy controls', values: ['', '✓', '✓'] },
+          { label: 'Vault — retain, archive & search data', values: ['', '', '✓'] },
+        ],
+      },
+    ],
+  },
 };
 
 const AdminLayoutSectionPreview = () => {
