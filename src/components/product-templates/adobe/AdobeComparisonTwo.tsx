@@ -24,7 +24,7 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
   <div
     className={`rounded-2xl border p-6 md:p-8 ${
       highlight
-        ? 'border-primary/60 bg-primary/5 shadow-lg'
+        ? 'border-white/40 bg-white text-slate-900 shadow-xl'
         : 'border-border/60 bg-card'
     }`}
   >
