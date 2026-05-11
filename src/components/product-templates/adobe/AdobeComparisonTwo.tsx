@@ -49,7 +49,7 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
           aria-hidden
         />
         <div
-          className="rounded-full border px-5 py-2 text-sm md:text-base font-semibold whitespace-nowrap text-white"
+          className={`rounded-full border px-5 py-2 text-sm md:text-base font-semibold whitespace-nowrap ${highlight ? 'text-white' : 'text-gray-400'}`}
           style={{ borderColor: accent }}
         >
           {side.label || ''}
