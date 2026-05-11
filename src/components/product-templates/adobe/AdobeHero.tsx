@@ -67,9 +67,7 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: any }) => {
           </div>
         </div>
         <div className="relative">
-          {product ? (
-            <AdobeVariationCard product={product} />
-          ) : data.image_url ? (
+          {data.image_url ? (
             <img
               src={data.image_url}
               alt={data.heading || 'hero'}
