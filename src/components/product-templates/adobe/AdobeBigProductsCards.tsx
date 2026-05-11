@@ -1,12 +1,7 @@
-import { ShoppingCart } from 'lucide-react';
-
 interface BigProductItem {
   image_url?: string;
   heading?: string;
-  price?: string;
   description?: string;
-  cta_label?: string;
-  cta_link?: string;
 }
 
 interface BigProductsCardsData {
@@ -67,25 +62,11 @@ const AdobeBigProductsCards = ({ data }: { data: BigProductsCardsData }) => {
                     {it.heading}
                   </h3>
                 )}
-                {it.price && (
-                  <div className="text-2xl md:text-3xl font-semibold text-foreground mb-3">
-                    {it.price}
-                  </div>
-                )}
                 {it.description && (
-                  <p className="text-sm text-foreground/70 leading-relaxed mb-4 flex-1">
+                  <p className="text-sm text-foreground/70 leading-relaxed">
                     {it.description}
                   </p>
                 )}
-                <div className="pt-3 mt-auto border-t border-border flex justify-end">
-                  <a
-                    href={it.cta_link || '#'}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    {it.cta_label || 'Buy Now'}
-                  </a>
-                </div>
               </div>
             </div>
           ))}
