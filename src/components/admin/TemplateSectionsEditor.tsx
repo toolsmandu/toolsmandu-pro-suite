@@ -62,6 +62,13 @@ const Field = ({ label, value, onChange, textarea }: { label: string; value?: st
   </div>
 );
 
+const RichField = ({ label, value, onChange }: { label: string; value?: string; onChange: (v: string) => void }) => (
+  <div>
+    <Label className="mb-1 block text-xs">{label}</Label>
+    <RichTextEditor value={value || ''} onChange={onChange} />
+  </div>
+);
+
 interface SingleProps {
   type: SectionType;
   value: any;
