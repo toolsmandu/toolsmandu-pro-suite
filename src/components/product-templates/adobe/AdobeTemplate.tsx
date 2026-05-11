@@ -7,6 +7,7 @@ import AdobePlans from './AdobePlans';
 import AdobePricingTable from './AdobePricingTable';
 import AdobeFeaturesFAQ from './AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from './AdobeFeaturesIcon6';
+import AdobeFeaturesIcon5 from './AdobeFeaturesIcon5';
 import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
