@@ -9,6 +9,7 @@ import AdobeFeaturesFAQ from './AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from './AdobeFeaturesIcon6';
 import AdobeFeaturesIcon5 from './AdobeFeaturesIcon5';
 import AdobeStyleCards from './AdobeStyleCards';
+import AdobeComparisonTwo from './AdobeComparisonTwo';
 import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
@@ -59,6 +60,8 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         return <AdobeFeaturesIcon5 key={idx} data={data} />;
       case 'adobe_style_cards':
         return <AdobeStyleCards key={idx} data={data} />;
+      case 'comparison_two':
+        return <AdobeComparisonTwo key={idx} data={data} />;
       default:
         return null;
     }

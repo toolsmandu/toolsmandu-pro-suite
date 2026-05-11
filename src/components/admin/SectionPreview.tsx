@@ -7,6 +7,7 @@ import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeatures
 import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
 import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
 import AdobeStyleCards from '@/components/product-templates/adobe/AdobeStyleCards';
+import AdobeComparisonTwo from '@/components/product-templates/adobe/AdobeComparisonTwo';
 import { SectionType } from './TemplateSectionsEditor';
 
 interface Props {
@@ -43,6 +44,9 @@ const SectionPreview = ({ type, data }: Props) => {
       break;
     case 'adobe_style_cards':
       node = <AdobeStyleCards data={data || {}} />;
+      break;
+    case 'comparison_two':
+      node = <AdobeComparisonTwo data={data || {}} />;
       break;
   }
 
