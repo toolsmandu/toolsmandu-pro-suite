@@ -127,20 +127,6 @@ const SAMPLE: Record<SectionType, any> = {
       { icon_url: '/placeholder.svg', heading: 'Unmatched Cloud Capabilities', description: 'Access the widest range of services to build, scale, optimize your applications and turn your ideas into reality.' },
     ],
   },
-  adobe_style_cards: {
-    eyebrow: 'Unleash Your Creativity with Our Top-Rated Products',
-    heading: 'Explore our most popular apps for creating anything you can imagine.',
-    subheading: '',
-    columns: 3,
-    items: [
-      { icon_url: '/placeholder.svg', heading: 'Acrobat Pro', description: 'Create, edit, review, and sign PDFs.', cta_label: 'Buy Now', cta_link: '#' },
-      { icon_url: '/placeholder.svg', heading: 'Photoshop Pro', description: 'Combine, retouch, and remix your pics.', cta_label: 'Buy Now', cta_link: '#' },
-      { icon_url: '/placeholder.svg', heading: 'Premiere Pro', description: 'Edit, trim, and craft your videos.', cta_label: 'Buy Now', cta_link: '#' },
-      { icon_url: '/placeholder.svg', heading: 'Adobe Illustrator Pro', description: 'Create logos, designs, graphics, and more.', cta_label: 'Buy Now', cta_link: '#' },
-      { icon_url: '/placeholder.svg', heading: 'Adobe Indesign Pro', description: 'Design, layout, publish, bring ideas to life!', cta_label: 'Buy Now', cta_link: '#' },
-      { icon_url: '/placeholder.svg', heading: 'Creative Cloud', description: 'Your Creative Toolkit, All in One Place!', cta_label: 'Buy Now', cta_link: '#' },
-    ],
-  },
   comparison_two: {
     eyebrow: 'Microsoft Defender For Your Business',
     heading: 'Microsoft Defender: Smarter Alternative to Other Antiviruses',
