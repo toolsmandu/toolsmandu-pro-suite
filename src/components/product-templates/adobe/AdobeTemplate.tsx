@@ -51,6 +51,8 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         return <AdobePricingTable key={idx} data={data} />;
       case 'features_faq':
         return <AdobeFeaturesFAQ key={idx} data={data} />;
+      case 'features_icon_6':
+        return <AdobeFeaturesIcon6 key={idx} data={data} />;
       default:
         return null;
     }
