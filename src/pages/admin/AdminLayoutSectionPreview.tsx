@@ -12,6 +12,7 @@ import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeatur
 import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
 
 import AdobeComparisonTwo from '@/components/product-templates/adobe/AdobeComparisonTwo';
+import AdobeBigProductsCards from '@/components/product-templates/adobe/AdobeBigProductsCards';
 
 const SAMPLE: Record<SectionType, any> = {
   hero: {
@@ -125,6 +126,18 @@ const SAMPLE: Record<SectionType, any> = {
       { icon_url: '/placeholder.svg', heading: 'Expertise You Can Count On', description: 'With unmatched operational expertise and a proven track record, we ensure your business runs smoothly, reliably, and at scale.' },
       { icon_url: '/placeholder.svg', heading: 'Drive Transformation & Innovation', description: 'Leverage cutting-edge solutions to accelerate your business growth and stay ahead of the competition.' },
       { icon_url: '/placeholder.svg', heading: 'Unmatched Cloud Capabilities', description: 'Access the widest range of services to build, scale, optimize your applications and turn your ideas into reality.' },
+    ],
+  },
+  big_products_cards: {
+    eyebrow: '',
+    heading: '',
+    subheading: '',
+    columns: 4,
+    items: [
+      { image_url: '/placeholder.svg', heading: 'Adobe Acrobat Standard For Teams', price: 'Rs.29500/yr', description: 'Create, edit, sign, and manage PDFs effortlessly across all devices.', cta_label: 'Buy Now', cta_link: '#' },
+      { image_url: '/placeholder.svg', heading: 'Adobe Premiere Pro For Teams', price: 'Rs.77500/yr', description: 'Industry-leading video editing software for film, TV, and web content.', cta_label: 'Buy Now', cta_link: '#' },
+      { image_url: '/placeholder.svg', heading: 'Adobe Photoshop For Teams', price: 'Rs.77500/yr', description: 'Powerful software for photo editing, digital art, and graphic design.', cta_label: 'Buy Now', cta_link: '#' },
+      { image_url: '/placeholder.svg', heading: 'Adobe Illustrator For Teams', price: 'Rs.77500/yr', description: 'Vector graphics software for creating logos, icons, and detailed illustrations.', cta_label: 'Buy Now', cta_link: '#' },
     ],
   },
   comparison_two: {
