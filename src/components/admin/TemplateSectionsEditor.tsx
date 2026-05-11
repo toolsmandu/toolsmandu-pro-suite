@@ -465,6 +465,22 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
                 <Field label="Period (e.g. mo)" value={p.period} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, period: v } : a))} />
               </div>
               <Field label="Note (e.g. You pay Rs. X today...)" textarea value={p.note} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, note: v } : a))} />
+              <div>
+                <Label className="mb-1 block text-xs">Linked product variation (selected when "Select Plan" is clicked)</Label>
+                <select
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  value={p.variation_id || ''}
+                  onChange={(e) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, variation_id: e.target.value } : a))}
+                >
+                  <option value="">— None —</option>
+                  {variations.map((v) => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
+                </select>
+                {!productId && (
+                  <p className="text-[11px] text-muted-foreground mt-1">Open this editor from a product page to load its variations.</p>
+                )}
+              </div>
             </div>
           ))}
           <Button variant="outline" size="sm" onClick={() => patch({
