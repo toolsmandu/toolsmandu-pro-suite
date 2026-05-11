@@ -597,7 +597,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
             label="Features (one per line)"
             textarea
             value={(p.features || []).join('\n')}
-            onChange={(v) => setPlans(plans.map((a, j) => j === i ? { ...a, features: v.split('\n').map((s) => s.trim()).filter(Boolean) } : a))}
+            onChange={(v) => setPlans(plans.map((a, j) => j === i ? { ...a, features: v.split('\n') } : a))}
           />
           <div className="flex items-center gap-2">
             <Switch checked={!!p.highlighted} onCheckedChange={(c) => setPlans(plans.map((a, j) => j === i ? { ...a, highlighted: c } : a))} />
