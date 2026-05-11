@@ -32,10 +32,10 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
               src={side.logo_url}
               alt={side.label || ''}
               loading="lazy"
-              className={`h-16 w-16 md:h-20 md:w-20 object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
+              className={`h-32 w-32 md:h-40 md:w-40 object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
             />
           ) : (
-            <div className={`h-16 w-16 md:h-20 md:w-20 rounded-full ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
+            <div className={`h-32 w-32 md:h-40 md:w-40 rounded-full ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
           )}
         </div>
       </div>
