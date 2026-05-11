@@ -45,6 +45,8 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         return <AdobeFeatures key={idx} data={data} />;
       case 'plans':
         return <AdobePlans key={idx} data={data} />;
+      case 'pricing_table':
+        return <AdobePricingTable key={idx} data={data} />;
       default:
         return null;
     }
