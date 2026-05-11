@@ -21,7 +21,7 @@ interface ComparisonTwoData {
 }
 
 const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean }) => {
-  const accent = highlight ? '#2563eb' : 'hsl(var(--border))';
+  const accent = highlight ? '#2563eb' : 'hsl(var(--foreground) / 0.85)';
   return (
     <div className="flex flex-col">
       {/* Image card with arch */}
