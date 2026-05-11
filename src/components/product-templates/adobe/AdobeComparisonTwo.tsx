@@ -38,7 +38,7 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
         />
       )}
       {side.label && (
-        <div className={`text-xl md:text-2xl font-bold ${highlight ? 'text-primary' : 'text-card-foreground'}`}>
+        <div className={`text-xl md:text-2xl font-bold ${highlight ? 'text-slate-900' : 'text-card-foreground'}`}>
           {side.label}
         </div>
       )}
@@ -49,14 +49,14 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
           <span
             className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
               it.included
-                ? 'bg-primary/15 text-primary'
+                ? (highlight ? 'bg-emerald-500/20 text-emerald-600' : 'bg-primary/15 text-primary')
                 : 'bg-destructive/15 text-destructive'
             }`}
             aria-hidden
           >
             {it.included ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
           </span>
-          <span className="text-sm md:text-base text-card-foreground/85 leading-relaxed">
+          <span className={`text-sm md:text-base leading-relaxed ${highlight ? 'text-slate-800' : 'text-card-foreground/85'}`}>
             {it.text}
           </span>
         </li>
