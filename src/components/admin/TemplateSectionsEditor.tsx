@@ -7,7 +7,7 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { Plus, Trash2 } from 'lucide-react';
 
-export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'features_faq', 'features_icon_5', 'features_icon_6', 'adobe_style_cards', 'plans', 'pricing_table'] as const;
+export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'features_faq', 'features_icon_5', 'features_icon_6', 'adobe_style_cards', 'comparison_two', 'plans', 'pricing_table'] as const;
 export type SectionType = typeof SECTION_TYPES[number];
 
 export const SECTION_LABELS: Record<SectionType, string> = {
@@ -18,6 +18,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   features_icon_5: '5 Features with icon',
   features_icon_6: '6 Features with icon',
   adobe_style_cards: 'Adobe Style Cards',
+  comparison_two: 'Comparision of 2',
   plans: 'Pricing Cards',
   pricing_table: 'Pricing & Feature Comparison Table',
 };
@@ -30,6 +31,7 @@ export const emptySectionData: Record<SectionType, any> = {
   features_icon_5: { heading: '', subheading: '', items: [] },
   features_icon_6: { heading: '', subheading: '', columns: 3, items: [] },
   adobe_style_cards: { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] },
+  comparison_two: { eyebrow: '', heading: '', subheading: '', highlight_side: 'right', left: { logo_url: '', label: '', items: [] }, right: { logo_url: '', label: '', items: [] } },
   plans: { heading: '', plans: [] },
   pricing_table: { heading: '', plans: [], groups: [] },
 };
@@ -41,6 +43,7 @@ export const buildEmptySection = (type: SectionType) => {
   if (type === 'features_icon_5') return { heading: '', subheading: '', items: [] };
   if (type === 'features_icon_6') return { heading: '', subheading: '', columns: 3, items: [] };
   if (type === 'adobe_style_cards') return { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] };
+  if (type === 'comparison_two') return { eyebrow: '', heading: '', subheading: '', highlight_side: 'right', left: { logo_url: '', label: 'Other', items: [] }, right: { logo_url: '', label: '', items: [] } };
   if (type === 'plans') return { ...emptySectionData.plans, plans: [] };
   if (type === 'pricing_table') return { heading: '', plans: [], groups: [] };
   return { ...emptySectionData.hero };
