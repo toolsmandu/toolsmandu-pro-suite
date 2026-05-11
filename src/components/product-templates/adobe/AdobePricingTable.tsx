@@ -173,11 +173,13 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
                   {p.period && <span className="text-base text-muted-foreground">/{p.period}</span>}
                 </div>
                 {p.note && <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{p.note}</p>}
-                {p.cta_label && (
-                  <Button asChild className="w-full rounded-md bg-foreground text-background hover:bg-foreground/90">
-                    <Link to={p.cta_link || '#'}>{p.cta_label}</Link>
-                  </Button>
-                )}
+                <Button
+                  type="button"
+                  onClick={() => handleSelect(p.variation_id)}
+                  className="w-full rounded-md bg-foreground text-background hover:bg-foreground/90"
+                >
+                  Select Plan
+                </Button>
               </div>
             );
           })()}
