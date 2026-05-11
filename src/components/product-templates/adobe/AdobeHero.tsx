@@ -29,7 +29,7 @@ const decodeHtmlEntities = (value: string) => {
   return decoded;
 };
 
-const AdobeHero = ({ data, product }: { data: HeroData; product?: any }) => {
+const AdobeHero = ({ data }: { data: HeroData }) => {
   const subheadingHtml = data.subheading ? decodeHtmlEntities(data.subheading) : '';
 
   return (
