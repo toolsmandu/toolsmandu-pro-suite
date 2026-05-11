@@ -25,17 +25,17 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
   return (
     <div className="flex flex-col">
       {/* Image card with arch */}
-      <div className="relative rounded-2xl bg-muted/60 aspect-[16/10] flex items-end justify-center overflow-hidden">
-        <div className="relative w-2/5 aspect-[2/1] rounded-t-full bg-background flex items-center justify-center pt-4">
+      <div className="relative rounded-2xl bg-muted/60 flex items-end justify-center overflow-hidden pt-12 md:pt-16">
+        <div className="relative w-3/5 aspect-[2/1] rounded-t-full bg-background flex items-end justify-center overflow-hidden">
           {side.logo_url ? (
             <img
               src={side.logo_url}
               alt={side.label || ''}
               loading="lazy"
-              className={`h-32 w-32 md:h-40 md:w-40 object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
+              className={`w-[70%] h-[70%] object-contain mb-[10%] ${highlight ? '' : 'opacity-40 grayscale'}`}
             />
           ) : (
-            <div className={`h-32 w-32 md:h-40 md:w-40 rounded-full ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
+            <div className={`w-[55%] aspect-square rounded-full mb-[10%] ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
           )}
         </div>
       </div>
