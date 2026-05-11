@@ -118,6 +118,7 @@ const SAMPLE: Record<SectionType, any> = {
       { icon_url: '/placeholder.svg', heading: 'Calendar, Tasks & Notes', description: 'Manage emails, events, and tasks from one unified platform.' },
       { icon_url: '/placeholder.svg', heading: 'Ad-Free & Secure Email', description: 'Manage emails, events, and tasks from one unified platform.' },
     ],
+  },
   features_icon_5: {
     heading: 'What\u2019s So Great About Our AWS Plans?',
     subheading: 'Enjoy the following features with every AWS plan.',
