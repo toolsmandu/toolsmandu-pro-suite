@@ -33,6 +33,9 @@ const SectionPreview = ({ type, data }: Props) => {
     case 'features_faq':
       node = <AdobeFeaturesFAQ data={data || {}} />;
       break;
+    case 'features_icon_6':
+      node = <AdobeFeaturesIcon6 data={data || {}} />;
+      break;
   }
 
   return (
