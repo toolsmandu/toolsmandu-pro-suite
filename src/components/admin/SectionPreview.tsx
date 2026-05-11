@@ -5,6 +5,7 @@ import AdobePlans from '@/components/product-templates/adobe/AdobePlans';
 import AdobePricingTable from '@/components/product-templates/adobe/AdobePricingTable';
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
+import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
 import { SectionType } from './TemplateSectionsEditor';
 
 interface Props {
