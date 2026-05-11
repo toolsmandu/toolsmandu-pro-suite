@@ -251,6 +251,57 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
     );
   }
 
+  if (type === 'adobe_style_cards') {
+    const items: any[] = data.items || [];
+    const setItems = (next: any[]) => patch({ items: next });
+    return (
+      <div className="space-y-3">
+        <Field label="Eyebrow (small tag above heading)" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
+        <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
+        <div>
+          <Label className="mb-1 block text-xs">Columns</Label>
+          <select
+            value={data.columns ?? 3}
+            onChange={(e) => patch({ columns: Number(e.target.value) })}
+            className="flex h-9 w-32 rounded-md border border-input bg-background px-2 text-sm"
+          >
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+          </select>
+        </div>
+        <div className="space-y-3 pt-2">
+          <div className="text-xs font-semibold text-muted-foreground">Cards</div>
+          {items.map((it, i) => (
+            <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-muted-foreground">Card #{i + 1}</span>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                  onClick={() => setItems(items.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Icon / Logo</Label>
+                <ImageUpload value={it.icon_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, icon_url: url } : a))} />
+              </div>
+              <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
+              <Field label="Description" textarea value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+              <div className="grid grid-cols-2 gap-2">
+                <Field label="CTA label" value={it.cta_label} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_label: v } : a))} />
+                <Field label="CTA link" value={it.cta_link} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
+              </div>
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => setItems([...items, { icon_url: '', heading: '', description: '', cta_label: 'Buy Now', cta_link: '' }])}>
+            <Plus className="h-4 w-4 mr-1" /> Add card
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (type === 'features_icon_6') {
     const items: any[] = data.items || [];
     const setItems = (next: any[]) => patch({ items: next });
