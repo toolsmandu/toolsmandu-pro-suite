@@ -1,3 +1,4 @@
+import AdobeBigProductsCards from '@/components/product-templates/adobe/AdobeBigProductsCards';
 import AdobeHero from '@/components/product-templates/adobe/AdobeHero';
 import AdobeAppGrid from '@/components/product-templates/adobe/AdobeAppGrid';
 import AdobeFeatures from '@/components/product-templates/adobe/AdobeFeatures';
@@ -41,6 +42,9 @@ const SectionPreview = ({ type, data }: Props) => {
       break;
     case 'features_icon_5':
       node = <AdobeFeaturesIcon5 data={data || {}} showItemNumber />;
+      break;
+    case 'big_products_cards':
+      node = <AdobeBigProductsCards data={data || {}} />;
       break;
     case 'comparison_two':
       node = <AdobeComparisonTwo data={data || {}} />;

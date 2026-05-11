@@ -12,6 +12,7 @@ import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeatur
 import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
 
 import AdobeComparisonTwo from '@/components/product-templates/adobe/AdobeComparisonTwo';
+import AdobeBigProductsCards from '@/components/product-templates/adobe/AdobeBigProductsCards';
 
 const SAMPLE: Record<SectionType, any> = {
   hero: {
@@ -127,6 +128,18 @@ const SAMPLE: Record<SectionType, any> = {
       { icon_url: '/placeholder.svg', heading: 'Unmatched Cloud Capabilities', description: 'Access the widest range of services to build, scale, optimize your applications and turn your ideas into reality.' },
     ],
   },
+  big_products_cards: {
+    eyebrow: '',
+    heading: '',
+    subheading: '',
+    columns: 4,
+    items: [
+      { image_url: '/placeholder.svg', heading: 'Adobe Acrobat Standard For Teams', price: 'Rs.29500/yr', description: 'Create, edit, sign, and manage PDFs effortlessly across all devices.', cta_label: 'Buy Now', cta_link: '#' },
+      { image_url: '/placeholder.svg', heading: 'Adobe Premiere Pro For Teams', price: 'Rs.77500/yr', description: 'Industry-leading video editing software for film, TV, and web content.', cta_label: 'Buy Now', cta_link: '#' },
+      { image_url: '/placeholder.svg', heading: 'Adobe Photoshop For Teams', price: 'Rs.77500/yr', description: 'Powerful software for photo editing, digital art, and graphic design.', cta_label: 'Buy Now', cta_link: '#' },
+      { image_url: '/placeholder.svg', heading: 'Adobe Illustrator For Teams', price: 'Rs.77500/yr', description: 'Vector graphics software for creating logos, icons, and detailed illustrations.', cta_label: 'Buy Now', cta_link: '#' },
+    ],
+  },
   comparison_two: {
     eyebrow: 'Microsoft Defender For Your Business',
     heading: 'Microsoft Defender: Smarter Alternative to Other Antiviruses',
@@ -174,7 +187,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
   else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} showItemNumber />;
   else if (t === 'features_icon_5') node = <AdobeFeaturesIcon5 data={data} showItemNumber />;
-  
+  else if (t === 'big_products_cards') node = <AdobeBigProductsCards data={data} />;
   else if (t === 'comparison_two') node = <AdobeComparisonTwo data={data} />;
 
   return (
