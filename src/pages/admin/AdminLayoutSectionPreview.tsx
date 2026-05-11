@@ -164,6 +164,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
   else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} />;
   else if (t === 'features_icon_5') node = <AdobeFeaturesIcon5 data={data} />;
+  else if (t === 'adobe_style_cards') node = <AdobeStyleCards data={data} />;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
