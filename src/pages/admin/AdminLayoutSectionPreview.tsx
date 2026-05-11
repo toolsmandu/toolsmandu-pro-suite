@@ -187,7 +187,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
   else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} showItemNumber />;
   else if (t === 'features_icon_5') node = <AdobeFeaturesIcon5 data={data} showItemNumber />;
-  
+  else if (t === 'big_products_cards') node = <AdobeBigProductsCards data={data} />;
   else if (t === 'comparison_two') node = <AdobeComparisonTwo data={data} />;
 
   return (

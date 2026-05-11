@@ -1,3 +1,4 @@
+import AdobeBigProductsCards from '@/components/product-templates/adobe/AdobeBigProductsCards';
 import AdobeHero from '@/components/product-templates/adobe/AdobeHero';
 import AdobeAppGrid from '@/components/product-templates/adobe/AdobeAppGrid';
 import AdobeFeatures from '@/components/product-templates/adobe/AdobeFeatures';
