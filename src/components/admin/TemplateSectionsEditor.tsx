@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -64,11 +66,24 @@ interface SingleProps {
   type: SectionType;
   value: any;
   onChange: (next: any) => void;
+  productId?: string;
 }
 
-export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
+export const SingleSectionEditor = ({ type, value, onChange, productId }: SingleProps) => {
   const data = value || buildEmptySection(type);
   const patch = (p: any) => onChange({ ...data, ...p });
+
+  const [variations, setVariations] = useState<Array<{ id: string; name: string }>>([]);
+  useEffect(() => {
+    if (!productId || type !== 'pricing_table') return;
+    supabase
+      .from('product_variations')
+      .select('id, name')
+      .eq('product_id', productId)
+      .eq('is_active', true)
+      .order('sort_order')
+      .then(({ data }) => setVariations((data || []) as any));
+  }, [productId, type]);
 
   if (type === 'hero') {
     return (
