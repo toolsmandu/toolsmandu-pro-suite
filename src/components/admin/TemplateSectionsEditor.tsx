@@ -7,7 +7,7 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { Plus, Trash2 } from 'lucide-react';
 
-export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'features_faq', 'features_icon_6', 'plans', 'pricing_table'] as const;
+export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'features_faq', 'features_icon_5', 'features_icon_6', 'plans', 'pricing_table'] as const;
 export type SectionType = typeof SECTION_TYPES[number];
 
 export const SECTION_LABELS: Record<SectionType, string> = {
@@ -15,6 +15,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   app_grid: 'App grid',
   features: 'Feature highlights',
   features_faq: 'Features with FAQ Style',
+  features_icon_5: '5 Features with icon',
   features_icon_6: '6 Features with icon',
   plans: 'Pricing Cards',
   pricing_table: 'Pricing & Feature Comparison Table',
@@ -25,6 +26,7 @@ export const emptySectionData: Record<SectionType, any> = {
   app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
   features_faq: { heading: '', description: '', image_url: '', image_side: 'left', items: [] },
+  features_icon_5: { heading: '', subheading: '', items: [] },
   features_icon_6: { heading: '', subheading: '', columns: 3, items: [] },
   plans: { heading: '', plans: [] },
   pricing_table: { heading: '', plans: [], groups: [] },
@@ -34,6 +36,7 @@ export const buildEmptySection = (type: SectionType) => {
   if (type === 'app_grid') return { ...emptySectionData.app_grid, apps: [] };
   if (type === 'features') return { ...emptySectionData.features, items: [] };
   if (type === 'features_faq') return { heading: '', description: '', image_url: '', image_side: 'left', items: [] };
+  if (type === 'features_icon_5') return { heading: '', subheading: '', items: [] };
   if (type === 'features_icon_6') return { heading: '', subheading: '', columns: 3, items: [] };
   if (type === 'plans') return { ...emptySectionData.plans, plans: [] };
   if (type === 'pricing_table') return { heading: '', plans: [], groups: [] };
@@ -204,6 +207,42 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
           <Button variant="outline" size="sm" onClick={() => setItems([...items, { heading: '', description: '', image_url: '' }])}>
             <Plus className="h-4 w-4 mr-1" /> Add item
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === 'features_icon_5') {
+    const items: any[] = data.items || [];
+    const setItems = (next: any[]) => patch({ items: next });
+    return (
+      <div className="space-y-3">
+        <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
+        <div className="space-y-3 pt-2">
+          <div className="text-xs font-semibold text-muted-foreground">Feature cards (first card is featured/wider — up to 5 cards)</div>
+          {items.map((it, i) => (
+            <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-muted-foreground">Card #{i + 1}{i === 0 ? ' (featured)' : ''}</span>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                  onClick={() => setItems(items.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Icon</Label>
+                <ImageUpload value={it.icon_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, icon_url: url } : a))} />
+              </div>
+              <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
+              <Field label="Description" textarea value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+            </div>
+          ))}
+          {items.length < 5 && (
+            <Button variant="outline" size="sm" onClick={() => setItems([...items, { icon_url: '', heading: '', description: '' }])}>
+              <Plus className="h-4 w-4 mr-1" /> Add card
+            </Button>
+          )}
         </div>
       </div>
     );

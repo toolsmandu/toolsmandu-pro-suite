@@ -1,0 +1,2 @@
+INSERT INTO public.custom_templates (name, slug, template_type, data, is_active)
+VALUES ('5 Features with icon', 'features-icon-5', 'features_icon_5', '{"heading":"","subheading":"","items":[]}'::jsonb, true);

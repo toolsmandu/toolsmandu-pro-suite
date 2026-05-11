@@ -9,6 +9,7 @@ import AdobePlans from '@/components/product-templates/adobe/AdobePlans';
 import AdobePricingTable from '@/components/product-templates/adobe/AdobePricingTable';
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
+import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
 
 const SAMPLE: Record<SectionType, any> = {
   hero: {
@@ -118,6 +119,17 @@ const SAMPLE: Record<SectionType, any> = {
       { icon_url: '/placeholder.svg', heading: 'Ad-Free & Secure Email', description: 'Manage emails, events, and tasks from one unified platform.' },
     ],
   },
+  features_icon_5: {
+    heading: 'What\u2019s So Great About Our AWS Plans?',
+    subheading: 'Enjoy the following features with every AWS plan.',
+    items: [
+      { icon_url: '/placeholder.svg', heading: 'World\u2019s Largest Cloud Community', description: 'Tap into a global network of customers, partners, and experts to accelerate your success.' },
+      { icon_url: '/placeholder.svg', heading: 'Built-In Security You Can Rely On', description: 'Protect your data with industry-leading security, trusted by the world\u2019s most sensitive organizations.' },
+      { icon_url: '/placeholder.svg', heading: 'Expertise You Can Count On', description: 'With unmatched operational expertise and a proven track record, we ensure your business runs smoothly, reliably, and at scale.' },
+      { icon_url: '/placeholder.svg', heading: 'Drive Transformation & Innovation', description: 'Leverage cutting-edge solutions to accelerate your business growth and stay ahead of the competition.' },
+      { icon_url: '/placeholder.svg', heading: 'Unmatched Cloud Capabilities', description: 'Access the widest range of services to build, scale, optimize your applications and turn your ideas into reality.' },
+    ],
+  },
 };
 
 const AdminLayoutSectionPreview = () => {
@@ -136,6 +148,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'pricing_table') node = <AdobePricingTable data={data} />;
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
   else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} />;
+  else if (t === 'features_icon_5') node = <AdobeFeaturesIcon5 data={data} />;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
