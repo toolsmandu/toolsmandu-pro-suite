@@ -7,6 +7,7 @@ interface AppGridData {
   heading?: string;
   apps?: App[];
   footer_text?: string;
+  columns?: number;
 }
 
 const decodeHtmlEntities = (str: string): string => {
@@ -25,6 +26,17 @@ const decodeHtmlEntities = (str: string): string => {
 const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
   if (!data.apps?.length && !data.footer_text) return null;
 
+  const colsMap: Record<number, string> = {
+    2: 'md:grid-cols-2 lg:grid-cols-2',
+    3: 'md:grid-cols-3 lg:grid-cols-3',
+    4: 'md:grid-cols-3 lg:grid-cols-4',
+    5: 'md:grid-cols-4 lg:grid-cols-5',
+    6: 'md:grid-cols-4 lg:grid-cols-6',
+    7: 'md:grid-cols-5 lg:grid-cols-7',
+    8: 'md:grid-cols-5 lg:grid-cols-8',
+  };
+  const colClass = colsMap[data.columns || 5] || colsMap[5];
+
   return (
     <section className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -34,7 +46,7 @@ const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
           </h2>
         )}
         {!!data.apps?.length && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className={`grid grid-cols-2 sm:grid-cols-3 ${colClass} gap-6`}>
             {data.apps.map((app, idx) => (
               <div
                 key={idx}

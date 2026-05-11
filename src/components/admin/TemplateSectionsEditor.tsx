@@ -122,6 +122,18 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
     return (
       <div className="space-y-3">
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <div>
+          <Label className="mb-1 block text-xs">Apps per row (desktop)</Label>
+          <select
+            className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            value={data.columns || 5}
+            onChange={(e) => patch({ columns: Number(e.target.value) })}
+          >
+            {[2, 3, 4, 5, 6, 7, 8].map((n) => (
+              <option key={n} value={n}>{n}</option>
+            ))}
+          </select>
+        </div>
         <div className="space-y-3">
           {apps.map((app, i) => (
             <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
