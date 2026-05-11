@@ -303,15 +303,10 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
                 <ImageUpload value={it.image_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, image_url: url } : a))} />
               </div>
               <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
-              <Field label="Price (e.g. Rs.29500/yr)" value={it.price} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, price: v } : a))} />
               <Field label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} textarea />
-              <div className="grid grid-cols-2 gap-2">
-                <Field label="CTA label" value={it.cta_label} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_label: v } : a))} />
-                <Field label="CTA link" value={it.cta_link} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
-              </div>
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => setItems([...items, { image_url: '', heading: '', price: '', description: '', cta_label: 'Buy Now', cta_link: '' }])}>
+          <Button variant="outline" size="sm" onClick={() => setItems([...items, { image_url: '', heading: '', description: '' }])}>
             <Plus className="h-4 w-4 mr-1" /> Add card
           </Button>
         </div>
