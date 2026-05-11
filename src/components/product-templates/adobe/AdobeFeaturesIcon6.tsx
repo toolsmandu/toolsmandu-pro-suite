@@ -34,13 +34,13 @@ const AdobeFeaturesIcon6 = ({ data }: { data: FeaturesIcon6Data }) => {
           </div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2 items-start">
+        <div className="md:columns-2 gap-6 [column-fill:_balance]">
           {items.map((it, i) => {
             const featured = featuredIndices.has(i);
             return (
               <div
                 key={i}
-                className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all ${
+                className={`mb-6 break-inside-avoid rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all ${
                   featured ? 'flex flex-col items-center text-center' : 'flex items-center gap-5'
                 }`}
               >
