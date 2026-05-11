@@ -10,7 +10,7 @@ import AdobePricingTable from '@/components/product-templates/adobe/AdobePricing
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
 import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
-import AdobeStyleCards from '@/components/product-templates/adobe/AdobeStyleCards';
+
 import AdobeComparisonTwo from '@/components/product-templates/adobe/AdobeComparisonTwo';
 
 const SAMPLE: Record<SectionType, any> = {
@@ -188,7 +188,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
   else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} showItemNumber />;
   else if (t === 'features_icon_5') node = <AdobeFeaturesIcon5 data={data} showItemNumber />;
-  else if (t === 'adobe_style_cards') node = <AdobeStyleCards data={data} />;
+  
   else if (t === 'comparison_two') node = <AdobeComparisonTwo data={data} />;
 
   return (
