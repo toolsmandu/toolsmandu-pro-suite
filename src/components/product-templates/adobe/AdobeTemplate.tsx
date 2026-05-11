@@ -5,6 +5,7 @@ import AdobeAppGrid from './AdobeAppGrid';
 import AdobeFeatures from './AdobeFeatures';
 import AdobePlans from './AdobePlans';
 import AdobePricingTable from './AdobePricingTable';
+import AdobeFeaturesFAQ from './AdobeFeaturesFAQ';
 import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
