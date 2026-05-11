@@ -39,9 +39,10 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
               return (
                 <div
                   key={globalIdx}
-                  className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all min-h-0 overflow-hidden ${
+                  className={`rounded-2xl border border-border/60 p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all min-h-0 overflow-hidden ${
                     stacked ? 'flex flex-col gap-6 flex-[2]' : 'flex items-center gap-6 flex-1'
                   }`}
+                  style={{ backgroundColor: '#0a2e5c' }}
                 >
                   {stacked && showItemNumber && (
                     <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-sm font-bold self-start">
