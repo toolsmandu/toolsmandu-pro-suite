@@ -146,6 +146,34 @@ const SAMPLE: Record<SectionType, any> = {
       { icon_url: '/placeholder.svg', heading: 'Creative Cloud', description: 'Your Creative Toolkit, All in One Place!', cta_label: 'Buy Now', cta_link: '#' },
     ],
   },
+  comparison_two: {
+    eyebrow: 'Microsoft Defender For Your Business',
+    heading: 'Microsoft Defender: Smarter Alternative to Other Antiviruses',
+    subheading: '',
+    highlight_side: 'right',
+    left: {
+      logo_url: '/placeholder.svg',
+      label: 'Other',
+      items: [
+        { text: 'Threat Protection Pro\u2122: Anti-malware and advanced browsing', included: false },
+        { text: 'Real-time phishing detection and website scanning', included: false },
+        { text: 'Cloud-based threat intelligence', included: false },
+        { text: 'Secure VPN with unlimited bandwidth', included: false },
+        { text: 'Automatic software patching and update alerts', included: false },
+      ],
+    },
+    right: {
+      logo_url: '/placeholder.svg',
+      label: 'MS Defender',
+      items: [
+        { text: 'Threat Protection Pro\u2122: Anti-malware and advanced browsing', included: true },
+        { text: 'Real-time phishing detection and website scanning', included: true },
+        { text: 'Cloud-based threat intelligence', included: true },
+        { text: 'Secure VPN with unlimited bandwidth', included: true },
+        { text: 'Automatic software patching and update alerts', included: true },
+      ],
+    },
+  },
 };
 
 const AdminLayoutSectionPreview = () => {
