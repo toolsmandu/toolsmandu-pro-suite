@@ -32,9 +32,10 @@ const AdobeFeatures = ({ data }: { data: FeaturesData }) => {
                   {item.heading}
                 </h3>
                 {item.description && (
-                  <p className="text-base md:text-lg text-foreground/75 leading-relaxed whitespace-pre-line">
-                    {item.description}
-                  </p>
+                  <div
+                    className="text-base md:text-lg text-foreground/75 leading-relaxed prose prose-invert max-w-none"
+                    dangerouslySetInnerHTML={{ __html: item.description }}
+                  />
                 )}
               </div>
               {item.image_url && (

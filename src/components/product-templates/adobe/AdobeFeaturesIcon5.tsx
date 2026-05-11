@@ -61,9 +61,7 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
                       </h3>
                     </div>
                     {it.description && (
-                      <p className="text-sm md:text-base text-card-foreground/70 leading-relaxed">
-                        {it.description}
-                      </p>
+                      <div className="text-sm md:text-base text-card-foreground/70 leading-relaxed prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: it.description }} />
                     )}
                   </div>
                   {it.icon_url && (
@@ -105,9 +103,7 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
                       </h3>
                     </div>
                     {it.description && (
-                      <p className="text-sm md:text-base text-card-foreground/70 leading-relaxed">
-                        {it.description}
-                      </p>
+                      <div className="text-sm md:text-base text-card-foreground/70 leading-relaxed prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: it.description }} />
                     )}
                   </div>
                   {it.icon_url && (

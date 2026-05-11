@@ -64,10 +64,8 @@ const AdobeStyleCards = ({ data }: { data: AdobeStyleCardsData }) => {
                 {it.heading}
               </h3>
               {it.description && (
-                <p className="text-sm md:text-base text-card-foreground/70 leading-relaxed mb-5">
-                  {it.description}
-                </p>
-              )}
+                      <div className="text-sm md:text-base text-card-foreground/70 leading-relaxed mb-5 prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: it.description }} />
+                    )}
               {it.cta_label && (
                 <a
                   href={it.cta_link || '#'}

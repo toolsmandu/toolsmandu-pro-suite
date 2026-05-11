@@ -33,7 +33,7 @@ const AdobeFeaturesFAQ = ({ data }: { data: FeaturesFAQData }) => {
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{data.heading}</h2>
             )}
             {data.description && (
-              <p className="text-base md:text-lg text-foreground/75 leading-relaxed">{data.description}</p>
+              <div className="text-base md:text-lg text-foreground/75 leading-relaxed prose prose-invert max-w-none mx-auto" dangerouslySetInnerHTML={{ __html: data.description }} />
             )}
           </div>
         )}
@@ -84,9 +84,7 @@ const AdobeFeaturesFAQ = ({ data }: { data: FeaturesFAQData }) => {
                   )}>
                     <div className="overflow-hidden">
                       {it.description && (
-                        <p className="text-sm md:text-base text-foreground/75 leading-relaxed whitespace-pre-line">
-                          {it.description}
-                        </p>
+                        <div className="text-sm md:text-base text-foreground/75 leading-relaxed prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: it.description }} />
                       )}
                     </div>
                   </div>
