@@ -59,7 +59,7 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
                       loading="lazy"
                       className={
                         stacked
-                          ? 'w-full h-56 md:h-80 object-cover rounded-xl'
+                          ? 'w-full flex-1 min-h-0 object-cover rounded-xl'
                           : 'h-40 w-40 md:h-48 md:w-48 object-contain shrink-0'
                       }
                     />
