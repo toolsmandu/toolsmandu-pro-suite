@@ -29,7 +29,7 @@ export const emptySectionData: Record<SectionType, any> = {
   hero: { eyebrow: '', heading: '', subheading: '', image_url: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
   app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
-  features_faq: { heading: '', description: '', image_url: '', image_side: 'left', items: [] },
+  features_faq: { heading: '', description: '', items: [] },
   features_icon_5: { heading: '', subheading: '', items: [] },
   features_icon_6: { heading: '', subheading: '', columns: 3, items: [] },
   adobe_style_cards: { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] },
@@ -41,7 +41,7 @@ export const emptySectionData: Record<SectionType, any> = {
 export const buildEmptySection = (type: SectionType) => {
   if (type === 'app_grid') return { ...emptySectionData.app_grid, apps: [] };
   if (type === 'features') return { ...emptySectionData.features, items: [] };
-  if (type === 'features_faq') return { heading: '', description: '', image_url: '', image_side: 'left', items: [] };
+  if (type === 'features_faq') return { heading: '', description: '', items: [] };
   if (type === 'features_icon_5') return { heading: '', subheading: '', items: [] };
   if (type === 'features_icon_6') return { heading: '', subheading: '', columns: 3, items: [] };
   if (type === 'adobe_style_cards') return { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] };
@@ -210,21 +210,6 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
       <div className="space-y-3">
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
         <RichField label="Description" value={data.description} onChange={(v) => patch({ description: v })} />
-        <div>
-          <Label className="mb-1 block text-xs">Default image (fallback when an item has no image)</Label>
-          <ImageUpload value={data.image_url} onChange={(url) => patch({ image_url: url })} />
-        </div>
-        <div>
-          <Label className="mb-1 block text-xs">Image side</Label>
-          <select
-            value={data.image_side || 'left'}
-            onChange={(e) => patch({ image_side: e.target.value })}
-            className="flex h-9 w-32 rounded-md border border-input bg-background px-2 text-sm"
-          >
-            <option value="left">Left</option>
-            <option value="right">Right</option>
-          </select>
-        </div>
         <div className="space-y-3 pt-2">
           <div className="text-xs font-semibold text-muted-foreground">FAQ items (click to expand on the live page)</div>
           {items.map((it, i) => (
@@ -238,13 +223,9 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
               </div>
               <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
               <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
-              <div>
-                <Label className="mb-1 block text-xs">Image (shown when this item is active)</Label>
-                <ImageUpload value={it.image_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, image_url: url } : a))} />
-              </div>
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => setItems([...items, { heading: '', description: '', image_url: '' }])}>
+          <Button variant="outline" size="sm" onClick={() => setItems([...items, { heading: '', description: '' }])}>
             <Plus className="h-4 w-4 mr-1" /> Add item
           </Button>
         </div>
