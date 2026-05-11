@@ -25,7 +25,7 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
   return (
     <div className="flex flex-col">
       {/* Image card with arch */}
-      <div className="relative rounded-2xl bg-muted/60 aspect-[16/10] flex items-end justify-center overflow-hidden">
+      <div className="relative rounded-2xl bg-muted/60 aspect-[16/5] flex items-end justify-center overflow-hidden">
         <div className="relative w-2/5 aspect-[2/1] rounded-t-full bg-background flex items-center justify-center pt-4">
           {side.logo_url ? (
             <img
