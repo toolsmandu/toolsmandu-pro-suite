@@ -34,7 +34,7 @@ const AdobeFeaturesIcon6 = ({ data }: { data: FeaturesIcon6Data }) => {
           </div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 items-start">
           {items.map((it, i) => {
             const featured = featuredIndices.has(i);
             return (
