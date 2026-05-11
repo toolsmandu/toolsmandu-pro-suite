@@ -7,6 +7,7 @@ import AdobeAppGrid from '@/components/product-templates/adobe/AdobeAppGrid';
 import AdobeFeatures from '@/components/product-templates/adobe/AdobeFeatures';
 import AdobePlans from '@/components/product-templates/adobe/AdobePlans';
 import AdobePricingTable from '@/components/product-templates/adobe/AdobePricingTable';
+import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
 
 const SAMPLE: Record<SectionType, any> = {
   hero: {
@@ -80,6 +81,29 @@ const SAMPLE: Record<SectionType, any> = {
       },
     ],
   },
+  features_faq: {
+    heading: 'Why You Should Use A VPN in Nepal?',
+    description: 'Access the internet freely, securely, and without borders to stay connected to your favorite apps and sites. NordVPN protects your online activity from surveillance, data theft, and insecure networks, giving you true digital privacy and peace of mind in Nepal and beyond.',
+    image_url: '/placeholder.svg',
+    image_side: 'left',
+    items: [
+      {
+        heading: 'Secures your internet activity',
+        description: 'NordVPN encrypts every connection, whether you\u2019re in the office or working remotely. This protects sensitive data and ensures secure access to internal systems from anywhere.',
+        image_url: '/placeholder.svg',
+      },
+      {
+        heading: 'Unlocks global business tools and platforms',
+        description: 'Connect to servers around the world to access region-restricted software, marketplaces and SaaS platforms your team relies on.',
+        image_url: '/placeholder.svg',
+      },
+      {
+        heading: 'Boosts your online privacy',
+        description: 'Hide your IP, block trackers and stop ISPs from monitoring your browsing \u2014 true privacy by default.',
+        image_url: '/placeholder.svg',
+      },
+    ],
+  },
 };
 
 const AdminLayoutSectionPreview = () => {
@@ -96,6 +120,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'features') node = <AdobeFeatures data={data} />;
   else if (t === 'plans') node = <AdobePlans data={data} />;
   else if (t === 'pricing_table') node = <AdobePricingTable data={data} />;
+  else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">

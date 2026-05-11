@@ -5,6 +5,7 @@ import AdobeAppGrid from './AdobeAppGrid';
 import AdobeFeatures from './AdobeFeatures';
 import AdobePlans from './AdobePlans';
 import AdobePricingTable from './AdobePricingTable';
+import AdobeFeaturesFAQ from './AdobeFeaturesFAQ';
 import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
@@ -47,6 +48,8 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         return <AdobePlans key={idx} data={data} />;
       case 'pricing_table':
         return <AdobePricingTable key={idx} data={data} />;
+      case 'features_faq':
+        return <AdobeFeaturesFAQ key={idx} data={data} />;
       default:
         return null;
     }

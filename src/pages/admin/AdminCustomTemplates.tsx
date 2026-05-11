@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
-import { Image as ImageIcon, LayoutGrid, Sparkles, CreditCard, Table as TableIcon } from 'lucide-react';
+import { Image as ImageIcon, LayoutGrid, Sparkles, CreditCard, Table as TableIcon, ListCollapse } from 'lucide-react';
 import { SECTION_LABELS, SECTION_TYPES, SectionType } from '@/components/admin/TemplateSectionsEditor';
 
 const SECTION_META: Record<SectionType, { icon: any; description: string }> = {
   hero: { icon: ImageIcon, description: 'Top banner with heading, subheading, image and CTAs.' },
   app_grid: { icon: LayoutGrid, description: 'Grid of apps or icons with names.' },
   features: { icon: Sparkles, description: 'Alternating feature highlights with images.' },
+  features_faq: { icon: ListCollapse, description: 'Accordion-style features with a synced preview image.' },
   plans: { icon: CreditCard, description: 'Pricing plans / tiers with features.' },
   pricing_table: { icon: TableIcon, description: 'Detailed pricing & feature comparison table.' },
 };
