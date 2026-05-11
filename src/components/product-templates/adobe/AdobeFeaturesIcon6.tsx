@@ -11,7 +11,7 @@ interface FeaturesIcon6Data {
   columns?: 2 | 3;
 }
 
-const AdobeFeaturesIcon6 = ({ data }: { data: FeaturesIcon6Data }) => {
+const AdobeFeaturesIcon6 = ({ data, showItemNumber = false }: { data: FeaturesIcon6Data; showItemNumber?: boolean }) => {
   const items = data.items || [];
   if (!items.length) return null;
 
