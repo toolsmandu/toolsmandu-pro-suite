@@ -10,7 +10,7 @@ interface FeaturesIcon5Data {
   items?: IconFeatureItem[];
 }
 
-const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
+const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIcon5Data; showItemNumber?: boolean }) => {
   const items = (data.items || []).slice(0, 5);
   if (!items.length) return null;
 
