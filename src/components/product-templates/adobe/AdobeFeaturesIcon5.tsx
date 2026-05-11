@@ -39,8 +39,8 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
               return (
                 <div
                   key={globalIdx}
-                  className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all flex-1 min-h-0 overflow-hidden ${
-                    stacked ? 'flex flex-col gap-6' : 'flex items-center gap-6'
+                  className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all min-h-0 overflow-hidden ${
+                    stacked ? 'flex flex-col gap-6 flex-[2]' : 'flex items-center gap-6 flex-1'
                   }`}
                 >
                   {stacked && (
