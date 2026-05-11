@@ -3,6 +3,7 @@ import AdobeAppGrid from '@/components/product-templates/adobe/AdobeAppGrid';
 import AdobeFeatures from '@/components/product-templates/adobe/AdobeFeatures';
 import AdobePlans from '@/components/product-templates/adobe/AdobePlans';
 import AdobePricingTable from '@/components/product-templates/adobe/AdobePricingTable';
+import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
 import { SectionType } from './TemplateSectionsEditor';
 
 interface Props {
