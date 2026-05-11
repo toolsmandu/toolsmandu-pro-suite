@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Image as ImageIcon, LayoutGrid, Sparkles, CreditCard, Table as TableIcon, ListCollapse, Grid3x3, Grid2x2 } from 'lucide-react';
+import { Image as ImageIcon, LayoutGrid, Sparkles, CreditCard, Table as TableIcon, ListCollapse, Grid3x3, Grid2x2, Rocket } from 'lucide-react';
 import { SECTION_LABELS, SECTION_TYPES, SectionType } from '@/components/admin/TemplateSectionsEditor';
 
 const SECTION_META: Record<SectionType, { icon: any; description: string }> = {
@@ -9,6 +9,7 @@ const SECTION_META: Record<SectionType, { icon: any; description: string }> = {
   features_faq: { icon: ListCollapse, description: 'Accordion-style features with a synced preview image.' },
   features_icon_5: { icon: Grid2x2, description: 'Bento grid of 5 icon + heading + description feature cards.' },
   features_icon_6: { icon: Grid3x3, description: 'Grid of icon + heading + description feature cards.' },
+  adobe_style_cards: { icon: Rocket, description: 'Product cards with icon, heading, description and Buy Now link.' },
   plans: { icon: CreditCard, description: 'Pricing plans / tiers with features.' },
   pricing_table: { icon: TableIcon, description: 'Detailed pricing & feature comparison table.' },
 };

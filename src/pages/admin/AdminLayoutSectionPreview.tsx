@@ -10,6 +10,7 @@ import AdobePricingTable from '@/components/product-templates/adobe/AdobePricing
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
 import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
+import AdobeStyleCards from '@/components/product-templates/adobe/AdobeStyleCards';
 
 const SAMPLE: Record<SectionType, any> = {
   hero: {
@@ -130,6 +131,20 @@ const SAMPLE: Record<SectionType, any> = {
       { icon_url: '/placeholder.svg', heading: 'Unmatched Cloud Capabilities', description: 'Access the widest range of services to build, scale, optimize your applications and turn your ideas into reality.' },
     ],
   },
+  adobe_style_cards: {
+    eyebrow: 'Unleash Your Creativity with Our Top-Rated Products',
+    heading: 'Explore our most popular apps for creating anything you can imagine.',
+    subheading: '',
+    columns: 3,
+    items: [
+      { icon_url: '/placeholder.svg', heading: 'Acrobat Pro', description: 'Create, edit, review, and sign PDFs.', cta_label: 'Buy Now', cta_link: '#' },
+      { icon_url: '/placeholder.svg', heading: 'Photoshop Pro', description: 'Combine, retouch, and remix your pics.', cta_label: 'Buy Now', cta_link: '#' },
+      { icon_url: '/placeholder.svg', heading: 'Premiere Pro', description: 'Edit, trim, and craft your videos.', cta_label: 'Buy Now', cta_link: '#' },
+      { icon_url: '/placeholder.svg', heading: 'Adobe Illustrator Pro', description: 'Create logos, designs, graphics, and more.', cta_label: 'Buy Now', cta_link: '#' },
+      { icon_url: '/placeholder.svg', heading: 'Adobe Indesign Pro', description: 'Design, layout, publish, bring ideas to life!', cta_label: 'Buy Now', cta_link: '#' },
+      { icon_url: '/placeholder.svg', heading: 'Creative Cloud', description: 'Your Creative Toolkit, All in One Place!', cta_label: 'Buy Now', cta_link: '#' },
+    ],
+  },
 };
 
 const AdminLayoutSectionPreview = () => {
@@ -149,6 +164,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
   else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} />;
   else if (t === 'features_icon_5') node = <AdobeFeaturesIcon5 data={data} />;
+  else if (t === 'adobe_style_cards') node = <AdobeStyleCards data={data} />;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">

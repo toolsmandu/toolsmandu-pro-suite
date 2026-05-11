@@ -8,6 +8,7 @@ import AdobePricingTable from './AdobePricingTable';
 import AdobeFeaturesFAQ from './AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from './AdobeFeaturesIcon6';
 import AdobeFeaturesIcon5 from './AdobeFeaturesIcon5';
+import AdobeStyleCards from './AdobeStyleCards';
 import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
@@ -56,6 +57,8 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         return <AdobeFeaturesIcon6 key={idx} data={data} />;
       case 'features_icon_5':
         return <AdobeFeaturesIcon5 key={idx} data={data} />;
+      case 'adobe_style_cards':
+        return <AdobeStyleCards key={idx} data={data} />;
       default:
         return null;
     }
