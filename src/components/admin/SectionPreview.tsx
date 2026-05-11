@@ -4,6 +4,7 @@ import AdobeFeatures from '@/components/product-templates/adobe/AdobeFeatures';
 import AdobePlans from '@/components/product-templates/adobe/AdobePlans';
 import AdobePricingTable from '@/components/product-templates/adobe/AdobePricingTable';
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
+import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
 import { SectionType } from './TemplateSectionsEditor';
 
 interface Props {
@@ -31,6 +32,9 @@ const SectionPreview = ({ type, data }: Props) => {
       break;
     case 'features_faq':
       node = <AdobeFeaturesFAQ data={data || {}} />;
+      break;
+    case 'features_icon_6':
+      node = <AdobeFeaturesIcon6 data={data || {}} />;
       break;
   }
 

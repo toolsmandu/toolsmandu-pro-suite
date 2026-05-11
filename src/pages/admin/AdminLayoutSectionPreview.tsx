@@ -8,6 +8,7 @@ import AdobeFeatures from '@/components/product-templates/adobe/AdobeFeatures';
 import AdobePlans from '@/components/product-templates/adobe/AdobePlans';
 import AdobePricingTable from '@/components/product-templates/adobe/AdobePricingTable';
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
+import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
 
 const SAMPLE: Record<SectionType, any> = {
   hero: {
@@ -104,6 +105,19 @@ const SAMPLE: Record<SectionType, any> = {
       },
     ],
   },
+  features_icon_6: {
+    heading: 'What\u2019s so Great about our Zoho Mail Service?',
+    subheading: 'Explore these features with every Zoho Mail plan.',
+    columns: 3,
+    items: [
+      { icon_url: '/placeholder.svg', heading: 'Team Collaboration Tools', description: 'Use Streams for email-based discussions.' },
+      { icon_url: '/placeholder.svg', heading: 'Advanced Spam Protection', description: 'Manage emails, events, and tasks from one unified platform.' },
+      { icon_url: '/placeholder.svg', heading: 'Custom Domain Email', description: 'Create professional business email addresses using your domain name.' },
+      { icon_url: '/placeholder.svg', heading: 'Offline Access & Mobile Support', description: 'Stay connected with Zoho Mail\u2019s mobile apps and offline email access.' },
+      { icon_url: '/placeholder.svg', heading: 'Calendar, Tasks & Notes', description: 'Manage emails, events, and tasks from one unified platform.' },
+      { icon_url: '/placeholder.svg', heading: 'Ad-Free & Secure Email', description: 'Manage emails, events, and tasks from one unified platform.' },
+    ],
+  },
 };
 
 const AdminLayoutSectionPreview = () => {
@@ -121,6 +135,7 @@ const AdminLayoutSectionPreview = () => {
   else if (t === 'plans') node = <AdobePlans data={data} />;
   else if (t === 'pricing_table') node = <AdobePricingTable data={data} />;
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;
+  else if (t === 'features_icon_6') node = <AdobeFeaturesIcon6 data={data} />;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
