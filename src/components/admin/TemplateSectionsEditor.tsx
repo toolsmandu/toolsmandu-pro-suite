@@ -305,6 +305,75 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
     );
   }
 
+  if (type === 'comparison_two') {
+    const left = data.left || { logo_url: '', label: '', items: [] };
+    const right = data.right || { logo_url: '', label: '', items: [] };
+    const setSide = (key: 'left' | 'right', next: any) => patch({ [key]: next });
+
+    const renderSide = (key: 'left' | 'right', side: any, defaultLabel: string) => {
+      const items: any[] = side.items || [];
+      const setItems = (next: any[]) => setSide(key, { ...side, items: next });
+      return (
+        <div className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-3">
+          <div className="text-xs font-semibold text-muted-foreground">{defaultLabel} column</div>
+          <div>
+            <Label className="mb-1 block text-xs">Logo / Icon</Label>
+            <ImageUpload value={side.logo_url} onChange={(url) => setSide(key, { ...side, logo_url: url })} />
+          </div>
+          <Field label="Label (e.g. Other, MS Defender)" value={side.label} onChange={(v) => setSide(key, { ...side, label: v })} />
+          <div className="space-y-2">
+            <div className="text-xs font-semibold text-muted-foreground">Feature rows</div>
+            {items.map((it: any, i: number) => (
+              <div key={i} className="border border-border/40 rounded p-2 bg-background space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Row #{i + 1}</span>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                    onClick={() => setItems(items.filter((_, j) => j !== i))}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <Field label="Text" value={it.text} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, text: v } : a))} />
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={!!it.included}
+                    onCheckedChange={(checked) => setItems(items.map((a, j) => j === i ? { ...a, included: checked } : a))}
+                  />
+                  <Label className="text-xs">Included (show check) — off shows cross</Label>
+                </div>
+              </div>
+            ))}
+            <Button variant="outline" size="sm" onClick={() => setItems([...items, { text: '', included: key === 'right' }])}>
+              <Plus className="h-4 w-4 mr-1" /> Add row
+            </Button>
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <div className="space-y-3">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
+        <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
+        <div>
+          <Label className="mb-1 block text-xs">Highlight side (visually emphasized)</Label>
+          <select
+            value={data.highlight_side || 'right'}
+            onChange={(e) => patch({ highlight_side: e.target.value })}
+            className="flex h-9 w-40 rounded-md border border-input bg-background px-2 text-sm"
+          >
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+        <div className="grid md:grid-cols-2 gap-3">
+          {renderSide('left', left, 'Left')}
+          {renderSide('right', right, 'Right')}
+        </div>
+      </div>
+    );
+  }
+
   if (type === 'features_icon_6') {
     const items: any[] = data.items || [];
     const setItems = (next: any[]) => patch({ items: next });
