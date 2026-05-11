@@ -197,7 +197,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
     return (
       <div className="space-y-3">
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
-        <Field label="Description" textarea value={data.description} onChange={(v) => patch({ description: v })} />
+        <RichField label="Description" value={data.description} onChange={(v) => patch({ description: v })} />
         <div>
           <Label className="mb-1 block text-xs">Default image (fallback when an item has no image)</Label>
           <ImageUpload value={data.image_url} onChange={(url) => patch({ image_url: url })} />
@@ -225,7 +225,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
                 </Button>
               </div>
               <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
-              <Field label="Description" textarea value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+              <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
               <div>
                 <Label className="mb-1 block text-xs">Image (shown when this item is active)</Label>
                 <ImageUpload value={it.image_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, image_url: url } : a))} />
@@ -263,7 +263,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
                 <ImageUpload value={it.icon_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, icon_url: url } : a))} />
               </div>
               <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
-              <Field label="Description" textarea value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+              <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
             </div>
           ))}
           {items.length < 5 && (
@@ -312,7 +312,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
                 <ImageUpload value={it.icon_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, icon_url: url } : a))} />
               </div>
               <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
-              <Field label="Description" textarea value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+              <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
               <div className="grid grid-cols-2 gap-2">
                 <Field label="CTA label" value={it.cta_label} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_label: v } : a))} />
                 <Field label="CTA link" value={it.cta_link} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
@@ -430,7 +430,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
                 <ImageUpload value={it.icon_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, icon_url: url } : a))} />
               </div>
               <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
-              <Field label="Description" textarea value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+              <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
             </div>
           ))}
           <Button variant="outline" size="sm" onClick={() => setItems([...items, { icon_url: '', heading: '', description: '' }])}>
