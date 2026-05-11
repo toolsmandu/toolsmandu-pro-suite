@@ -30,7 +30,7 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
           </div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 items-stretch">
           {/* Left column: 2 cards */}
           <div className="flex flex-col gap-6">
             {items.slice(0, 2).map((it, i) => {
@@ -38,7 +38,7 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
               return (
                 <div
                   key={i}
-                  className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all ${
+                  className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all flex-1 min-h-0 ${
                     stacked ? 'flex flex-col gap-6' : 'flex items-center gap-6'
                   }`}
                 >
@@ -59,7 +59,7 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
                       loading="lazy"
                       className={
                         stacked
-                          ? 'w-full max-h-72 object-contain'
+                          ? 'flex-1 w-full h-full min-h-0 object-contain'
                           : 'h-40 w-40 md:h-48 md:w-48 object-contain shrink-0'
                       }
                     />
@@ -74,7 +74,7 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
             {items.slice(2, 5).map((it, i) => (
               <div
                 key={i + 2}
-                className="rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all flex items-center gap-6"
+                className="rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all flex items-center gap-6 flex-1 min-h-0"
               >
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg md:text-xl font-semibold text-card-foreground mb-2">
