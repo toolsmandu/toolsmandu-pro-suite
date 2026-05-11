@@ -16,7 +16,7 @@ const AdobeFeaturesIcon6 = ({ data }: { data: FeaturesIcon6Data }) => {
   if (!items.length) return null;
 
   // Indices that render as "featured" cards with big centered image (per screenshot: 3rd and 4th items)
-  const featuredIndices = new Set([2, 3]);
+  const featuredIndices = new Set([1, 4]);
 
   return (
     <section className="py-16 md:py-24 bg-background">
