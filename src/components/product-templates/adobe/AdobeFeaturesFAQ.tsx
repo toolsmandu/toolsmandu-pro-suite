@@ -84,9 +84,7 @@ const AdobeFeaturesFAQ = ({ data }: { data: FeaturesFAQData }) => {
                   )}>
                     <div className="overflow-hidden">
                       {it.description && (
-                        <p className="text-sm md:text-base text-foreground/75 leading-relaxed whitespace-pre-line">
-                          {it.description}
-                        </p>
+                        <div className="text-sm md:text-base text-foreground/75 leading-relaxed prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: it.description }} />
                       )}
                     </div>
                   </div>
