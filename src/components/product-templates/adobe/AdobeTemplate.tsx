@@ -43,7 +43,7 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
   const renderSection = (idx: number, type: string, data: any) => {
     switch (type) {
       case 'hero':
-        return <AdobeHero key={idx} data={data} product={product} />;
+        return <AdobeHero key={idx} data={data} />;
       case 'app_grid':
         return <AdobeAppGrid key={idx} data={data} />;
       case 'features':
