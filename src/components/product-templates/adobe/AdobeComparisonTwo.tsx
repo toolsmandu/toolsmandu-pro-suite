@@ -21,7 +21,7 @@ interface ComparisonTwoData {
 }
 
 const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean }) => {
-  const accent = '#ffffff';
+  const accent = highlight ? '#ffffff' : '#9ca3af';
   return (
     <div className="flex flex-col">
       {/* Image card with arch */}
