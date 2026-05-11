@@ -7,13 +7,14 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { Plus, Trash2 } from 'lucide-react';
 
-export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'plans', 'pricing_table'] as const;
+export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'features_faq', 'plans', 'pricing_table'] as const;
 export type SectionType = typeof SECTION_TYPES[number];
 
 export const SECTION_LABELS: Record<SectionType, string> = {
   hero: 'Hero',
   app_grid: 'App grid',
   features: 'Feature highlights',
+  features_faq: 'Features with FAQ Style',
   plans: 'Pricing Cards',
   pricing_table: 'Pricing & Feature Comparison Table',
 };
@@ -22,6 +23,7 @@ export const emptySectionData: Record<SectionType, any> = {
   hero: { eyebrow: '', heading: '', subheading: '', image_url: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
   app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
+  features_faq: { heading: '', description: '', image_url: '', image_side: 'left', items: [] },
   plans: { heading: '', plans: [] },
   pricing_table: { heading: '', plans: [], groups: [] },
 };
@@ -29,6 +31,7 @@ export const emptySectionData: Record<SectionType, any> = {
 export const buildEmptySection = (type: SectionType) => {
   if (type === 'app_grid') return { ...emptySectionData.app_grid, apps: [] };
   if (type === 'features') return { ...emptySectionData.features, items: [] };
+  if (type === 'features_faq') return { heading: '', description: '', image_url: '', image_side: 'left', items: [] };
   if (type === 'plans') return { ...emptySectionData.plans, plans: [] };
   if (type === 'pricing_table') return { heading: '', plans: [], groups: [] };
   return { ...emptySectionData.hero };
