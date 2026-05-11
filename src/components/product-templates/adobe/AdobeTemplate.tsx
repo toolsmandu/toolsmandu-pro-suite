@@ -9,6 +9,7 @@ import AdobeFeaturesFAQ from './AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from './AdobeFeaturesIcon6';
 import AdobeFeaturesIcon5 from './AdobeFeaturesIcon5';
 import AdobeStyleCards from './AdobeStyleCards';
+import AdobeComparisonTwo from './AdobeComparisonTwo';
 import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
