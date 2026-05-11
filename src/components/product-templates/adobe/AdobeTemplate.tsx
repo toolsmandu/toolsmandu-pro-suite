@@ -60,6 +60,8 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         return <AdobeFeaturesIcon5 key={idx} data={data} />;
       case 'adobe_style_cards':
         return <AdobeStyleCards key={idx} data={data} />;
+      case 'comparison_two':
+        return <AdobeComparisonTwo key={idx} data={data} />;
       default:
         return null;
     }
