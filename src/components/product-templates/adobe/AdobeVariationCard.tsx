@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,17 @@ const AdobeVariationCard = ({ product }: { product: Product }) => {
   const activeVariations = (product.product_variations || [])
     .filter((v) => v.is_active && v.stock_status !== 'out_of_stock')
     .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (!detail?.variationId) return;
+      const match = activeVariations.find((v) => v.id === detail.variationId);
+      if (match) setSelectedVariant(match);
+    };
+    window.addEventListener('adobe:select-variation', handler);
+    return () => window.removeEventListener('adobe:select-variation', handler);
+  }, [activeVariations]);
 
   const isVariantInCart = selectedVariant
     ? items.some((i) => i.id === product.id && i.variantId === selectedVariant.id)

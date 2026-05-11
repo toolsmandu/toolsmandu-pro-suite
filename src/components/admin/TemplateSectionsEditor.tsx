@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -64,11 +66,24 @@ interface SingleProps {
   type: SectionType;
   value: any;
   onChange: (next: any) => void;
+  productId?: string;
 }
 
-export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
+export const SingleSectionEditor = ({ type, value, onChange, productId }: SingleProps) => {
   const data = value || buildEmptySection(type);
   const patch = (p: any) => onChange({ ...data, ...p });
+
+  const [variations, setVariations] = useState<Array<{ id: string; name: string }>>([]);
+  useEffect(() => {
+    if (!productId || type !== 'pricing_table') return;
+    supabase
+      .from('product_variations')
+      .select('id, name')
+      .eq('product_id', productId)
+      .eq('is_active', true)
+      .order('sort_order')
+      .then(({ data }) => setVariations((data || []) as any));
+  }, [productId, type]);
 
   if (type === 'hero') {
     return (
@@ -450,6 +465,22 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
                 <Field label="Period (e.g. mo)" value={p.period} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, period: v } : a))} />
               </div>
               <Field label="Note (e.g. You pay Rs. X today...)" textarea value={p.note} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, note: v } : a))} />
+              <div>
+                <Label className="mb-1 block text-xs">Linked product variation (selected when "Select Plan" is clicked)</Label>
+                <select
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  value={p.variation_id || ''}
+                  onChange={(e) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, variation_id: e.target.value } : a))}
+                >
+                  <option value="">— None —</option>
+                  {variations.map((v) => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
+                </select>
+                {!productId && (
+                  <p className="text-[11px] text-muted-foreground mt-1">Open this editor from a product page to load its variations.</p>
+                )}
+              </div>
             </div>
           ))}
           <Button variant="outline" size="sm" onClick={() => patch({

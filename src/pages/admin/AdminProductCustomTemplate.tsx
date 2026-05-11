@@ -224,6 +224,7 @@ const AdminProductCustomTemplate = () => {
                       type={it.template_type}
                       value={it.data}
                       onChange={(next) => updateData(i, next)}
+                      productId={id}
                     />
                   </div>
                   <div className="lg:sticky lg:top-4 self-start">

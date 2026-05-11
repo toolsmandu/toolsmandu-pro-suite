@@ -1,5 +1,16 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import AdobeVariationCard from './AdobeVariationCard';
+
+interface HeroProduct {
+  id: string;
+  name: string;
+  image_url?: string | null;
+  duration?: string | null;
+  price: number;
+  stock_status?: string;
+  product_variations?: any[];
+}
 
 interface HeroData {
   eyebrow?: string;
@@ -29,7 +40,7 @@ const decodeHtmlEntities = (value: string) => {
   return decoded;
 };
 
-const AdobeHero = ({ data }: { data: HeroData }) => {
+const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct }) => {
   const subheadingHtml = data.subheading ? decodeHtmlEntities(data.subheading) : '';
 
   return (
@@ -67,7 +78,9 @@ const AdobeHero = ({ data }: { data: HeroData }) => {
           </div>
         </div>
         <div className="relative">
-          {data.image_url ? (
+          {product ? (
+            <AdobeVariationCard product={product as any} />
+          ) : data.image_url ? (
             <img
               src={data.image_url}
               alt={data.heading || 'hero'}
