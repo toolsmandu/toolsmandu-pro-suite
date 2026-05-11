@@ -31,31 +31,40 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
         )}
 
         <div className="grid gap-6 md:grid-cols-2">
-          {items.map((it, i) => (
-            <div
-              key={i}
-              className="rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all flex items-center gap-6"
-            >
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg md:text-xl font-semibold text-card-foreground mb-2">
-                  {it.heading}
-                </h3>
-                {it.description && (
-                  <p className="text-sm md:text-base text-card-foreground/70 leading-relaxed">
-                    {it.description}
-                  </p>
+          {items.map((it, i) => {
+            const stacked = i === 0;
+            return (
+              <div
+                key={i}
+                className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all ${
+                  stacked ? 'flex flex-col gap-6' : 'flex items-center gap-6'
+                }`}
+              >
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg md:text-xl font-semibold text-card-foreground mb-2">
+                    {it.heading}
+                  </h3>
+                  {it.description && (
+                    <p className="text-sm md:text-base text-card-foreground/70 leading-relaxed">
+                      {it.description}
+                    </p>
+                  )}
+                </div>
+                {it.icon_url && (
+                  <img
+                    src={it.icon_url}
+                    alt={it.heading}
+                    loading="lazy"
+                    className={
+                      stacked
+                        ? 'w-full max-h-72 object-contain'
+                        : 'h-40 w-40 md:h-48 md:w-48 object-contain shrink-0'
+                    }
+                  />
                 )}
               </div>
-              {it.icon_url && (
-                <img
-                  src={it.icon_url}
-                  alt={it.heading}
-                  loading="lazy"
-                  className="h-40 w-40 md:h-48 md:w-48 object-contain shrink-0"
-                />
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
