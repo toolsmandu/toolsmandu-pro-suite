@@ -7,6 +7,7 @@ interface AppGridData {
   heading?: string;
   apps?: App[];
   footer_text?: string;
+  columns?: number;
 }
 
 const decodeHtmlEntities = (str: string): string => {
