@@ -113,7 +113,7 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
                       src={it.icon_url}
                       alt={it.heading}
                       loading="lazy"
-                      className="h-40 w-40 md:h-48 md:w-48 object-contain shrink-0"
+                      className="h-36 md:h-44 w-auto max-w-[45%] object-contain shrink-0"
                     />
                   )}
                 </div>
