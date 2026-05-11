@@ -48,8 +48,8 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
                       {globalIdx + 1}
                     </span>
                   )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className={stacked ? 'shrink-0' : 'flex-1 min-w-0'}>
+                    <div className="flex items-center gap-2 mb-2">
                       {!stacked && showItemNumber && (
                         <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary text-xs font-bold shrink-0">
                           {globalIdx + 1}
@@ -72,8 +72,8 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
                       loading="lazy"
                       className={
                         stacked
-                          ? 'w-full flex-1 min-h-0 max-h-full object-contain rounded-xl'
-                          : 'h-40 w-40 md:h-48 md:w-48 object-contain shrink-0'
+                          ? 'w-full flex-1 min-h-0 object-contain'
+                          : 'h-36 md:h-44 w-auto max-w-[45%] object-contain shrink-0'
                       }
                     />
                   )}
