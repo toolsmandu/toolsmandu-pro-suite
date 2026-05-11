@@ -436,10 +436,10 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
               <div className="flex justify-between items-center">
                 <span className="text-xs font-semibold text-muted-foreground">Plan #{i + 1}</span>
                 <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
-                  onClick={() => {
-                    setPtPlans(ptPlans.filter((_, j) => j !== i));
-                    setGroups(groups.map((g) => ({ ...g, rows: (g.rows || []).map((r: any) => ({ ...r, values: (r.values || []).filter((_: any, k: number) => k !== i) })) })));
-                  }}>
+                  onClick={() => patch({
+                    plans: ptPlans.filter((_, j) => j !== i),
+                    groups: groups.map((g) => ({ ...g, rows: (g.rows || []).map((r: any) => ({ ...r, values: (r.values || []).filter((_: any, k: number) => k !== i) })) })),
+                  })}>
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -454,10 +454,10 @@ export const SingleSectionEditor = ({ type, value, onChange }: SingleProps) => {
               <Field label="Note (e.g. You pay Rs. X today...)" textarea value={p.note} onChange={(v) => setPtPlans(ptPlans.map((a, j) => j === i ? { ...a, note: v } : a))} />
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => {
-            setPtPlans([...ptPlans, { name: '', currency: '', price: '', period: 'mo', cta_label: 'Select Plan', cta_link: '/cart', note: '' }]);
-            setGroups(groups.map((g) => ({ ...g, rows: (g.rows || []).map((r: any) => ({ ...r, values: [...(r.values || []), ''] })) })));
-          }}>
+          <Button variant="outline" size="sm" onClick={() => patch({
+            plans: [...ptPlans, { name: '', currency: '', price: '', period: 'mo', cta_label: 'Select Plan', cta_link: '/cart', note: '' }],
+            groups: groups.map((g) => ({ ...g, rows: (g.rows || []).map((r: any) => ({ ...r, values: [...(r.values || []), ''] })) })),
+          })}>
             <Plus className="h-4 w-4 mr-1" /> Add plan column
           </Button>
         </div>
