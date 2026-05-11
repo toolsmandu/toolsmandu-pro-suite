@@ -29,6 +29,9 @@ const SectionPreview = ({ type, data }: Props) => {
     case 'pricing_table':
       node = <AdobePricingTable data={data || {}} />;
       break;
+    case 'features_faq':
+      node = <AdobeFeaturesFAQ data={data || {}} />;
+      break;
   }
 
   return (
