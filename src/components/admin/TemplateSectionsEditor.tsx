@@ -269,6 +269,56 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
     );
   }
 
+  if (type === 'big_products_cards') {
+    const items: any[] = data.items || [];
+    const setItems = (next: any[]) => patch({ items: next });
+    return (
+      <div className="space-y-3">
+        <Field label="Eyebrow (optional)" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
+        <Field label="Heading (optional)" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading (optional)" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
+        <div>
+          <Label className="mb-1 block text-xs">Cards per row (desktop)</Label>
+          <select
+            className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            value={data.columns || 4}
+            onChange={(e) => patch({ columns: Number(e.target.value) })}
+          >
+            {[2, 3, 4].map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+        </div>
+        <div className="space-y-3 pt-2">
+          <div className="text-xs font-semibold text-muted-foreground">Product cards</div>
+          {items.map((it, i) => (
+            <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-muted-foreground">Card #{i + 1}</span>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                  onClick={() => setItems(items.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Card image (top hero)</Label>
+                <ImageUpload value={it.image_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, image_url: url } : a))} />
+              </div>
+              <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
+              <Field label="Price (e.g. Rs.29500/yr)" value={it.price} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, price: v } : a))} />
+              <Field label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} textarea />
+              <div className="grid grid-cols-2 gap-2">
+                <Field label="CTA label" value={it.cta_label} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_label: v } : a))} />
+                <Field label="CTA link" value={it.cta_link} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
+              </div>
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => setItems([...items, { image_url: '', heading: '', price: '', description: '', cta_label: 'Buy Now', cta_link: '' }])}>
+            <Plus className="h-4 w-4 mr-1" /> Add card
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (type === 'comparison_two') {
     const left = data.left || { logo_url: '', label: '', items: [] };
     const right = data.right || { logo_url: '', label: '', items: [] };
