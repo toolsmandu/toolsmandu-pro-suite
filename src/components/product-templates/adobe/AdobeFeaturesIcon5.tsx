@@ -38,7 +38,7 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
               return (
                 <div
                   key={i}
-                  className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all flex-1 min-h-0 ${
+                  className={`rounded-2xl border border-border/60 bg-card p-6 md:p-8 hover:shadow-lg hover:border-primary/40 transition-all flex-1 min-h-0 overflow-hidden ${
                     stacked ? 'flex flex-col gap-6' : 'flex items-center gap-6'
                   }`}
                 >
@@ -59,7 +59,7 @@ const AdobeFeaturesIcon5 = ({ data }: { data: FeaturesIcon5Data }) => {
                       loading="lazy"
                       className={
                         stacked
-                          ? 'w-full h-56 md:h-80 object-cover rounded-xl'
+                          ? 'w-full flex-1 min-h-0 object-cover rounded-xl'
                           : 'h-40 w-40 md:h-48 md:w-48 object-contain shrink-0'
                       }
                     />
