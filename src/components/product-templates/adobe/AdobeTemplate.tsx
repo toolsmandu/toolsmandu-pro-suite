@@ -4,6 +4,7 @@ import AdobeHero from './AdobeHero';
 import AdobeAppGrid from './AdobeAppGrid';
 import AdobeFeatures from './AdobeFeatures';
 import AdobePlans from './AdobePlans';
+import AdobePricingTable from './AdobePricingTable';
 import AdobeFAQs from './AdobeFAQs';
 import AdobeRelated from './AdobeRelated';
 
