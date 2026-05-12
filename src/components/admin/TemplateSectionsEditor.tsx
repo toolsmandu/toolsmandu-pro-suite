@@ -26,7 +26,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
 };
 
 export const emptySectionData: Record<SectionType, any> = {
-  hero: { eyebrow: '', heading: '', subheading: '', image_url: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
+  hero: { eyebrow: '', heading: '', subheading: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
   app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
   features_faq: { heading: '', description: '', items: [] },
@@ -100,10 +100,6 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
         <div>
           <Label className="mb-1 block text-xs">Subheading</Label>
           <RichTextEditor value={data.subheading || ''} onChange={(v) => patch({ subheading: v })} />
-        </div>
-        <div>
-          <Label className="mb-1 block text-sm">Hero image</Label>
-          <ImageUpload value={data.image_url} onChange={(url) => patch({ image_url: url })} />
         </div>
         <div className="grid md:grid-cols-2 gap-3">
           <Field label="Primary CTA label" value={data.cta_label} onChange={(v) => patch({ cta_label: v })} />
