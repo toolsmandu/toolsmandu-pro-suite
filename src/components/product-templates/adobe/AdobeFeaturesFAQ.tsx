@@ -20,7 +20,7 @@ const AdobeFeaturesFAQ = ({ data }: { data: FeaturesFAQData }) => {
   const current = items[active] || items[0];
 
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
         {(data.heading || data.description) && (
           <div className="max-w-3xl mx-auto text-center mb-12">

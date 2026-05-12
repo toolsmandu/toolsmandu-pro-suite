@@ -24,7 +24,7 @@ const AdobeBigProductsCards = ({ data }: { data: BigProductsCardsData }) => {
   const cols = colsMap[data.columns || 4] || 'lg:grid-cols-4';
 
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
         {(data.eyebrow || data.heading || data.subheading) && (
           <div className="max-w-3xl mx-auto text-center mb-12">

@@ -15,8 +15,8 @@ const AdobeFeatures = ({ data }: { data: FeaturesData }) => {
   if (!data.items?.length) return null;
 
   return (
-    <section className="py-16 md:py-24 bg-secondary/30">
-      <div className="container mx-auto px-4 space-y-20 md:space-y-28">
+    <section className="py-8 md:py-12 bg-secondary/30">
+      <div className="container mx-auto px-4 space-y-10 md:space-y-14">
         {data.items.map((item, idx) => {
           const imageRight = (item.image_side || (idx % 2 === 0 ? 'right' : 'left')) === 'right';
           return (
