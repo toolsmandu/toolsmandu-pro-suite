@@ -75,7 +75,11 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         .map((it: any, idx: number) => {
           const perProduct = it.data && Object.keys(it.data).length > 0 ? it.data : null;
           const sectionData = perProduct || it.custom_templates.data || {};
-          return renderSection(idx, it.custom_templates.template_type, sectionData);
+          return (
+            <div key={idx} id={`section-${idx + 1}`} className="scroll-mt-20">
+              {renderSection(idx, it.custom_templates.template_type, sectionData)}
+            </div>
+          );
         })}
       <AdobeFAQs productName={product?.name || ''} />
       <AdobeRelated productId={productId} categoryId={product?.category_id} />
