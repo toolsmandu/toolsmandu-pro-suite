@@ -24,23 +24,16 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
   const accent = highlight ? '#ffffff' : '#9ca3af';
   return (
     <div className="flex flex-col">
-      {/* Image card */}
-      <div className="relative rounded-2xl bg-muted/60 flex items-center justify-center overflow-hidden p-6 md:p-8">
-        <div
-          className={`relative w-full aspect-[4/3] rounded-xl flex items-center justify-center overflow-hidden ${highlight ? '' : 'bg-background'}`}
-          style={highlight ? { backgroundColor: '#0a2e5c' } : undefined}
-        >
-          {side.logo_url ? (
-            <img
-              src={side.logo_url}
-              alt={side.label || ''}
-              loading="lazy"
-              className={`w-[70%] h-[70%] object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
-            />
-          ) : (
-            <div className={`w-[40%] aspect-square rounded-full ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
-          )}
-        </div>
+      {/* Logo only */}
+      <div className="flex items-center justify-center min-h-[180px] md:min-h-[220px]">
+        {side.logo_url ? (
+          <img
+            src={side.logo_url}
+            alt={side.label || ''}
+            loading="lazy"
+            className={`max-h-32 md:max-h-40 w-auto object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
+          />
+        ) : null}
       </div>
 
       {/* Label connector */}
