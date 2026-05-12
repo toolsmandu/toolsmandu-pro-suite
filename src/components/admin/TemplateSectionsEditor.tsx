@@ -26,7 +26,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
 };
 
 export const emptySectionData: Record<SectionType, any> = {
-  hero: { eyebrow: '', heading: '', subheading: '', image_url: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
+  hero: { eyebrow: '', heading: '', subheading: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
   app_grid: { heading: '', apps: [], footer_text: '' },
   features: { items: [] },
   features_faq: { heading: '', description: '', items: [] },
