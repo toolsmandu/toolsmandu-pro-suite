@@ -24,10 +24,10 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
   const accent = highlight ? '#ffffff' : '#9ca3af';
   return (
     <div className="flex flex-col">
-      {/* Image card with arch */}
-      <div className="relative rounded-2xl bg-muted/60 flex items-end justify-center overflow-hidden pt-12 md:pt-16">
+      {/* Image card */}
+      <div className="relative rounded-2xl bg-muted/60 flex items-center justify-center overflow-hidden p-6 md:p-8">
         <div
-          className={`relative w-3/5 aspect-[2/1] rounded-t-full flex items-start justify-center overflow-hidden ${highlight ? '' : 'bg-background'}`}
+          className={`relative w-full aspect-[4/3] rounded-xl flex items-center justify-center overflow-hidden ${highlight ? '' : 'bg-background'}`}
           style={highlight ? { backgroundColor: '#0a2e5c' } : undefined}
         >
           {side.logo_url ? (
@@ -35,10 +35,10 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
               src={side.logo_url}
               alt={side.label || ''}
               loading="lazy"
-              className={`w-[85%] h-[85%] object-contain mt-[8%] ${highlight ? '' : 'opacity-40 grayscale'}`}
+              className={`w-[70%] h-[70%] object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
             />
           ) : (
-            <div className={`w-[55%] aspect-square rounded-full mb-[10%] ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
+            <div className={`w-[40%] aspect-square rounded-full ${highlight ? 'bg-primary/20' : 'bg-muted-foreground/20'}`} />
           )}
         </div>
       </div>
