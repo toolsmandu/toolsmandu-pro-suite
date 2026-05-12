@@ -39,6 +39,28 @@ const decodeHtmlEntities = (value: string) => {
   return decoded;
 };
 
+const CtaLink = ({ href, children }: { href?: string; children: React.ReactNode }) => {
+  const target = href || '#';
+  if (target.startsWith('#')) {
+    return (
+      <a
+        href={target}
+        onClick={(e) => {
+          const id = target.slice(1);
+          const el = id ? document.getElementById(id) : null;
+          if (el) {
+            e.preventDefault();
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }}
+      >
+        {children}
+      </a>
+    );
+  }
+  return <Link to={target}>{children}</Link>;
+};
+
 const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct }) => {
   const subheadingHtml = data.subheading ? decodeHtmlEntities(data.subheading) : '';
 
