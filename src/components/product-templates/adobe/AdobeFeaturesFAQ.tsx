@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 interface FAQItem {
   heading: string;
   description?: string;
+  image_url?: string;
 }
 
 interface FeaturesFAQData {
@@ -60,9 +61,19 @@ const AdobeFeaturesFAQ = ({ data }: { data: FeaturesFAQData }) => {
                   open ? 'grid-rows-[1fr] opacity-100 pb-4' : 'grid-rows-[0fr] opacity-0'
                 )}>
                   <div className="overflow-hidden">
-                    {it.description && (
-                      <div className="text-sm md:text-base text-foreground/75 leading-relaxed prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: it.description }} />
-                    )}
+                    <div className={cn('grid gap-4 items-start', it.image_url ? 'md:grid-cols-[200px_1fr]' : 'grid-cols-1')}>
+                      {it.image_url && (
+                        <img
+                          src={it.image_url}
+                          alt={it.heading}
+                          loading="lazy"
+                          className="w-full h-auto rounded-lg"
+                        />
+                      )}
+                      {it.description && (
+                        <div className="text-sm md:text-base text-foreground/75 leading-relaxed prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: it.description }} />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
