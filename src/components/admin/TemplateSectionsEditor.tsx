@@ -246,9 +246,13 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
               </div>
               <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
               <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+              <div>
+                <Label className="mb-1 block text-xs">Image (optional, shown on the left)</Label>
+                <ImageUpload value={it.image_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, image_url: url } : a))} />
+              </div>
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => setItems([...items, { heading: '', description: '' }])}>
+          <Button variant="outline" size="sm" onClick={() => setItems([...items, { heading: '', description: '', image_url: '' }])}>
             <Plus className="h-4 w-4 mr-1" /> Add item
           </Button>
         </div>
