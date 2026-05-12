@@ -225,6 +225,7 @@ const AdminProductCustomTemplate = () => {
                       value={it.data}
                       onChange={(next) => updateData(i, next)}
                       productId={id}
+                      availableSections={items.map((s, idx) => ({ index: idx + 1, name: s.name, type: s.template_type }))}
                     />
                   </div>
                   <div className="lg:sticky lg:top-4 self-start">

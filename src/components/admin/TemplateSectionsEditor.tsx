@@ -74,9 +74,10 @@ interface SingleProps {
   value: any;
   onChange: (next: any) => void;
   productId?: string;
+  availableSections?: Array<{ index: number; name: string; type: SectionType }>;
 }
 
-export const SingleSectionEditor = ({ type, value, onChange, productId }: SingleProps) => {
+export const SingleSectionEditor = ({ type, value, onChange, productId, availableSections }: SingleProps) => {
   const data = value || buildEmptySection(type);
   const patch = (p: any) => onChange({ ...data, ...p });
 
@@ -92,6 +93,26 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
       .then(({ data }) => setVariations((data || []) as any));
   }, [productId, type]);
 
+  const SectionPicker = ({ value: v, onChange: oc }: { value?: string; onChange: (s: string) => void }) => {
+    const sections = (availableSections || []).filter((s) => s.type !== 'hero');
+    if (sections.length === 0) return null;
+    const current = v?.startsWith('#section-') ? v : '';
+    return (
+      <select
+        value={current}
+        onChange={(e) => oc(e.target.value)}
+        className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-xs"
+      >
+        <option value="">— Or jump to a section on this page —</option>
+        {sections.map((s) => (
+          <option key={s.index} value={`#section-${s.index}`}>
+            {s.index}. {s.name}
+          </option>
+        ))}
+      </select>
+    );
+  };
+
   if (type === 'hero') {
     return (
       <div className="space-y-3">
@@ -103,9 +124,15 @@ export const SingleSectionEditor = ({ type, value, onChange, productId }: Single
         </div>
         <div className="grid md:grid-cols-2 gap-3">
           <Field label="Primary CTA label" value={data.cta_label} onChange={(v) => patch({ cta_label: v })} />
-          <Field label="Primary CTA link" value={data.cta_link} onChange={(v) => patch({ cta_link: v })} />
+          <div>
+            <Field label="Primary CTA link" value={data.cta_link} onChange={(v) => patch({ cta_link: v })} />
+            <SectionPicker value={data.cta_link} onChange={(v) => patch({ cta_link: v })} />
+          </div>
           <Field label="Secondary CTA label" value={data.secondary_cta_label} onChange={(v) => patch({ secondary_cta_label: v })} />
-          <Field label="Secondary CTA link" value={data.secondary_cta_link} onChange={(v) => patch({ secondary_cta_link: v })} />
+          <div>
+            <Field label="Secondary CTA link" value={data.secondary_cta_link} onChange={(v) => patch({ secondary_cta_link: v })} />
+            <SectionPicker value={data.secondary_cta_link} onChange={(v) => patch({ secondary_cta_link: v })} />
+          </div>
         </div>
         <Field label="Background (CSS color or gradient, optional)" value={data.bg_color} onChange={(v) => patch({ bg_color: v })} />
       </div>

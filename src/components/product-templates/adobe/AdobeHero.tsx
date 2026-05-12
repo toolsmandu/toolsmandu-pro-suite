@@ -39,6 +39,28 @@ const decodeHtmlEntities = (value: string) => {
   return decoded;
 };
 
+const CtaLink = ({ href, children }: { href?: string; children: React.ReactNode }) => {
+  const target = href || '#';
+  if (target.startsWith('#')) {
+    return (
+      <a
+        href={target}
+        onClick={(e) => {
+          const id = target.slice(1);
+          const el = id ? document.getElementById(id) : null;
+          if (el) {
+            e.preventDefault();
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }}
+      >
+        {children}
+      </a>
+    );
+  }
+  return <Link to={target}>{children}</Link>;
+};
+
 const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct }) => {
   const subheadingHtml = data.subheading ? decodeHtmlEntities(data.subheading) : '';
 
@@ -66,12 +88,12 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
           <div className="flex flex-wrap gap-3">
             {data.cta_label && (
               <Button asChild size="lg" className="rounded-full px-8 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
-                <Link to={data.cta_link || '#'}>{data.cta_label}</Link>
+                <CtaLink href={data.cta_link}>{data.cta_label}</CtaLink>
               </Button>
             )}
             {data.secondary_cta_label && (
               <Button asChild size="lg" variant="outline" className="rounded-full px-8 bg-transparent border-foreground/40 text-foreground hover:bg-foreground/10">
-                <Link to={data.secondary_cta_link || '#'}>{data.secondary_cta_label}</Link>
+                <CtaLink href={data.secondary_cta_link}>{data.secondary_cta_label}</CtaLink>
               </Button>
             )}
           </div>
