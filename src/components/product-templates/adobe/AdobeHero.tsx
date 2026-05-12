@@ -16,7 +16,6 @@ interface HeroData {
   eyebrow?: string;
   heading?: string;
   subheading?: string;
-  image_url?: string;
   cta_label?: string;
   cta_link?: string;
   secondary_cta_label?: string;
