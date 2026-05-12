@@ -77,17 +77,19 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
             )}
           </div>
         </div>
-        <div className="relative">
-          {product ? (
-            <AdobeVariationCard product={product as any} />
-          ) : data.image_url ? (
-            <img
-              src={data.image_url}
-              alt={data.heading || 'hero'}
-              loading="eager"
-              className="w-full h-auto rounded-2xl shadow-2xl"
-            />
-          ) : null}
+        <div className="relative flex justify-end">
+          <div className="w-3/4">
+            {product ? (
+              <AdobeVariationCard product={product as any} />
+            ) : data.image_url ? (
+              <img
+                src={data.image_url}
+                alt={data.heading || 'hero'}
+                loading="eager"
+                className="w-full h-auto rounded-2xl shadow-2xl"
+              />
+            ) : null}
+          </div>
         </div>
       </div>
     </section>
