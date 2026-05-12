@@ -24,17 +24,6 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
   const accent = highlight ? '#ffffff' : '#9ca3af';
   return (
     <div className="flex flex-col">
-      {/* Logo only */}
-      <div className="flex items-center justify-center min-h-[180px] md:min-h-[220px]">
-        {side.logo_url ? (
-          <img
-            src={side.logo_url}
-            alt={side.label || ''}
-            loading="lazy"
-            className={`max-h-32 md:max-h-40 w-auto object-contain ${highlight ? '' : 'opacity-40 grayscale'}`}
-          />
-        ) : null}
-      </div>
 
       {/* Label connector */}
       <div className="flex items-center gap-2 mt-6">
