@@ -26,7 +26,10 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
     <div className="flex flex-col">
       {/* Image card with arch */}
       <div className="relative rounded-2xl bg-muted/60 flex items-end justify-center overflow-hidden pt-12 md:pt-16">
-        <div className="relative w-3/5 aspect-[2/1] rounded-t-full bg-background flex items-start justify-center overflow-hidden">
+        <div
+          className={`relative w-3/5 aspect-[2/1] rounded-t-full flex items-start justify-center overflow-hidden ${highlight ? '' : 'bg-background'}`}
+          style={highlight ? { backgroundColor: '#0a2e5c' } : undefined}
+        >
           {side.logo_url ? (
             <img
               src={side.logo_url}
@@ -70,14 +73,14 @@ const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean })
               <span
                 className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
                   it.included
-                    ? (highlight ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground')
+                    ? (highlight ? 'bg-white/15 text-white' : 'bg-primary/15 text-primary')
                     : 'bg-destructive/15 text-destructive'
                 }`}
                 aria-hidden
               >
                 {it.included ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
               </span>
-              <span className="text-sm md:text-base text-foreground/85 leading-relaxed">
+              <span className={`text-sm md:text-base leading-relaxed ${highlight ? 'text-white' : 'text-foreground/85'}`}>
                 {it.text}
               </span>
             </li>
