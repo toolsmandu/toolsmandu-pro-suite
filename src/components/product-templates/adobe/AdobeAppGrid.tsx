@@ -41,9 +41,16 @@ const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
     <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
         {data.heading && (
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-6">
             {data.heading}
           </h2>
+        )}
+        {data.footer_text && (
+          <div
+            className="prose prose-sm md:prose-base dark:prose-invert max-w-3xl mx-auto mb-10 text-left"
+            style={{ color: '#ffffff' }}
+            dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(data.footer_text) }}
+          />
         )}
         {!!data.apps?.length && (
           <div className={`grid grid-cols-2 sm:grid-cols-3 ${colClass} gap-6`}>
@@ -68,13 +75,6 @@ const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
               </div>
             ))}
           </div>
-        )}
-        {data.footer_text && (
-          <div
-            className="prose prose-sm md:prose-base dark:prose-invert max-w-3xl mx-auto mt-12 text-left"
-            style={{ color: '#ffffff' }}
-            dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(data.footer_text) }}
-          />
         )}
       </div>
     </section>
