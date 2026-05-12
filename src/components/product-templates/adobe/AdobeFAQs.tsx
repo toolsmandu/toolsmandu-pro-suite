@@ -18,7 +18,7 @@ const AdobeFAQs = ({ productName }: { productName: string }) => {
   const replace = (t: string) => t.replace(/\[product\]/gi, productName);
 
   return (
-    <section className="py-16 md:py-24" style={{ backgroundColor: '#0a1f3d' }}>
+    <section className="py-8 md:py-12" style={{ backgroundColor: '#0a1f3d' }}>
       <div className="container mx-auto px-4 max-w-4xl">
         <h2 className="text-xl font-bold text-foreground mb-5">
           Frequently Asked Questions

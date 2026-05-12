@@ -19,7 +19,7 @@ const AdobeFeaturesIcon6 = ({ data, showItemNumber = false }: { data: FeaturesIc
   const featuredIndices = new Set([0, 5]);
 
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
         {(data.heading || data.subheading) && (
           <div className="text-center max-w-3xl mx-auto mb-12">
