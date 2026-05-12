@@ -47,7 +47,7 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
       className="relative overflow-hidden"
       style={{ background: data.bg_color || 'linear-gradient(135deg, hsl(224 76% 16%) 0%, hsl(222 47% 8%) 100%)' }}
     >
-      <div className="container mx-auto px-4 py-16 md:py-24 lg:py-32 grid lg:grid-cols-2 gap-10 items-center relative z-10">
+      <div className={`container mx-auto px-4 py-16 md:py-24 lg:py-32 gap-10 items-center relative z-10 ${product ? 'grid lg:grid-cols-[3fr_2fr]' : ''}`}>
         <div className="text-foreground">
           {data.eyebrow && (
             <p className="text-sm font-semibold tracking-widest uppercase text-primary-foreground/80 mb-4">
@@ -59,7 +59,7 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
           </h1>
           {subheadingHtml && (
             <div
-              className="text-lg md:text-xl text-foreground/80 mb-8 max-w-xl leading-relaxed prose prose-invert prose-sm md:prose-base max-w-none"
+              className="text-lg md:text-xl text-foreground/80 mb-8 leading-relaxed prose prose-invert prose-sm md:prose-base max-w-none"
               dangerouslySetInnerHTML={{ __html: subheadingHtml }}
             />
           )}
@@ -76,20 +76,13 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
             )}
           </div>
         </div>
-        <div className="relative flex justify-end">
-          <div className="w-3/4">
-            {product ? (
+        {product && (
+          <div className="relative flex justify-end">
+            <div className="w-3/4">
               <AdobeVariationCard product={product as any} />
-            ) : data.image_url ? (
-              <img
-                src={data.image_url}
-                alt={data.heading || 'hero'}
-                loading="eager"
-                className="w-full h-auto rounded-2xl shadow-2xl"
-              />
-            ) : null}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
