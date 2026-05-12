@@ -69,7 +69,7 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
       className="relative overflow-hidden"
       style={{ background: data.bg_color || 'linear-gradient(135deg, hsl(224 76% 16%) 0%, hsl(222 47% 8%) 100%)' }}
     >
-      <div className={`container mx-auto px-4 py-16 md:py-24 lg:py-32 gap-10 items-center relative z-10 ${product ? 'grid lg:grid-cols-[3fr_2fr]' : ''}`}>
+      <div className={`container mx-auto px-4 py-8 md:py-12 lg:py-16 gap-10 items-center relative z-10 ${product ? 'grid lg:grid-cols-[3fr_2fr]' : ''}`}>
         <div className="text-foreground">
           {data.eyebrow && (
             <p className="text-sm font-semibold tracking-widest uppercase text-primary-foreground/80 mb-4">
