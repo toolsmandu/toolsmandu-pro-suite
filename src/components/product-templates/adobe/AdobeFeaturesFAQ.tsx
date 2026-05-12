@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 interface FAQItem {
   heading: string;
   description?: string;
+  image_url?: string;
 }
 
 interface FeaturesFAQData {
