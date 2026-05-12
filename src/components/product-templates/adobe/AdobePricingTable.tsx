@@ -54,7 +54,7 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
 
   const handleSelect = (variationId?: string) => {
     if (!variationId) {
-      toast.error('No plan linked. Please configure this plan in admin.');
+      toast.error('Plan not available, contact support team');
       return;
     }
     window.dispatchEvent(new CustomEvent('adobe:select-variation', { detail: { variationId } }));
