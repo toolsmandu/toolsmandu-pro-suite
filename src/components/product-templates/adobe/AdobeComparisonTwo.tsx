@@ -23,33 +23,41 @@ interface ComparisonTwoData {
 const Col = ({ side, highlight }: { side: ComparisonSide; highlight?: boolean }) => {
   const accent = highlight ? '#ffffff' : '#9ca3af';
   return (
-    <div className="flex flex-col">
+    <div
+      className={`relative flex flex-col rounded-2xl p-6 md:p-8 border transition-all ${
+        highlight
+          ? 'border-white/20 shadow-2xl shadow-primary/20 ring-1 ring-white/10'
+          : 'border-border/60 bg-card/40'
+      }`}
+      style={
+        highlight
+          ? { background: 'linear-gradient(160deg, #0a2e5c 0%, #061a36 100%)' }
+          : undefined
+      }
+    >
+      {highlight && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white text-[#0a2e5c] text-[11px] font-bold uppercase tracking-wider px-3 py-1 shadow">
+          Recommended
+        </div>
+      )}
 
       {/* Label connector */}
-      <div className="flex items-center gap-2 mt-6">
+      <div className="flex items-center gap-2">
         <div className="flex-1 h-px" style={{ background: accent }} />
-        <span
-          className="h-2 w-2 rounded-full"
-          style={{ background: accent }}
-          aria-hidden
-        />
+        <span className="h-2 w-2 rounded-full" style={{ background: accent }} aria-hidden />
         <div
           className={`rounded-full border px-5 py-2 text-sm md:text-base font-semibold whitespace-nowrap ${highlight ? 'text-white' : 'text-gray-400'}`}
           style={{ borderColor: accent }}
         >
           {side.label || ''}
         </div>
-        <span
-          className="h-2 w-2 rounded-full"
-          style={{ background: accent }}
-          aria-hidden
-        />
+        <span className="h-2 w-2 rounded-full" style={{ background: accent }} aria-hidden />
         <div className="flex-1 h-px" style={{ background: accent }} />
       </div>
 
       {/* Items */}
       {(side.items || []).length > 0 && (
-        <ul className="space-y-4 mt-6">
+        <ul className="space-y-4 mt-8">
           {(side.items || []).map((it, i) => (
             <li key={i} className="flex items-start gap-3">
               <span
