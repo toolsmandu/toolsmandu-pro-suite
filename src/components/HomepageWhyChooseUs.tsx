@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import * as Icons from 'lucide-react';
 import { ShieldCheck } from 'lucide-react';
+import { TrustpilotCard, GoogleCard } from './ReviewCards';
 
 export type WhyItem = {
   icon: string;
@@ -35,7 +36,11 @@ const HomepageWhyChooseUs = () => {
       const { data } = await supabase
         .from('site_settings')
         .select('key,value')
-        .in('key', ['homepage_why_title', 'homepage_why_intro', 'homepage_why_items']);
+        .in('key', [
+          'homepage_why_title', 'homepage_why_intro', 'homepage_why_items',
+          'trustpilot_score', 'trustpilot_count', 'google_score', 'google_count',
+          'footer_trustpilot_link', 'footer_google_link',
+        ]);
       return data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string>) || {};
     },
   });
@@ -62,9 +67,23 @@ const HomepageWhyChooseUs = () => {
         </div>
 
         <div className="p-6 md:p-10">
-          <p className="text-center text-foreground/80 max-w-3xl mx-auto mb-10 leading-relaxed text-sm md:text-base">
-            {intro}
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 md:gap-8 items-start mb-10">
+            <p className="text-foreground/80 leading-relaxed text-sm md:text-base">
+              {intro}
+            </p>
+            <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-[260px]">
+              <TrustpilotCard
+                score={data?.trustpilot_score || '4.8'}
+                count={data?.trustpilot_count || '53'}
+                link={data?.footer_trustpilot_link || 'https://www.trustpilot.com/review/toolsmandu.com'}
+              />
+              <GoogleCard
+                score={data?.google_score || '4.9'}
+                count={data?.google_count || '120'}
+                link={data?.footer_google_link || '#'}
+              />
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-7">
             {items.map((item, i) => {

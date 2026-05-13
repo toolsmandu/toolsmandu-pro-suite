@@ -174,6 +174,19 @@ const AdminHomepageSeo = () => {
               ))}
             </div>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border">
+            <div className="space-y-2">
+              <Label className="font-semibold">Trustpilot Reviews</Label>
+              <div><Label className="text-xs">Score (out of 5)</Label><Input value={tpScore} onChange={e => setTpScore(e.target.value)} placeholder="4.8" /></div>
+              <div><Label className="text-xs">Number of Reviews</Label><Input value={tpCount} onChange={e => setTpCount(e.target.value)} placeholder="53" /></div>
+            </div>
+            <div className="space-y-2">
+              <Label className="font-semibold">Google Reviews</Label>
+              <div><Label className="text-xs">Score (out of 5)</Label><Input value={gScore} onChange={e => setGScore(e.target.value)} placeholder="4.9" /></div>
+              <div><Label className="text-xs">Number of Reviews</Label><Input value={gCount} onChange={e => setGCount(e.target.value)} placeholder="120" /></div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -189,19 +202,6 @@ const AdminHomepageSeo = () => {
             <Label>About Content</Label>
             <p className="text-xs text-muted-foreground mb-2">Shown below the Blogs section on the homepage.</p>
             <RichTextEditor value={aboutContent} onChange={setAboutContent} />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="font-semibold">Trustpilot Reviews</Label>
-              <div><Label className="text-xs">Score (out of 5)</Label><Input value={tpScore} onChange={e => setTpScore(e.target.value)} placeholder="4.8" /></div>
-              <div><Label className="text-xs">Number of Reviews</Label><Input value={tpCount} onChange={e => setTpCount(e.target.value)} placeholder="53" /></div>
-            </div>
-            <div className="space-y-2">
-              <Label className="font-semibold">Google Reviews</Label>
-              <div><Label className="text-xs">Score (out of 5)</Label><Input value={gScore} onChange={e => setGScore(e.target.value)} placeholder="4.9" /></div>
-              <div><Label className="text-xs">Number of Reviews</Label><Input value={gCount} onChange={e => setGCount(e.target.value)} placeholder="120" /></div>
-            </div>
           </div>
 
           <div>
