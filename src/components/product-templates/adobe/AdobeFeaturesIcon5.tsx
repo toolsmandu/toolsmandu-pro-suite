@@ -5,6 +5,7 @@ interface IconFeatureItem {
 }
 
 interface FeaturesIcon5Data {
+  eyebrow?: string;
   heading?: string;
   subheading?: string;
   items?: IconFeatureItem[];
@@ -17,8 +18,13 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
   return (
     <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
-        {(data.heading || data.subheading) && (
+        {(data.eyebrow || data.heading || data.subheading) && (
           <div className="text-center max-w-3xl mx-auto mb-12">
+            {data.eyebrow && (
+              <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
+                {data.eyebrow}
+              </p>
+            )}
             {data.heading && (
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
                 {data.heading}
