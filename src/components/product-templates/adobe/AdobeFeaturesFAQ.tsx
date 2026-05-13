@@ -28,7 +28,7 @@ const AdobeFeaturesFAQ = ({ data }: { data: FeaturesFAQData }) => {
         {(data.eyebrow || data.heading || data.description) && (
           <div className="max-w-3xl mx-auto text-center mb-12">
             {data.eyebrow && (
-              <p className="text-sm font-semibold tracking-widest uppercase italic text-primary mb-2">
+              <p className="text-sm font-semibold tracking-widest uppercase italic text-white mb-2">
                 {data.eyebrow}
               </p>
             )}
