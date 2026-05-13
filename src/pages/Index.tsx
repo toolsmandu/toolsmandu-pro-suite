@@ -11,6 +11,7 @@ const NewInStore = lazy(() => import('@/components/NewInStore'));
 const SuperSavingDeals = lazy(() => import('@/components/SuperSavingDeals'));
 const HomepageBlogs = lazy(() => import('@/components/HomepageBlogs'));
 const HomepageSeoContent = lazy(() => import('@/components/HomepageSeoContent'));
+const HomepageWhyChooseUs = lazy(() => import('@/components/HomepageWhyChooseUs'));
 
 const ProductRowSkeleton = () => (
   <div className="flex gap-4 overflow-hidden pb-4">
@@ -232,6 +233,7 @@ const Index = () => {
         ))}
         <Suspense fallback={null}>
           <HomepageBlogs />
+          <HomepageWhyChooseUs />
           <HomepageSeoContent />
         </Suspense>
       </div>
