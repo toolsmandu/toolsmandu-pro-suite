@@ -12,12 +12,12 @@ import MainLayout from "@/components/layout/MainLayout";
 import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import ProductPage from "./pages/ProductPage";
-import CategoryPage from "./pages/CategoryPage";
 
 // Lazy: secondary public pages
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
+const ProductPage = lazy(() => import("./pages/ProductPage"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
