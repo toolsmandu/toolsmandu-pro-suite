@@ -464,7 +464,9 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
 
     return (
       <div className="space-y-4">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
 
         <div className="space-y-3">
           <div className="text-xs font-semibold text-muted-foreground">Plan columns</div>
