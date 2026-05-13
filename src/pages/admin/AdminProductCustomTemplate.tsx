@@ -111,6 +111,12 @@ const AdminProductCustomTemplate = () => {
   };
   const toggle = (idx: number) =>
     setItems((cur) => cur.map((it, i) => (i === idx ? { ...it, open: !it.open } : it)));
+  const allCollapsed = items.length > 0 && items.every((it) => !it.open);
+  const toggleAll = () =>
+    setItems((cur) => {
+      const expand = cur.every((it) => !it.open);
+      return cur.map((it) => ({ ...it, open: expand }));
+    });
   const updateData = (idx: number, next: any) =>
     setItems((cur) => cur.map((it, i) => (i === idx ? { ...it, data: next } : it)));
 
@@ -186,6 +192,18 @@ const AdminProductCustomTemplate = () => {
           The library's content is used as a starting point, then you can edit it just for this product. <Link to="/admin/layout-section" className="underline">Manage sections</Link>.
         </p>
       </div>
+
+      {items.length > 0 && (
+        <div className="flex justify-end mb-2">
+          <Button variant="outline" size="sm" onClick={toggleAll}>
+            {allCollapsed ? (
+              <><ChevronDown className="h-4 w-4 mr-1" /> Expand all</>
+            ) : (
+              <><ChevronRight className="h-4 w-4 mr-1" /> Collapse all</>
+            )}
+          </Button>
+        </div>
+      )}
 
       <div className="space-y-3">
         {items.length === 0 ? (
