@@ -111,6 +111,7 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
                   </button>
                 </div>
               )}
+            </div>
             {plans.map((p, i) => (
               <div key={i} className="pt-2">
                 <div className="text-base font-medium text-foreground/80 mb-2">{p.name}</div>
