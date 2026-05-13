@@ -9,6 +9,7 @@ interface BulletItem {
 interface ProductIntroItem {
   eyebrow?: string;
   heading?: string;
+  subheading?: string;
   description?: string;
   image_url?: string;
   image_side?: 'left' | 'right';
