@@ -4,9 +4,23 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { toast } from 'sonner';
+import * as Icons from 'lucide-react';
+import { Plus, Trash2, ShieldCheck } from 'lucide-react';
+
+type WhyItem = { icon: string; title: string; description: string };
+
+const DEFAULT_WHY_ITEMS: WhyItem[] = [
+  { icon: 'ShieldCheck', title: '100% Genuine Products', description: 'Only authentic, official subscriptions sourced directly — never cracked or shared illegally.' },
+  { icon: 'Zap', title: 'Instant Delivery', description: 'Most products are delivered to your inbox within minutes of payment confirmation.' },
+  { icon: 'BadgeCheck', title: 'Service Warranty', description: 'Every order is covered by a full warranty for the duration of your subscription.' },
+  { icon: 'Wallet', title: 'Local Payment Methods', description: 'Pay easily with eSewa, Khalti, IME Pay, FonePay, or bank transfer in NPR.' },
+  { icon: 'Headphones', title: 'Friendly 24/7 Support', description: 'Our Nepal-based support team is always one WhatsApp message away.' },
+  { icon: 'TrendingDown', title: 'Best Prices in Nepal', description: 'Save big with shared family plans and bulk pricing you won\'t find elsewhere.' },
+];
 
 const KEYS = [
   'homepage_seo_title',
@@ -16,6 +30,9 @@ const KEYS = [
   'trustpilot_count',
   'google_score',
   'google_count',
+  'homepage_why_title',
+  'homepage_why_intro',
+  'homepage_why_items',
 ] as const;
 
 const AdminHomepageSeo = () => {
