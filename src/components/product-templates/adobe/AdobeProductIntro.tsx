@@ -50,6 +50,11 @@ const AdobeProductIntro = ({ data }: { data: ProductIntroData }) => {
                     {item.heading}
                   </h3>
                 )}
+                {item.subheading && (
+                  <p className="text-base md:text-lg text-foreground/80 mb-4 leading-relaxed">
+                    {item.subheading}
+                  </p>
+                )}
                 {item.description && (
                   <div
                     className="text-base text-foreground/75 leading-relaxed mb-5 prose prose-invert max-w-none"
