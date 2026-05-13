@@ -91,7 +91,7 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
           <div className="grid gap-x-6" style={{ gridTemplateColumns: `minmax(180px, 1fr) repeat(${plans.length}, minmax(0, 1fr))` }}>
             {/* Header row: Plan label + plans */}
             <div className="pt-2">
-              <div className="text-base font-medium text-foreground/80 mb-2">Plan</div>
+              <div className="text-base font-medium text-foreground/80 mb-2">Plan Comparison</div>
               {plans.length > visibleCount && (
                 <div className="flex gap-2">
                   <button
@@ -117,7 +117,7 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
               <div key={i} className="pt-2">
                 <div className="text-base font-medium text-foreground/80 mb-2">{p.name}</div>
                 <div className="mb-3">
-                  {p.currency && <span className="text-base align-top mr-0.5 line-through opacity-70">{p.currency}</span>}
+                  {p.currency && <span className="text-base align-top mr-0.5 opacity-70">{p.currency}</span>}
                   <span className="text-4xl font-bold text-foreground">{p.price}</span>
                   {p.period && <span className="text-base text-muted-foreground">/{p.period}</span>}
                 </div>
@@ -182,7 +182,7 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
               <div className="mb-6">
                 <div className="text-base font-medium text-foreground/80 mb-2">{p.name}</div>
                 <div className="mb-3">
-                  {p.currency && <span className="text-base align-top mr-0.5 line-through opacity-70">{p.currency}</span>}
+                  {p.currency && <span className="text-base align-top mr-0.5 opacity-70">{p.currency}</span>}
                   <span className="text-4xl font-bold text-foreground">{p.price}</span>
                   {p.period && <span className="text-base text-muted-foreground">/{p.period}</span>}
                 </div>
