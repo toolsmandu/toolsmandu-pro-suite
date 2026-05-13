@@ -67,9 +67,23 @@ const HomepageWhyChooseUs = () => {
         </div>
 
         <div className="p-6 md:p-10">
-          <p className="text-center text-foreground/80 max-w-3xl mx-auto mb-10 leading-relaxed text-sm md:text-base">
-            {intro}
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 md:gap-8 items-start mb-10">
+            <p className="text-foreground/80 leading-relaxed text-sm md:text-base">
+              {intro}
+            </p>
+            <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-[260px]">
+              <TrustpilotCard
+                score={data?.trustpilot_score || '4.8'}
+                count={data?.trustpilot_count || '53'}
+                link={data?.footer_trustpilot_link || 'https://www.trustpilot.com/review/toolsmandu.com'}
+              />
+              <GoogleCard
+                score={data?.google_score || '4.9'}
+                count={data?.google_count || '120'}
+                link={data?.footer_google_link || '#'}
+              />
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-7">
             {items.map((item, i) => {
