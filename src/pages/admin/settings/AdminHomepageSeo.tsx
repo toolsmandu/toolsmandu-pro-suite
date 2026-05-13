@@ -91,6 +91,7 @@ const AdminHomepageSeo = () => {
       { key: 'google_score', value: gScore },
       { key: 'google_count', value: gCount },
       { key: 'homepage_why_title', value: whyTitle },
+      { key: 'homepage_why_eyebrow', value: whyEyebrow },
       { key: 'homepage_why_intro', value: whyIntro },
       { key: 'homepage_why_items', value: JSON.stringify(whyItems) },
     ];
