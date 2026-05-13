@@ -57,18 +57,30 @@ const HomepageWhyChooseUs = () => {
 
   return (
     <section className="mb-12 mt-4">
-      <div className="relative rounded-2xl border border-border/60 bg-card/40 overflow-hidden shadow-[0_10px_40px_-15px_rgba(0,0,0,0.5)]">
-        {/* Gradient header */}
-        <div className="relative bg-gradient-to-r from-primary/90 via-primary to-primary/90 py-5 px-6 text-center">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.15),transparent_70%)]" />
-          <h2 className="relative text-xl md:text-2xl font-extrabold tracking-[0.15em] text-primary-foreground uppercase">
-            {title}
-          </h2>
-        </div>
+      <div className="relative rounded-3xl overflow-hidden border border-primary/20 bg-gradient-to-br from-card via-card/95 to-card/80 shadow-[0_20px_60px_-20px_rgba(59,130,246,0.35)]">
+        {/* Decorative orbs */}
+        <div className="pointer-events-none absolute -top-32 -right-32 h-80 w-80 rounded-full bg-primary/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -left-32 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(rgba(255,255,255,.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.5)_1px,transparent_1px)] [background-size:32px_32px]" />
 
-        <div className="p-6 md:p-10">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 md:gap-8 items-start mb-10">
-            <p className="text-foreground/80 leading-relaxed text-sm md:text-base">
+        <div className="relative p-6 md:p-12">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 mb-4">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-xs font-semibold tracking-[0.25em] text-primary uppercase">Trusted by thousands</span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground uppercase">
+              <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
+                {title}
+              </span>
+            </h2>
+            <div className="mt-3 mx-auto h-1 w-20 rounded-full bg-gradient-to-r from-transparent via-primary to-transparent" />
+          </div>
+
+          {/* Intro + reviews */}
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 md:gap-10 items-start mb-12">
+            <p className="text-foreground/80 leading-relaxed text-base md:text-lg">
               {intro}
             </p>
             <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-[260px]">
@@ -85,23 +97,38 @@ const HomepageWhyChooseUs = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-7">
+          {/* Feature cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {items.map((item, i) => {
               const Icon = getIcon(item.icon);
               return (
                 <div
                   key={i}
-                  className="group flex items-start gap-4 rounded-xl p-3 -m-3 transition-all hover:bg-primary/5"
+                  className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-primary/40 via-border to-border hover:from-primary hover:via-primary/60 hover:to-primary/30 transition-all duration-300"
                 >
-                  <div className="shrink-0 relative">
-                    <div className="absolute inset-0 rounded-full bg-primary/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center ring-2 ring-primary/40 shadow-lg">
-                      <Icon className="h-5 w-5 text-primary-foreground" strokeWidth={2.2} />
+                  <div className="relative h-full rounded-2xl bg-card/90 backdrop-blur p-6 overflow-hidden transition-transform duration-300 group-hover:-translate-y-1">
+                    {/* hover glow */}
+                    <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    {/* Icon */}
+                    <div className="relative mb-5 inline-flex">
+                      <div className="absolute inset-0 rounded-2xl bg-primary/40 blur-lg opacity-50 group-hover:opacity-90 transition-opacity" />
+                      <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg ring-1 ring-primary/50 group-hover:rotate-6 group-hover:scale-105 transition-transform duration-300">
+                        <Icon className="h-6 w-6 text-primary-foreground" strokeWidth={2.2} />
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-foreground mb-1 text-base">{item.title}</h3>
-                    <p className="text-sm text-foreground/70 leading-relaxed">{item.description}</p>
+
+                    <h3 className="relative font-bold text-foreground text-lg mb-2 group-hover:text-primary transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="relative text-sm text-foreground/70 leading-relaxed">
+                      {item.description}
+                    </p>
+
+                    {/* corner number */}
+                    <div className="absolute top-4 right-4 text-3xl font-black text-primary/10 group-hover:text-primary/30 transition-colors">
+                      {String(i + 1).padStart(2, '0')}
+                    </div>
                   </div>
                 </div>
               );
