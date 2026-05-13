@@ -36,7 +36,11 @@ const HomepageWhyChooseUs = () => {
       const { data } = await supabase
         .from('site_settings')
         .select('key,value')
-        .in('key', ['homepage_why_title', 'homepage_why_intro', 'homepage_why_items']);
+        .in('key', [
+          'homepage_why_title', 'homepage_why_intro', 'homepage_why_items',
+          'trustpilot_score', 'trustpilot_count', 'google_score', 'google_count',
+          'footer_trustpilot_link', 'footer_google_link',
+        ]);
       return data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string>) || {};
     },
   });
