@@ -37,7 +37,7 @@ const HomepageWhyChooseUs = () => {
         .from('site_settings')
         .select('key,value')
         .in('key', [
-          'homepage_why_title', 'homepage_why_intro', 'homepage_why_items',
+          'homepage_why_title', 'homepage_why_intro', 'homepage_why_items', 'homepage_why_eyebrow',
           'trustpilot_score', 'trustpilot_count', 'google_score', 'google_count',
           'footer_trustpilot_link', 'footer_google_link',
         ]);
@@ -47,6 +47,7 @@ const HomepageWhyChooseUs = () => {
 
   const title = data?.homepage_why_title || DEFAULT_TITLE;
   const intro = data?.homepage_why_intro || DEFAULT_INTRO;
+  const eyebrow = data?.homepage_why_eyebrow || 'Trusted by thousands';
   let items: WhyItem[] = DEFAULT_ITEMS;
   if (data?.homepage_why_items) {
     try {
@@ -67,13 +68,11 @@ const HomepageWhyChooseUs = () => {
           {/* Header */}
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 mb-4">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs font-semibold tracking-[0.25em] text-primary uppercase">Trusted by thousands</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#ffffff] animate-pulse" />
+              <span className="text-xs font-semibold tracking-[0.25em] text-[#ffffff] uppercase">{eyebrow}</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground uppercase">
-              <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
-                {title}
-              </span>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-[#ffffff] uppercase">
+              {title}
             </h2>
             <div className="mt-3 mx-auto h-1 w-20 rounded-full bg-gradient-to-r from-transparent via-primary to-transparent" />
           </div>

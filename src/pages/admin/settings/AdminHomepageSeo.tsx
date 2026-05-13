@@ -30,6 +30,7 @@ const KEYS = [
   'homepage_why_title',
   'homepage_why_intro',
   'homepage_why_items',
+  'homepage_why_eyebrow',
 ] as const;
 
 const ICON_OPTIONS = [
@@ -51,6 +52,7 @@ const AdminHomepageSeo = () => {
   const [gScore, setGScore] = useState('4.9');
   const [gCount, setGCount] = useState('120');
   const [whyTitle, setWhyTitle] = useState('WHY CHOOSE TOOLSMANDU');
+  const [whyEyebrow, setWhyEyebrow] = useState('Trusted by thousands');
   const [whyIntro, setWhyIntro] = useState('');
   const [whyItems, setWhyItems] = useState<WhyItem[]>(DEFAULT_WHY_ITEMS);
 
@@ -64,6 +66,7 @@ const AdminHomepageSeo = () => {
       setGScore(map.google_score || '4.9');
       setGCount(map.google_count || '120');
       setWhyTitle(map.homepage_why_title || 'WHY CHOOSE TOOLSMANDU');
+      setWhyEyebrow(map.homepage_why_eyebrow || 'Trusted by thousands');
       setWhyIntro(map.homepage_why_intro || 'Toolsmandu is the trusted destination for genuine digital subscriptions in Nepal. We deliver authentic software, streaming, design, and productivity tools at the best prices — backed by warranty, fast support, and years of proven experience.');
       if (map.homepage_why_items) {
         try {
@@ -88,6 +91,7 @@ const AdminHomepageSeo = () => {
       { key: 'google_score', value: gScore },
       { key: 'google_count', value: gCount },
       { key: 'homepage_why_title', value: whyTitle },
+      { key: 'homepage_why_eyebrow', value: whyEyebrow },
       { key: 'homepage_why_intro', value: whyIntro },
       { key: 'homepage_why_items', value: JSON.stringify(whyItems) },
     ];
@@ -110,8 +114,13 @@ const AdminHomepageSeo = () => {
         <CardHeader><CardTitle>Why Choose Us Section</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           <div>
+            <Label>Eyebrow Text</Label>
+            <p className="text-xs text-muted-foreground mb-2">Small pill-shaped tag shown above the section title.</p>
+            <Input value={whyEyebrow} onChange={e => setWhyEyebrow(e.target.value)} placeholder="Trusted by thousands" />
+          </div>
+          <div>
             <Label>Section Title</Label>
-            <p className="text-xs text-muted-foreground mb-2">Heading shown in the gradient bar.</p>
+            <p className="text-xs text-muted-foreground mb-2">Main heading of the section.</p>
             <Input value={whyTitle} onChange={e => setWhyTitle(e.target.value)} placeholder="WHY CHOOSE TOOLSMANDU" />
           </div>
           <div>
