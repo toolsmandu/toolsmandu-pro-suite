@@ -66,6 +66,7 @@ const AdminHomepageSeo = () => {
       setGScore(map.google_score || '4.9');
       setGCount(map.google_count || '120');
       setWhyTitle(map.homepage_why_title || 'WHY CHOOSE TOOLSMANDU');
+      setWhyEyebrow(map.homepage_why_eyebrow || 'Trusted by thousands');
       setWhyIntro(map.homepage_why_intro || 'Toolsmandu is the trusted destination for genuine digital subscriptions in Nepal. We deliver authentic software, streaming, design, and productivity tools at the best prices — backed by warranty, fast support, and years of proven experience.');
       if (map.homepage_why_items) {
         try {
