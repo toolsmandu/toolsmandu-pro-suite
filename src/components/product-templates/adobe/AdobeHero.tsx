@@ -87,7 +87,7 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
           )}
           <div className="flex flex-wrap gap-3">
             {data.cta_label && (
-              <Button asChild size="lg" className="rounded-full px-8 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+              <Button asChild size="lg" className="rounded-full px-8 text-white hover:opacity-90" style={{ backgroundColor: '#338fe1' }}>
                 <CtaLink href={data.cta_link}>{data.cta_label}</CtaLink>
               </Button>
             )}
