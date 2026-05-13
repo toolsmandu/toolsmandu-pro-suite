@@ -27,15 +27,15 @@ export const SECTION_LABELS: Record<SectionType, string> = {
 
 export const emptySectionData: Record<SectionType, any> = {
   hero: { eyebrow: '', heading: '', subheading: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
-  app_grid: { heading: '', apps: [], footer_text: '' },
+  app_grid: { eyebrow: '', heading: '', subheading: '', apps: [], columns: 5 },
   features: { items: [] },
-  features_faq: { heading: '', description: '', items: [] },
-  features_icon_5: { heading: '', subheading: '', items: [] },
-  features_icon_6: { heading: '', subheading: '', columns: 3, items: [] },
+  features_faq: { eyebrow: '', heading: '', description: '', items: [] },
+  features_icon_5: { eyebrow: '', heading: '', subheading: '', items: [] },
+  features_icon_6: { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] },
   big_products_cards: { eyebrow: '', heading: '', subheading: '', columns: 4, items: [] },
   comparison_two: { eyebrow: '', heading: '', subheading: '', highlight_side: 'right', left: { logo_url: '', label: '', items: [] }, right: { logo_url: '', label: '', items: [] } },
-  plans: { heading: '', plans: [] },
-  pricing_table: { heading: '', plans: [], groups: [] },
+  plans: { eyebrow: '', heading: '', subheading: '', plans: [] },
+  pricing_table: { eyebrow: '', heading: '', subheading: '', plans: [], groups: [] },
 };
 
 export const buildEmptySection = (type: SectionType) => {
