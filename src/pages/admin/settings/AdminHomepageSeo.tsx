@@ -190,28 +190,6 @@ const AdminHomepageSeo = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader><CardTitle>"What is Toolsmandu? Why Toolsmandu?"</CardTitle></CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <Label>Section Title (H2)</Label>
-            <p className="text-xs text-muted-foreground mb-2">Heading shown above the about content on the homepage.</p>
-            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="What is Toolsmandu? Why Toolsmandu?" />
-          </div>
-          <div>
-            <Label>About Content</Label>
-            <p className="text-xs text-muted-foreground mb-2">Shown below the Blogs section on the homepage.</p>
-            <RichTextEditor value={aboutContent} onChange={setAboutContent} />
-          </div>
-
-          <div>
-            <Label>Additional SEO Content</Label>
-            <p className="text-xs text-muted-foreground mb-2">Long-form SEO copy shown below the "What is Toolsmandu?" section.</p>
-            <RichTextEditor value={seoContent} onChange={setSeoContent} />
-          </div>
-        </CardContent>
-      </Card>
-
       <div className="mt-6">
         <Button onClick={save} size="lg">Save All Changes</Button>
       </div>
