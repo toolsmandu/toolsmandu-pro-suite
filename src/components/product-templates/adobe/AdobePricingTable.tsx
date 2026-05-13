@@ -91,8 +91,27 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
           <div className="grid gap-x-6" style={{ gridTemplateColumns: `minmax(180px, 1fr) repeat(${plans.length}, minmax(0, 1fr))` }}>
             {/* Header row: Plan label + plans */}
             <div className="pt-2">
-              <div className="text-base font-medium text-foreground/80 mb-3">Plan</div>
               {plans.length > visibleCount && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setStart((s) => Math.max(0, s - 1))}
+                    disabled={!canPrev}
+                    className="h-10 w-10 rounded-md border border-border flex items-center justify-center disabled:opacity-40"
+                    aria-label="Previous plans"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setStart((s) => Math.min(plans.length - visibleCount, s + 1))}
+                    disabled={!canNext}
+                    className="h-10 w-10 rounded-md border border-border flex items-center justify-center disabled:opacity-40"
+                    aria-label="Next plans"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setStart((s) => Math.max(0, s - 1))}
