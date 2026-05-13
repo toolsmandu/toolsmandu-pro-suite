@@ -111,27 +111,6 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
                   </button>
                 </div>
               )}
-            </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setStart((s) => Math.max(0, s - 1))}
-                    disabled={!canPrev}
-                    className="h-10 w-10 rounded-md border border-border flex items-center justify-center disabled:opacity-40"
-                    aria-label="Previous plans"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setStart((s) => Math.min(plans.length - visibleCount, s + 1))}
-                    disabled={!canNext}
-                    className="h-10 w-10 rounded-md border border-border flex items-center justify-center disabled:opacity-40"
-                    aria-label="Next plans"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
-            </div>
             {plans.map((p, i) => (
               <div key={i} className="pt-2">
                 <div className="text-base font-medium text-foreground/80 mb-2">{p.name}</div>
