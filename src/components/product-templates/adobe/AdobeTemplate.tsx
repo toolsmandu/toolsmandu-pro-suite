@@ -81,17 +81,6 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
             </div>
           );
         })}
-      {product?.description && (
-        <section className="py-8 md:py-12 bg-background">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div
-              className="prose prose-sm prose-invert max-w-none text-white [&_a]:underline [&_img]:rounded-lg [&_img]:max-w-full"
-              style={{ color: 'white' }}
-              dangerouslySetInnerHTML={{ __html: product.description.replace(/<a /g, '<a style="color:#16a249" ') }}
-            />
-          </div>
-        </section>
-      )}
       <AdobeFAQs productName={product?.name || ''} />
       <AdobeRelated productId={productId} categoryId={product?.category_id} />
     </div>
