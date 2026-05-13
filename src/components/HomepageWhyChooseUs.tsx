@@ -68,13 +68,11 @@ const HomepageWhyChooseUs = () => {
           {/* Header */}
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 mb-4">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs font-semibold tracking-[0.25em] text-primary uppercase">Trusted by thousands</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#ffffff] animate-pulse" />
+              <span className="text-xs font-semibold tracking-[0.25em] text-[#ffffff] uppercase">{eyebrow}</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground uppercase">
-              <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
-                {title}
-              </span>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-[#ffffff] uppercase">
+              {title}
             </h2>
             <div className="mt-3 mx-auto h-1 w-20 rounded-full bg-gradient-to-r from-transparent via-primary to-transparent" />
           </div>
