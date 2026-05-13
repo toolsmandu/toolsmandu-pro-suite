@@ -264,6 +264,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
     const setItems = (next: any[]) => patch({ items: next });
     return (
       <div className="space-y-3">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
         <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
         <div className="space-y-3 pt-2">
