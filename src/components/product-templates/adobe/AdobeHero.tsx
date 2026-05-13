@@ -72,7 +72,7 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
       <div className={`container mx-auto px-4 py-8 md:py-12 lg:py-16 gap-10 items-center relative z-10 ${product ? 'grid lg:grid-cols-[3fr_2fr]' : ''}`}>
         <div className="text-foreground">
           {data.eyebrow && (
-            <p className="text-sm font-semibold tracking-widest uppercase text-primary-foreground/80 mb-4">
+            <p className="text-sm font-semibold tracking-widest uppercase text-white mb-4">
               {data.eyebrow}
             </p>
           )}
