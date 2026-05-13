@@ -52,6 +52,7 @@ const AdminHomepageSeo = () => {
   const [gScore, setGScore] = useState('4.9');
   const [gCount, setGCount] = useState('120');
   const [whyTitle, setWhyTitle] = useState('WHY CHOOSE TOOLSMANDU');
+  const [whyEyebrow, setWhyEyebrow] = useState('Trusted by thousands');
   const [whyIntro, setWhyIntro] = useState('');
   const [whyItems, setWhyItems] = useState<WhyItem[]>(DEFAULT_WHY_ITEMS);
 
