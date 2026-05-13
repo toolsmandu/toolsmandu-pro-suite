@@ -10,6 +10,7 @@ import AdobePricingTable from '@/components/product-templates/adobe/AdobePricing
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
 import AdobeFeaturesIcon6 from '@/components/product-templates/adobe/AdobeFeaturesIcon6';
 import AdobeFeaturesIcon5 from '@/components/product-templates/adobe/AdobeFeaturesIcon5';
+import AdobeProductIntro from '@/components/product-templates/adobe/AdobeProductIntro';
 
 import AdobeComparisonTwo from '@/components/product-templates/adobe/AdobeComparisonTwo';
 import AdobeBigProductsCards from '@/components/product-templates/adobe/AdobeBigProductsCards';
@@ -42,6 +43,41 @@ const SAMPLE: Record<SectionType, any> = {
       { heading: 'Powerful editing', description: 'Pro-grade tools for photos, videos and design.', image_url: '/placeholder.svg', image_side: 'right' },
       { heading: 'Cloud sync', description: 'Your files, everywhere — automatic backup and sharing.', image_url: '/placeholder.svg', image_side: 'left' },
       { heading: 'AI-powered', description: 'Smart features that speed up your everyday workflow.', image_url: '/placeholder.svg', image_side: 'right' },
+    ],
+  },
+  product_intro: {
+    items: [
+      {
+        eyebrow: 'Empower Your Digital Presence',
+        heading: 'Fast, Secure and Reliable Hosting in Nepal for Every Business Need',
+        description: '<p>Look, we get it. You\u2019ve probably been burned by slow hosting before. From simple websites to complex online stores, we handle it all.</p>',
+        image_url: '/placeholder.svg',
+        image_side: 'right',
+        bullets: [
+          { title: 'NVMe Solid State Drives (SSDs)', description: 'Get up to 7x faster speeds with NVMe storage.' },
+          { title: 'PHP OPCache', description: 'Your PHP scripts run once, then get cached in memory.' },
+          { title: 'Enhanced I/O Capabilities', description: 'Database queries happen quicker and pages load without delays.' },
+          { title: '99.9% Uptime Guarantee', description: 'Your site stays live when it matters most.' },
+        ],
+        cta_label: 'WhatsApp Now',
+        cta_link: '#',
+      },
+      {
+        eyebrow: 'Reliable Cloud Solutions',
+        heading: 'Advanced Security Measures to Protect Your Cloud Hosted Data.',
+        description: '<p>Keep your digital assets safe with cutting-edge cloud security built for reliability, trust, and real peace of mind.</p>',
+        image_url: '/placeholder.svg',
+        image_side: 'left',
+        bullets: [
+          { title: 'We keep your data locked down tight', description: 'Everything gets encrypted in transit and at rest.' },
+          { title: 'Heavy-duty firewalls', description: 'Stand guard around the clock.' },
+          { title: 'Restrict access with precision', description: 'Only the right people can reach sensitive data.' },
+          { title: 'Daily backups & fast recovery', description: 'Easy restore points included.' },
+          { title: 'We follow the rulebook', description: 'ISO 27001, GDPR, SOC 2 \u2014 all the standards that matter.' },
+        ],
+        cta_label: 'Get Started',
+        cta_link: '#',
+      },
     ],
   },
   plans: {
@@ -182,6 +218,7 @@ const AdminLayoutSectionPreview = () => {
   if (t === 'hero') node = <AdobeHero data={data} />;
   else if (t === 'app_grid') node = <AdobeAppGrid data={data} />;
   else if (t === 'features') node = <AdobeFeatures data={data} />;
+  else if (t === 'product_intro') node = <AdobeProductIntro data={data} />;
   else if (t === 'plans') node = <AdobePlans data={data} />;
   else if (t === 'pricing_table') node = <AdobePricingTable data={data} />;
   else if (t === 'features_faq') node = <AdobeFeaturesFAQ data={data} />;

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import AdobeHero from './AdobeHero';
 import AdobeAppGrid from './AdobeAppGrid';
 import AdobeFeatures from './AdobeFeatures';
+import AdobeProductIntro from './AdobeProductIntro';
 import AdobePlans from './AdobePlans';
 import AdobePricingTable from './AdobePricingTable';
 import AdobeFeaturesFAQ from './AdobeFeaturesFAQ';
@@ -49,6 +50,8 @@ const AdobeTemplate = ({ productId }: { productId: string }) => {
         return <AdobeAppGrid key={idx} data={data} />;
       case 'features':
         return <AdobeFeatures key={idx} data={data} />;
+      case 'product_intro':
+        return <AdobeProductIntro key={idx} data={data} />;
       case 'plans':
         return <AdobePlans key={idx} data={data} />;
       case 'pricing_table':

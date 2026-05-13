@@ -6,6 +6,7 @@ const SECTION_META: Record<SectionType, { icon: any; description: string }> = {
   hero: { icon: ImageIcon, description: 'Top banner with heading, subheading, image and CTAs.' },
   app_grid: { icon: LayoutGrid, description: 'Grid of apps or icons with names.' },
   features: { icon: Sparkles, description: 'Alternating feature highlights with images.' },
+  product_intro: { icon: Sparkles, description: 'Alternating product intro rows with eyebrow, bullets and CTA.' },
   features_faq: { icon: ListCollapse, description: 'Accordion-style features with a synced preview image.' },
   features_icon_5: { icon: Grid2x2, description: 'Bento grid of 5 icon + heading + description feature cards.' },
   features_icon_6: { icon: Grid3x3, description: 'Grid of icon + heading + description feature cards.' },
