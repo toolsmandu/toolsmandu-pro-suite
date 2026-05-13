@@ -77,14 +77,16 @@ const AdobeProductIntro = ({ data }: { data: ProductIntroData }) => {
                       href={item.cta_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 px-5 py-2.5 text-sm font-semibold transition-colors"
+                      className="inline-flex items-center justify-center rounded-md text-white hover:opacity-90 px-5 py-2.5 text-sm font-semibold transition-opacity"
+                      style={{ backgroundColor: '#338fe1' }}
                     >
                       {item.cta_label}
                     </a>
                   ) : (
                     <Link
                       to={item.cta_link}
-                      className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 px-5 py-2.5 text-sm font-semibold transition-colors"
+                      className="inline-flex items-center justify-center rounded-md text-white hover:opacity-90 px-5 py-2.5 text-sm font-semibold transition-opacity"
+                      style={{ backgroundColor: '#338fe1' }}
                     >
                       {item.cta_label}
                     </Link>
