@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import RichTextEditor from '@/components/admin/RichTextEditor';
+
 import { toast } from 'sonner';
 import * as Icons from 'lucide-react';
 import { Plus, Trash2, ShieldCheck } from 'lucide-react';
