@@ -144,7 +144,9 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
     const setApps = (next: any[]) => patch({ apps: next });
     return (
       <div className="space-y-3">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
         <div>
           <Label className="mb-1 block text-xs">Apps per row (desktop)</Label>
           <select
@@ -177,10 +179,6 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
           <Button variant="outline" size="sm" onClick={() => setApps([...apps, { name: '', icon_url: '' }])}>
             <Plus className="h-4 w-4 mr-1" /> Add app
           </Button>
-        </div>
-        <div className="pt-2">
-          <Label className="mb-1 block text-xs">Footer text (shown below the grid)</Label>
-          <RichTextEditor value={data.footer_text || ''} onChange={(v) => patch({ footer_text: v })} />
         </div>
       </div>
     );
