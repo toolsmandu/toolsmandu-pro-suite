@@ -41,13 +41,13 @@ export const emptySectionData: Record<SectionType, any> = {
 export const buildEmptySection = (type: SectionType) => {
   if (type === 'app_grid') return { ...emptySectionData.app_grid, apps: [] };
   if (type === 'features') return { ...emptySectionData.features, items: [] };
-  if (type === 'features_faq') return { heading: '', description: '', items: [] };
-  if (type === 'features_icon_5') return { heading: '', subheading: '', items: [] };
-  if (type === 'features_icon_6') return { heading: '', subheading: '', columns: 3, items: [] };
+  if (type === 'features_faq') return { eyebrow: '', heading: '', description: '', items: [] };
+  if (type === 'features_icon_5') return { eyebrow: '', heading: '', subheading: '', items: [] };
+  if (type === 'features_icon_6') return { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] };
   if (type === 'big_products_cards') return { eyebrow: '', heading: '', subheading: '', columns: 4, items: [] };
   if (type === 'comparison_two') return { eyebrow: '', heading: '', subheading: '', highlight_side: 'right', left: { logo_url: '', label: 'Other', items: [] }, right: { logo_url: '', label: '', items: [] } };
-  if (type === 'plans') return { ...emptySectionData.plans, plans: [] };
-  if (type === 'pricing_table') return { heading: '', plans: [], groups: [] };
+  if (type === 'plans') return { eyebrow: '', heading: '', subheading: '', plans: [] };
+  if (type === 'pricing_table') return { eyebrow: '', heading: '', subheading: '', plans: [], groups: [] };
   return { ...emptySectionData.hero };
 };
 
