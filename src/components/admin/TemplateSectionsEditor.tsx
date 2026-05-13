@@ -586,7 +586,9 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
   const setPlans = (next: any[]) => patch({ plans: next });
   return (
     <div className="space-y-3">
+      <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
       <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+      <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
       {plans.map((p, i) => (
         <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
           <div className="flex justify-between items-center">
