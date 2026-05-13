@@ -30,6 +30,7 @@ export const emptySectionData: Record<SectionType, any> = {
   hero: { eyebrow: '', heading: '', subheading: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
   app_grid: { eyebrow: '', heading: '', subheading: '', apps: [], columns: 5 },
   features: { items: [] },
+  product_intro: { items: [] },
   features_faq: { eyebrow: '', heading: '', description: '', items: [] },
   features_icon_5: { eyebrow: '', heading: '', subheading: '', items: [] },
   features_icon_6: { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] },
@@ -42,6 +43,7 @@ export const emptySectionData: Record<SectionType, any> = {
 export const buildEmptySection = (type: SectionType) => {
   if (type === 'app_grid') return { ...emptySectionData.app_grid, apps: [] };
   if (type === 'features') return { ...emptySectionData.features, items: [] };
+  if (type === 'product_intro') return { items: [] };
   if (type === 'features_faq') return { eyebrow: '', heading: '', description: '', items: [] };
   if (type === 'features_icon_5') return { eyebrow: '', heading: '', subheading: '', items: [] };
   if (type === 'features_icon_6') return { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] };
