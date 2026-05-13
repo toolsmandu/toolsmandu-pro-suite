@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import * as Icons from 'lucide-react';
 import { ShieldCheck } from 'lucide-react';
+import { TrustpilotCard, GoogleCard } from './ReviewCards';
 
 export type WhyItem = {
   icon: string;
