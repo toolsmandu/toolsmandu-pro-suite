@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import RichTextEditor from '@/components/admin/RichTextEditor';
+
 import { toast } from 'sonner';
 import * as Icons from 'lucide-react';
 import { Plus, Trash2, ShieldCheck } from 'lucide-react';
@@ -23,9 +23,6 @@ const DEFAULT_WHY_ITEMS: WhyItem[] = [
 ];
 
 const KEYS = [
-  'homepage_seo_title',
-  'homepage_about_content',
-  'homepage_seo_content',
   'trustpilot_score',
   'trustpilot_count',
   'google_score',
@@ -49,9 +46,6 @@ const IconPreview = ({ name }: { name: string }) => {
 
 const AdminHomepageSeo = () => {
   const queryClient = useQueryClient();
-  const [title, setTitle] = useState('What is Toolsmandu? Why Toolsmandu?');
-  const [aboutContent, setAboutContent] = useState('');
-  const [seoContent, setSeoContent] = useState('');
   const [tpScore, setTpScore] = useState('4.8');
   const [tpCount, setTpCount] = useState('53');
   const [gScore, setGScore] = useState('4.9');
@@ -65,9 +59,6 @@ const AdminHomepageSeo = () => {
     queryFn: async () => {
       const { data } = await supabase.from('site_settings').select('key,value').in('key', KEYS as unknown as string[]);
       const map = data?.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string>) || {};
-      setTitle(map.homepage_seo_title || 'What is Toolsmandu? Why Toolsmandu?');
-      setAboutContent(map.homepage_about_content || '');
-      setSeoContent(map.homepage_seo_content || '');
       setTpScore(map.trustpilot_score || '4.8');
       setTpCount(map.trustpilot_count || '53');
       setGScore(map.google_score || '4.9');
@@ -92,9 +83,6 @@ const AdminHomepageSeo = () => {
 
   const save = async () => {
     const items = [
-      { key: 'homepage_seo_title', value: title },
-      { key: 'homepage_about_content', value: aboutContent },
-      { key: 'homepage_seo_content', value: seoContent },
       { key: 'trustpilot_score', value: tpScore },
       { key: 'trustpilot_count', value: tpCount },
       { key: 'google_score', value: gScore },
@@ -186,28 +174,6 @@ const AdminHomepageSeo = () => {
               <div><Label className="text-xs">Score (out of 5)</Label><Input value={gScore} onChange={e => setGScore(e.target.value)} placeholder="4.9" /></div>
               <div><Label className="text-xs">Number of Reviews</Label><Input value={gCount} onChange={e => setGCount(e.target.value)} placeholder="120" /></div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><CardTitle>"What is Toolsmandu? Why Toolsmandu?"</CardTitle></CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <Label>Section Title (H2)</Label>
-            <p className="text-xs text-muted-foreground mb-2">Heading shown above the about content on the homepage.</p>
-            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="What is Toolsmandu? Why Toolsmandu?" />
-          </div>
-          <div>
-            <Label>About Content</Label>
-            <p className="text-xs text-muted-foreground mb-2">Shown below the Blogs section on the homepage.</p>
-            <RichTextEditor value={aboutContent} onChange={setAboutContent} />
-          </div>
-
-          <div>
-            <Label>Additional SEO Content</Label>
-            <p className="text-xs text-muted-foreground mb-2">Long-form SEO copy shown below the "What is Toolsmandu?" section.</p>
-            <RichTextEditor value={seoContent} onChange={setSeoContent} />
           </div>
         </CardContent>
       </Card>
