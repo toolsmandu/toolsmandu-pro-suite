@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ComponentType } from 'react';
 const trustpilotImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494880317-8uue9fe7kpp.webp';
 const googleReviewsImg = 'https://iuussfrylzowigmaozwv.supabase.co/storage/v1/object/public/assets/media/1775494878578-cse3wn6nvgm.webp';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, Menu, X, icons } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, House, Cloud, Bot, GraduationCap, MonitorPlay, GlobeLock, BookOpen, Computer, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,6 +17,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+const navIcons: Record<string, ComponentType<{ className?: string }>> = {
+  House,
+  Cloud,
+  Bot,
+  GraduationCap,
+  MonitorPlay,
+  GlobeLock,
+  BookOpen,
+  Computer,
+  Wrench,
+};
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -45,7 +57,7 @@ const Navbar = () => {
 
   const renderNavIcon = (iconName: string | null) => {
     if (!iconName) return null;
-    const LucideIcon = (icons as Record<string, any>)[iconName];
+    const LucideIcon = navIcons[iconName];
     if (!LucideIcon) return null;
     return <LucideIcon className="h-4 w-4" />;
   };

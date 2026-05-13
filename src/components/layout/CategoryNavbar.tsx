@@ -1,10 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
-import { icons } from 'lucide-react';
+import { type ComponentType } from 'react';
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, House, Cloud, Bot, GraduationCap, MonitorPlay, GlobeLock, BookOpen, Computer, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+const navIcons: Record<string, ComponentType<{ className?: string }>> = {
+  House,
+  Cloud,
+  Bot,
+  GraduationCap,
+  MonitorPlay,
+  GlobeLock,
+  BookOpen,
+  Computer,
+  Wrench,
+};
 
 type NavMenuItem = {
   id: string;
@@ -34,7 +46,7 @@ const CategoryNavbar = () => {
 
   const renderIcon = (iconName: string | null) => {
     if (!iconName) return null;
-    const LucideIcon = (icons as Record<string, any>)[iconName];
+    const LucideIcon = navIcons[iconName];
     if (!LucideIcon) return null;
     return <LucideIcon className="h-4 w-4 text-white" />;
   };
