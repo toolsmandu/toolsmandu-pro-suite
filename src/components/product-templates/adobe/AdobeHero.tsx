@@ -87,14 +87,24 @@ const AdobeHero = ({ data, product }: { data: HeroData; product?: HeroProduct })
           )}
           <div className="flex flex-wrap gap-3">
             {data.cta_label && (
-              <Button asChild size="lg" className="rounded-full px-8 text-white hover:opacity-90" style={{ backgroundColor: '#338fe1' }}>
-                <CtaLink href={data.cta_link}>{data.cta_label}</CtaLink>
-              </Button>
+              <CtaLink href={data.cta_link}>
+                <span
+                  className="inline-flex items-center justify-center rounded-full px-8 h-11 text-base font-medium text-white hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: '#338fe1' }}
+                >
+                  {data.cta_label}
+                </span>
+              </CtaLink>
             )}
             {data.secondary_cta_label && (
-              <Button asChild size="lg" variant="outline" className="rounded-full px-8 bg-transparent border-foreground/40 text-foreground hover:bg-foreground/10">
-                <CtaLink href={data.secondary_cta_link}>{data.secondary_cta_label}</CtaLink>
-              </Button>
+              <CtaLink href={data.secondary_cta_link}>
+                <span
+                  className="inline-flex items-center justify-center rounded-full px-8 h-11 text-base font-medium text-white hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: '#338fe1' }}
+                >
+                  {data.secondary_cta_label}
+                </span>
+              </CtaLink>
             )}
           </div>
         </div>
