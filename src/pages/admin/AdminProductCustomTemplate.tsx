@@ -193,6 +193,18 @@ const AdminProductCustomTemplate = () => {
         </p>
       </div>
 
+      {items.length > 0 && (
+        <div className="flex justify-end mb-2">
+          <Button variant="outline" size="sm" onClick={toggleAll}>
+            {allCollapsed ? (
+              <><ChevronDown className="h-4 w-4 mr-1" /> Expand all</>
+            ) : (
+              <><ChevronRight className="h-4 w-4 mr-1" /> Collapse all</>
+            )}
+          </Button>
+        </div>
+      )}
+
       <div className="space-y-3">
         {items.length === 0 ? (
           <div className="bg-card border border-border rounded-lg p-5">
