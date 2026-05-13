@@ -91,7 +91,6 @@ const AdobePricingTable = ({ data }: { data: PricingTableData }) => {
           <div className="grid gap-x-6" style={{ gridTemplateColumns: `minmax(180px, 1fr) repeat(${plans.length}, minmax(0, 1fr))` }}>
             {/* Header row: Plan label + plans */}
             <div className="pt-2">
-              <div className="text-base font-medium text-foreground/80 mb-3">Plan</div>
               {plans.length > visibleCount && (
                 <div className="flex gap-2">
                   <button
