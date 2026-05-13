@@ -227,6 +227,79 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
     );
   }
 
+  if (type === 'product_intro') {
+    const items: any[] = data.items || [];
+    const setItems = (next: any[]) => patch({ items: next });
+    return (
+      <div className="space-y-3">
+        <div className="text-xs text-muted-foreground">Each row alternates image side automatically (or set per item below).</div>
+        {items.map((it, i) => {
+          const bullets: any[] = it.bullets || [];
+          const setBullets = (next: any[]) =>
+            setItems(items.map((a, j) => (j === i ? { ...a, bullets: next } : a)));
+          return (
+            <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-muted-foreground">Row #{i + 1}</span>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                  onClick={() => setItems(items.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <Field label="Eyebrow" value={it.eyebrow} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, eyebrow: v } : a))} />
+              <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
+              <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
+              <div>
+                <Label className="mb-1 block text-xs">Image</Label>
+                <ImageUpload value={it.image_url} onChange={(url) => setItems(items.map((a, j) => j === i ? { ...a, image_url: url } : a))} />
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Image side</Label>
+                <select
+                  value={it.image_side || (i % 2 === 0 ? 'right' : 'left')}
+                  onChange={(e) => setItems(items.map((a, j) => j === i ? { ...a, image_side: e.target.value } : a))}
+                  className="flex h-9 w-32 rounded-md border border-input bg-background px-2 text-sm"
+                >
+                  <option value="right">Right</option>
+                  <option value="left">Left</option>
+                </select>
+              </div>
+              <div className="space-y-2 pt-1">
+                <div className="text-xs font-semibold text-muted-foreground">Bullet points</div>
+                {bullets.map((b, bi) => (
+                  <div key={bi} className="border border-border/40 rounded p-2 bg-background space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">Bullet #{bi + 1}</span>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                        onClick={() => setBullets(bullets.filter((_, k) => k !== bi))}>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                    <Field label="Bold term" value={b.title} onChange={(v) => setBullets(bullets.map((a, k) => k === bi ? { ...a, title: v } : a))} />
+                    <Field label="Description" textarea value={b.description} onChange={(v) => setBullets(bullets.map((a, k) => k === bi ? { ...a, description: v } : a))} />
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" onClick={() => setBullets([...bullets, { title: '', description: '' }])}>
+                  <Plus className="h-4 w-4 mr-1" /> Add bullet
+                </Button>
+              </div>
+              <div className="grid md:grid-cols-2 gap-2 pt-1">
+                <Field label="CTA label" value={it.cta_label} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_label: v } : a))} />
+                <div>
+                  <Field label="CTA link" value={it.cta_link} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
+                  <SectionPicker value={it.cta_link} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, cta_link: v } : a))} />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <Button variant="outline" size="sm" onClick={() => setItems([...items, { eyebrow: '', heading: '', description: '', image_url: '', image_side: items.length % 2 === 0 ? 'right' : 'left', bullets: [], cta_label: '', cta_link: '' }])}>
+          <Plus className="h-4 w-4 mr-1" /> Add row
+        </Button>
+      </div>
+    );
+  }
+
   if (type === 'features_faq') {
     const items: any[] = data.items || [];
     const setItems = (next: any[]) => patch({ items: next });

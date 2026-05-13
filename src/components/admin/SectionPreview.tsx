@@ -2,6 +2,7 @@ import AdobeBigProductsCards from '@/components/product-templates/adobe/AdobeBig
 import AdobeHero from '@/components/product-templates/adobe/AdobeHero';
 import AdobeAppGrid from '@/components/product-templates/adobe/AdobeAppGrid';
 import AdobeFeatures from '@/components/product-templates/adobe/AdobeFeatures';
+import AdobeProductIntro from '@/components/product-templates/adobe/AdobeProductIntro';
 import AdobePlans from '@/components/product-templates/adobe/AdobePlans';
 import AdobePricingTable from '@/components/product-templates/adobe/AdobePricingTable';
 import AdobeFeaturesFAQ from '@/components/product-templates/adobe/AdobeFeaturesFAQ';
@@ -27,6 +28,9 @@ const SectionPreview = ({ type, data }: Props) => {
       break;
     case 'features':
       node = <AdobeFeatures data={data || {}} />;
+      break;
+    case 'product_intro':
+      node = <AdobeProductIntro data={data || {}} />;
       break;
     case 'plans':
       node = <AdobePlans data={data || {}} />;
