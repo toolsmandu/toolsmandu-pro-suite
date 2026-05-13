@@ -9,13 +9,14 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { Plus, Trash2 } from 'lucide-react';
 
-export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'features_faq', 'features_icon_5', 'features_icon_6', 'big_products_cards', 'comparison_two', 'plans', 'pricing_table'] as const;
+export const SECTION_TYPES = ['hero', 'app_grid', 'features', 'product_intro', 'features_faq', 'features_icon_5', 'features_icon_6', 'big_products_cards', 'comparison_two', 'plans', 'pricing_table'] as const;
 export type SectionType = typeof SECTION_TYPES[number];
 
 export const SECTION_LABELS: Record<SectionType, string> = {
   hero: 'Hero',
   app_grid: 'App grid',
   features: 'Feature highlights',
+  product_intro: 'Product Intro',
   features_faq: 'Features with FAQ Style',
   features_icon_5: '5 Features with icon',
   features_icon_6: '6 Features with icon',
