@@ -233,6 +233,7 @@ const Index = () => {
         ))}
         <Suspense fallback={null}>
           <HomepageBlogs />
+          <HomepageWhyChooseUs />
           <HomepageSeoContent />
         </Suspense>
       </div>
