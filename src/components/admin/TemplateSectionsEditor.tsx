@@ -248,6 +248,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
               </div>
               <Field label="Eyebrow" value={it.eyebrow} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, eyebrow: v } : a))} />
               <Field label="Heading" value={it.heading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, heading: v } : a))} />
+              <Field label="Subheading" value={it.subheading} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, subheading: v } : a))} />
               <RichField label="Description" value={it.description} onChange={(v) => setItems(items.map((a, j) => j === i ? { ...a, description: v } : a))} />
               <div>
                 <Label className="mb-1 block text-xs">Image</Label>

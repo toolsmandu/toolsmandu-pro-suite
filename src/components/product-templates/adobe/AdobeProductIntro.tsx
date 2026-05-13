@@ -9,6 +9,7 @@ interface BulletItem {
 interface ProductIntroItem {
   eyebrow?: string;
   heading?: string;
+  subheading?: string;
   description?: string;
   image_url?: string;
   image_side?: 'left' | 'right';
@@ -48,6 +49,11 @@ const AdobeProductIntro = ({ data }: { data: ProductIntroData }) => {
                   <h3 className="text-2xl md:text-4xl font-bold text-foreground mb-4 leading-tight">
                     {item.heading}
                   </h3>
+                )}
+                {item.subheading && (
+                  <p className="text-base md:text-lg text-foreground/80 mb-4 leading-relaxed">
+                    {item.subheading}
+                  </p>
                 )}
                 {item.description && (
                   <div
