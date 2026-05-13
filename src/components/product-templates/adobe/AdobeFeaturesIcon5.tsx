@@ -21,7 +21,7 @@ const AdobeFeaturesIcon5 = ({ data, showItemNumber = false }: { data: FeaturesIc
         {(data.eyebrow || data.heading || data.subheading) && (
           <div className="text-center max-w-3xl mx-auto mb-12">
             {data.eyebrow && (
-              <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
+              <p className="text-sm font-semibold tracking-widest uppercase italic text-primary mb-2">
                 {data.eyebrow}
               </p>
             )}

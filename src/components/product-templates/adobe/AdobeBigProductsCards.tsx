@@ -29,7 +29,7 @@ const AdobeBigProductsCards = ({ data }: { data: BigProductsCardsData }) => {
         {(data.eyebrow || data.heading || data.subheading) && (
           <div className="max-w-3xl mx-auto text-center mb-12">
             {data.eyebrow && (
-              <p className="text-sm md:text-base font-medium uppercase tracking-wide mb-2" style={{ color: '#ffffff' }}>{data.eyebrow}</p>
+              <p className="text-sm md:text-base font-medium uppercase italic tracking-wide mb-2" style={{ color: '#ffffff' }}>{data.eyebrow}</p>
             )}
             {data.heading && (
               <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-3">{data.heading}</h2>
