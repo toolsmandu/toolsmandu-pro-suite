@@ -30,6 +30,7 @@ const KEYS = [
   'homepage_why_title',
   'homepage_why_intro',
   'homepage_why_items',
+  'homepage_why_eyebrow',
 ] as const;
 
 const ICON_OPTIONS = [
