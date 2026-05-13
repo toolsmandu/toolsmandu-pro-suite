@@ -83,9 +83,6 @@ const AdminHomepageSeo = () => {
 
   const save = async () => {
     const items = [
-      { key: 'homepage_seo_title', value: title },
-      { key: 'homepage_about_content', value: aboutContent },
-      { key: 'homepage_seo_content', value: seoContent },
       { key: 'trustpilot_score', value: tpScore },
       { key: 'trustpilot_count', value: tpCount },
       { key: 'google_score', value: gScore },
