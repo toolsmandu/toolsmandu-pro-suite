@@ -223,7 +223,7 @@ const Index = () => {
       <Suspense fallback={null}>
         <NewInStore />
       </Suspense>
-      <div className="container mx-auto px-4 pb-12">
+      <div className="container mx-auto pb-12 px-0">
         <Suspense fallback={null}>
           <SuperSavingDeals />
         </Suspense>
