@@ -23,9 +23,6 @@ const DEFAULT_WHY_ITEMS: WhyItem[] = [
 ];
 
 const KEYS = [
-  'homepage_seo_title',
-  'homepage_about_content',
-  'homepage_seo_content',
   'trustpilot_score',
   'trustpilot_count',
   'google_score',
