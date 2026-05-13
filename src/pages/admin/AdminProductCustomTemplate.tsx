@@ -111,6 +111,12 @@ const AdminProductCustomTemplate = () => {
   };
   const toggle = (idx: number) =>
     setItems((cur) => cur.map((it, i) => (i === idx ? { ...it, open: !it.open } : it)));
+  const allCollapsed = items.length > 0 && items.every((it) => !it.open);
+  const toggleAll = () =>
+    setItems((cur) => {
+      const expand = cur.every((it) => !it.open);
+      return cur.map((it) => ({ ...it, open: expand }));
+    });
   const updateData = (idx: number, next: any) =>
     setItems((cur) => cur.map((it, i) => (i === idx ? { ...it, data: next } : it)));
 
