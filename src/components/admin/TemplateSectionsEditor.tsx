@@ -27,27 +27,27 @@ export const SECTION_LABELS: Record<SectionType, string> = {
 
 export const emptySectionData: Record<SectionType, any> = {
   hero: { eyebrow: '', heading: '', subheading: '', cta_label: '', cta_link: '', secondary_cta_label: '', secondary_cta_link: '', bg_color: '' },
-  app_grid: { heading: '', apps: [], footer_text: '' },
+  app_grid: { eyebrow: '', heading: '', subheading: '', apps: [], columns: 5 },
   features: { items: [] },
-  features_faq: { heading: '', description: '', items: [] },
-  features_icon_5: { heading: '', subheading: '', items: [] },
-  features_icon_6: { heading: '', subheading: '', columns: 3, items: [] },
+  features_faq: { eyebrow: '', heading: '', description: '', items: [] },
+  features_icon_5: { eyebrow: '', heading: '', subheading: '', items: [] },
+  features_icon_6: { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] },
   big_products_cards: { eyebrow: '', heading: '', subheading: '', columns: 4, items: [] },
   comparison_two: { eyebrow: '', heading: '', subheading: '', highlight_side: 'right', left: { logo_url: '', label: '', items: [] }, right: { logo_url: '', label: '', items: [] } },
-  plans: { heading: '', plans: [] },
-  pricing_table: { heading: '', plans: [], groups: [] },
+  plans: { eyebrow: '', heading: '', subheading: '', plans: [] },
+  pricing_table: { eyebrow: '', heading: '', subheading: '', plans: [], groups: [] },
 };
 
 export const buildEmptySection = (type: SectionType) => {
   if (type === 'app_grid') return { ...emptySectionData.app_grid, apps: [] };
   if (type === 'features') return { ...emptySectionData.features, items: [] };
-  if (type === 'features_faq') return { heading: '', description: '', items: [] };
-  if (type === 'features_icon_5') return { heading: '', subheading: '', items: [] };
-  if (type === 'features_icon_6') return { heading: '', subheading: '', columns: 3, items: [] };
+  if (type === 'features_faq') return { eyebrow: '', heading: '', description: '', items: [] };
+  if (type === 'features_icon_5') return { eyebrow: '', heading: '', subheading: '', items: [] };
+  if (type === 'features_icon_6') return { eyebrow: '', heading: '', subheading: '', columns: 3, items: [] };
   if (type === 'big_products_cards') return { eyebrow: '', heading: '', subheading: '', columns: 4, items: [] };
   if (type === 'comparison_two') return { eyebrow: '', heading: '', subheading: '', highlight_side: 'right', left: { logo_url: '', label: 'Other', items: [] }, right: { logo_url: '', label: '', items: [] } };
-  if (type === 'plans') return { ...emptySectionData.plans, plans: [] };
-  if (type === 'pricing_table') return { heading: '', plans: [], groups: [] };
+  if (type === 'plans') return { eyebrow: '', heading: '', subheading: '', plans: [] };
+  if (type === 'pricing_table') return { eyebrow: '', heading: '', subheading: '', plans: [], groups: [] };
   return { ...emptySectionData.hero };
 };
 
@@ -144,7 +144,9 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
     const setApps = (next: any[]) => patch({ apps: next });
     return (
       <div className="space-y-3">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
         <div>
           <Label className="mb-1 block text-xs">Apps per row (desktop)</Label>
           <select
@@ -177,10 +179,6 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
           <Button variant="outline" size="sm" onClick={() => setApps([...apps, { name: '', icon_url: '' }])}>
             <Plus className="h-4 w-4 mr-1" /> Add app
           </Button>
-        </div>
-        <div className="pt-2">
-          <Label className="mb-1 block text-xs">Footer text (shown below the grid)</Label>
-          <RichTextEditor value={data.footer_text || ''} onChange={(v) => patch({ footer_text: v })} />
         </div>
       </div>
     );
@@ -231,6 +229,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
     const setItems = (next: any[]) => patch({ items: next });
     return (
       <div className="space-y-3">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
         <RichField label="Description" value={data.description} onChange={(v) => patch({ description: v })} />
         <div className="space-y-3 pt-2">
@@ -265,6 +264,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
     const setItems = (next: any[]) => patch({ items: next });
     return (
       <div className="space-y-3">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
         <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
         <div className="space-y-3 pt-2">
@@ -415,6 +415,7 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
     const setItems = (next: any[]) => patch({ items: next });
     return (
       <div className="space-y-3">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
         <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
         <div>
@@ -463,7 +464,9 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
 
     return (
       <div className="space-y-4">
+        <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
         <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+        <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
 
         <div className="space-y-3">
           <div className="text-xs font-semibold text-muted-foreground">Plan columns</div>
@@ -583,7 +586,9 @@ export const SingleSectionEditor = ({ type, value, onChange, productId, availabl
   const setPlans = (next: any[]) => patch({ plans: next });
   return (
     <div className="space-y-3">
+      <Field label="Eyebrow" value={data.eyebrow} onChange={(v) => patch({ eyebrow: v })} />
       <Field label="Heading" value={data.heading} onChange={(v) => patch({ heading: v })} />
+      <Field label="Subheading" value={data.subheading} onChange={(v) => patch({ subheading: v })} />
       {plans.map((p, i) => (
         <div key={i} className="border border-border/60 rounded-lg p-3 bg-background/50 space-y-2">
           <div className="flex justify-between items-center">

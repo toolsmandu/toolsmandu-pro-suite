@@ -16,7 +16,9 @@ interface Plan {
 }
 
 interface PlansData {
+  eyebrow?: string;
   heading?: string;
+  subheading?: string;
   plans?: Plan[];
 }
 
@@ -26,10 +28,22 @@ const AdobePlans = ({ data }: { data: PlansData }) => {
   return (
     <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
-        {data.heading && (
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-12">
-            {data.heading}
-          </h2>
+        {(data.eyebrow || data.heading || data.subheading) && (
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            {data.eyebrow && (
+              <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
+                {data.eyebrow}
+              </p>
+            )}
+            {data.heading && (
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                {data.heading}
+              </h2>
+            )}
+            {data.subheading && (
+              <p className="text-lg md:text-xl text-foreground/70">{data.subheading}</p>
+            )}
+          </div>
         )}
         <div className={cn(
           'grid gap-6 mx-auto',

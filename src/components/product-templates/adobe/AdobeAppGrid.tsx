@@ -4,9 +4,10 @@ interface App {
 }
 
 interface AppGridData {
+  eyebrow?: string;
   heading?: string;
+  subheading?: string;
   apps?: App[];
-  footer_text?: string;
   columns?: number;
 }
 
@@ -24,7 +25,7 @@ const decodeHtmlEntities = (str: string): string => {
 };
 
 const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
-  if (!data.apps?.length && !data.footer_text) return null;
+  if (!data.apps?.length) return null;
 
   const colsMap: Record<number, string> = {
     2: 'md:grid-cols-2 lg:grid-cols-2',
@@ -40,17 +41,22 @@ const AdobeAppGrid = ({ data }: { data: AppGridData }) => {
   return (
     <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
-        {data.heading && (
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-6">
-            {data.heading}
-          </h2>
-        )}
-        {data.footer_text && (
-          <div
-            className="prose prose-sm md:prose-base dark:prose-invert max-w-3xl mx-auto mb-10 text-left"
-            style={{ color: '#ffffff' }}
-            dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(data.footer_text) }}
-          />
+        {(data.eyebrow || data.heading || data.subheading) && (
+          <div className="max-w-3xl mx-auto text-center mb-10">
+            {data.eyebrow && (
+              <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
+                {data.eyebrow}
+              </p>
+            )}
+            {data.heading && (
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                {data.heading}
+              </h2>
+            )}
+            {data.subheading && (
+              <p className="text-lg md:text-xl text-foreground/70">{data.subheading}</p>
+            )}
+          </div>
         )}
         {!!data.apps?.length && (
           <div className={`grid grid-cols-2 sm:grid-cols-3 ${colClass} gap-6`}>

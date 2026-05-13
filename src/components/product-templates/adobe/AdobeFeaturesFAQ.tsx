@@ -9,6 +9,7 @@ interface FAQItem {
 }
 
 interface FeaturesFAQData {
+  eyebrow?: string;
   heading?: string;
   description?: string;
   items?: FAQItem[];
@@ -24,8 +25,13 @@ const AdobeFeaturesFAQ = ({ data }: { data: FeaturesFAQData }) => {
   return (
     <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
-        {(data.heading || data.description) && (
+        {(data.eyebrow || data.heading || data.description) && (
           <div className="max-w-3xl mx-auto text-center mb-12">
+            {data.eyebrow && (
+              <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
+                {data.eyebrow}
+              </p>
+            )}
             {data.heading && (
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{data.heading}</h2>
             )}
