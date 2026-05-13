@@ -91,7 +91,7 @@ const AdobeComparisonTwo = ({ data }: { data: ComparisonTwoData }) => {
         {(data.eyebrow || data.heading || data.subheading) && (
           <div className="text-center max-w-3xl mx-auto mb-12">
             {data.eyebrow && (
-              <div className="text-sm font-semibold uppercase tracking-wider text-white mb-2">
+              <div className="text-sm font-semibold uppercase italic tracking-wider text-white mb-2">
                 {data.eyebrow}
               </div>
             )}
