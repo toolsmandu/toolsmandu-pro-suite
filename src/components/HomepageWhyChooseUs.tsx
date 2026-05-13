@@ -37,7 +37,7 @@ const HomepageWhyChooseUs = () => {
         .from('site_settings')
         .select('key,value')
         .in('key', [
-          'homepage_why_title', 'homepage_why_intro', 'homepage_why_items',
+          'homepage_why_title', 'homepage_why_intro', 'homepage_why_items', 'homepage_why_eyebrow',
           'trustpilot_score', 'trustpilot_count', 'google_score', 'google_count',
           'footer_trustpilot_link', 'footer_google_link',
         ]);
@@ -47,6 +47,7 @@ const HomepageWhyChooseUs = () => {
 
   const title = data?.homepage_why_title || DEFAULT_TITLE;
   const intro = data?.homepage_why_intro || DEFAULT_INTRO;
+  const eyebrow = data?.homepage_why_eyebrow || 'Trusted by thousands';
   let items: WhyItem[] = DEFAULT_ITEMS;
   if (data?.homepage_why_items) {
     try {
