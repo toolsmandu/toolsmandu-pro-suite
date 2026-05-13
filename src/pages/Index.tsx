@@ -146,8 +146,6 @@ const HeroSlider = () => {
 const CategorySection = ({ category, products }: { category: { id: string; name: string; slug: string }; products: any[] }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  if (!products.length) return null;
-
   const scroll = (dir: number) => {
     scrollRef.current?.scrollBy({ left: dir * 280, behavior: 'smooth' });
   };
@@ -169,13 +167,15 @@ const CategorySection = ({ category, products }: { category: { id: string; name:
           </div>
         </div>
       </div>
-      <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-        {products.map(p => (
-          <div key={p.id} className="min-w-[165px] max-w-[165px]">
-            <ProductCard {...p} />
-          </div>
-        ))}
-      </div>
+      {products.length ? (
+        <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+          {products.map(p => (
+            <div key={p.id} className="min-w-[165px] max-w-[165px]">
+              <ProductCard {...p} />
+            </div>
+          ))}
+        </div>
+      ) : <ProductRowSkeleton />}
     </section>
   );
 };
