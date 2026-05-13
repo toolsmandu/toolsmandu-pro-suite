@@ -140,7 +140,7 @@ const HomepageSeoContent = () => {
   return (
     <section className="mb-12 mt-4">
       <div className="bg-card/40 rounded-lg p-6 md:p-8 border border-border/50 flex flex-col md:block">
-        <div className="order-2 md:order-[unset] md:float-right md:ml-6 mb-4 flex flex-wrap gap-3 md:flex-nowrap">
+        <div className="order-2 md:float-right md:ml-6 mb-4 flex flex-wrap gap-3 md:flex-nowrap">
           <TrustpilotCard
             score={settings?.trustpilot_score || '4.8'}
             count={settings?.trustpilot_count || '53'}
@@ -152,20 +152,20 @@ const HomepageSeoContent = () => {
             link={settings?.footer_google_link || '#'}
           />
         </div>
-        <h2 className="order-1 md:order-[unset] text-2xl md:text-3xl font-bold text-foreground mb-4">
+        <h2 className="order-1 text-2xl md:text-3xl font-bold text-foreground mb-4">
           {title}
         </h2>
         {seo && (
           <div
-            className="order-3 md:order-[unset] prose prose-invert max-w-none text-foreground/90 mb-6 prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary"
+            className="order-3 prose prose-invert max-w-none text-foreground/90 mb-6 prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary"
             dangerouslySetInnerHTML={{ __html: seo }}
           />
         )}
         <div
-          className="order-4 md:order-[unset] prose prose-invert max-w-none text-foreground/90 prose-p:my-3 prose-strong:text-foreground"
+          className="order-4 prose prose-invert max-w-none text-foreground/90 prose-p:my-3 prose-strong:text-foreground"
           dangerouslySetInnerHTML={{ __html: about }}
         />
-        <div className="order-5 md:order-[unset] clear-both" />
+        <div className="order-5 clear-both" />
       </div>
     </section>
   );
