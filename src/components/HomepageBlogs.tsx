@@ -96,14 +96,14 @@ const HomepageBlogs = () => {
             </Button>
           </Link>
           {canSlide && (
-            <>
+            <div className="hidden lg:flex items-center gap-2">
               <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => { setCurrent(c => (c - 1 + totalOriginal) % totalOriginal); setIsTransitioning(true); }}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => { setCurrent(c => c + 1); setIsTransitioning(true); }}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
-            </>
+            </div>
           )}
         </div>
       </div>
