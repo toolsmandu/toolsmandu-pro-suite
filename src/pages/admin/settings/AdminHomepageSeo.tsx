@@ -114,8 +114,13 @@ const AdminHomepageSeo = () => {
         <CardHeader><CardTitle>Why Choose Us Section</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           <div>
+            <Label>Eyebrow Text</Label>
+            <p className="text-xs text-muted-foreground mb-2">Small pill-shaped tag shown above the section title.</p>
+            <Input value={whyEyebrow} onChange={e => setWhyEyebrow(e.target.value)} placeholder="Trusted by thousands" />
+          </div>
+          <div>
             <Label>Section Title</Label>
-            <p className="text-xs text-muted-foreground mb-2">Heading shown in the gradient bar.</p>
+            <p className="text-xs text-muted-foreground mb-2">Main heading of the section.</p>
             <Input value={whyTitle} onChange={e => setWhyTitle(e.target.value)} placeholder="WHY CHOOSE TOOLSMANDU" />
           </div>
           <div>
