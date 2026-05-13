@@ -1,15 +1,30 @@
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
-import { useEffect, useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
-import NewInStore from '@/components/NewInStore';
-import SuperSavingDeals from '@/components/SuperSavingDeals';
-import HomepageBlogs from '@/components/HomepageBlogs';
-import HomepageSeoContent from '@/components/HomepageSeoContent';
 import { Loader2 } from 'lucide-react';
+
+const NewInStore = lazy(() => import('@/components/NewInStore'));
+const SuperSavingDeals = lazy(() => import('@/components/SuperSavingDeals'));
+const HomepageBlogs = lazy(() => import('@/components/HomepageBlogs'));
+const HomepageSeoContent = lazy(() => import('@/components/HomepageSeoContent'));
+
+const ProductRowSkeleton = () => (
+  <div className="flex gap-4 overflow-hidden pb-4">
+    {Array.from({ length: 8 }).map((_, i) => (
+      <div key={i} className="min-w-[165px] max-w-[165px] rounded-2xl bg-card/70 overflow-hidden">
+        <div className="aspect-[2/3] bg-muted animate-pulse" />
+        <div className="p-4 space-y-3">
+          <div className="h-3 rounded bg-muted animate-pulse" />
+          <div className="mx-auto h-4 w-20 rounded bg-muted animate-pulse" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
