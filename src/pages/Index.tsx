@@ -181,52 +181,60 @@ const CategorySection = ({ category, products }: { category: { id: string; name:
 };
 
 const Index = () => {
-  // Single query to fetch ALL products, then filter client-side
-  const { data: allProducts, isLoading } = useQuery({
-    queryKey: ['all-products'],
-    staleTime: 5 * 60 * 1000,
-    queryFn: async () => {
-      const { data } = await supabase.from('products').select('*, product_variations(*)').order('created_at', { ascending: false });
-      return data || [];
-    },
-  });
-
-  const { data: categories, isLoading: categoriesLoading } = useQuery({
+  const { data: categories } = useQuery({
     queryKey: ['categories'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const { data } = await supabase.from('categories').select('*').order('sort_order');
+      const { data } = await supabase.from('categories').select('id, name, slug').order('sort_order').limit(8);
       return data || [];
     },
   });
 
-  const isInStock = (p: any) => {
-    const vars = (p.product_variations || []).filter((v: any) => v.is_active);
-    if (vars.length > 0) return vars.some((v: any) => v.stock_status !== 'out_of_stock');
-    return p.stock_status !== 'out_of_stock';
-  };
-  const productsByCategory = (catId: string) => allProducts?.filter(p => p.category_id === catId && isInStock(p)).slice(0, 10) || [];
+  const { data: categoryProducts } = useQuery({
+    queryKey: ['homepage-category-products', categories?.map(c => c.id).join(',')],
+    staleTime: 5 * 60 * 1000,
+    enabled: !!categories?.length,
+    queryFn: async () => {
+      const ids = categories!.map(c => c.id);
+      const { data } = await supabase
+        .from('products')
+        .select('id, name, slug, price, original_price, image_url, duration, is_flash_sale, flash_sale_label, is_bestseller, stock_status, category_id, created_at, product_variations(id, price, original_price, is_active, stock_status)')
+        .in('category_id', ids)
+        .order('created_at', { ascending: false });
 
-  const loading = isLoading || categoriesLoading;
+      const grouped = new Map<string, any[]>();
+      (data || []).forEach((product: any) => {
+        const vars = (product.product_variations || []).filter((v: any) => v.is_active);
+        const inStock = vars.length > 0 ? vars.some((v: any) => v.stock_status !== 'out_of_stock') : product.stock_status !== 'out_of_stock';
+        if (!inStock) return;
+        const list = grouped.get(product.category_id) || [];
+        if (list.length < 10) {
+          list.push(product);
+          grouped.set(product.category_id, list);
+        }
+      });
+      return grouped;
+    },
+  });
 
   return (
     <>
-      {loading ? (
-        <div className="flex items-center justify-center min-h-[80vh]">
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        </div>
-      ) : (
-        <>
-          <HeroSlider />
-          <NewInStore />
-          <div className="container mx-auto px-4 pb-12">
-            <SuperSavingDeals />
-            {categories?.map(cat => <CategorySection key={cat.id} category={cat} products={productsByCategory(cat.id)} />)}
-            <HomepageBlogs />
-            <HomepageSeoContent />
-          </div>
-        </>
-      )}
+      <HeroSlider />
+      <Suspense fallback={null}>
+        <NewInStore />
+      </Suspense>
+      <div className="container mx-auto px-4 pb-12">
+        <Suspense fallback={null}>
+          <SuperSavingDeals />
+        </Suspense>
+        {categories?.map(cat => (
+          <CategorySection key={cat.id} category={cat} products={categoryProducts?.get(cat.id) || []} />
+        ))}
+        <Suspense fallback={null}>
+          <HomepageBlogs />
+          <HomepageSeoContent />
+        </Suspense>
+      </div>
     </>
   );
 };
