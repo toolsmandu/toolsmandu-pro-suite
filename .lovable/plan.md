@@ -1,66 +1,40 @@
-## Goal
-Add a per-product "custom template" system. The first template — **Adobe-style** — will be applied to `/item/adobe-creative-cloud` and reusable for any future product. All content (hero copy, apps, features, plans) is editable from the admin panel.
+# Why the site loads slowly
 
-## Database changes
+I profiled your homepage and found the root cause:
 
-**1. `products` table** — add one column:
-- `custom_template` text default `'default'` — values: `'default'` | `'adobe_style'`. When not `'default'`, the custom layout renders instead of the standard product page.
+- **9.4s page load**, **8.5s First Contentful Paint**, **240 script requests**, **3MB+ of JavaScript**.
+- Your `src/App.tsx` statically imports **every page in the app** at the top — including ~60 admin pages and 4 dashboard pages — even though a visitor to `/` will never see them.
+- That pulls heavy libraries (`recharts` 217KB, `xlsx` 184KB, `lucide-react` 191KB, rich text editor, etc.) into the homepage bundle.
+- Result: a regular shopper downloads the entire admin panel before they see the first product.
 
-**2. New table `product_custom_sections`** — stores section content per product:
-- `product_id` (uuid)
-- `section_type` text — `'hero'` | `'app_grid'` | `'features'` | `'plans'`
-- `data` jsonb — section payload (see shapes below)
-- `sort_order` int
-- `is_active` boolean
-- RLS: public read; admin/editor write
+Note: in the Lovable preview, Vite serves files un-bundled, so 240 separate requests look extreme. In production it will be lighter, but the underlying problem (no code splitting) still costs several seconds and megabytes.
 
-### `data` jsonb shapes per section_type
+# Plan — code splitting
 
-```text
-hero       { eyebrow, heading, subheading, image_url, cta_label, cta_link, secondary_cta_label, secondary_cta_link, bg_color }
-app_grid   { heading, apps: [{ name, icon_url, description }] }
-features   { items: [{ heading, description, image_url, image_side: 'left'|'right' }] }
-plans      { heading, plans: [{ name, price, period, badge?, features: string[], cta_label, cta_link, highlighted: bool }] }
-```
+## 1. Lazy-load every admin route
+Convert all `import AdminX from "./pages/admin/..."` statements in `src/App.tsx` to `const AdminX = lazy(() => import("./pages/admin/..."))`. Wrap the `/admin` `<Route>` subtree in `<Suspense fallback={...}>` so Vite splits each admin page into its own chunk that only downloads when an admin actually visits `/admin/...`.
 
-## Frontend
+## 2. Lazy-load dashboard + secondary public pages
+Same treatment for: `DashboardLayout`, `ProfilePage`, `OrdersPage`, `ReportProblemPage`, `InboxPage`, plus rarely-hit public pages: `BlogList`, `BlogPost`, `FreeTools`, `FreeToolDetail`, `Unsubscribe`, `PaymentVerify`, `PublicInboxPage`, `ForgotPassword`, `ResetPassword`, `Signup`, `Login`, `CartPage`, `SearchPage`.
 
-### New components (in `src/components/product-templates/adobe/`)
-- `AdobeTemplate.tsx` — orchestrator; fetches `product_custom_sections`, renders sections in order
-- `AdobeHero.tsx` — full-bleed hero with eyebrow + big headline + dual CTAs + image
-- `AdobeAppGrid.tsx` — responsive grid of app cards (icon + name + short desc)
-- `AdobeFeatures.tsx` — alternating image/text rows (zigzag)
-- `AdobePlans.tsx` — 3-column pricing comparison with highlight + checklist
-- All themed with semantic tokens (no hardcoded colors), responsive, lazy-loaded images
+Keep eagerly imported (needed for first paint of `/`):
+`MainLayout`, `Index`, `ProductPage`, `CategoryPage`, `ScrollToTop`, `NotFound`.
 
-### `src/pages/ProductPage.tsx`
-- After product fetch: if `product.custom_template === 'adobe_style'`, render `<AdobeTemplate product={product} />` and bypass the default layout. Default page unchanged.
+## 3. Add a simple Suspense fallback
+A small centered spinner using existing design tokens — no new dependency.
 
-## Admin
+## 4. Fix CLS (0.20 → target <0.1)
+The profile flagged layout shifts on the homepage container, header search form, and footer. After the bundle fix I'll verify CLS and, if still high, reserve explicit heights on the hero/category sections and add `width`/`height` on images that lack them.
 
-### `src/pages/admin/AdminProductCustomTemplate.tsx` (new)
-- Route: `/admin/products/:id/template`
-- Template selector dropdown (Default / Adobe style) → updates `products.custom_template`
-- When Adobe style is selected, show 4 collapsible section editors:
-  - **Hero**: text inputs + image upload + CTA fields
-  - **App Grid**: heading + repeater of {name, icon (image upload), description}
-  - **Features**: repeater of {heading, description, image, side}
-  - **Plans**: heading + repeater of {name, price, badge, feature list (textarea, one per line), CTA, highlighted toggle}
-- Save writes to `product_custom_sections` (delete + reinsert per section_type for simplicity)
+## Expected impact
+- Initial JS for `/` drops from ~3MB / 240 files to roughly 5–10 chunks.
+- FCP should drop from **8.5s → ~1.5–2.5s** in production.
+- Admin and dashboard load slightly slower on first visit (one extra chunk each), which is the correct tradeoff.
 
-### `src/pages/admin/AdminProducts.tsx`
-- Add a "Custom template" link/button on each product row pointing to the new editor
+## Out of scope (can do later if needed)
+- Migrating to the new Lovable SSR stack (would require a full rebuild — discussed earlier).
+- Image optimization with `vite-imagetools`.
+- Upgrading the Lovable Cloud instance size — only relevant if the database/edge functions become the bottleneck, which they currently aren't.
 
-## Seeding
-Pre-populate Adobe Creative Cloud product with sensible default content (hero, ~10 apps, 3 features, 3 plans) so the page looks complete immediately. User can then refine in admin.
-
-## Out of scope
-- Other templates (only Adobe style now; framework supports adding more later)
-- Cart/checkout flow changes — CTAs link to existing cart or external URLs
-- A/B testing or scheduling
-
-## Verification
-- Visit `/item/adobe-creative-cloud` → see Adobe-style page
-- Visit any other product → unchanged default page
-- Edit hero text in admin → reflects on refresh
-- Mobile responsive at 375px and 1492px
+## Files touched
+- `src/App.tsx` (the only file changed)
