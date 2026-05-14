@@ -103,6 +103,7 @@ const AdminDashboard = () => {
 
   const { data: orderChart } = useQuery({
     queryKey: ['admin-orders-12m'],
+    staleTime: STALE,
     queryFn: async () => {
       const { data } = await supabase
         .from('orders')
