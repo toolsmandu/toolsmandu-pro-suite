@@ -469,8 +469,10 @@ const AdminLayout = () => {
           <header className="h-14 flex items-center border-b border-border px-2 sm:px-4 gap-2 sm:gap-4 bg-background sticky top-0 z-30 shrink-0 w-full overflow-hidden">
             <MenuTrigger />
             <MobileAutoClose />
-            {isAdmin && <SalesStatsBar />}
-            {!isAdmin && isEditor && <EditorTaskStatsBar />}
+            <Suspense fallback={null}>
+              {isAdmin && <SalesStatsBar />}
+              {!isAdmin && isEditor && <EditorTaskStatsBar />}
+            </Suspense>
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
               {isAdmin && (
                 <Button
