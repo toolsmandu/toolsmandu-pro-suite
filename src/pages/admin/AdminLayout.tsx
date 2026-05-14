@@ -35,12 +35,13 @@ const MobileAutoClose = () => {
 };
 
 const AdminLayout = () => {
-  const { user, loading, isAdmin, isEditor, signOut } = useAuth();
+  const { user, loading, rolesLoading, isAdmin, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const { data: logoUrl } = useQuery({
     queryKey: ['site-logo-url'],
+    staleTime: Infinity,
     queryFn: async () => {
       const { data } = await supabase.from('site_settings').select('value').eq('key', 'logo_url').maybeSingle();
       return data?.value || '';
