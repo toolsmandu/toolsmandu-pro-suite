@@ -86,8 +86,8 @@ const AdminLayout = () => {
   }, [isReportsSection]);
 
   useEffect(() => {
-    if (!loading && (!user || (!isAdmin && !isEditor))) navigate('/');
-  }, [user, loading, isAdmin, isEditor, navigate]);
+    if (!loading && !rolesLoading && (!user || (!isAdmin && !isEditor))) navigate('/');
+  }, [user, loading, rolesLoading, isAdmin, isEditor, navigate]);
 
   // Apply admin-light class to body so portaled elements (dialogs, popovers) inherit admin theme
   useEffect(() => {
@@ -96,7 +96,8 @@ const AdminLayout = () => {
   }, []);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
-  if (!user || (!isAdmin && !isEditor)) return null;
+  if (!user) return null;
+  if (!rolesLoading && !isAdmin && !isEditor) return null;
 
   const topLinks = [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
