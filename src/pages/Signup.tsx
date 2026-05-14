@@ -340,7 +340,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md" style={{ backgroundColor: '#0a2e5c' }}>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">
             {settings?.logo_url ? (
@@ -437,8 +437,8 @@ const Signup = () => {
                   {loading ? 'Creating account...' : 'Sign Up'}
                 </Button>
               </form>
-              <p className="text-center text-sm text-muted-foreground mt-4">
-                Already have an account? <Link to="/login" className="text-primary hover:underline">Sign In</Link>
+              <p className="text-center text-sm text-[#ffffff] mt-4">
+                Already have an account? <Link to="/login" className="text-[#ffffff] underline hover:no-underline font-medium">Sign In</Link>
               </p>
             </>
           )}
