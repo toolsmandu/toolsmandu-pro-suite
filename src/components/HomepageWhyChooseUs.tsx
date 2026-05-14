@@ -79,9 +79,10 @@ const HomepageWhyChooseUs = () => {
 
           {/* Intro + reviews */}
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 md:gap-10 items-start mb-12">
-            <p className="text-foreground/80 leading-relaxed text-base md:text-lg">
-              {intro}
-            </p>
+            <div
+              className="text-foreground/80 leading-relaxed text-base md:text-lg prose prose-sm prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: intro }}
+            />
             <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-[260px]">
               <TrustpilotCard
                 score={data?.trustpilot_score || '4.8'}
@@ -117,7 +118,7 @@ const HomepageWhyChooseUs = () => {
                       </div>
                     </div>
 
-                    <h3 className="relative font-bold text-foreground text-lg mb-2 group-hover:text-primary transition-colors">
+                    <h3 className="relative font-bold text-foreground text-lg mb-2 group-hover:text-[#ffffff] transition-colors">
                       {item.title}
                     </h3>
                     <p className="relative text-sm text-foreground/70 leading-relaxed">
