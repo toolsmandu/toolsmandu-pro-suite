@@ -76,6 +76,8 @@ const AdminLayout = () => {
   const { data: logoUrl } = useQuery({
     queryKey: ['site-logo-url'],
     staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const { data } = await supabase.from('site_settings').select('value').eq('key', 'logo_url').maybeSingle();
       return data?.value || '';
@@ -94,18 +96,6 @@ const AdminLayout = () => {
   useEffect(() => {
     if (isSheetsSection) setSheetsOpen(true);
   }, [isSheetsSection]);
-
-  const { data: sheetsList = [] } = useQuery({
-    queryKey: ['admin-sidebar-sheets'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('sheets')
-        .select('id, name, slug')
-        .order('created_at', { ascending: false });
-      return (data || []) as { id: string; name: string; slug: string | null }[];
-    },
-    enabled: !!user && (isAdmin || isEditor),
-  });
 
   useEffect(() => {
     if (isProductsSection) setProductsOpen(true);
@@ -504,8 +494,8 @@ const AdminLayout = () => {
             <MenuTrigger />
             <MobileAutoClose />
             <Suspense fallback={null}>
-              {isAdmin && <SalesStatsBar />}
-              {!isAdmin && isEditor && <EditorTaskStatsBar />}
+              {!rolesLoading && isAdmin && <SalesStatsBar />}
+              {!rolesLoading && !isAdmin && isEditor && <EditorTaskStatsBar />}
             </Suspense>
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
               {isAdmin && (
