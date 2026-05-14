@@ -45,7 +45,7 @@ const ForgotPassword = () => {
               {loading ? 'Sending...' : 'Send OTP Code'}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              <Link to="/login" className="text-primary hover:underline">Back to Login</Link>
+              <Link to="/login" className="text-[#ffffff] underline hover:no-underline">Back to Login</Link>
             </p>
           </form>
         </CardContent>
