@@ -502,7 +502,9 @@ const AdminLayout = () => {
             <Outlet />
           </main>
         </div>
-        <ChatbotWidget />
+        <Suspense fallback={null}>
+          <ChatbotWidget />
+        </Suspense>
       </div>
     </SidebarProvider>
   );
