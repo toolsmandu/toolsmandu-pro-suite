@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { NavLink } from '@/components/NavLink';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
   import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut, Wrench, Table, Network, Layout } from 'lucide-react';
-import ChatbotWidget from '@/components/admin/ChatbotWidget';
-import SalesStatsBar from '@/components/admin/SalesStatsBar';
-import EditorTaskStatsBar from '@/components/admin/EditorTaskStatsBar';
+const ChatbotWidget = lazy(() => import('@/components/admin/ChatbotWidget'));
+const SalesStatsBar = lazy(() => import('@/components/admin/SalesStatsBar'));
+const EditorTaskStatsBar = lazy(() => import('@/components/admin/EditorTaskStatsBar'));
 import { Button } from '@/components/ui/button';
 
 const MenuTrigger = () => {
