@@ -58,7 +58,7 @@ const AdminTopMenu = lazy(() => import("./pages/admin/settings/AdminTopMenu"));
 const AdminFooter = lazy(() => import("./pages/admin/settings/AdminFooter"));
 const AdminEmailTemplates = lazy(() => import("./pages/admin/settings/AdminEmailTemplates"));
 const AdminMaintenance = lazy(() => import("./pages/admin/settings/AdminMaintenance"));
-const AdminHomepageSeo = lazy(() => import("./pages/admin/settings/AdminHomepageSeo"));
+
 const AdminMedia = lazy(() => import("./pages/admin/AdminMedia"));
 const AdminFAQs = lazy(() => import("./pages/admin/AdminFAQs"));
 const AdminFamilySharing = lazy(() => import("./pages/admin/AdminFamilySharing"));
@@ -173,7 +173,7 @@ const App = () => (
                   <Route path="settings/footer" element={<AdminFooter />} />
                   <Route path="settings/email-templates" element={<AdminEmailTemplates />} />
                   <Route path="settings/maintenance" element={<AdminMaintenance />} />
-                  <Route path="settings/homepage-seo" element={<AdminHomepageSeo />} />
+                  
                   <Route path="faqs" element={<AdminFAQs />} />
                   <Route path="family-sharing" element={<AdminFamilySharing />} />
                   <Route path="family-sharing/:id" element={<AdminFamilySharingDetail />} />
