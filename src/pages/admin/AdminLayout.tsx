@@ -10,7 +10,41 @@ import {
   SidebarMenuSubButton, SidebarProvider, useSidebar,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-  import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut, Wrench, Table, Network, Layout } from 'lucide-react';
+import LayoutDashboard from 'lucide-react/dist/esm/icons/layout-dashboard.js';
+import Package from 'lucide-react/dist/esm/icons/package.js';
+import FolderOpen from 'lucide-react/dist/esm/icons/folder-open.js';
+import ShoppingCart from 'lucide-react/dist/esm/icons/shopping-cart.js';
+import Image from 'lucide-react/dist/esm/icons/image.js';
+import Users from 'lucide-react/dist/esm/icons/users.js';
+import Settings from 'lucide-react/dist/esm/icons/settings.js';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right.js';
+import Tag from 'lucide-react/dist/esm/icons/tag.js';
+import Film from 'lucide-react/dist/esm/icons/film.js';
+import HelpCircle from 'lucide-react/dist/esm/icons/help-circle.js';
+import Share2 from 'lucide-react/dist/esm/icons/share-2.js';
+import Globe from 'lucide-react/dist/esm/icons/globe.js';
+import ShoppingBag from 'lucide-react/dist/esm/icons/shopping-bag.js';
+import Menu from 'lucide-react/dist/esm/icons/menu.js';
+import PanelBottom from 'lucide-react/dist/esm/icons/panel-bottom.js';
+import Ticket from 'lucide-react/dist/esm/icons/ticket.js';
+import Zap from 'lucide-react/dist/esm/icons/zap.js';
+import StickyNote from 'lucide-react/dist/esm/icons/sticky-note.js';
+import Newspaper from 'lucide-react/dist/esm/icons/newspaper.js';
+import Mail from 'lucide-react/dist/esm/icons/mail.js';
+import FormInput from 'lucide-react/dist/esm/icons/form-input.js';
+import Bell from 'lucide-react/dist/esm/icons/bell.js';
+import BadgePercent from 'lucide-react/dist/esm/icons/badge-percent.js';
+import KeyRound from 'lucide-react/dist/esm/icons/key-round.js';
+import BarChart3 from 'lucide-react/dist/esm/icons/bar-chart-3.js';
+import FileBarChart from 'lucide-react/dist/esm/icons/file-bar-chart.js';
+import TrendingUp from 'lucide-react/dist/esm/icons/trending-up.js';
+import BookOpen from 'lucide-react/dist/esm/icons/book-open.js';
+import ListChecks from 'lucide-react/dist/esm/icons/list-checks.js';
+import LogOut from 'lucide-react/dist/esm/icons/log-out.js';
+import Wrench from 'lucide-react/dist/esm/icons/wrench.js';
+import Table from 'lucide-react/dist/esm/icons/table.js';
+import Network from 'lucide-react/dist/esm/icons/network.js';
+import Layout from 'lucide-react/dist/esm/icons/layout.js';
 const ChatbotWidget = lazy(() => import('@/components/admin/ChatbotWidget'));
 const SalesStatsBar = lazy(() => import('@/components/admin/SalesStatsBar'));
 const EditorTaskStatsBar = lazy(() => import('@/components/admin/EditorTaskStatsBar'));
@@ -42,6 +76,8 @@ const AdminLayout = () => {
   const { data: logoUrl } = useQuery({
     queryKey: ['site-logo-url'],
     staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const { data } = await supabase.from('site_settings').select('value').eq('key', 'logo_url').maybeSingle();
       return data?.value || '';
@@ -56,22 +92,16 @@ const AdminLayout = () => {
   const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
   const [reportsOpen, setReportsOpen] = useState(isReportsSection);
   const [sheetsOpen, setSheetsOpen] = useState(isSheetsSection);
+  const [showChatbot, setShowChatbot] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowChatbot(true), 2000);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (isSheetsSection) setSheetsOpen(true);
   }, [isSheetsSection]);
-
-  const { data: sheetsList = [] } = useQuery({
-    queryKey: ['admin-sidebar-sheets'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('sheets')
-        .select('id, name, slug')
-        .order('created_at', { ascending: false });
-      return (data || []) as { id: string; name: string; slug: string | null }[];
-    },
-    enabled: !!user && (isAdmin || isEditor),
-  });
 
   useEffect(() => {
     if (isProductsSection) setProductsOpen(true);
@@ -470,8 +500,8 @@ const AdminLayout = () => {
             <MenuTrigger />
             <MobileAutoClose />
             <Suspense fallback={null}>
-              {isAdmin && <SalesStatsBar />}
-              {!isAdmin && isEditor && <EditorTaskStatsBar />}
+              {!rolesLoading && isAdmin && <SalesStatsBar />}
+              {!rolesLoading && !isAdmin && isEditor && <EditorTaskStatsBar />}
             </Suspense>
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
               {isAdmin && (
@@ -502,9 +532,11 @@ const AdminLayout = () => {
             <Outlet />
           </main>
         </div>
-        <Suspense fallback={null}>
-          <ChatbotWidget />
-        </Suspense>
+        {showChatbot && (
+          <Suspense fallback={null}>
+            <ChatbotWidget />
+          </Suspense>
+        )}
       </div>
     </SidebarProvider>
   );
