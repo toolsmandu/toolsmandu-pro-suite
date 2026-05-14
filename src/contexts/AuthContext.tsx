@@ -67,18 +67,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [signOut]);
 
   const syncAuthState = useCallback(async (nextSession: Session | null, isInitial = false) => {
-    if (isInitial) setLoading(true);
     setSession(nextSession);
     setUser(nextSession?.user ?? null);
 
+    if (isInitial) setLoading(false);
+
     if (nextSession?.user) {
+      setRolesLoading(true);
       await fetchUserData(nextSession.user.id);
+      setRolesLoading(false);
     } else {
       setRoles([]);
       setProfile(null);
+      setRolesLoading(false);
     }
-
-    if (isInitial) setLoading(false);
   }, [fetchUserData]);
 
   const refreshProfile = useCallback(async () => {
