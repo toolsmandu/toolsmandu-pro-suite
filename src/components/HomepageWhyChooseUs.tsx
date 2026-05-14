@@ -117,7 +117,7 @@ const HomepageWhyChooseUs = () => {
                       </div>
                     </div>
 
-                    <h3 className="relative font-bold text-foreground text-lg mb-2 group-hover:text-primary transition-colors">
+                    <h3 className="relative font-bold text-foreground text-lg mb-2 group-hover:text-[#ffffff] transition-colors">
                       {item.title}
                     </h3>
                     <p className="relative text-sm text-foreground/70 leading-relaxed">
