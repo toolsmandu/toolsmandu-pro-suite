@@ -73,6 +73,7 @@ const AdminDashboard = () => {
 
   const { data: signupChart } = useQuery({
     queryKey: ['admin-signups-active-12m'],
+    staleTime: STALE,
     queryFn: async () => {
       const [signupsRes, loginsRes] = await Promise.all([
         supabase.from('profiles').select('created_at').gte('created_at', earliest),
