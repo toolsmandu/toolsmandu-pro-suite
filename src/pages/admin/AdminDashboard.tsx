@@ -1,25 +1,16 @@
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, ShoppingCart, Users, Newspaper, PauseCircle, RotateCcw, CheckCircle2 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import Package from 'lucide-react/dist/esm/icons/package.js';
+import ShoppingCart from 'lucide-react/dist/esm/icons/shopping-cart.js';
+import Users from 'lucide-react/dist/esm/icons/users.js';
+import Newspaper from 'lucide-react/dist/esm/icons/newspaper.js';
+import PauseCircle from 'lucide-react/dist/esm/icons/pause-circle.js';
+import RotateCcw from 'lucide-react/dist/esm/icons/rotate-ccw.js';
+import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2.js';
 
-const MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-const buildLast12Months = () => {
-  const now = new Date();
-  const months: { key: string; label: string; start: Date; end: Date }[] = [];
-  for (let i = 11; i >= 0; i--) {
-    const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
-    months.push({
-      key: `${start.getFullYear()}-${start.getMonth()}`,
-      label: `${MONTH_LABELS[start.getMonth()]} ${String(start.getFullYear()).slice(-2)}`,
-      start, end,
-    });
-  }
-  return months;
-};
+const AdminDashboardCharts = lazy(() => import('./AdminDashboardCharts'));
 
 const AdminDashboard = () => {
   const STALE = 60_000;
