@@ -124,7 +124,7 @@ const Navbar = () => {
                 {settings?.logo_url ? (
                   <img src={settings.logo_url} alt="Toolsmandu" className="h-8 md:h-8 max-h-[28.8px] md:max-h-none object-contain" />
                 ) : (
-                  <><span className="text-primary">Tools</span>mandu</>
+                  <span className="h-8 w-[120px] inline-block" aria-hidden="true" />
                 )}
               </Link>
             </div>
