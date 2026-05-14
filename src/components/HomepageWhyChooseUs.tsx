@@ -79,9 +79,10 @@ const HomepageWhyChooseUs = () => {
 
           {/* Intro + reviews */}
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 md:gap-10 items-start mb-12">
-            <p className="text-foreground/80 leading-relaxed text-base md:text-lg">
-              {intro}
-            </p>
+            <div
+              className="text-foreground/80 leading-relaxed text-base md:text-lg prose prose-sm prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: intro }}
+            />
             <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-[260px]">
               <TrustpilotCard
                 score={data?.trustpilot_score || '4.8'}

@@ -127,7 +127,7 @@ const AdminHomepageSeo = () => {
           <div>
             <Label>Intro Paragraph</Label>
             <p className="text-xs text-muted-foreground mb-2">Short description shown below the heading.</p>
-            <Textarea value={whyIntro} onChange={e => setWhyIntro(e.target.value)} rows={3} />
+            <RichTextEditor value={whyIntro} onChange={setWhyIntro} />
           </div>
 
           <div>
