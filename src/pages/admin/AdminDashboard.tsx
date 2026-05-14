@@ -22,18 +22,28 @@ const buildLast12Months = () => {
 };
 
 const AdminDashboard = () => {
+  const STALE = 60_000;
+
   const { data: orderCounts } = useQuery({
     queryKey: ['admin-order-counts'],
+    staleTime: STALE,
     queryFn: async () => {
-      const { data } = await supabase.from('orders').select('status');
-      const counts = { processing: 0, on_hold: 0, completed: 0, cancelled: 0, refunded: 0, pending: 0, total: 0 };
-      data?.forEach(o => { counts[o.status as keyof typeof counts]++; counts.total++; });
-      return counts;
+      const statuses = ['processing','on_hold','completed','cancelled','refunded','pending'] as const;
+      const results = await Promise.all([
+        ...statuses.map(s =>
+          supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', s)
+        ),
+        supabase.from('orders').select('*', { count: 'exact', head: true }),
+      ]);
+      const counts: any = { total: results[results.length - 1].count || 0 };
+      statuses.forEach((s, i) => { counts[s] = results[i].count || 0; });
+      return counts as { processing: number; on_hold: number; completed: number; cancelled: number; refunded: number; pending: number; total: number };
     },
   });
 
   const { data: productCount } = useQuery({
     queryKey: ['admin-product-count'],
+    staleTime: STALE,
     queryFn: async () => {
       const { count } = await supabase.from('products').select('*', { count: 'exact', head: true });
       return count || 0;
@@ -42,6 +52,7 @@ const AdminDashboard = () => {
 
   const { data: customerCount } = useQuery({
     queryKey: ['admin-customer-count'],
+    staleTime: STALE,
     queryFn: async () => {
       const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
       return count || 0;
@@ -50,6 +61,7 @@ const AdminDashboard = () => {
 
   const { data: blogCount } = useQuery({
     queryKey: ['admin-blog-count'],
+    staleTime: STALE,
     queryFn: async () => {
       const { count } = await supabase.from('blogs').select('*', { count: 'exact', head: true });
       return count || 0;
