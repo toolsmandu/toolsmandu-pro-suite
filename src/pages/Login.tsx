@@ -181,10 +181,10 @@ const Login = () => {
                 </Button>
               </form>
               <div className="flex items-center justify-between mt-4">
-                <Link to="/forgot-password" className="text-sm text-primary hover:underline">Forgot password?</Link>
+                <Link to="/forgot-password" className="text-sm text-[#ffffff] hover:underline">Forgot password?</Link>
               </div>
-              <p className="text-center text-sm text-muted-foreground mt-4">
-                Don't have an account? <Link to="/signup" className="text-primary hover:underline">Sign Up</Link>
+              <p className="text-center text-sm text-[#ffffff] mt-4">
+                Don't have an account? <Link to="/signup" className="text-[#ffffff] hover:underline font-medium">Sign Up</Link>
               </p>
             </>
           )}
