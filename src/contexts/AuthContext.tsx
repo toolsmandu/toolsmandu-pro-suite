@@ -9,6 +9,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  rolesLoading: boolean;
   roles: UserRole[];
   isAdmin: boolean;
   isEditor: boolean;
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   loading: true,
+  rolesLoading: true,
   roles: [],
   isAdmin: false,
   isEditor: false,
