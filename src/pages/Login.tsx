@@ -146,7 +146,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md" style={{ backgroundColor: '#0a2e5c' }}>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">
             {settings?.logo_url ? (
