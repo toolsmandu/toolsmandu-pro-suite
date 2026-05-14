@@ -92,6 +92,12 @@ const AdminLayout = () => {
   const [settingsOpen, setSettingsOpen] = useState(isSettingsSection);
   const [reportsOpen, setReportsOpen] = useState(isReportsSection);
   const [sheetsOpen, setSheetsOpen] = useState(isSheetsSection);
+  const [showChatbot, setShowChatbot] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowChatbot(true), 2000);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (isSheetsSection) setSheetsOpen(true);
@@ -526,9 +532,11 @@ const AdminLayout = () => {
             <Outlet />
           </main>
         </div>
-        <Suspense fallback={null}>
-          <ChatbotWidget />
-        </Suspense>
+        {showChatbot && (
+          <Suspense fallback={null}>
+            <ChatbotWidget />
+          </Suspense>
+        )}
       </div>
     </SidebarProvider>
   );
