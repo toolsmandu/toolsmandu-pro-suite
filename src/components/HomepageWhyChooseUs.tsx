@@ -125,10 +125,6 @@ const HomepageWhyChooseUs = () => {
                       {item.description}
                     </p>
 
-                    {/* corner number */}
-                    <div className="absolute top-4 right-4 text-3xl font-black text-primary/10 group-hover:text-primary/30 transition-colors">
-                      {String(i + 1).padStart(2, '0')}
-                    </div>
                   </div>
                 </div>
               );
