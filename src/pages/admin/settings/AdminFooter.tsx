@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Plus, Trash2, Pencil } from 'lucide-react';
+import AdminHomepageSeo from './AdminHomepageSeo';
 
 const AdminFooter = () => {
   const queryClient = useQueryClient();
@@ -122,6 +123,7 @@ const AdminFooter = () => {
 
   return (
     <div className="space-y-8">
+      <AdminHomepageSeo />
       <h2 className="text-2xl font-bold text-foreground">Footer</h2>
 
       {/* Footer Appearance */}
