@@ -7,13 +7,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 
-// Eager: needed for first paint of "/"
-import MainLayout from "@/components/layout/MainLayout";
 import ScrollToTop from "@/components/ScrollToTop";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
 
-// Lazy: secondary public pages
+// Lazy: public pages/layouts
+const MainLayout = lazy(() => import("@/components/layout/MainLayout"));
+const Index = lazy(() => import("./pages/Index"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
