@@ -184,7 +184,7 @@ const Login = () => {
                 <Link to="/forgot-password" className="text-sm text-[#ffffff] hover:underline">Forgot password?</Link>
               </div>
               <p className="text-center text-sm text-[#ffffff] mt-4">
-                Don't have an account? <Link to="/signup" className="text-[#ffffff] hover:underline font-medium">Sign Up</Link>
+                Don't have an account? <Link to="/signup" className="text-[#ffffff] underline hover:no-underline font-medium">Sign Up</Link>
               </p>
             </>
           )}
