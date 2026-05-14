@@ -9,6 +9,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  rolesLoading: boolean;
   roles: UserRole[];
   isAdmin: boolean;
   isEditor: boolean;
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   loading: true,
+  rolesLoading: true,
   roles: [],
   isAdmin: false,
   isEditor: false,
@@ -35,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [rolesLoading, setRolesLoading] = useState(true);
   const [roles, setRoles] = useState<UserRole[]>([]);
   const [profile, setProfile] = useState<AuthContextType['profile']>(null);
 
@@ -64,18 +67,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [signOut]);
 
   const syncAuthState = useCallback(async (nextSession: Session | null, isInitial = false) => {
-    if (isInitial) setLoading(true);
     setSession(nextSession);
     setUser(nextSession?.user ?? null);
 
+    if (isInitial) setLoading(false);
+
     if (nextSession?.user) {
+      setRolesLoading(true);
       await fetchUserData(nextSession.user.id);
+      setRolesLoading(false);
     } else {
       setRoles([]);
       setProfile(null);
+      setRolesLoading(false);
     }
-
-    if (isInitial) setLoading(false);
   }, [fetchUserData]);
 
   const refreshProfile = useCallback(async () => {
@@ -133,7 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider value={{
-      user, session, loading, roles, profile,
+      user, session, loading, rolesLoading, roles, profile,
       isAdmin: roles.includes('admin'),
       isEditor: roles.includes('editor'),
       signOut, refreshProfile,

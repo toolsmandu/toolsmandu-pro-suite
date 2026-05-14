@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { NavLink } from '@/components/NavLink';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
   import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Image, Users, Settings, ChevronRight, Tag, Film, HelpCircle, Share2, Globe, ShoppingBag, Menu, PanelBottom, Ticket, Zap, StickyNote, Newspaper, Mail, FormInput, Bell, BadgePercent, KeyRound, BarChart3, FileBarChart, TrendingUp, BookOpen, ListChecks, LogOut, Wrench, Table, Network, Layout } from 'lucide-react';
-import ChatbotWidget from '@/components/admin/ChatbotWidget';
-import SalesStatsBar from '@/components/admin/SalesStatsBar';
-import EditorTaskStatsBar from '@/components/admin/EditorTaskStatsBar';
+const ChatbotWidget = lazy(() => import('@/components/admin/ChatbotWidget'));
+const SalesStatsBar = lazy(() => import('@/components/admin/SalesStatsBar'));
+const EditorTaskStatsBar = lazy(() => import('@/components/admin/EditorTaskStatsBar'));
 import { Button } from '@/components/ui/button';
 
 const MenuTrigger = () => {
@@ -35,12 +35,13 @@ const MobileAutoClose = () => {
 };
 
 const AdminLayout = () => {
-  const { user, loading, isAdmin, isEditor, signOut } = useAuth();
+  const { user, loading, rolesLoading, isAdmin, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const { data: logoUrl } = useQuery({
     queryKey: ['site-logo-url'],
+    staleTime: Infinity,
     queryFn: async () => {
       const { data } = await supabase.from('site_settings').select('value').eq('key', 'logo_url').maybeSingle();
       return data?.value || '';
@@ -85,8 +86,8 @@ const AdminLayout = () => {
   }, [isReportsSection]);
 
   useEffect(() => {
-    if (!loading && (!user || (!isAdmin && !isEditor))) navigate('/');
-  }, [user, loading, isAdmin, isEditor, navigate]);
+    if (!loading && !rolesLoading && (!user || (!isAdmin && !isEditor))) navigate('/');
+  }, [user, loading, rolesLoading, isAdmin, isEditor, navigate]);
 
   // Apply admin-light class to body so portaled elements (dialogs, popovers) inherit admin theme
   useEffect(() => {
@@ -95,7 +96,8 @@ const AdminLayout = () => {
   }, []);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
-  if (!user || (!isAdmin && !isEditor)) return null;
+  if (!user) return null;
+  if (!rolesLoading && !isAdmin && !isEditor) return null;
 
   const topLinks = [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -467,8 +469,10 @@ const AdminLayout = () => {
           <header className="h-14 flex items-center border-b border-border px-2 sm:px-4 gap-2 sm:gap-4 bg-background sticky top-0 z-30 shrink-0 w-full overflow-hidden">
             <MenuTrigger />
             <MobileAutoClose />
-            {isAdmin && <SalesStatsBar />}
-            {!isAdmin && isEditor && <EditorTaskStatsBar />}
+            <Suspense fallback={null}>
+              {isAdmin && <SalesStatsBar />}
+              {!isAdmin && isEditor && <EditorTaskStatsBar />}
+            </Suspense>
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
               {isAdmin && (
                 <Button
@@ -498,7 +502,9 @@ const AdminLayout = () => {
             <Outlet />
           </main>
         </div>
-        <ChatbotWidget />
+        <Suspense fallback={null}>
+          <ChatbotWidget />
+        </Suspense>
       </div>
     </SidebarProvider>
   );
